@@ -25,12 +25,18 @@ importers:
       '@fuels/tsup-config':
         specifier: 0.15.2
         version: 0.15.2(tsup@7.2.0)
+      eslint:
+        specifier: 8.56.0
+        version: 8.56.0
       husky:
         specifier: 9.0.11
         version: 9.0.11
       lint-staged:
         specifier: 15.2.2
         version: 15.2.2
+      prettier:
+        specifier: 3.2.5
+        version: 3.2.5
       turbo:
         specifier: 1.12.4
         version: 1.12.4

@@ -8,6 +8,7 @@
   "scripts": {
     "build": "turbo build",
     "ts:check": "turbo run ts:check",
+    "lint:check": "eslint . --ext .ts,.tsx,.js,.jsx",
     "changeset": "changeset",
     "prepare": "husky"
   },
@@ -18,8 +19,10 @@
     "@fuels/prettier-config": "0.15.2",
     "@fuels/ts-config": "0.15.2",
     "@fuels/tsup-config": "0.15.2",
+    "eslint": "8.56.0",
     "husky": "9.0.11",
     "lint-staged": "15.2.2",
+    "prettier": "3.2.5",
     "turbo": "1.12.4"
   },
   "packageManager": "pnpm@8.9.0",

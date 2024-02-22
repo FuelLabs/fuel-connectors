@@ -4,7 +4,7 @@
   "pipeline": {
     "ts:check": {
       "dependsOn": [],
-      "outputs": ["./**/*.typegen.ts"]
+      "outputs": []
     },
     "build": {
       "dependsOn": ["ts:check"],
