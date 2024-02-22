@@ -1,11 +1,22 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
-  "changelog": "@changesets/cli/changelog",
+  "privatePackages": {
+    "version": true,
+    "tag": true
+  },
+  "changelog": [
+    "@changesets/changelog-github",
+    { "repo": "FuelLabs/fuel-connectors" }
+  ],
   "commit": false,
-  "fixed": [],
+  "fixed": [["@fuel-connectors/*"]],
   "linked": [],
-  "access": "restricted",
+  "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "ignore": [],
+  "snapshot": {
+    "useCalculatedVersion": true,
+    "prereleaseTemplate": "{tag}-{commit}"
+  }
 }
