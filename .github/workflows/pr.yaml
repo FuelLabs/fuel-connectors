@@ -1,0 +1,84 @@
+name: 'PR Checks'
+
+on:
+  pull_request:
+    types: [opened, synchronize, edited, closed, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-title:
+    name: Validate PR Title
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  check-packages-changed:
+    name: Assign project changed
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.packages-changed.outputs.any_changed }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check external packages changes
+        id: packages-changed
+        uses: tj-actions/changed-files@v22.2
+        with:
+          files: |
+            **/packages/connectors/**
+
+  validate-changeset:
+    name: Validate PR Changeset
+    needs: check-packages-changed
+    if: ${{ github.head_ref != 'changeset-release/master' && needs.check-packages-changed.outputs.changed == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: CI Setup
+        uses: FuelLabs/github-actions/setups/node@master
+
+      - name: Validate Changeset
+        run: pnpm changeset status --since=origin/${{ github.base_ref }}
+
+  audit:
+    name: Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: FuelLabs/github-actions/setups/node@master
+      - run: pnpm audit --prod
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: FuelLabs/github-actions/setups/node@master
+
+      - name: Run lint
+        run: |
+          pnpm ts:check
+          pnpm lint
+
+  docs:
+    name: Docs
+    uses: FuelLabs/github-actions/.github/workflows/next-docs.yml@master
+    with:
+      doc-folder-path: 'packages/docs/docs'
+      src-folder-path: 'packages/docs/src'
+      spellcheck-config-path: 'packages/docs/.spellcheck.yml'

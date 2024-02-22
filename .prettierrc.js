@@ -1,4 +1,4 @@
-const fuelPrettierConfig = require('@fuels/prettier-config');
+const config = require('@fuels/prettier-config');
 
 /** @type {import("prettier").Config} */
-module.exports = fuelPrettierConfig;
+module.exports = config;
