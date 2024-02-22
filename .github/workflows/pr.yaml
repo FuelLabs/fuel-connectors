@@ -70,7 +70,7 @@ jobs:
       - name: Setup Node
         uses: FuelLabs/github-actions/setups/node@master
 
-      - name: Run lint
+      - name: Run lint  & ts:check
         run: |
+          pnpm lint:ci
           pnpm ts:check
-          pnpm lint:check

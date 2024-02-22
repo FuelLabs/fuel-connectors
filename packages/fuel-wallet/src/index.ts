@@ -1,35 +1,35 @@
 import {
-  transactionRequestify,
-  Provider,
-  FuelConnector,
-  FuelConnectorEventTypes,
-  type ConnectorMetadata,
-  type FuelABI,
-  type Network,
-  type Version,
   type Asset,
   type AssetFuel,
+  type ConnectorMetadata,
+  type FuelABI,
+  FuelConnector,
+  FuelConnectorEventTypes,
+  type Network,
+  Provider,
   type TransactionRequestLike,
+  type Version,
+  transactionRequestify,
 } from 'fuels';
 import type { JSONRPCRequest } from 'json-rpc-2.0';
 import { JSONRPCClient } from 'json-rpc-2.0';
 
 import {
-  EVENT_MESSAGE,
-  CONTENT_SCRIPT_NAME,
   CONNECTOR_SCRIPT,
+  CONTENT_SCRIPT_NAME,
+  EVENT_MESSAGE,
 } from './constants';
 import {
-  MessageTypes,
   type CommunicationMessage,
-  type ResponseMessage,
   type EventMessage,
+  MessageTypes,
+  type ResponseMessage,
 } from './types';
 
 export class FuelWalletConnector extends FuelConnector {
-  name: string = '';
-  connected: boolean = false;
-  installed: boolean = false;
+  name = '';
+  connected = false;
+  installed = false;
   events = FuelConnectorEventTypes;
   metadata: ConnectorMetadata = {
     image: '/connectors/fuel-wallet.svg',
@@ -43,7 +43,7 @@ export class FuelWalletConnector extends FuelConnector {
 
   readonly client: JSONRPCClient;
 
-  constructor(name: string = 'Fuel Wallet') {
+  constructor(name = 'Fuel Wallet') {
     super();
     this.name = name;
     this.setMaxListeners(100);

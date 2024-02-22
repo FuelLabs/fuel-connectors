@@ -8,21 +8,20 @@
   "scripts": {
     "build": "turbo build",
     "ts:check": "turbo run ts:check",
-    "lint:check": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:check": "biome check --apply-unsafe .",
+    "lint:ci": "biome lint --max-diagnostics=1000 --diagnostic-level=error .",
+    "format": "biome format --write .",
     "changeset": "changeset",
     "prepare": "husky"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.5.3",
     "@changesets/changelog-github": "0.5.0",
     "@changesets/cli": "2.27.1",
-    "@fuels/eslint-plugin": "0.15.2",
-    "@fuels/prettier-config": "0.15.2",
     "@fuels/ts-config": "0.15.2",
     "@fuels/tsup-config": "0.15.2",
-    "eslint": "8.56.0",
     "husky": "9.0.11",
     "lint-staged": "15.2.2",
-    "prettier": "3.2.5",
     "turbo": "1.12.4"
   },
   "packageManager": "pnpm@8.9.0",
