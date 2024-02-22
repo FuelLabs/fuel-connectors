@@ -1,5 +1,6 @@
 {
   "name": "@fuel-connectors/fuel-wallet",
+  "private": true,
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts"
