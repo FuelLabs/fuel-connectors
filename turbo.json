@@ -1,0 +1,14 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "pipeline": {
+    "ts:check": {
+      "dependsOn": [],
+      "outputs": ["./**/*.typegen.ts"]
+    },
+    "build": {
+      "dependsOn": ["ts:check"],
+      "outputs": ["dist/**"]
+    }
+  }
+}

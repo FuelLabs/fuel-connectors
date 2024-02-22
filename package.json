@@ -1,0 +1,30 @@
+{
+  "name": "fuel-connectors",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Fuel Wallet Connectors",
+  "author": "Fuel Labs <contact@fuel.sh> (https://fuel.network/)",
+  "homepage": "https://github.com/FuelLabs/fuel-connectors",
+  "scripts": {
+    "build": "turbo build",
+    "ts:check": "turbo run ts:check",
+    "changeset": "changeset",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "0.5.0",
+    "@changesets/cli": "2.27.1",
+    "@fuels/eslint-plugin": "0.15.2",
+    "@fuels/prettier-config": "0.15.2",
+    "@fuels/ts-config": "0.15.2",
+    "@fuels/tsup-config": "0.15.2",
+    "husky": "9.0.11",
+    "lint-staged": "15.2.2",
+    "turbo": "1.12.4"
+  },
+  "packageManager": "pnpm@8.9.0",
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8"
+  }
+}

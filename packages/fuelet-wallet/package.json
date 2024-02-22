@@ -1,0 +1,20 @@
+{
+  "name": "@fuel-connectors/fuelet-wallet",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "ts:check": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "fuels": ">=0.74.0"
+  },
+  "dependencies": {
+    "@fuel-connectors/fuel-wallet": "workspace:*"
+  },
+  "devDependencies": {
+    "fuels": "0.74.0",
+    "typescript": "5.3.3"
+  }
+}
