@@ -8,8 +8,10 @@ type DefaultConnectors = {
 
 export function defaultConnectors({ devMode }: DefaultConnectors = {}) {
   const connectors = [new FuelWalletConnector(), new FueletWalletConnector()];
+
   if (devMode) {
     connectors.push(new FuelWalletDevelopmentConnector());
   }
+
   return connectors;
 }
