@@ -34,7 +34,7 @@ importers:
         version: 1.12.4
 
   packages/connectors:
-    dependencies:
+    devDependencies:
       '@fuel-connectors/fuel-development-wallet':
         specifier: workspace:*
         version: link:../fuel-development-wallet
@@ -44,7 +44,9 @@ importers:
       '@fuel-connectors/fuelet-wallet':
         specifier: workspace:*
         version: link:../fuelet-wallet
-    devDependencies:
+      fuels:
+        specifier: 0.74.0
+        version: 0.74.0(dexie@3.2.5)
       terser:
         specifier: 5.27.2
         version: 5.27.2

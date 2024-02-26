@@ -11,12 +11,14 @@
     "build": "tsup --dts",
     "ts:check": "tsc --noEmit"
   },
-  "dependencies": {
-    "@fuel-connectors/fuel-development-wallet": "workspace:*",
-    "@fuel-connectors/fuel-wallet": "workspace:*",
-    "@fuel-connectors/fuelet-wallet": "workspace:*"
+  "peerDependencies": {
+    "fuels": ">=0.74.0"
   },
   "devDependencies": {
+    "@fuel-connectors/fuel-development-wallet": "workspace:*",
+    "@fuel-connectors/fuel-wallet": "workspace:*",
+    "@fuel-connectors/fuelet-wallet": "workspace:*",
+    "fuels": "0.74.0",
     "terser": "5.27.2",
     "tsup": "7.2.0",
     "typescript": "5.3.3"
