@@ -4,6 +4,7 @@ import { defineConfig } from 'tsup';
 export default defineConfig((options) => ({
   ...baseConfig(options, { withReact: false }),
   entry: ['src/index.ts'],
+  external: ['fuels'],
   noExternal: [
     '@fuel-connectors/fuel-development-wallet',
     '@fuel-connectors/fuel-wallet',
