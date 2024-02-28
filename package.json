@@ -8,6 +8,8 @@
   "scripts": {
     "build": "turbo build",
     "ts:check": "turbo run ts:check",
+    "test": "turbo run test --parallel",
+    "test:ci": "turbo run test --parallel -- --ci --testLocationInResults --json --coverage",
     "lint:check": "biome check --apply-unsafe .",
     "lint:ci": "biome lint --max-diagnostics=1000 --diagnostic-level=error .",
     "format": "biome format --write .",
