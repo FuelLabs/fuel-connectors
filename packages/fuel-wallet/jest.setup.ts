@@ -12,7 +12,7 @@ Object.defineProperties(globalThis, {
   ReadableStream: { value: ReadableStream },
 });
 
-import { Blob, File } from 'node:buffer';
+import { Blob } from 'node:buffer';
 import { FormData, Headers, Request, Response, fetch } from 'undici';
 
 Object.defineProperties(globalThis, {
