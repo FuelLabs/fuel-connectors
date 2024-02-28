@@ -103,6 +103,9 @@ importers:
       '@types/jest':
         specifier: 29.5.12
         version: 29.5.12
+      events:
+        specifier: 3.3.0
+        version: 3.3.0
       fuels:
         specifier: 0.74.0
         version: 0.74.0(dexie@3.2.5)
