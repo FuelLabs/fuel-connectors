@@ -37,10 +37,37 @@ jobs:
         uses: artiomtr/jest-coverage-report-action@v2.0.5
         if: ${{ steps.findPr.outputs.number }}
         with:
+          custom-title: Coverage report for Fuel Wallet
           github-token: ${{ secrets.GITHUB_TOKEN }}
           package-manager: pnpm
           annotations: failed-tests
           test-script: pnpm test:ci
-          working-directory: ./packages/connectors
+          working-directory: ./packages/fuel-wallet
+          coverage-file: ${{ env.COVERAGE_FILE }}
+          base-coverage-file: ${{ env.COVERAGE_FILE }}
+
+      - name: Publish coverage
+        uses: artiomtr/jest-coverage-report-action@v2.0.5
+        if: ${{ steps.findPr.outputs.number }}
+        with:
+          custom-title: Coverage report for Fuelet Wallet
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          package-manager: pnpm
+          annotations: failed-tests
+          test-script: pnpm test:ci
+          working-directory: ./packages/fuelet-wallet
+          coverage-file: ${{ env.COVERAGE_FILE }}
+          base-coverage-file: ${{ env.COVERAGE_FILE }}
+
+      - name: Publish coverage
+        uses: artiomtr/jest-coverage-report-action@v2.0.5
+        if: ${{ steps.findPr.outputs.number }}
+        with:
+          custom-title: Coverage report for Fuel Development Wallet
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          package-manager: pnpm
+          annotations: failed-tests
+          test-script: pnpm test:ci
+          working-directory: ./packages/fuel-development-wallet
           coverage-file: ${{ env.COVERAGE_FILE }}
           base-coverage-file: ${{ env.COVERAGE_FILE }}
