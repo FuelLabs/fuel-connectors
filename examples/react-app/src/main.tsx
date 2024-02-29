@@ -6,10 +6,13 @@ import { FuelWalletConnector } from '@fuels/connectors';
 
 import App from './App.tsx';
 
-// biome-ignore lint/style/noNonNullAssertion: <explanation>
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <FuelProvider fuelConfig={{ connectors: [new FuelWalletConnector()] }}>
+    <FuelProvider
+      fuelConfig={{
+        connectors: [new FuelWalletConnector()],
+      }}
+    >
       <App />
     </FuelProvider>
   </React.StrictMode>,
