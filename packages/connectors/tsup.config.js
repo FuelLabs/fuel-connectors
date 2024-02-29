@@ -11,7 +11,6 @@ export default defineConfig((options) => ({
     '@fuel-connectors/fuelet-wallet',
   ],
   minify: 'terser',
-  treeshake: true,
   splitting: true,
   metafile: true,
 }));
