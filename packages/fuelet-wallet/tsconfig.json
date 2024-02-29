@@ -3,7 +3,9 @@
   "compilerOptions": {
     "outDir": "./dist",
     "baseUrl": ".",
-    "rootDir": "."
+    "paths": {
+      "@fuel-connectors/*": ["../*/src"]
+    }
   },
   "exclude": ["dist"]
 }
