@@ -7,7 +7,7 @@
       "outputs": []
     },
     "build": {
-      "dependsOn": ["ts:check"],
+      "dependsOn": ["ts:check", "^build"],
       "outputs": ["dist/**"]
     },
     "test": {

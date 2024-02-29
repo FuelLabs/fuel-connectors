@@ -12,11 +12,14 @@
     }
   },
   "scripts": {
-    "build": "tsup --dts",
+    "build": "tsup",
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
     "fuels": ">=0.74.0"
+  },
+  "dependencies": {
+    "json-rpc-2.0": "1.7.0"
   },
   "devDependencies": {
     "@fuel-connectors/fuel-development-wallet": "workspace:*",

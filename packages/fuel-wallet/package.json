@@ -2,11 +2,12 @@
   "name": "@fuel-connectors/fuel-wallet",
   "version": "0.0.1",
   "private": true,
-  "types": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts"
   },
   "scripts": {
+    "build": "tsup --dts-only",
     "ts:check": "tsc --noEmit",
     "test": "jest --verbose"
   },
@@ -25,6 +26,7 @@
     "jest-transform-stub": "2.0.0",
     "ts-jest": "29.1.2",
     "ts-node": "10.9.2",
+    "tsup": "7.2.0",
     "typescript": "5.3.3",
     "undici": "6.6.2",
     "web-streams-polyfill": "3.3.3"
