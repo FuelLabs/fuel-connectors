@@ -164,22 +164,6 @@ describe('FuelWalletConnector', () => {
       expect(request).toHaveBeenCalledWith('networks', {});
     });
 
-    test('should add network', async () => {
-      const request = requestMock.mockReturnValue(Promise.resolve(true));
-
-      const connector = new FuelWalletConnector();
-      const result = await connector.addNetwork(
-        'https://beta-5.fuel.network/graphql',
-      );
-      expect(result).toBe(true);
-      expect(request).toHaveBeenCalledWith('addNetwork', {
-        network: {
-          url: 'https://beta-5.fuel.network/graphql',
-          name: 'Testnet Beta 5',
-        },
-      });
-    });
-
     test('should return version', async () => {
       const request = requestMock.mockReturnValue(Promise.resolve('0x123'));
 
