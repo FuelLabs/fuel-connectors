@@ -34,7 +34,7 @@ jobs:
             --coverage.reportOnFailure \
             --coverage.reporter=json-summary \
             --coverage.reporter=json \
-            --coverage.thresholds.functions=32 \
+            --coverage.thresholds.functions=50 \
             --coverage.thresholds.lines=64 \
             --coverage.thresholds.branches=50 \
             --coverage.thresholds.statements=50
