@@ -9,7 +9,6 @@
     "build": "turbo build",
     "ts:check": "turbo run ts:check",
     "test": "turbo run test",
-    "test:ci": "turbo run test -- --run --coverage.enabled --coverage.reporter=json-summary --coverage.reporter=json",
     "lint:check": "biome check --apply-unsafe .",
     "lint:ci": "biome lint --max-diagnostics=1000 --diagnostic-level=error .",
     "format": "biome format --write .",
