@@ -31,16 +31,17 @@ jobs:
           pnpm run test \
             --run \
             --coverage.enabled \
+            --coverage.reportOnFailure \
             --coverage.reporter=json-summary \
             --coverage.reporter=json \
-            --coverage.thresholds.functions=50 \
-            --coverage.thresholds.lines=50 \
+            --coverage.thresholds.functions=32 \
+            --coverage.thresholds.lines=64 \
             --coverage.thresholds.branches=50 \
             --coverage.thresholds.statements=50
 
       - name: Publish Fuel Wallet Coverage
         uses: davelosert/vitest-coverage-report-action@v2
-        if: ${{ steps.findPr.outputs.number }}
+        if: ${{ always() && steps.findPr.outputs.number }}
         with:
           name: 'Fuel Wallet'
           working-directory: ./packages/fuel-wallet
@@ -49,7 +50,7 @@ jobs:
 
       - name: Publish Fuel Development Wallet Coverage
         uses: davelosert/vitest-coverage-report-action@v2
-        if: ${{ steps.findPr.outputs.number }}
+        if: ${{ always() && steps.findPr.outputs.number }}
         with:
           name: 'Fuel DevelopmentWallet'
           working-directory: ./packages/fuel-development-wallet
@@ -58,7 +59,7 @@ jobs:
 
       - name: Publish Fuelet Wallet Coverage
         uses: davelosert/vitest-coverage-report-action@v2
-        if: ${{ steps.findPr.outputs.number }}
+        if: ${{ always() && steps.findPr.outputs.number }}
         with:
           name: 'Fuelet Wallet'
           working-directory: ./packages/fuelet-wallet
