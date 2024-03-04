@@ -28,7 +28,9 @@ jobs:
 
       - name: Run Vitest
         run: |
-          pnpm test -- --run 
+          pnpm run test
+            --
+            --run
             --coverage.enabled
             --coverage.reporter=json-summary
             --coverage.reporter=json
