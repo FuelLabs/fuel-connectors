@@ -7,6 +7,8 @@ node_modules
 # Build Outputs
 dist
 
+# Coverage
+coverage
 
 # Debug
 npm-debug.log*

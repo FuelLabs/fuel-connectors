@@ -14,6 +14,9 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "correctness": {
+        "noUnusedVariables": "error"
+      },
       "complexity": {
         "noForEach": "off"
       }

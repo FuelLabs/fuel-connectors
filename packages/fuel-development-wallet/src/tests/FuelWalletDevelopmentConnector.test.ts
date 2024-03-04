@@ -1,18 +1,16 @@
+import { describe, expect, test, vi } from 'vitest';
+
 import { FuelWalletDevelopmentConnector } from '../FuelWalletDevelopmentConnector';
 
-jest.mock('json-rpc-2.0', () => {
+vi.mock('json-rpc-2.0', () => {
   return {
-    JSONRPCClient: jest.fn().mockImplementation(() => ({
-      request: jest.fn(),
+    JSONRPCClient: vi.fn().mockImplementation(() => ({
+      request: vi.fn(),
     })),
   };
 });
 
 describe('FuelWalletDevelopmentConnector', () => {
-  beforeEach(() => {
-    window.localStorage.clear();
-  });
-
   test('constructor initializes properties correctly', async () => {
     const connector = new FuelWalletDevelopmentConnector();
     expect(connector.name).toBe('Fuel Wallet Development');

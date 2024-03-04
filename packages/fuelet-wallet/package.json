@@ -9,20 +9,14 @@
   "scripts": {
     "build": "tsup --dts-only",
     "ts:check": "tsc --noEmit",
-    "test": "jest --verbose"
+    "test": "vitest"
   },
   "peerDependencies": {
     "fuels": ">=0.74.0"
   },
   "devDependencies": {
     "@fuel-connectors/fuel-wallet": "workspace:*",
-    "@types/jest": "29.5.12",
     "fuels": "0.74.0",
-    "jest": "29.7.0",
-    "jest-environment-jsdom": "29.7.0",
-    "jest-transform-stub": "2.0.0",
-    "ts-jest": "29.1.2",
-    "ts-node": "10.9.2",
     "tsup": "7.2.0",
     "typescript": "5.3.3",
     "undici": "6.6.2",

@@ -9,12 +9,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-env:
-  COVERAGE_FILE: ./coverage/report.json
-
 jobs:
-  tests-jest:
-    name: JEST Tests
+  tests-vitest:
+    name: Vitest Tests
     runs-on: buildjet-4vcpu-ubuntu-2204
     steps:
       - uses: actions/checkout@v3
@@ -24,50 +21,39 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Unit tests running with JEST
+      # Unit tests running with Vitest
       - name: Find PR number
         uses: jwalton/gh-find-current-pr@v1
         id: findPr
 
-      - name: Run Jest Tests
+      - name: Run Vitest
         run: |
           pnpm test:ci --outputFile="${{ env.COVERAGE_FILE }}"
 
-      - name: Publish coverage
-        uses: artiomtr/jest-coverage-report-action@v2.0.5
+      - name: Publish Fuel Wallet Coverage
+        uses: davelosert/vitest-coverage-report-action@v2
         if: ${{ steps.findPr.outputs.number }}
         with:
-          custom-title: Coverage report for Fuel Wallet
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          package-manager: pnpm
-          annotations: failed-tests
-          test-script: pnpm test:ci
+          name: 'Fuel Wallet'
           working-directory: ./packages/fuel-wallet
-          coverage-file: ${{ env.COVERAGE_FILE }}
-          base-coverage-file: ${{ env.COVERAGE_FILE }}
+          json-summary-path: ./coverage/coverage-summary.json
+          json-final-path: ./coverage/coverage-final.json
 
-      - name: Publish coverage
-        uses: artiomtr/jest-coverage-report-action@v2.0.5
+      - name: Publish Fuel Development Wallet Coverage
+        uses: davelosert/vitest-coverage-report-action@v2
         if: ${{ steps.findPr.outputs.number }}
         with:
-          custom-title: Coverage report for Fuelet Wallet
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          package-manager: pnpm
-          annotations: failed-tests
-          test-script: pnpm test:ci
-          working-directory: ./packages/fuelet-wallet
-          coverage-file: ${{ env.COVERAGE_FILE }}
-          base-coverage-file: ${{ env.COVERAGE_FILE }}
-
-      - name: Publish coverage
-        uses: artiomtr/jest-coverage-report-action@v2.0.5
-        if: ${{ steps.findPr.outputs.number }}
-        with:
-          custom-title: Coverage report for Fuel Development Wallet
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          package-manager: pnpm
-          annotations: failed-tests
-          test-script: pnpm test:ci
+          name: 'Fuel Wallet'
           working-directory: ./packages/fuel-development-wallet
-          coverage-file: ${{ env.COVERAGE_FILE }}
-          base-coverage-file: ${{ env.COVERAGE_FILE }}
+          json-summary-path: ./coverage/coverage-summary.json
+          json-final-path: ./coverage/coverage-final.json
+
+      - name: Publish Fuelet Wallet Coverage
+        uses: davelosert/vitest-coverage-report-action@v2
+        if: ${{ steps.findPr.outputs.number }}
+        with:
+          name: 'Fuelet Wallet'
+          working-directory: ./packages/fuelet-wallet
+          json-summary-path: ./coverage/coverage-summary.json
+          json-final-path: ./coverage/coverage-final.json
+

@@ -1,22 +1,20 @@
+import { Mock, describe, expect, test, vi } from 'vitest';
+
 import { TransactionType } from 'fuels';
 import { JSONRPCClient } from 'json-rpc-2.0';
 import { FuelWalletConnector } from '../FuelWalletConnector';
 
-jest.mock('json-rpc-2.0', () => {
+vi.mock('json-rpc-2.0', () => {
   return {
-    JSONRPCClient: jest.fn().mockImplementation(() => ({
-      request: jest.fn(),
+    JSONRPCClient: vi.fn().mockImplementation(() => ({
+      request: vi.fn(),
     })),
   };
 });
 
-const JSONRPCClientMock = JSONRPCClient as jest.Mock;
+const JSONRPCClientMock = JSONRPCClient as Mock;
 
 describe('FuelWalletConnector', () => {
-  beforeEach(() => {
-    window.localStorage.clear();
-  });
-
   test('constructor initializes properties correctly', async () => {
     const connector = new FuelWalletConnector();
     expect(connector.name).toBe('Fuel Wallet');
@@ -25,7 +23,7 @@ describe('FuelWalletConnector', () => {
   });
 
   test('should connect', async () => {
-    const request = jest.fn().mockImplementation(() => Promise.resolve(true));
+    const request = vi.fn().mockImplementation(() => Promise.resolve(true));
     JSONRPCClientMock.mockReturnValueOnce({
       request,
     });
@@ -37,7 +35,7 @@ describe('FuelWalletConnector', () => {
   });
 
   test('should disconnect', async () => {
-    const request = jest.fn().mockImplementation(() => Promise.resolve(true));
+    const request = vi.fn().mockImplementation(() => Promise.resolve(true));
     JSONRPCClientMock.mockReturnValueOnce({
       request,
     });
@@ -49,7 +47,7 @@ describe('FuelWalletConnector', () => {
   });
 
   test('should request accounts', async () => {
-    const request = jest
+    const request = vi
       .fn()
       .mockImplementation(() => Promise.resolve(['0x123']));
     JSONRPCClientMock.mockReturnValueOnce({
@@ -63,9 +61,7 @@ describe('FuelWalletConnector', () => {
   });
 
   test('should request current account', async () => {
-    const request = jest
-      .fn()
-      .mockImplementation(() => Promise.resolve('0x123'));
+    const request = vi.fn().mockImplementation(() => Promise.resolve('0x123'));
     JSONRPCClientMock.mockReturnValueOnce({
       request,
     });
@@ -77,9 +73,7 @@ describe('FuelWalletConnector', () => {
   });
 
   test('should request sign message', async () => {
-    const request = jest
-      .fn()
-      .mockImplementation(() => Promise.resolve('0x123'));
+    const request = vi.fn().mockImplementation(() => Promise.resolve('0x123'));
     JSONRPCClientMock.mockReturnValueOnce({
       request,
     });
@@ -94,9 +88,7 @@ describe('FuelWalletConnector', () => {
   });
 
   test('should request send transaction', async () => {
-    const request = jest
-      .fn()
-      .mockImplementation(() => Promise.resolve('0x123'));
+    const request = vi.fn().mockImplementation(() => Promise.resolve('0x123'));
     JSONRPCClientMock.mockReturnValueOnce({
       request,
     });
