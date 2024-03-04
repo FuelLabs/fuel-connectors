@@ -9,6 +9,9 @@
     "build": {
       "dependsOn": ["ts:check", "^build"],
       "outputs": ["dist/**"]
+    },
+    "test": {
+      "dependsOn": []
     }
   }
 }

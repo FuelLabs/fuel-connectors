@@ -28,16 +28,7 @@ jobs:
 
       - name: Run Vitest
         run: |
-          pnpm run test \
-            --run \
-            --coverage.enabled \
-            --coverage.reportOnFailure \
-            --coverage.reporter=json-summary \
-            --coverage.reporter=json \
-            --coverage.thresholds.functions=50 \
-            --coverage.thresholds.lines=50 \
-            --coverage.thresholds.branches=50 \
-            --coverage.thresholds.statements=50
+          pnpm test:ci
 
       - name: Publish Fuel Wallet Coverage
         uses: davelosert/vitest-coverage-report-action@v2
