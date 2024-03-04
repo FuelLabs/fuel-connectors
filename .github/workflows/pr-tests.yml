@@ -28,7 +28,7 @@ jobs:
 
       - name: Run Vitest
         run: |
-          pnpm test:ci --outputFile="${{ env.COVERAGE_FILE }}"
+          pnpm test:ci
 
       - name: Publish Fuel Wallet Coverage
         uses: davelosert/vitest-coverage-report-action@v2
