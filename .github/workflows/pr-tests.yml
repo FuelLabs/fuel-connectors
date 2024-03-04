@@ -52,7 +52,7 @@ jobs:
         uses: davelosert/vitest-coverage-report-action@v2
         if: ${{ always() && steps.findPr.outputs.number }}
         with:
-          name: 'Fuel DevelopmentWallet'
+          name: 'Fuel Development Wallet'
           working-directory: ./packages/fuel-development-wallet
           json-summary-path: ./coverage/coverage-summary.json
           json-final-path: ./coverage/coverage-final.json
