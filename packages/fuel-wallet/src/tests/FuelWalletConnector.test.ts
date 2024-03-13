@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { FuelABI, TransactionRequestLike, TransactionType } from 'fuels';
+import {
+  type FuelABI,
+  type TransactionRequestLike,
+  TransactionType,
+} from 'fuels';
 import { FuelWalletConnector } from '../FuelWalletConnector';
 
 const requestMock = vi.fn();
