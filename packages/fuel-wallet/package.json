@@ -20,9 +20,9 @@
   "devDependencies": {
     "events": "3.3.0",
     "fuels": "0.74.0",
-    "tsup": "7.2.0",
-    "typescript": "5.3.3",
-    "undici": "6.6.2",
-    "web-streams-polyfill": "3.3.3"
+    "tsup": "8.0.2",
+    "typescript": "5.4.2",
+    "undici": "6.8.0",
+    "web-streams-polyfill": "4.0.0"
   }
 }
