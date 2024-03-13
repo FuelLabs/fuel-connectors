@@ -34,7 +34,7 @@ jobs:
   validate-changeset:
     name: Validate PR Changeset
     needs: check-packages-changed
-    if: ${{ github.head_ref != 'changeset-release/master' && needs.check-packages-changed.outputs.changed == 'true' }}
+    if: ${{ github.head_ref != 'changeset-release/main' && needs.check-packages-changed.outputs.changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
