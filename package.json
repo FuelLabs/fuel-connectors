@@ -1,0 +1,36 @@
+{
+  "name": "fuel-connectors",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Fuel Wallet Connectors",
+  "author": "Fuel Labs <contact@fuel.sh> (https://fuel.network/)",
+  "homepage": "https://github.com/FuelLabs/fuel-connectors",
+  "scripts": {
+    "build": "turbo build",
+    "ts:check": "turbo run ts:check",
+    "test": "vitest",
+    "test:ci": "turbo run test -- --run --coverage.enabled --coverage.reporter=json-summary --coverage.reporter=json --coverage.thresholds.functions=50 --coverage.thresholds.lines=50 --coverage.thresholds.branches=50 --coverage.thresholds.statements=50",
+    "lint:check": "biome check --apply-unsafe .",
+    "lint:ci": "biome lint --max-diagnostics=1000 --diagnostic-level=error .",
+    "format": "biome format --write .",
+    "changeset": "changeset",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.6.1",
+    "@changesets/changelog-github": "0.5.0",
+    "@changesets/cli": "2.27.1",
+    "@fuels/ts-config": "0.16.0",
+    "@fuels/tsup-config": "0.16.0",
+    "@vitest/coverage-v8": "1.3.1",
+    "husky": "9.0.11",
+    "lint-staged": "15.2.2",
+    "turbo": "1.12.5",
+    "vitest": "1.3.1"
+  },
+  "packageManager": "pnpm@8.9.0",
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8"
+  }
+}

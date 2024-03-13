@@ -1,0 +1,59 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests-vitest:
+    name: Vitest Tests
+    runs-on: buildjet-4vcpu-ubuntu-2204
+    steps:
+      - uses: actions/checkout@v3
+      - uses: FuelLabs/github-actions/setups/node@master
+      - uses: FuelLabs/github-actions/setups/docker@master
+        with:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Unit tests running with Vitest
+      - name: Find PR number
+        uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+
+      - name: Run Vitest
+        run: |
+          pnpm test:ci
+
+      - name: Publish Fuel Wallet Coverage
+        uses: davelosert/vitest-coverage-report-action@v2
+        if: ${{ always() && steps.findPr.outputs.number }}
+        with:
+          name: 'Fuel Wallet'
+          working-directory: ./packages/fuel-wallet
+          json-summary-path: ./coverage/coverage-summary.json
+          json-final-path: ./coverage/coverage-final.json
+
+      - name: Publish Fuel Development Wallet Coverage
+        uses: davelosert/vitest-coverage-report-action@v2
+        if: ${{ always() && steps.findPr.outputs.number }}
+        with:
+          name: 'Fuel Development Wallet'
+          working-directory: ./packages/fuel-development-wallet
+          json-summary-path: ./coverage/coverage-summary.json
+          json-final-path: ./coverage/coverage-final.json
+
+      - name: Publish Fuelet Wallet Coverage
+        uses: davelosert/vitest-coverage-report-action@v2
+        if: ${{ always() && steps.findPr.outputs.number }}
+        with:
+          name: 'Fuelet Wallet'
+          working-directory: ./packages/fuelet-wallet
+          json-summary-path: ./coverage/coverage-summary.json
+          json-final-path: ./coverage/coverage-final.json
+

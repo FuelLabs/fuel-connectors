@@ -1,0 +1,25 @@
+{
+  "name": "@fuel-connectors/fuel-development-wallet",
+  "version": "0.0.1",
+  "private": true,
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsup --dts-only",
+    "ts:check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "peerDependencies": {
+    "fuels": ">=0.74.0"
+  },
+  "devDependencies": {
+    "@fuel-connectors/fuel-wallet": "workspace:*",
+    "fuels": "0.74.0",
+    "tsup": "8.0.2",
+    "typescript": "5.4.2",
+    "undici": "6.8.0",
+    "web-streams-polyfill": "4.0.0"
+  }
+}

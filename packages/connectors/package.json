@@ -1,0 +1,33 @@
+{
+  "name": "@fuels/connectors",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "ts:check": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "fuels": ">=0.74.0"
+  },
+  "dependencies": {
+    "json-rpc-2.0": "1.7.0"
+  },
+  "devDependencies": {
+    "@fuel-connectors/fuel-development-wallet": "workspace:*",
+    "@fuel-connectors/fuel-wallet": "workspace:*",
+    "@fuel-connectors/fuelet-wallet": "workspace:*",
+    "fuels": "0.74.0",
+    "terser": "5.29.1",
+    "tsup": "8.0.2",
+    "typescript": "5.4.2"
+  }
+}
