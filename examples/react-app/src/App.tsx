@@ -1,8 +1,4 @@
-import {
-  useConnectUI,
-  useDisconnect,
-  useIsConnected,
-} from '@fuel-wallet/react';
+import { useConnectUI, useDisconnect, useIsConnected } from '@fuels/react';
 
 function App() {
   const { connect, isConnecting } = useConnectUI();

@@ -7,8 +7,8 @@
     "dev": "vite"
   },
   "dependencies": {
-    "@fuel-wallet/react": "0.15.2",
     "@fuels/connectors": "workspace:*",
+    "@fuels/react": "0.15.3",
     "fuels": "0.74.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
