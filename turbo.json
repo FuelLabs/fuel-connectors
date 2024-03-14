@@ -10,6 +10,10 @@
       "dependsOn": ["ts:check", "^build"],
       "outputs": ["dist/**"]
     },
+    "build:watch": {
+      "dependsOn": ["ts:check", "^build"],
+      "outputs": ["dist/**"]
+    },
     "test": {
       "dependsOn": []
     }
