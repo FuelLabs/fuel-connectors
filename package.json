@@ -14,6 +14,7 @@
     "lint:ci": "biome lint --max-diagnostics=1000 --diagnostic-level=error .",
     "format": "biome format --write .",
     "changeset": "changeset",
+    "packages:version": "node ./scripts/version.js",
     "prepare": "husky"
   },
   "devDependencies": {
