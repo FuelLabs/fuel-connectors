@@ -9,13 +9,15 @@
   },
   "dependencies": {
     "@fuels/connectors": "workspace:*",
-    "@fuels/react": "0.16.0",
-    "fuels": "0.74.0",
+    "@fuels/react": "0.17.0",
+    "@tanstack/react-query": "5.28.4",
+    "fuels": "0.77.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@types/react": "18.2.65",
+    "@tanstack/react-query-devtools": "5.28.4",
+    "@types/react": "18.2.67",
     "@types/react-dom": "18.2.22",
     "@vitejs/plugin-react": "4.2.1",
     "typescript": "5.4.2",

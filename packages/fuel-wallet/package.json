@@ -13,17 +13,17 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.74.0"
+    "fuels": ">=0.77.0"
   },
   "dependencies": {
     "json-rpc-2.0": "1.7.0"
   },
   "devDependencies": {
     "events": "3.3.0",
-    "fuels": "0.74.0",
+    "fuels": "0.77.0",
     "tsup": "8.0.2",
     "typescript": "5.4.2",
-    "undici": "6.8.0",
+    "undici": "6.9.0",
     "web-streams-polyfill": "4.0.0"
   }
 }
