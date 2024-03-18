@@ -9,7 +9,7 @@ export enum MessageTypes {
   removeConnection = 'removeConnection',
 }
 
-interface MessageSender {
+export interface MessageSender {
   id?: string | undefined;
   origin?: string | undefined;
   tab?: {
@@ -29,18 +29,18 @@ type BaseEvent<T> = {
   readonly sender?: MessageSender;
 } & T;
 
-type EventMessageEvents = Array<{
+export type EventMessageEvents = Array<{
   event: string;
   params: Array<unknown>;
 }>;
 
-type UIEventMessage = BaseEvent<{
+export type UIEventMessage = BaseEvent<{
   readonly type: MessageTypes.uiEvent;
   readonly ready: boolean;
   readonly session: string;
 }>;
 
-type RequestMessage = BaseEvent<{
+export type RequestMessage = BaseEvent<{
   readonly type: MessageTypes.request;
   readonly request: JSONRPCRequest;
 }>;
