@@ -1,6 +1,6 @@
 # @fuels/connector
 
-Collection of connectors for `@fuels/react`.
+Collection of connectors for `fuels` SDK.
 This package enables users to use their **wallets** to sign transactions on Fuel Network.
 
 > **Warning**
