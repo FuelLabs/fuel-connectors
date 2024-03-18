@@ -18,11 +18,11 @@ importers:
         specifier: 2.27.1
         version: 2.27.1
       '@fuels/ts-config':
-        specifier: 0.16.0
-        version: 0.16.0(typescript@5.4.2)
+        specifier: 0.17.0
+        version: 0.17.0(typescript@5.4.2)
       '@fuels/tsup-config':
-        specifier: 0.16.0
-        version: 0.16.0(tsup@8.0.2)
+        specifier: 0.17.0
+        version: 0.17.0(tsup@8.0.2)
       '@vitest/coverage-v8':
         specifier: 1.4.0
         version: 1.4.0(vitest@1.4.0)
@@ -45,8 +45,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/connectors
       '@fuels/react':
-        specifier: 0.16.0
-        version: 0.16.0(@types/react-dom@18.2.22)(@types/react@18.2.67)(fuels@0.77.0)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 0.17.0
+        version: 0.17.0(@tanstack/react-query@5.28.4)(@types/react-dom@18.2.22)(@types/react@18.2.67)(fuels@0.77.0)(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-query':
+        specifier: 5.28.4
+        version: 5.28.4(react@18.2.0)
       fuels:
         specifier: 0.77.0
         version: 0.77.0(dexie@3.2.6)
@@ -57,6 +60,9 @@ importers:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
     devDependencies:
+      '@tanstack/react-query-devtools':
+        specifier: 5.28.4
+        version: 5.28.4(@tanstack/react-query@5.28.4)(react@18.2.0)
       '@types/react':
         specifier: 18.2.67
         version: 18.2.67
@@ -1146,14 +1152,15 @@ packages:
   /@fuels/assets@0.1.5:
     resolution: {integrity: sha512-3rFZdY2f5/h7e2Rlhv/+WKz1CVsTnydKoxLdVjQfUaNsj7zbMLSfT37bsBSB42AnXKOlPs/vyMbS77LxhN8a2A==}
 
-  /@fuels/react@0.16.0(@types/react-dom@18.2.22)(@types/react@18.2.67)(fuels@0.77.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-+VE2yczITKhAW9343f9MrOV29YSRpyS/oRa46A9yCY/Ks/BtG1XwbC2lCs5amGHRDmBB35kQcuUL9cvL36+gdA==}
+  /@fuels/react@0.17.0(@tanstack/react-query@5.28.4)(@types/react-dom@18.2.22)(@types/react@18.2.67)(fuels@0.77.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-vGVLIEeOnjptU4mBiKjv9Cp4dsST/Q6CjhnZzT7nnsFHfzrQCPfP1Mz73qqlULi2l0pFR1SBroVk340BB5+srg==}
     peerDependencies:
+      '@tanstack/react-query': '>=5.0.0'
       fuels: '>=0.74.0'
       react: ^18.2.0
     dependencies:
       '@radix-ui/react-dialog': 1.0.5(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0)(react@18.2.0)
-      '@tanstack/react-query': 4.36.1(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-query': 5.28.4(react@18.2.0)
       events: 3.3.0
       fuels: 0.77.0(dexie@3.2.6)
       react: 18.2.0
@@ -1161,19 +1168,18 @@ packages:
       - '@types/react'
       - '@types/react-dom'
       - react-dom
-      - react-native
     dev: false
 
-  /@fuels/ts-config@0.16.0(typescript@5.4.2):
-    resolution: {integrity: sha512-25+7+2gTkN7nVodKe/AqD3ZYDp3rCsb0k0/q+q9eXKVGDdNKdaOtU+ofRjvLvNTOG07pevp3TCDLWiDeIa02sQ==}
+  /@fuels/ts-config@0.17.0(typescript@5.4.2):
+    resolution: {integrity: sha512-OoEM1JHFCzWlOjsy/KG0T2RsQ8Z2uQVN8Y6qlszvZO0WzbLa8mJf1gFDayx0K0sv6SyABF0c17anNgsYf7ZM8Q==}
     peerDependencies:
       typescript: 5.2.2
     dependencies:
       typescript: 5.4.2
     dev: true
 
-  /@fuels/tsup-config@0.16.0(tsup@8.0.2):
-    resolution: {integrity: sha512-INBBMgu1wutrq6eY+PkudDvYRCLQ2/1/+O3m/GJquWNUtc5jH1cxiNLLx71u67jJUji/zg9WUxWSqTXoHTj1Dw==}
+  /@fuels/tsup-config@0.17.0(tsup@8.0.2):
+    resolution: {integrity: sha512-+ArWpkcWz9FLFCLgsHoV2qeAqpML5mnfkhM1rAqEJd12jfo7n/BUHTGMylt6a0mUdstfyFblbI3VUBQy7bgMmg==}
     peerDependencies:
       tsup: ^7.2.0
     dependencies:
@@ -1713,27 +1719,31 @@ packages:
   /@socket.io/component-emitter@3.1.0:
     resolution: {integrity: sha512-+9jVqKhRSpsc591z5vX+X5Yyw+he/HCB4iQ/RYxw35CEPaY1gnsNE43nf9n9AaYjAQrTiI/mOwKUKdUs9vf7Xg==}
 
-  /@tanstack/query-core@4.36.1:
-    resolution: {integrity: sha512-DJSilV5+ytBP1FbFcEJovv4rnnm/CokuVvrBEtW/Va9DvuJ3HksbXUJEpI0aV1KtuL4ZoO9AVE6PyNLzF7tLeA==}
-    dev: false
+  /@tanstack/query-core@5.28.4:
+    resolution: {integrity: sha512-uQZqOFqLWUvXNIQZ63XdKzg22NtHzgCBUfDmjDHi3BoF+nUYeBNvMi/xFPtFrMhqRzG2Ir4mYaGsWZzmiEjXpA==}
 
-  /@tanstack/react-query@4.36.1(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-y7ySVHFyyQblPl3J3eQBWpXZkliroki3ARnBKsdJchlgt7yJLRDUcf4B8soufgiYt3pEQIkBWBx1N9/ZPIeUWw==}
+  /@tanstack/query-devtools@5.28.3:
+    resolution: {integrity: sha512-Kxch05PVnxLUAyRiz2gXYQhXATHfXbQQwvz858YPjYYQyi7yk8SyS9Z5hyw90bRb0pd3rjelXyGFCsNMWvEghw==}
+    dev: true
+
+  /@tanstack/react-query-devtools@5.28.4(@tanstack/react-query@5.28.4)(react@18.2.0):
+    resolution: {integrity: sha512-oS+3INjCIX4Nkh0IAV6LH2mgLqJjkcd/DDxp8dwdWCGloLrz6IBj+bOuuI2wD0zb8r7l45wIAYIhl4Z6XyTupQ==}
     peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
+      '@tanstack/react-query': ^5.28.4
+      react: ^18.0.0
     dependencies:
-      '@tanstack/query-core': 4.36.1
+      '@tanstack/query-devtools': 5.28.3
+      '@tanstack/react-query': 5.28.4(react@18.2.0)
       react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      use-sync-external-store: 1.2.0(react@18.2.0)
-    dev: false
+    dev: true
+
+  /@tanstack/react-query@5.28.4(react@18.2.0):
+    resolution: {integrity: sha512-BErcoB/QQG6YwLSUKnaGxF+lSc270RH2w3kMBpG0i4YzDCsFs2pdxPX1WVknQvFk9bNgukMb158hc2Zb4SdwSA==}
+    peerDependencies:
+      react: ^18.0.0
+    dependencies:
+      '@tanstack/query-core': 5.28.4
+      react: 18.2.0
 
   /@types/babel__core@7.20.5:
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -5444,14 +5454,6 @@ packages:
       detect-node-es: 1.1.0
       react: 18.2.0
       tslib: 2.6.2
-    dev: false
-
-  /use-sync-external-store@1.2.0(react@18.2.0):
-    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 18.2.0
     dev: false
 
   /utils-merge@1.0.1:
