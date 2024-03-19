@@ -1,0 +1,29 @@
+{
+  "name": "@fuel-connectors/bako-safe",
+  "version": "0.0.1",
+  "private": true,
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsup ./src/BakoSafeConnector.tsx --dts-only",
+    "build:watch": "tsup --watch --dts-only",
+    "ts:check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "peerDependencies": {
+    "fuels": ">=0.77.0",
+    "socket.io-client": "^4.7.2",
+    "axios": "^1.5.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "events": "3.3.0",
+    "fuels": "0.77.0",
+    "tsup": "8.0.2",
+    "typescript": "5.4.2",
+    "undici": "6.9.0",
+    "web-streams-polyfill": "4.0.0"
+  }
+}
