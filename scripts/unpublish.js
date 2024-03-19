@@ -3,7 +3,7 @@ const { join } = require('node:path');
 const util = require('node:util');
 const { compare } = require('compare-versions');
 const exec = util.promisify(require('node:child_process').exec);
-const { version } = require('../packages/app/package.json');
+const { version } = require('../packages/connectors/package.json');
 
 const DELETE_TAGS = /next|preview|rc|main/;
 const CURRENT_VERSION = version;
