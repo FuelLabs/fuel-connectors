@@ -1,4 +1,4 @@
-const APP_BSAFE_URL = 'https://app.bsafe.pro/';
+import { APP_BSAFE_URL } from './constants';
 
 export class DAppWindow {
   BSAFEAPP = APP_BSAFE_URL;

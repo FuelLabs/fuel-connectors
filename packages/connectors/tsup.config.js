@@ -4,11 +4,12 @@ import { defineConfig } from 'tsup';
 export default defineConfig((options) => ({
   ...baseConfig(options, { withReact: false }),
   entry: ['src/index.ts'],
-  external: ['fuels', 'json-rpc-2.0'],
+  external: ['fuels', 'json-rpc-2.0', 'socket.io-client', 'axios'],
   noExternal: [
     '@fuel-connectors/fuel-development-wallet',
     '@fuel-connectors/fuel-wallet',
     '@fuel-connectors/fuelet-wallet',
+    '@fuel-connectors/bako-safe',
   ],
   minify: 'terser',
   dts: {
@@ -16,6 +17,7 @@ export default defineConfig((options) => ({
       '@fuel-connectors/fuel-development-wallet',
       '@fuel-connectors/fuel-wallet',
       '@fuel-connectors/fuelet-wallet',
+      '@fuel-connectors/bako-safe',
     ],
   },
   splitting: true,

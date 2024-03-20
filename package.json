@@ -30,6 +30,11 @@
     "turbo": "1.12.5",
     "vitest": "1.4.0"
   },
+  "peerDependencies": {
+    "fuels": ">=0.77.0",
+    "socket.io-client": "4.7.2",
+    "axios": "1.5.1"
+  },
   "packageManager": "pnpm@8.9.0",
   "engines": {
     "node": ">=18",

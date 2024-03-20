@@ -7,6 +7,16 @@ settings:
 importers:
 
   .:
+    dependencies:
+      axios:
+        specifier: 1.5.1
+        version: 1.5.1
+      fuels:
+        specifier: '>=0.77.0'
+        version: 0.77.0(dexie@3.2.6)
+      socket.io-client:
+        specifier: 4.7.2
+        version: 4.7.2
     devDependencies:
       '@biomejs/biome':
         specifier: 1.6.1
@@ -84,15 +94,9 @@ importers:
       axios:
         specifier: ^1.5.1
         version: 1.6.8
-      json-rpc-2.0:
-        specifier: 1.7.0
-        version: 1.7.0
       socket.io-client:
         specifier: ^4.7.2
         version: 4.7.5
-      uuid:
-        specifier: ^9.0.1
-        version: 9.0.1
     devDependencies:
       events:
         specifier: 3.3.0
@@ -115,10 +119,19 @@ importers:
 
   packages/connectors:
     dependencies:
+      axios:
+        specifier: 1.5.1
+        version: 1.5.1
       json-rpc-2.0:
         specifier: 1.7.0
         version: 1.7.0
+      socket.io-client:
+        specifier: 4.7.2
+        version: 4.7.2
     devDependencies:
+      '@fuel-connectors/bako-safe':
+        specifier: workspace:*
+        version: link:../bako-safe
       '@fuel-connectors/fuel-development-wallet':
         specifier: workspace:*
         version: link:../fuel-development-wallet
@@ -2302,6 +2315,16 @@ packages:
     dependencies:
       possible-typed-array-names: 1.0.0
     dev: true
+
+  /axios@1.5.1:
+    resolution: {integrity: sha512-Q28iYCWzNHjAm+yEAot5QaAMxhMghWLFVf7rRdwhUI+c2jix2DUXjAHXVi+s1ibs3mjPO/cCgbA++3BjD0vP/A==}
+    dependencies:
+      follow-redirects: 1.15.6
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
 
   /axios@1.6.8:
     resolution: {integrity: sha512-v/ZHtJDU39mDpyBoFVkETcd/uNdxrWRrg3bKpOKzXFA6Bvqopts6ALSMU3y6ijYxbw2B+wPrIv46egTzJXCLGQ==}
@@ -5135,6 +5158,20 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+
+  /socket.io-client@4.7.2:
+    resolution: {integrity: sha512-vtA0uD4ibrYD793SOIAwlo8cj6haOeMHrGvwPxJsxH7CeIksqJ+3Zc06RvWTIFgiSqx4A3sOnTXpfAEE2Zyz6w==}
+    engines: {node: '>=10.0.0'}
+    dependencies:
+      '@socket.io/component-emitter': 3.1.0
+      debug: 4.3.4
+      engine.io-client: 6.5.3
+      socket.io-parser: 4.2.4
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
 
   /socket.io-client@4.7.5:
     resolution: {integrity: sha512-sJ/tqHOCe7Z50JCBCXrsY3I2k03iOiUe+tj1OmKeD2lXPiGH/RUCdTZFoqVyN7l1MnpIzPrGtLcijffmeouNlQ==}

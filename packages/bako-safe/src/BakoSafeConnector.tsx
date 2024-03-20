@@ -4,21 +4,21 @@ import {
   FuelConnector,
   FuelConnectorEventTypes,
   type JsonAbi,
+  Provider,
   type TransactionRequestLike,
 } from 'fuels';
 import { type Socket, io } from 'socket.io-client';
 
 import { DAppWindow } from './DAPPWindow';
+import {
+  API_URL,
+  APP_BSAFE_URL,
+  APP_DESCRIPTION,
+  APP_IMAGE_DARK,
+  APP_IMAGE_LIGHT,
+  APP_NAME,
+} from './constants';
 import { BAKOSAFEConnectorEvents } from './types';
-
-const APP_NAME = 'Bsafe';
-const APP_DESCRIPTION =
-  'BSafe is a connector to app.bsafe.pro, a non-custodial vault for your crypto assets.';
-const APP_IMAGE_DARK = 'https://app.bsafe.pro/assets/logo-294a5e40.svg';
-const APP_IMAGE_LIGHT = 'https://app.bsafe.pro/assets/logoDark-97c52b43.svg';
-
-const APP_BSAFE_URL = 'https://app.bsafe.pro/';
-const API_URL = 'https://api-multsig.infinitybase.com';
 
 type FuelABI = JsonAbi;
 type Network = {
@@ -47,7 +47,7 @@ export class BakoSafeConnector extends FuelConnector {
     ...BAKOSAFEConnectorEvents,
   };
 
-  private readonly socket: Socket;
+  private socket!: Socket;
   private readonly sessionId: string;
   private readonly api: AxiosInstance = axios.create({
     baseURL: API_URL,
@@ -64,15 +64,6 @@ export class BakoSafeConnector extends FuelConnector {
 
     this.sessionId = sessionId;
 
-    this.socket = io(API_URL, {
-      auth: {
-        username: `${'[WALLET]'}`,
-        data: new Date(),
-        sessionId: this.sessionId,
-        origin: window.origin,
-      },
-    });
-
     this.dAppWindow = new DAppWindow({
       sessionId,
       name: document.title,
@@ -84,21 +75,33 @@ export class BakoSafeConnector extends FuelConnector {
         height: 1280,
       },
     });
-
-    this.socket.on(BAKOSAFEConnectorEvents.DEFAULT, (message) => {
-      this.emit(message.type, ...message.data);
-    });
   }
 
   async connect() {
+    if (this.connected) {
+      return true;
+    }
     return new Promise<boolean>((resolve) => {
+      this.socket = io(API_URL, {
+        auth: {
+          username: `[WALLET]${this.sessionId}`,
+          data: new Date(),
+          sessionId: this.sessionId,
+          origin: window.origin,
+        },
+      });
+
+      this.socket.on(BAKOSAFEConnectorEvents.DEFAULT, (message) => {
+        this.emit(message.type, ...message.data);
+      });
+
       const dappWindow = this.dAppWindow.open('/');
       dappWindow?.addEventListener('close', () => {
         resolve(false);
       });
 
       // @ts-ignore
-      this.on(BSAFEConnectorEvents.CONNECTION, (connection: boolean) => {
+      this.on(BAKOSAFEConnectorEvents.CONNECTION, (connection: boolean) => {
         this.connected = connection;
         resolve(connection);
       });
@@ -121,7 +124,7 @@ export class BakoSafeConnector extends FuelConnector {
         reject('closed');
       });
       // @ts-ignore
-      this.on(BSAFEConnectorEvents.POPUP_TRANSFER, () => {
+      this.on(BAKOSAFEConnectorEvents.POPUP_TRANSFER, () => {
         this.socket.emit(BAKOSAFEConnectorEvents.TRANSACTION_SEND, {
           to: `${this.sessionId}:${window.origin}`,
           content: {
@@ -131,7 +134,7 @@ export class BakoSafeConnector extends FuelConnector {
         });
       });
       // @ts-ignore
-      this.on(BSAFEConnectorEvents.TRANSACTION_CREATED, (content) => {
+      this.on(BAKOSAFEConnectorEvents.TRANSACTION_CREATED, (content) => {
         resolve(`0x${content}`);
       });
     });
@@ -141,16 +144,16 @@ export class BakoSafeConnector extends FuelConnector {
     return true;
   }
 
-  //todo: make a file on sdk, to return this object
   async version() {
     return {
       app: '0.0.1',
-      network: '>=0.12.4',
+      network: '>=0.0.0',
     };
   }
 
   async isConnected() {
     const { data } = await this.api.get(`/connections/${this.sessionId}/state`);
+    this.connected = data;
 
     return data;
   }
@@ -159,7 +162,8 @@ export class BakoSafeConnector extends FuelConnector {
     const { data } = await this.api.get(
       `/connections/${this.sessionId}/accounts`,
     );
-    return data;
+    const acc = Array.isArray(data) ? data : [];
+    return acc;
   }
 
   async currentAccount() {
@@ -186,7 +190,13 @@ export class BakoSafeConnector extends FuelConnector {
     const { data } = await this.api.get(
       `/connections/${this.sessionId}/currentNetwork`,
     );
-    return data;
+
+    const provider = await Provider.create(data);
+
+    return {
+      url: provider.url,
+      chainId: provider.getChainId(),
+    };
   }
 
   async assets(): Promise<Asset[]> {

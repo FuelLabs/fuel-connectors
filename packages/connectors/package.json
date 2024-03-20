@@ -17,7 +17,9 @@
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "fuels": ">=0.77.0"
+    "fuels": ">=0.77.0",
+    "socket.io-client": "4.7.2",
+    "axios": "1.5.1"
   },
   "dependencies": {
     "json-rpc-2.0": "1.7.0"
@@ -26,6 +28,7 @@
     "@fuel-connectors/fuel-development-wallet": "workspace:*",
     "@fuel-connectors/fuel-wallet": "workspace:*",
     "@fuel-connectors/fuelet-wallet": "workspace:*",
+    "@fuel-connectors/bako-safe": "workspace:*",
     "fuels": "0.77.0",
     "terser": "5.29.2",
     "tsup": "8.0.2",
