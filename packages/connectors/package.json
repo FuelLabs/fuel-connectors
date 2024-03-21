@@ -26,6 +26,7 @@
     "@fuel-connectors/fuel-development-wallet": "workspace:*",
     "@fuel-connectors/fuel-wallet": "workspace:*",
     "@fuel-connectors/fuelet-wallet": "workspace:*",
+    "@fuel-connectors/evm-connector": "workspace:*",
     "fuels": "0.77.0",
     "terser": "5.29.2",
     "tsup": "8.0.2",
