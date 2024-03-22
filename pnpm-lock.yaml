@@ -94,16 +94,13 @@ importers:
       axios:
         specifier: ^1.5.1
         version: 1.6.8
+      fuels:
+        specifier: '>=0.77.0'
+        version: 0.77.0(dexie@3.2.6)
       socket.io-client:
         specifier: ^4.7.2
         version: 4.7.5
     devDependencies:
-      events:
-        specifier: 3.3.0
-        version: 3.3.0
-      fuels:
-        specifier: 0.77.0
-        version: 0.77.0(dexie@3.2.6)
       tsup:
         specifier: 8.0.2
         version: 8.0.2(typescript@5.4.2)
@@ -113,9 +110,6 @@ importers:
       undici:
         specifier: 6.9.0
         version: 6.9.0
-      web-streams-polyfill:
-        specifier: 4.0.0
-        version: 4.0.0
 
   packages/connectors:
     dependencies:

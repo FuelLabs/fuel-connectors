@@ -12,17 +12,16 @@
     "ts:check": "tsc --noEmit",
     "test": "vitest"
   },
-  "peerDependencies": {
-    "fuels": ">=0.77.0",
+  "dependencies": {
     "socket.io-client": "^4.7.2",
     "axios": "^1.5.1"
   },
+  "peerDependencies": {
+    "fuels": ">=0.77.0"
+  },
   "devDependencies": {
-    "events": "3.3.0",
-    "fuels": "0.77.0",
     "tsup": "8.0.2",
     "typescript": "5.4.2",
-    "undici": "6.9.0",
-    "web-streams-polyfill": "4.0.0"
+    "undici": "6.9.0"
   }
 }
