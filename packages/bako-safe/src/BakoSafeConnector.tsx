@@ -1,9 +1,10 @@
 import axios, { type AxiosInstance } from 'axios';
 import {
   type Asset,
+  type FuelABI,
   FuelConnector,
   FuelConnectorEventTypes,
-  type JsonAbi,
+  type Network,
   Provider,
   type TransactionRequestLike,
 } from 'fuels';
@@ -19,12 +20,6 @@ import {
   APP_NAME,
 } from './constants';
 import { BAKOSAFEConnectorEvents } from './types';
-
-type FuelABI = JsonAbi;
-type Network = {
-  url: string;
-  chainId: number;
-};
 
 export class BakoSafeConnector extends FuelConnector {
   name = APP_NAME;
