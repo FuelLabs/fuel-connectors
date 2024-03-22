@@ -124,6 +124,9 @@ importers:
       '@fuel-ts/account':
         specifier: ^0.77.0
         version: 0.77.0(dexie@3.2.6)
+      '@fuel-ts/forc':
+        specifier: 0.74.0
+        version: 0.74.0
       '@fuel-ts/fuel-core':
         specifier: ^0.77.0
         version: 0.77.0
@@ -1327,6 +1330,16 @@ packages:
     engines: {node: ^18.18.2 || ^20.0.0}
     dependencies:
       '@fuel-ts/versions': 0.77.0
+
+  /@fuel-ts/forc@0.74.0:
+    resolution: {integrity: sha512-ran2OoHeUiITnPzUoUFe+MG2sc8DurQHm8f4hd6wzlByNDkG2qMQv23NVtWbSqOpnlvoBarQoqeyJriO7rQfAQ==}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
 
   /@fuel-ts/forc@0.77.0:
     resolution: {integrity: sha512-ZSmW/FlPGEbF05na/4RQU942RmdJUGSE2fV75lN4kln7dZoDCkX0QBEbg9QeBfd2pZB4UUG9Rp7kwOqU7eOuJQ==}
