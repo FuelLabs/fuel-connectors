@@ -9,6 +9,7 @@ export default defineConfig((options) => ({
     '@fuel-connectors/fuel-development-wallet',
     '@fuel-connectors/fuel-wallet',
     '@fuel-connectors/fuelet-wallet',
+    '@fuel-connectors/bako-safe',
   ],
   minify: 'terser',
   dts: {
@@ -16,6 +17,7 @@ export default defineConfig((options) => ({
       '@fuel-connectors/fuel-development-wallet',
       '@fuel-connectors/fuel-wallet',
       '@fuel-connectors/fuelet-wallet',
+      '@fuel-connectors/bako-safe',
     ],
   },
   splitting: true,
