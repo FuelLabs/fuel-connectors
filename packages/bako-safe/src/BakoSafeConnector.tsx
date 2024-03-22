@@ -194,6 +194,10 @@ export class BakoSafeConnector extends FuelConnector {
     };
   }
 
+  async networks(): Promise<Array<Network>> {
+    return [await this.currentNetwork()];
+  }
+
   async assets(): Promise<Asset[]> {
     return [];
   }
@@ -215,9 +219,6 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   async selectNetwork(_network: Network): Promise<boolean> {
-    throw new Error('Method not implemented.');
-  }
-  async networks(): Promise<Array<Network>> {
     throw new Error('Method not implemented.');
   }
 
