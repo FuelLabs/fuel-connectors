@@ -11,6 +11,7 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "files": ["dist"],
   "scripts": {
     "build": "tsup",
     "build:watch": "tsup --watch",
@@ -18,9 +19,6 @@
   },
   "peerDependencies": {
     "fuels": ">=0.77.0"
-  },
-  "dependencies": {
-    "json-rpc-2.0": "1.7.0"
   },
   "devDependencies": {
     "@fuel-connectors/fuel-development-wallet": "workspace:*",
