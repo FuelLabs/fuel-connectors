@@ -25,7 +25,7 @@ const main = async () => {
 
   // Listing available connectors
   const fuel = new Fuel({
-    connectors: [new FuelWalletConnector()],
+    connectors: [new FuelWalletConnector()], // Build and check "dist" to confirm only this connector was bundled
   });
   const connectors = await fuel.connectors();
   console.log(
