@@ -18,15 +18,15 @@
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "fuels": ">=0.77.0"
+    "fuels": ">=0.78.0"
   },
   "devDependencies": {
     "@fuel-connectors/fuel-development-wallet": "workspace:*",
     "@fuel-connectors/fuel-wallet": "workspace:*",
     "@fuel-connectors/fuelet-wallet": "workspace:*",
-    "fuels": "0.77.0",
+    "fuels": "0.78.0",
     "terser": "5.29.2",
     "tsup": "8.0.2",
-    "typescript": "5.4.2"
+    "typescript": "5.4.3"
   }
 }
