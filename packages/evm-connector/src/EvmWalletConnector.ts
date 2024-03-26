@@ -25,7 +25,7 @@ import {
   transactionRequestify,
 } from 'fuels';
 
-import { WINDOW } from './constants';
+import { BETA_5_URL, WINDOW } from './constants';
 import type { EVMWalletConnectorConfig } from './types';
 import type { EIP1193Provider } from './utils/eip-1193';
 import { METAMASK_ICON } from './utils/metamask-icon';
@@ -56,7 +56,7 @@ export class EVMWalletConnector extends FuelConnector {
     this.predicate = predicates['verification-predicate'];
     this.installed = true;
     this.config = Object.assign(config, {
-      fuelProvider: 'https://beta-5.fuel.network/graphql',
+      fuelProvider: config.fuelProvider || BETA_5_URL,
       ethProvider: config.ethProvider || window.ethereum,
     });
     this.setupEthereumEvents();
