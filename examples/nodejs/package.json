@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "main": "./src/index.ts",
   "scripts": {
-    "ts:check": "tsc --noEmit",
     "build": "tsup",
     "dev": "tsx watch src/index.ts"
   },
