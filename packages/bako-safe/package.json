@@ -13,8 +13,8 @@
     "test": "vitest"
   },
   "dependencies": {
-    "socket.io-client": "^4.7.2",
-    "axios": "^1.5.1"
+    "socket.io-client": "4.7.2",
+    "axios": "1.5.1"
   },
   "peerDependencies": {
     "fuels": ">=0.77.0"

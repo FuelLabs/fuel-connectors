@@ -31,9 +31,7 @@
     "vitest": "1.4.0"
   },
   "peerDependencies": {
-    "fuels": ">=0.77.0",
-    "socket.io-client": "4.7.2",
-    "axios": "1.5.1"
+    "fuels": ">=0.77.0"
   },
   "packageManager": "pnpm@8.9.0",
   "engines": {
