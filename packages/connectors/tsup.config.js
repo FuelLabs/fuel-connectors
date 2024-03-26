@@ -10,8 +10,7 @@ export default defineConfig((options) => ({
     '@fuel-connectors/fuel-wallet',
     '@fuel-connectors/fuelet-wallet',
   ],
-  // minify: 'terser',
-  minify: false,
+  minify: 'terser',
   dts: {
     resolve: [
       '@fuel-connectors/fuel-development-wallet',
