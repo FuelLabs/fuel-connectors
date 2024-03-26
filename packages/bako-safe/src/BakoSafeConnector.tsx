@@ -73,9 +73,6 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   async connect() {
-    if (this.connected) {
-      return true;
-    }
     return new Promise<boolean>((resolve) => {
       this.socket = io(API_URL, {
         auth: {
@@ -150,7 +147,7 @@ export class BakoSafeConnector extends FuelConnector {
     const { data } = await this.api.get(`/connections/${this.sessionId}/state`);
     this.connected = data;
 
-    return data;
+    return data && !!this.socket;
   }
 
   async accounts() {
