@@ -1,4 +1,5 @@
-import { Mnemonic, WalletManager } from 'fuels';
+import { FuelWalletConnector } from '@fuels/connectors';
+import { Fuel, Mnemonic, WalletManager } from 'fuels';
 
 const main = async () => {
   // Mnemonic
@@ -19,8 +20,18 @@ const main = async () => {
 
   // Listing accounts
   const accounts = manager.getAccounts();
-  console.log(mnemonic);
+  console.log('mnenomic\n', mnemonic, '\n\naccounts');
   console.log(accounts.map((ac) => ac.address.toString()));
+
+  // Listing available connectors
+  const fuel = new Fuel({
+    connectors: [new FuelWalletConnector()],
+  });
+  const connectors = await fuel.connectors();
+  console.log(
+    '\navailable connectors\n',
+    connectors.map((c) => c.name),
+  );
 };
 
 main();
