@@ -1,3 +1,9 @@
+import type { EIP1193Provider } from './utils/eip-1193';
+
+declare global {
+  interface Window {
+    ethereum: EIP1193Provider | null;
+  }
+}
 const HAS_WINDOW = typeof window !== 'undefined';
-// biome-ignore lint/suspicious/noExplicitAny: the Window type doesn't recognise the ethereum property.
-export const WINDOW: any = HAS_WINDOW ? window : {};
+export const WINDOW = HAS_WINDOW ? window : null;

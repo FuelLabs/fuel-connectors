@@ -57,8 +57,7 @@ export class EVMWalletConnector extends FuelConnector {
     this.installed = true;
     this.config = Object.assign(config, {
       fuelProvider: 'https://beta-5.fuel.network/graphql',
-      // biome-ignore lint/suspicious/noExplicitAny: the Window type doesn't recognise the ethereum property.
-      ethProvider: config.ethProvider || (window as any).ethereum,
+      ethProvider: config.ethProvider || window.ethereum,
     });
     this.setupEthereumEvents();
   }
@@ -66,7 +65,7 @@ export class EVMWalletConnector extends FuelConnector {
   setupEthereumEvents() {
     this._ethereumEvents = Number(
       setInterval(() => {
-        if (WINDOW.ethereum) {
+        if (WINDOW?.ethereum) {
           clearInterval(this._ethereumEvents);
           window.dispatchEvent(
             new CustomEvent('FuelConnector', { detail: this }),
@@ -77,8 +76,13 @@ export class EVMWalletConnector extends FuelConnector {
   }
 
   async getLazyEthereum() {
-    if (this.config.ethProvider) return this.config.ethProvider;
-    return WINDOW.ethereum;
+    if (this.config.ethProvider) {
+      return this.config.ethProvider;
+    }
+    if (WINDOW?.ethereum) {
+      return WINDOW.ethereum;
+    }
+    return null;
   }
 
   /**
