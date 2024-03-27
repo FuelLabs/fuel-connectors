@@ -8,4 +8,4 @@ export const APP_IMAGE_LIGHT =
   'https://safe.bako.global/BAKO_CONNECTOR_ICON.svg';
 
 export const APP_BSAFE_URL = 'https://safe.bako.global';
-export const API_URL = 'https://api-safe.bako.global';
+export const HOST_URL = 'https://api-safe.bako.global';

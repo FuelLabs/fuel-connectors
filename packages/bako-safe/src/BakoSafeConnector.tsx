@@ -1,4 +1,3 @@
-import axios, { type AxiosInstance } from 'axios';
 import {
   type Asset,
   type FuelABI,
@@ -12,14 +11,15 @@ import { type Socket, io } from 'socket.io-client';
 
 import { DAppWindow } from './DAPPWindow';
 import {
-  API_URL,
   APP_BSAFE_URL,
   APP_DESCRIPTION,
   APP_IMAGE_DARK,
   APP_IMAGE_LIGHT,
   APP_NAME,
+  HOST_URL,
 } from './constants';
-import { BAKOSAFEConnectorEvents } from './types';
+import { RequestAPI } from './request';
+import { BAKOSAFEConnectorEvents, type BakoSafeConnectorConfig } from './types';
 
 export class BakoSafeConnector extends FuelConnector {
   name = APP_NAME;
@@ -42,21 +42,31 @@ export class BakoSafeConnector extends FuelConnector {
     ...BAKOSAFEConnectorEvents,
   };
 
-  private socket!: Socket;
+  private socket: Socket;
   private readonly sessionId: string;
-  private readonly api: AxiosInstance = axios.create({
-    baseURL: API_URL,
-  });
+  private readonly host: string;
+  private readonly api: RequestAPI;
+  private connnected = false;
   private dAppWindow: DAppWindow;
 
-  constructor() {
+  constructor(config?: BakoSafeConnectorConfig) {
     super();
+    this.host = config?.host ?? HOST_URL;
+    this.api = new RequestAPI(this.host);
     let sessionId: string = localStorage.getItem('sessionId') || '';
     if (!sessionId) {
       sessionId = crypto.randomUUID();
       localStorage.setItem('sessionId', sessionId);
     }
-
+    this.socket = io(this.host, {
+      auth: {
+        username: `[WALLET]${sessionId}`,
+        data: new Date(),
+        sessionId: sessionId,
+        origin: window.origin,
+      },
+      autoConnect: false,
+    });
     this.sessionId = sessionId;
 
     this.dAppWindow = new DAppWindow({
@@ -72,17 +82,15 @@ export class BakoSafeConnector extends FuelConnector {
     });
   }
 
+  async setup() {
+    if (!this.connnected) {
+      this.connnected = true;
+      await this.socket.connect();
+    }
+  }
+
   async connect() {
     return new Promise<boolean>((resolve) => {
-      this.socket = io(API_URL, {
-        auth: {
-          username: `[WALLET]${this.sessionId}`,
-          data: new Date(),
-          sessionId: this.sessionId,
-          origin: window.origin,
-        },
-      });
-
       this.socket.on(BAKOSAFEConnectorEvents.DEFAULT, (message) => {
         this.emit(message.type, ...message.data);
       });
@@ -133,13 +141,14 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   async ping() {
+    await this.setup();
     return true;
   }
 
   async version() {
     return {
-      app: '0.0.1',
-      network: '>=0.0.0',
+      app: '0.0.0',
+      network: '0.0.0',
     };
   }
 
