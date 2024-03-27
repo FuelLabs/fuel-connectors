@@ -18,11 +18,11 @@ importers:
         specifier: 2.27.1
         version: 2.27.1
       '@fuels/ts-config':
-        specifier: 0.17.0
-        version: 0.17.0(typescript@5.2.2)
+        specifier: 0.18.0
+        version: 0.18.0(typescript@5.2.2)
       '@fuels/tsup-config':
-        specifier: 0.17.0
-        version: 0.17.0(tsup@7.2.0)
+        specifier: 0.18.0
+        version: 0.18.0(tsup@7.2.0)
       '@vitest/coverage-v8':
         specifier: 1.4.0
         version: 1.4.0(vitest@1.4.0)
@@ -67,8 +67,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/connectors
       '@fuels/react':
-        specifier: 0.17.0
-        version: 0.17.0(@tanstack/react-query@5.28.8)(@types/react-dom@18.2.22)(@types/react@18.2.71)(fuels@0.78.0)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 0.18.0
+        version: 0.18.0(@tanstack/react-query@5.28.8)(@types/react-dom@18.2.22)(@types/react@18.2.71)(fuels@0.78.0)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
         specifier: 5.28.8
         version: 5.28.8(react@18.2.0)
@@ -1572,8 +1572,8 @@ packages:
   /@fuels/assets@0.1.5:
     resolution: {integrity: sha512-3rFZdY2f5/h7e2Rlhv/+WKz1CVsTnydKoxLdVjQfUaNsj7zbMLSfT37bsBSB42AnXKOlPs/vyMbS77LxhN8a2A==}
 
-  /@fuels/react@0.17.0(@tanstack/react-query@5.28.8)(@types/react-dom@18.2.22)(@types/react@18.2.71)(fuels@0.78.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-vGVLIEeOnjptU4mBiKjv9Cp4dsST/Q6CjhnZzT7nnsFHfzrQCPfP1Mz73qqlULi2l0pFR1SBroVk340BB5+srg==}
+  /@fuels/react@0.18.0(@tanstack/react-query@5.28.8)(@types/react-dom@18.2.22)(@types/react@18.2.71)(fuels@0.78.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-y9IZ4/ZlZ7gq+VZFGMDoV4EzHbSvfv8GLVtwU/qfRL3aduZbUwg3/lJ8wMNArB/W8+o633ZswDHjGXEw0JPHIA==}
     peerDependencies:
       '@tanstack/react-query': '>=5.0.0'
       fuels: '>=0.74.0'
@@ -1590,16 +1590,16 @@ packages:
       - react-dom
     dev: false
 
-  /@fuels/ts-config@0.17.0(typescript@5.2.2):
-    resolution: {integrity: sha512-OoEM1JHFCzWlOjsy/KG0T2RsQ8Z2uQVN8Y6qlszvZO0WzbLa8mJf1gFDayx0K0sv6SyABF0c17anNgsYf7ZM8Q==}
+  /@fuels/ts-config@0.18.0(typescript@5.2.2):
+    resolution: {integrity: sha512-xZos/RWXPdCdKk8ulyECnHHecl8C/ezstcJhqoQGo5w5PRXmcgVKYkkYj2p2U9dxnUJlcsCzjsRJfP+zw8gmcA==}
     peerDependencies:
       typescript: 5.2.2
     dependencies:
       typescript: 5.2.2
     dev: true
 
-  /@fuels/tsup-config@0.17.0(tsup@7.2.0):
-    resolution: {integrity: sha512-+ArWpkcWz9FLFCLgsHoV2qeAqpML5mnfkhM1rAqEJd12jfo7n/BUHTGMylt6a0mUdstfyFblbI3VUBQy7bgMmg==}
+  /@fuels/tsup-config@0.18.0(tsup@7.2.0):
+    resolution: {integrity: sha512-Xye9MKd8HEp8wR5CfHyNJZ+iD6bZfc42Mjifm28qH6TwMisw8UJQYzSR4JmE0IW7Jhlb7T2uvDnt+FXPLX2mjw==}
     peerDependencies:
       tsup: ^7.2.0
     dependencies:
