@@ -31,9 +31,6 @@
     "turbo": "1.13.0",
     "vitest": "1.4.0"
   },
-  "peerDependencies": {
-    "fuels": ">=0.77.0"
-  },
   "packageManager": "pnpm@8.9.0",
   "engines": {
     "node": ">=18",
