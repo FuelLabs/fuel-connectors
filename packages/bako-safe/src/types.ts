@@ -1,3 +1,5 @@
+import type { StorageAbstract } from 'fuels';
+
 export enum BAKOSAFEConnectorEvents {
   //accounts
   ACCOUNTS = 'accounts',
@@ -24,4 +26,6 @@ export enum BAKOSAFEConnectorEvents {
 
 export type BakoSafeConnectorConfig = {
   host?: string;
+  appUrl?: string;
+  stroage?: StorageAbstract;
 };

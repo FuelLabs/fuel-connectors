@@ -1,33 +1,34 @@
-import { APP_BSAFE_URL } from './constants';
+type PopupConfig = {
+  appUrl: string;
+  height: number;
+  width: number;
+  sessionId: string;
+};
 
 export class DAppWindow {
-  BSAFEAPP = APP_BSAFE_URL;
-  constructor(
-    private config: {
-      popup: {
-        top: number;
-        left: number;
-        width: number;
-        height: number;
-      };
-      sessionId: string;
-      name: string;
-      origin: string;
-    },
-  ) {}
+  constructor(private config: PopupConfig) {}
+
+  private get popupConfig() {
+    const { height, width } = this.config;
+    return {
+      top: window.innerHeight / 2 - height / 2,
+      left: window.innerWidth / 2 - width / 2,
+      width,
+      height,
+    };
+  }
 
   open(method: string) {
-    const { popup } = this.config;
-
+    const { left, top, width, height } = this.popupConfig;
     return window.open(
-      `${this.BSAFEAPP}${method}${this.queryString}`,
+      `${this.config.appUrl}${method}${this.queryString}`,
       'popup',
-      `left=${popup.left},top=${popup.top},width=${popup.width},height=${popup.height}`,
+      `left=${left},top=${top},width=${width},height=${height}`,
     );
   }
 
   private get queryString() {
-    const { origin, name, sessionId } = this.config;
-    return `?sessionId=${sessionId}&name=${name}&origin=${origin}`;
+    const { sessionId } = this.config;
+    return `?sessionId=${sessionId}&name=${document.title}&origin=${window.origin}`;
   }
 }
