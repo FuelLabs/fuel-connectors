@@ -4,14 +4,14 @@ import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider } from '@fuel-wallet/react';
+import { defaultConnectors } from '@fuels/connectors';
 
 import * as Toast from '@radix-ui/react-toast';
 
-import './index.css';
 import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
+import './index.css';
 
 const queryClient = new QueryClient();
 
@@ -19,9 +19,10 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <FuelProvider
+        theme="dark"
         fuelConfig={{
           devMode: true,
-          connectors: defaultConnectors()
+          connectors: defaultConnectors(),
         }}
       >
         <Toast.Provider>
@@ -36,5 +37,5 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
