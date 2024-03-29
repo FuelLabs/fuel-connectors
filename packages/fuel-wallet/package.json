@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "events": "3.3.0",
-    "fuels": "0.78.0",
+    "fuels": "0.79.0",
     "tsup": "8.0.2",
     "typescript": "5.4.3",
     "undici": "6.10.1",
