@@ -108,22 +108,41 @@ export class BakoSafeConnector extends FuelConnector {
     this.sessionId = sessionId;
   }
 
+  private async checkWindow(window: Window) {
+    const checkOpened = () => {
+      if (window?.closed) {
+        this.emit(this.events.POPUP_CLOSED);
+        clearInterval(timer);
+      }
+    };
+    const timer = setInterval(checkOpened, 500);
+  }
+
   // ============================================================
   // Connector methods
   // ============================================================
   async connect() {
     return new Promise<boolean>((resolve) => {
-      this.socket?.on(BAKOSAFEConnectorEvents.DEFAULT, (message) => {
+      this.socket?.on(this.events.DEFAULT, (message) => {
         this.emit(message.type, ...message.data);
       });
 
       const dappWindow = this.dAppWindow?.open('/');
-      dappWindow?.addEventListener('close', () => {
+
+      if (!dappWindow) {
+        resolve(false);
+        return;
+      }
+
+      this.checkWindow(dappWindow);
+
+      // @ts-ignore
+      this.on(this.events.POPUP_CLOSED, () => {
         resolve(false);
       });
 
       // @ts-ignore
-      this.on(BAKOSAFEConnectorEvents.CONNECTION, (connection: boolean) => {
+      this.on(this.events.CONNECTION, (connection: boolean) => {
         this.connected = connection;
         resolve(connection);
       });
@@ -146,8 +165,8 @@ export class BakoSafeConnector extends FuelConnector {
         reject('closed');
       });
       // @ts-ignore
-      this.on(BAKOSAFEConnectorEvents.POPUP_TRANSFER, () => {
-        this.socket?.emit(BAKOSAFEConnectorEvents.TRANSACTION_SEND, {
+      this.on(this.events.POPUP_TRANSFER, () => {
+        this.socket?.emit(this.events.TRANSACTION_SEND, {
           to: `${this.sessionId}:${window.origin}`,
           content: {
             address: _address,
@@ -156,7 +175,7 @@ export class BakoSafeConnector extends FuelConnector {
         });
       });
       // @ts-ignore
-      this.on(BAKOSAFEConnectorEvents.TRANSACTION_CREATED, (content) => {
+      this.on(this.events.TRANSACTION_CREATED, (content) => {
         resolve(`0x${content}`);
       });
     });
@@ -196,15 +215,15 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   async disconnect() {
-    this.socket?.emit(BAKOSAFEConnectorEvents.AUTH_DISCONECT_DAPP, {
+    this.socket?.emit(this.events.AUTH_DISCONECT_DAPP, {
       to: `${this.sessionId}:${window.origin}`,
       content: {
         sessionId: this.sessionId,
       },
     });
-    this.emit(BAKOSAFEConnectorEvents.CONNECTION, false);
-    this.emit(BAKOSAFEConnectorEvents.ACCOUNTS, []);
-    this.emit(BAKOSAFEConnectorEvents.CURRENT_ACCOUNT, null);
+    this.emit(this.events.CONNECTION, false);
+    this.emit(this.events.ACCOUNTS, []);
+    this.emit(this.events.CURRENT_ACCOUNT, null);
     return false;
   }
 

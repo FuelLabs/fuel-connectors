@@ -19,6 +19,7 @@ export enum BAKOSAFEConnectorEvents {
   CONNECTION = 'connection',
   POPUP_TRANSFER = '[POPUP_TRANSFER]_connected',
   CONNECTED_NETWORK = '[CONNECTED_NETWORK]',
+  POPUP_CLOSED = '[POPUP_CLOSED]',
 
   //default
   DEFAULT = 'message',
