@@ -55,7 +55,7 @@ export const useWallet = () => {
         ? connector?.metadata.image
         : connector?.metadata.image?.dark ?? './Fuel_Logo_White_RGB.svg';
 
-    const title = connector?.name ?? 'Fuel Wallet Demo';
+    const title = connector?.name ?? 'Fuel Wallet';
 
     setCurrentConnector({ logo, title });
   }, [data, isConnected]);
