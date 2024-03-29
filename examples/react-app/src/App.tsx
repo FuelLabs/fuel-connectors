@@ -1,8 +1,8 @@
-import Counter from './components/counter';
 import Account from './components/account';
 import Balance from './components/balance';
-import Transfer from './components/transfer';
 import Button from './components/button';
+import Counter from './components/counter';
+import Transfer from './components/transfer';
 import { useWallet } from './hooks/useWallet';
 
 export default function App() {
@@ -12,7 +12,7 @@ export default function App() {
     isConnecting,
     isLoading,
     isFetching,
-    connect
+    connect,
   } = useWallet();
 
   return (
@@ -25,7 +25,7 @@ export default function App() {
           id="nav"
           className="flex items-center justify-center py-6 lg:pb-10 lg:pt-0"
         >
-          <a href="https://fuel.network/" target="_blank">
+          <a href="https://fuel.network/" target="_blank" rel="noreferrer">
             <img src="./logo_white.png" alt="Fuel Logo" className="w-[124px]" />
           </a>
         </nav>
@@ -60,9 +60,10 @@ export default function App() {
                   </li>
                 </ul>
                 <a
-                  href="https://github.com/FuelLabs/EVM-Wallet-Connector"
+                  href="https://github.com/FuelLabs/fuel-connectors"
                   target="_blank"
                   className="block pt-4 text-green-500/80 transition-colors hover:text-green-500"
+                  rel="noreferrer"
                 >
                   Build your own wallet integration
                 </a>
