@@ -1,4 +1,4 @@
-import { useDisconnect } from '@fuel-wallet/react';
+import { useDisconnect } from '@fuels/react';
 import Button from './button';
 import Feature from './feature';
 import { useWallet } from '../hooks/useWallet';

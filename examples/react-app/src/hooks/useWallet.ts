@@ -1,12 +1,12 @@
 import {
   useAccounts,
   useConnectUI,
-  useConnectors,
   useIsConnected,
   useWallet as useFuelWallet,
-  useBalance
-} from '@fuel-wallet/react';
-import { useEffect, useState } from 'react';
+  useBalance,
+  useFuel,
+} from "@fuels/react";
+import { useEffect, useState } from "react";
 
 interface ICurrentConnector {
   logo: string;
@@ -14,31 +14,27 @@ interface ICurrentConnector {
 }
 
 export const useWallet = () => {
+  const { fuel } = useFuel();
   const { connect, isConnecting } = useConnectUI();
   const { isConnected, refetch: refetchConnected } = useIsConnected();
   const {
     accounts,
     isLoading: isLoadingAccounts,
-    isFetching: isFetchingAccounts
+    isFetching: isFetchingAccounts,
   } = useAccounts();
-  const {
-    data,
-    isLoading: isLoadingConnectors,
-    isFetching: isFetchingConnectors
-  } = useConnectors();
 
   const address = accounts[0];
-
   const { wallet, refetch: refetchWallet } = useFuelWallet(address);
+
   const {
     balance,
     isLoading: isLoadingBalance,
-    isFetching: isFetchingBalance
+    isFetching: isFetchingBalance,
   } = useBalance({ address });
 
   const [currentConnector, setCurrentConnector] = useState<ICurrentConnector>({
-    logo: './Fuel_Logo_White_RGB.svg',
-    title: 'Fuel Wallet Demo'
+    logo: "",
+    title: "Fuel Wallet Demo",
   });
 
   useEffect(() => {
@@ -46,31 +42,21 @@ export const useWallet = () => {
   }, [isConnected]);
 
   useEffect(() => {
-    const connector = data.find(
-      (connectorData) => connectorData.connected === true
-    );
+    const currentConnector = fuel.currentConnector();
 
-    let logo =
-      typeof connector?.metadata.image === 'string'
-        ? connector?.metadata.image
-        : connector?.metadata.image?.dark ?? './Fuel_Logo_White_RGB.svg';
+    const title = currentConnector?.name ?? "Fuel Wallet";
 
-    const title = connector?.name ?? 'Fuel Wallet';
+    const logo =
+      currentConnector && typeof currentConnector.metadata?.image === "object"
+        ? currentConnector.metadata.image.dark ?? ""
+        : (currentConnector?.metadata?.image as string) ?? "";
 
     setCurrentConnector({ logo, title });
-  }, [data, isConnected]);
+  }, [fuel.currentConnector, isConnected]);
 
-  const isLoading = [
-    isLoadingAccounts,
-    isLoadingConnectors,
-    isLoadingBalance
-  ].some(Boolean);
+  const isLoading = [isLoadingAccounts, isLoadingBalance].some(Boolean);
 
-  const isFetching = [
-    isFetchingAccounts,
-    isFetchingConnectors,
-    isFetchingBalance
-  ].some(Boolean);
+  const isFetching = [isFetchingAccounts, isFetchingBalance].some(Boolean);
 
   return {
     address,
@@ -84,6 +70,6 @@ export const useWallet = () => {
     wallet,
     connect,
     refetchConnected,
-    refetchWallet
+    refetchWallet,
   };
 };

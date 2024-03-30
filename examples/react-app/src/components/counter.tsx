@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
-import { useLogEvents } from '../hooks/use-log-events';
-import { CounterContractAbi__factory } from '../contracts';
-import { DEFAULT_AMOUNT } from './balance';
-import Feature from './feature';
-import Button from './button';
-import Notification, { Props as NotificationProps } from './notification';
-import { useWallet } from '../hooks/useWallet';
+import { useEffect, useState } from "react";
+import { useLogEvents } from "../hooks/use-log-events";
+import { CounterContractAbi__factory } from "../contracts";
+import { DEFAULT_AMOUNT } from "./balance";
+import Feature from "./feature";
+import Button from "./button";
+import Notification, { Props as NotificationProps } from "./notification";
+import { useWallet } from "../hooks/useWallet";
 
 export const COUNTER_CONTRACT_ID =
-  '0x0a46aafb83b387155222893b52ed12e5a4b9d6cd06770786f2b5e4307a63b65c';
+  "0x0a46aafb83b387155222893b52ed12e5a4b9d6cd06770786f2b5e4307a63b65c";
 
 export default function ContractCounter() {
   const { balance, wallet } = useWallet();
 
-  const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
-    open: false
+  const [toast, setToast] = useState<Omit<NotificationProps, "setOpen">>({
+    open: false,
   });
 
   const [isLoading, setLoading] = useState(false);
@@ -61,25 +61,27 @@ export default function ContractCounter() {
       setLoading(true);
       const contract = CounterContractAbi__factory.connect(
         COUNTER_CONTRACT_ID,
-        wallet
+        wallet,
       );
       try {
         await contract.functions
           .increment()
           .txParams({ gasPrice: 1, gasLimit: 100_000 })
           .call();
-        setCounter((prev) => prev + 1);
+
+        getCount();
+
         setToast({
           open: true,
-          type: 'success',
-          children: 'Counter incremented!'
+          type: "success",
+          children: "Counter incremented!",
         });
       } catch (err: any) {
-        console.error('error sending transaction...', err.message);
+        console.error("error sending transaction...", err.message);
         setToast({
           open: true,
-          type: 'error',
-          children: `The counter could not be incremented: ${err.message.substring(0, 32)}...`
+          type: "error",
+          children: `The counter could not be incremented: ${err.message.substring(0, 32)}...`,
         });
       } finally {
         setLoading(false);
@@ -92,8 +94,9 @@ export default function ContractCounter() {
 
     const counterContract = CounterContractAbi__factory.connect(
       COUNTER_CONTRACT_ID,
-      wallet
+      wallet,
     );
+
     try {
       const { value } = await counterContract.functions
         .count()

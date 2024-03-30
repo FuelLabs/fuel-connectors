@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useFuel } from '@fuel-wallet/react';
+import { useEffect } from "react";
+import { useFuel } from "@fuels/react";
 
 export function useLogEvents() {
   const { fuel } = useFuel();
@@ -8,9 +8,9 @@ export function useLogEvents() {
     const log = (prefix: string) => (data: unknown) => {
       console.log(prefix, data);
     };
-    const logAccounts = log('accounts');
-    const logConnection = log('connection');
-    const logCurrentAccount = log('currentAccount');
+    const logAccounts = log("accounts");
+    const logConnection = log("connection");
+    const logCurrentAccount = log("currentAccount");
 
     fuel.on(fuel.events.accounts, logAccounts);
     fuel.on(fuel.events.connection, logConnection);
