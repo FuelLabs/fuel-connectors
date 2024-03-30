@@ -1,5 +1,5 @@
 export default function ScreenSizeIndicator() {
-  if (process.env.NODE_ENV == 'production') return null;
+  if (process.env.NODE_ENV === 'production') return null;
 
   return (
     <div className="fixed bottom-1 left-1 z-50 rounded bg-zinc-800 px-1 font-mono text-xs text-white dark:bg-zinc-100 dark:text-zinc-900">

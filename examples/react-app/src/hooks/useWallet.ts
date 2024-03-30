@@ -1,12 +1,12 @@
 import {
   useAccounts,
-  useConnectUI,
-  useIsConnected,
-  useWallet as useFuelWallet,
   useBalance,
+  useConnectUI,
   useFuel,
-} from "@fuels/react";
-import { useEffect, useState } from "react";
+  useWallet as useFuelWallet,
+  useIsConnected,
+} from '@fuels/react';
+import { useEffect, useState } from 'react';
 
 interface ICurrentConnector {
   logo: string;
@@ -33,23 +33,23 @@ export const useWallet = () => {
   } = useBalance({ address });
 
   const [currentConnector, setCurrentConnector] = useState<ICurrentConnector>({
-    logo: "",
-    title: "Fuel Wallet Demo",
+    logo: '',
+    title: 'Fuel Wallet Demo',
   });
 
   useEffect(() => {
     refetchConnected();
-  }, [isConnected]);
+  }, [refetchConnected]);
 
   useEffect(() => {
     const currentConnector = fuel.currentConnector();
 
-    const title = currentConnector?.name ?? "Fuel Wallet";
+    const title = currentConnector?.name ?? 'Fuel Wallet';
 
     const logo =
-      currentConnector && typeof currentConnector.metadata?.image === "object"
-        ? currentConnector.metadata.image.dark ?? ""
-        : (currentConnector?.metadata?.image as string) ?? "";
+      currentConnector && typeof currentConnector.metadata?.image === 'object'
+        ? currentConnector.metadata.image.dark ?? ''
+        : (currentConnector?.metadata?.image as string) ?? '';
 
     setCurrentConnector({ logo, title });
   }, [fuel.currentConnector, isConnected]);

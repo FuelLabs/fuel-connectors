@@ -1,10 +1,11 @@
-import { useState } from 'react';
 import { Address, BaseAssetId } from 'fuels';
-import { DEFAULT_AMOUNT } from './balance';
-import Feature from './feature';
-import Button from './button';
-import Notification, { Props as NotificationProps } from './notification';
+import { useState } from 'react';
 import { useWallet } from '../hooks/useWallet';
+import type { CustomError } from '../utils/customError';
+import { DEFAULT_AMOUNT } from './balance';
+import Button from './button';
+import Feature from './feature';
+import Notification, { type Props as NotificationProps } from './notification';
 
 const DEFAULT_ADDRESS = Address.fromRandom().toString();
 
@@ -14,10 +15,10 @@ export default function Transfer() {
   const [receiver, setReceiver] = useState(DEFAULT_ADDRESS);
   const [isLoading, setLoading] = useState(false);
   const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
-    open: false
+    open: false,
   });
 
-  const hasBalance = balance && balance.gte(DEFAULT_AMOUNT);
+  const hasBalance = balance?.gte(DEFAULT_AMOUNT);
 
   const handleTransfer = async () => {
     setLoading(true);
@@ -30,8 +31,8 @@ export default function Transfer() {
         BaseAssetId,
         {
           gasPrice: 1,
-          gasLimit: 10_000
-        }
+          gasLimit: 10_000,
+        },
       );
 
       await resp?.waitForResult();
@@ -46,14 +47,18 @@ export default function Transfer() {
               block explorer
             </a>
           </p>
-        )
+        ),
       });
-    } catch (err: any) {
-      console.error(err.message);
+    } catch (err) {
+      const error = err as CustomError;
+      console.error(error.message);
       setToast({
         open: true,
         type: 'error',
-        children: `The transfer could not be processed: ${err.message.substring(0, 32)}...`
+        children: `The transfer could not be processed: ${error.message.substring(
+          0,
+          32,
+        )}...`,
       });
     } finally {
       setLoading(false);

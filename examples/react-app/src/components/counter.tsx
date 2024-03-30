@@ -1,26 +1,27 @@
-import { useEffect, useState } from "react";
-import { useLogEvents } from "../hooks/use-log-events";
-import { CounterContractAbi__factory } from "../contracts";
-import { DEFAULT_AMOUNT } from "./balance";
-import Feature from "./feature";
-import Button from "./button";
-import Notification, { Props as NotificationProps } from "./notification";
-import { useWallet } from "../hooks/useWallet";
+import { useEffect, useState } from 'react';
+import { CounterContractAbi__factory } from '../contracts';
+import { useLogEvents } from '../hooks/use-log-events';
+import { useWallet } from '../hooks/useWallet';
+import type { CustomError } from '../utils/customError';
+import { DEFAULT_AMOUNT } from './balance';
+import Button from './button';
+import Feature from './feature';
+import Notification, { type Props as NotificationProps } from './notification';
 
 export const COUNTER_CONTRACT_ID =
-  "0x0a46aafb83b387155222893b52ed12e5a4b9d6cd06770786f2b5e4307a63b65c";
+  '0x0a46aafb83b387155222893b52ed12e5a4b9d6cd06770786f2b5e4307a63b65c';
 
 export default function ContractCounter() {
   const { balance, wallet } = useWallet();
 
-  const [toast, setToast] = useState<Omit<NotificationProps, "setOpen">>({
+  const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
     open: false,
   });
 
   const [isLoading, setLoading] = useState(false);
   const [counter, setCounter] = useState(0);
 
-  const hasBalance = balance && balance.gte(DEFAULT_AMOUNT);
+  const hasBalance = balance?.gte(DEFAULT_AMOUNT);
 
   useLogEvents();
 
@@ -73,15 +74,20 @@ export default function ContractCounter() {
 
         setToast({
           open: true,
-          type: "success",
-          children: "Counter incremented!",
+          type: 'success',
+          children: 'Counter incremented!',
         });
-      } catch (err: any) {
-        console.error("error sending transaction...", err.message);
+      } catch (err) {
+        const error = err as CustomError;
+
+        console.error('error sending transaction...', error.message);
         setToast({
           open: true,
-          type: "error",
-          children: `The counter could not be incremented: ${err.message.substring(0, 32)}...`,
+          type: 'error',
+          children: `The counter could not be incremented: ${error.message.substring(
+            0,
+            32,
+          )}...`,
         });
       } finally {
         setLoading(false);

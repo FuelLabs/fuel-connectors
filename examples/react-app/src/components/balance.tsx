@@ -1,12 +1,12 @@
 import { bn } from 'fuels';
 import { useEffect } from 'react';
-import Feature from './feature';
 import { useWallet } from '../hooks/useWallet';
+import Feature from './feature';
 
 export const DEFAULT_AMOUNT = bn.parseUnits('0.0001');
 
 const BalanceSkeleton = () => (
-  <div className="h-6 w-28 animate-pulse bg-gray-800"></div>
+  <div className="h-6 w-28 animate-pulse bg-gray-800" />
 );
 
 export default function Balance() {
@@ -24,6 +24,7 @@ export default function Balance() {
         href={`https://faucet-beta-5.fuel.network/?address=${address}`}
         target="_blank"
         className="btn btn-primary"
+        rel="noreferrer"
       >
         Get coins
       </a>

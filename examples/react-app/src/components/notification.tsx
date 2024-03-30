@@ -1,6 +1,6 @@
-import React from 'react';
 import * as Toast from '@radix-ui/react-toast';
 import clsx from 'clsx';
+import React from 'react';
 
 export type Props = {
   open: boolean;
@@ -24,14 +24,14 @@ export default function Notification(props: Props) {
             <Toast.Title
               className={clsx(
                 'text-sm font-medium',
-                type == 'success' && 'text-green-300',
-                type == 'error' && 'text-red-300',
-                type == 'info' && 'text-indigo-300',
-                !type && 'text-zinc-300'
+                type === 'success' && 'text-green-300',
+                type === 'error' && 'text-red-300',
+                type === 'info' && 'text-indigo-300',
+                !type && 'text-zinc-300',
               )}
             >
-              {type == 'success' && 'Succes'}
-              {type == 'error' && 'Error'}
+              {type === 'success' && 'Succes'}
+              {type === 'error' && 'Error'}
             </Toast.Title>
             <Toast.Close className="">
               <button

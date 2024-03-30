@@ -1,7 +1,7 @@
 import { useDisconnect } from '@fuels/react';
+import { useWallet } from '../hooks/useWallet';
 import Button from './button';
 import Feature from './feature';
-import { useWallet } from '../hooks/useWallet';
 
 export default function ConnectedAccount() {
   const { address } = useWallet();

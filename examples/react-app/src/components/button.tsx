@@ -22,9 +22,9 @@ export default function Button(props: Props) {
       type="button"
       className={clsx(
         'btn',
-        color == 'primary' && 'btn-primary',
-        color == 'secondary' && 'btn-secondary',
-        className
+        color === 'primary' && 'btn-primary',
+        color === 'secondary' && 'btn-secondary',
+        className,
       )}
       disabled={disabled || loading}
       {...rest}
