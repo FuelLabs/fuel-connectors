@@ -101,7 +101,7 @@ export default function ContractCounter() {
       const { value } = await counterContract.functions
         .count()
         .txParams({ gasPrice: 1, gasLimit: 100_000 })
-        .simulate();
+        .get();
       setCounter(value.toNumber());
     } catch (error) {
       console.error(error);
