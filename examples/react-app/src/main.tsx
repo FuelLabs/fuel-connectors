@@ -21,8 +21,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <FuelProvider
         theme="dark"
         fuelConfig={{
-          devMode: true,
-          connectors: defaultConnectors(),
+          connectors: defaultConnectors({ devMode: true }),
         }}
       >
         <Toast.Provider>
