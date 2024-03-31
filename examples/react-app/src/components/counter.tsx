@@ -26,7 +26,9 @@ export default function ContractCounter() {
   useLogEvents();
 
   useEffect(() => {
-    getCount();
+    if (wallet) {
+      getCount();
+    }
   }, [wallet]);
 
   return (

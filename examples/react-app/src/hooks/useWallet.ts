@@ -34,7 +34,7 @@ export const useWallet = () => {
 
   const [currentConnector, setCurrentConnector] = useState<ICurrentConnector>({
     logo: '',
-    title: 'Fuel Wallet Demo',
+    title: 'Fuel Wallet',
   });
 
   useEffect(() => {
@@ -42,6 +42,11 @@ export const useWallet = () => {
   }, [refetchConnected]);
 
   useEffect(() => {
+    if (!isConnected) {
+      setCurrentConnector({ logo: '', title: 'Fuel Wallet' });
+      return;
+    }
+
     const currentConnector = fuel.currentConnector();
 
     const title = currentConnector?.name ?? 'Fuel Wallet';
