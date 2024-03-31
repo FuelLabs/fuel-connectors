@@ -41,11 +41,13 @@ export default function App() {
                 className="col-span-3 px-4 py-8 sm:px-8 sm:py-8 md:px-10 md:py-12"
               >
                 <div className="flex h-20 items-end">
-                  <img
-                    src={currentConnector.logo}
-                    alt={currentConnector.title}
-                    className="w-20"
-                  />
+                  {currentConnector.logo && (
+                    <img
+                      src={currentConnector.logo}
+                      alt={currentConnector.title}
+                      className="w-20"
+                    />
+                  )}
                 </div>
                 <h1 className="pb-1 pt-6 text-3xl font-medium">
                   {currentConnector.title}
