@@ -126,7 +126,7 @@ describe('EVM Wallet Connector', () => {
 
       const connected = await connector.disconnect();
 
-      expect(connected).to.be.true;
+      expect(connected).to.be.false;
     });
   });
 
@@ -438,26 +438,32 @@ describe('EVM Wallet Connector', () => {
   });
 
   describe('addAsset()', () => {
-    test('returns false', async () => {
+    test('throws error', async () => {
       const asset: Asset = {
         name: '',
         symbol: '',
         icon: '',
         networks: [],
       };
-      expect(await connector.addAsset(asset)).to.be.false;
+      await expect(() => connector.addAsset(asset)).rejects.toThrowError(
+        'Method not implemented.',
+      );
     });
   });
 
   describe('addAssets()', () => {
-    test('returns false', async () => {
-      expect(await connector.addAssets([])).to.be.false;
+    test('throws error', async () => {
+      await expect(() => connector.addAssets([])).rejects.toThrowError(
+        'Method not implemented.',
+      );
     });
   });
 
   describe('addAbi()', () => {
-    test('returns false', async () => {
-      expect(await connector.addAbi({})).to.be.false;
+    test('throws error', async () => {
+      await expect(() => connector.addAbi({})).rejects.toThrowError(
+        'Method not implemented.',
+      );
     });
   });
 
@@ -470,8 +476,10 @@ describe('EVM Wallet Connector', () => {
   });
 
   describe('hasAbi()', () => {
-    test('returns false', async () => {
-      expect(await connector.hasAbi('contractId')).to.be.false;
+    test('throws error', async () => {
+      await expect(() => connector.hasAbi('contractId')).rejects.toThrowError(
+        'A predicate account cannot have an ABI',
+      );
     });
   });
 
@@ -504,7 +512,9 @@ describe('EVM Wallet Connector', () => {
 
   describe('addNetwork()', () => {
     test('throws error', async () => {
-      expect(await connector.addNetwork('')).to.be.false;
+      await expect(() => connector.addNetwork('')).rejects.toThrowError(
+        'Method not implemented.',
+      );
     });
   });
 });
