@@ -53,7 +53,7 @@ export class EVMWalletConnector extends FuelConnector {
   private predicate = predicates['verification-predicate'];
   private setupLock = false;
   private _currentAccount: string | null = null;
-  private config: Required<EVMWalletConnectorConfig>;
+  private config: EVMWalletConnectorConfig = {};
   private _ethereumEvents = 0;
 
   constructor(config: EVMWalletConnectorConfig = {}) {
@@ -61,12 +61,15 @@ export class EVMWalletConnector extends FuelConnector {
 
     this.predicateAccount = new PredicateAccount();
 
+    this.configProviders(config);
+    this.setupEthereumEvents();
+  }
+
+  async configProviders(config: EVMWalletConnectorConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || BETA_5_URL,
+      fuelProvider: config.fuelProvider || (await Provider.create(BETA_5_URL)),
       ethProvider: config.ethProvider || window.ethereum,
     });
-
-    this.setupEthereumEvents();
   }
 
   setupEthereumEvents() {
@@ -107,11 +110,7 @@ export class EVMWalletConnector extends FuelConnector {
         throw new Error('Ethereum provider not found');
       }
 
-      if (typeof this.config.fuelProvider === 'string') {
-        this.fuelProvider = await Provider.create(this.config.fuelProvider);
-      } else {
-        this.fuelProvider = this.config.fuelProvider;
-      }
+      this.fuelProvider = this.config.fuelProvider ?? null;
 
       if (!this.fuelProvider) {
         throw new Error('Fuel provider not found');
