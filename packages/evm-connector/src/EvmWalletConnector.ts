@@ -1,31 +1,22 @@
 import { hexToBytes } from '@ethereumjs/util';
 // External libraries
-import {
-  type BytesLike,
-  arrayify,
-  hexlify,
-  splitSignature,
-} from '@ethersproject/bytes';
-import memoize from 'memoizee';
+import { hexlify, splitSignature } from '@ethersproject/bytes';
 
 import {
   type AbiMap,
-  Address,
   type Asset,
   type ConnectorMetadata,
   FuelConnector,
   FuelConnectorEventTypes,
-  type InputValue,
   type JsonAbi,
   type Network,
-  Predicate,
   Provider,
   type TransactionRequestLike,
   type Version,
-  getPredicateRoot,
   transactionRequestify,
 } from 'fuels';
 
+import { PredicateAccount } from './Predicate';
 import { BETA_5_URL, WINDOW } from './constants';
 import {
   type EVMWalletConnectorConfig,
@@ -33,6 +24,7 @@ import {
 } from './types';
 import type { EIP1193Provider } from './utils/eip-1193';
 import { METAMASK_ICON } from './utils/metamask-icon';
+import { createPredicate, getPredicateAddress } from './utils/predicate';
 import { predicates } from './utils/predicateResources';
 
 export class EVMWalletConnector extends FuelConnector {
@@ -57,6 +49,7 @@ export class EVMWalletConnector extends FuelConnector {
     ...EVMWalletConnectorEvents,
   };
 
+  private predicateAccount: PredicateAccount;
   private predicate = predicates['verification-predicate'];
   private setupLock = false;
   private _currentAccount: string | null = null;
@@ -65,6 +58,8 @@ export class EVMWalletConnector extends FuelConnector {
 
   constructor(config: EVMWalletConnectorConfig = {}) {
     super();
+
+    this.predicateAccount = new PredicateAccount();
 
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || BETA_5_URL,
@@ -184,7 +179,10 @@ export class EVMWalletConnector extends FuelConnector {
   }
 
   async accounts(): Promise<Array<string>> {
-    const accounts = await this.getPredicateAccounts();
+    const { ethProvider } = await this.getProviders();
+
+    const accounts =
+      await this.predicateAccount.getPredicateAccounts(ethProvider);
 
     return accounts.map((account) => account.predicateAccount);
   }
@@ -265,7 +263,10 @@ export class EVMWalletConnector extends FuelConnector {
     }
     const { ethProvider, fuelProvider } = await this.getProviders();
     const chainId = fuelProvider.getChainId();
-    const account = await this.getPredicateFromAddress(address);
+    const account = await this.predicateAccount.getPredicateFromAddress(
+      address,
+      ethProvider,
+    );
     if (!account) {
       throw Error(`No account found for ${address}`);
     }
@@ -379,83 +380,4 @@ export class EVMWalletConnector extends FuelConnector {
   async hasAbi(_contractId: string): Promise<boolean> {
     throw Error('A predicate account cannot have an ABI');
   }
-
-  private async getPredicateFromAddress(address: string) {
-    const accounts = await this.getPredicateAccounts();
-
-    return accounts.find((account) => account.predicateAccount === address);
-  }
-
-  private async getPredicateAccounts(): Promise<
-    Array<{
-      ethAccount: string;
-      predicateAccount: string;
-    }>
-  > {
-    const { ethProvider } = await this.getProviders();
-    const ethAccounts: Array<string> = await ethProvider.request({
-      method: 'eth_accounts',
-    });
-
-    const accounts = ethAccounts.map((account) => ({
-      ethAccount: account,
-      predicateAccount: getPredicateAddress(
-        account,
-        this.predicate.bytecode,
-        this.predicate.abi,
-      ),
-    }));
-
-    return accounts;
-  }
 }
-
-export const getPredicateAddress = memoize(
-  (
-    ethAddress: string,
-    predicateBytecode: BytesLike,
-    predicateAbi: JsonAbi,
-  ): string => {
-    const configurable = {
-      SIGNER: Address.fromB256(
-        ethAddress.replace('0x', '0x000000000000000000000000'),
-      ).toEvmAddress(),
-    };
-
-    // @ts-ignore
-    const { predicateBytes } = Predicate.processPredicateData(
-      predicateBytecode,
-      predicateAbi,
-      configurable,
-    );
-    const address = Address.fromB256(getPredicateRoot(predicateBytes));
-
-    return address.toString();
-  },
-);
-
-export const createPredicate = memoize(function createPredicate<
-  TInputData extends InputValue[],
->(
-  ethAddress: string,
-  provider: Provider,
-  predicateBytecode: BytesLike,
-  predicateAbi: JsonAbi,
-  inputData?: TInputData,
-): Predicate<InputValue[]> {
-  const configurable = {
-    SIGNER: Address.fromB256(
-      ethAddress.replace('0x', '0x000000000000000000000000'),
-    ).toEvmAddress(),
-  };
-
-  const predicate = new Predicate({
-    bytecode: arrayify(predicateBytecode),
-    abi: predicateAbi,
-    provider,
-    configurableConstants: configurable,
-    inputData,
-  });
-
-  return predicate;
-});

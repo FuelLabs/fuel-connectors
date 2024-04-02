@@ -18,7 +18,7 @@ import {
   expect,
   test,
 } from 'vitest';
-import { createPredicate, getPredicateAddress } from '../index';
+import { createPredicate, getPredicateAddress } from '../utils/predicate';
 import { predicates } from '../utils/predicateResources';
 import { MockProvider } from './mockProvider';
 import { testEVMWalletConnector as EVMWalletConnector } from './testConnector';
