@@ -1,0 +1,19 @@
+{
+  "name": "nodejs",
+  "private": true,
+  "version": "0.0.0",
+  "main": "./src/index.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@fuels/connectors": "workspace:*",
+    "fuels": "0.79.0"
+  },
+  "devDependencies": {
+    "tsup": "8.0.2",
+    "tsx": "4.7.1",
+    "typescript": "5.4.3"
+  }
+}

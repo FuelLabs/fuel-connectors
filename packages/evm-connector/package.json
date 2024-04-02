@@ -1,0 +1,47 @@
+{
+  "name": "@fuel-connectors/evm-connector",
+  "version": "0.1.1",
+  "type": "module",
+  "files": ["dist"],
+  "main": "./dist/wallet-connector-evm.umd.cjs",
+  "module": "./dist/wallet-connector-evm.js",
+  "exports": {
+    ".": {
+      "import": "./dist/wallet-connector-evm.js",
+      "require": "./dist/wallet-connector-evm.umd.cjs"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build:forc": "pnpm fuels-forc build --release --path ./signature-verification",
+    "build:resources": "pnpm run build:forc && tsup --dts-only ./src/utils/generatePredicateResources.ts",
+    "build": "pnpm run build:resources && tsup --dts-only",
+    "build:watch": "pnpm run build:resources && tsup --watch --dts-only",
+    "ts:check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "peerDependencies": {
+    "fuels": ">=0.77.0"
+  },
+  "dependencies": {
+    "@ethereumjs/util": "^9.0.1",
+    "@ethersproject/bytes": "^5.7.0",
+    "memoizee": "^0.4.15"
+  },
+  "devDependencies": {
+    "@types/memoizee": "^0.4.11",
+    "@fuel-ts/account": "^0.78.0",
+    "@fuel-ts/fuel-core": "^0.78.0",
+    "@fuel-ts/forc": "0.74.0",
+    "fuels": "^0.78.0",
+    "jsdom": "24.0.0",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.7.0",
+    "typescript": "5.4.3",
+    "vite": "^5.0.10",
+    "vite-plugin-dts": "^3.6.4",
+    "vitest": "^1.4.0",
+    "tsup": "8.0.2"
+  }
+}
