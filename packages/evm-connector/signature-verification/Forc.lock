@@ -11,8 +11,3 @@ dependencies = ["core"]
 name = "verification-predicate"
 source = "member"
 dependencies = ["std"]
-
-[[package]]
-name = "verification-script"
-source = "member"
-dependencies = ["std"]
