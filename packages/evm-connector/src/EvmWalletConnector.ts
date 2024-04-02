@@ -14,6 +14,7 @@ import {
   type Asset,
   type ConnectorMetadata,
   FuelConnector,
+  FuelConnectorEventTypes,
   type InputValue,
   type JsonAbi,
   type Network,
@@ -26,21 +27,16 @@ import {
 } from 'fuels';
 
 import { BETA_5_URL, WINDOW } from './constants';
-import type { EVMWalletConnectorConfig } from './types';
+import {
+  type EVMWalletConnectorConfig,
+  EVMWalletConnectorEvents,
+} from './types';
 import type { EIP1193Provider } from './utils/eip-1193';
 import { METAMASK_ICON } from './utils/metamask-icon';
 import { predicates } from './utils/predicateResources';
 
 export class EVMWalletConnector extends FuelConnector {
-  ethProvider: EIP1193Provider | null = null;
-  fuelProvider: Provider | null = null;
-  private predicate: { abi: JsonAbi; bytecode: Uint8Array };
-  private setupLock = false;
-  private _currentAccount: string | null = null;
-  private config: Required<EVMWalletConnectorConfig>;
-  private _ethereumEvents = 0;
-
-  // metadata placeholder
+  name = 'EVM wallet connector';
   metadata: ConnectorMetadata = {
     image: METAMASK_ICON,
     install: {
@@ -50,15 +46,31 @@ export class EVMWalletConnector extends FuelConnector {
     },
   };
 
+  installed = true;
+  connected = false;
+
+  ethProvider: EIP1193Provider | null = null;
+  fuelProvider: Provider | null = null;
+
+  events = {
+    ...FuelConnectorEventTypes,
+    ...EVMWalletConnectorEvents,
+  };
+
+  private predicate = predicates['verification-predicate'];
+  private setupLock = false;
+  private _currentAccount: string | null = null;
+  private config: Required<EVMWalletConnectorConfig>;
+  private _ethereumEvents = 0;
+
   constructor(config: EVMWalletConnectorConfig = {}) {
     super();
-    this.name = 'EVM wallet connector';
-    this.predicate = predicates['verification-predicate'];
-    this.installed = true;
+
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || BETA_5_URL,
       ethProvider: config.ethProvider || window.ethereum,
     });
+
     this.setupEthereumEvents();
   }
 
@@ -82,6 +94,7 @@ export class EVMWalletConnector extends FuelConnector {
     if (WINDOW?.ethereum) {
       return WINDOW.ethereum;
     }
+
     return null;
   }
 
@@ -116,28 +129,33 @@ export class EVMWalletConnector extends FuelConnector {
   async setup() {
     if (this.setupLock) return;
     this.setupLock = true;
+
     await this.setupCurrentAccount();
     await this.setupEventBridge();
   }
 
   async setupEventBridge() {
     const { ethProvider } = await this.getProviders();
-    ethProvider.on('accountsChanged', async (accounts) => {
+
+    ethProvider.on(this.events.ACCOUNTS_CHANGED, async (accounts) => {
       this.emit('accounts', await this.accounts());
       if (this._currentAccount !== accounts[0]) {
         await this.setupCurrentAccount();
       }
     });
-    ethProvider.on('connect', async (_arg) => {
+
+    ethProvider.on(this.events.CONNECT, async (_arg) => {
       this.emit('connection', await this.isConnected());
     });
-    ethProvider.on('disconnect', async (_arg) => {
+
+    ethProvider.on(this.events.DISCONNECT, async (_arg) => {
       this.emit('connection', await this.isConnected());
     });
   }
 
   async setupCurrentAccount() {
     const [currentAccount = null] = await this.accounts();
+
     this._currentAccount = currentAccount;
     this.emit('currentAccount', currentAccount);
   }
@@ -151,6 +169,7 @@ export class EVMWalletConnector extends FuelConnector {
   async ping(): Promise<boolean> {
     await this.getProviders();
     await this.setup();
+
     return true;
   }
 
@@ -160,17 +179,20 @@ export class EVMWalletConnector extends FuelConnector {
 
   async isConnected(): Promise<boolean> {
     const accounts = await this.accounts();
+
     return accounts.length > 0;
   }
 
   async accounts(): Promise<Array<string>> {
     const accounts = await this.getPredicateAccounts();
+
     return accounts.map((account) => account.predicateAccount);
   }
 
   async connect(): Promise<boolean> {
     if (!(await this.isConnected())) {
       const { ethProvider } = await this.getProviders();
+
       await ethProvider.request({
         method: 'wallet_requestPermissions',
         params: [
@@ -179,10 +201,12 @@ export class EVMWalletConnector extends FuelConnector {
           },
         ],
       });
+
       const wallet_chain_id = await ethProvider.request({
         method: 'eth_chainId',
         params: [],
       });
+
       if (wallet_chain_id !== '0x1') {
         await ethProvider.request({
           method: 'wallet_switchEthereumChain',
@@ -193,14 +217,24 @@ export class EVMWalletConnector extends FuelConnector {
           ],
         });
       }
+
+      this.emit(this.events.connection, true);
+
+      // @ts-ignore
+      this.on(this.events.CONNECTION, (connection: boolean) => {
+        this.connected = connection;
+      });
+
+      return true;
     }
-    this.connected = true;
-    return true;
+
+    return this.connected;
   }
 
   async disconnect(): Promise<boolean> {
     if (await this.isConnected()) {
       const { ethProvider } = await this.getProviders();
+
       await ethProvider.request({
         method: 'wallet_revokePermissions',
         params: [
@@ -209,9 +243,13 @@ export class EVMWalletConnector extends FuelConnector {
           },
         ],
       });
+
+      this.emit(this.events.connection, false);
+      this.emit(this.events.accounts, []);
+      this.emit(this.events.currentAccount, null);
     }
-    this.connected = false;
-    return true;
+
+    return false;
   }
 
   async signMessage(_address: string, _message: string): Promise<string> {
@@ -258,11 +296,6 @@ export class EVMWalletConnector extends FuelConnector {
 
     // Transform the signature into compact form for Sway to understand
     const compactSignature = splitSignature(hexToBytes(signature)).compact;
-
-    // We have a witness, attach it to the transaction for inspection / recovery via the predicate
-    // TODO: is below comment still relevant?
-    // TODO: not that there is a strange witness before we add out compact signature
-    //       it is [ 0x ] and we may need to update versions later if / when this is fixed
     transactionRequest.witnesses.push(compactSignature);
 
     const transactionWithPredicateEstimated =
@@ -286,7 +319,9 @@ export class EVMWalletConnector extends FuelConnector {
     const ethAccounts: string[] = await ethProvider.request({
       method: 'eth_accounts',
     });
+
     const currentEthAccount = ethAccounts[0];
+
     if (!currentEthAccount) {
       throw new Error('No Ethereum account selected');
     }
@@ -303,29 +338,23 @@ export class EVMWalletConnector extends FuelConnector {
   }
 
   async addAssets(_assets: Asset[]): Promise<boolean> {
-    console.warn('A predicate account cannot add assets');
-    return false;
+    throw new Error('Method not implemented.');
   }
 
   async addAsset(_asset: Asset): Promise<boolean> {
-    console.warn('A predicate account cannot add an asset');
-    return false;
+    throw new Error('Method not implemented.');
   }
 
   async assets(): Promise<Array<Asset>> {
-    // TODO: can get assets at a predicates address? emit warning/throw error if not?
     return [];
   }
 
   async addNetwork(_networkUrl: string): Promise<boolean> {
-    console.warn('Cannot add a network');
-    return false;
+    throw new Error('Method not implemented.');
   }
 
   async selectNetwork(_network: Network): Promise<boolean> {
-    // TODO: actually allow selecting networks once mainnet is released?
-    console.warn('Cannot select a network');
-    return false;
+    throw new Error('Method not implemented.');
   }
 
   async networks(): Promise<Network[]> {
@@ -335,12 +364,12 @@ export class EVMWalletConnector extends FuelConnector {
   async currentNetwork(): Promise<Network> {
     const { fuelProvider } = await this.getProviders();
     const chainId = fuelProvider.getChainId();
+
     return { url: fuelProvider.url, chainId: chainId };
   }
 
   async addAbi(_abiMap: AbiMap): Promise<boolean> {
-    console.warn('Cannot add an ABI to a predicate account');
-    return false;
+    throw new Error('Method not implemented.');
   }
 
   async getAbi(_contractId: string): Promise<JsonAbi> {
@@ -348,12 +377,12 @@ export class EVMWalletConnector extends FuelConnector {
   }
 
   async hasAbi(_contractId: string): Promise<boolean> {
-    console.warn('A predicate account cannot have an ABI');
-    return false;
+    throw Error('A predicate account cannot have an ABI');
   }
 
   private async getPredicateFromAddress(address: string) {
     const accounts = await this.getPredicateAccounts();
+
     return accounts.find((account) => account.predicateAccount === address);
   }
 
@@ -363,11 +392,11 @@ export class EVMWalletConnector extends FuelConnector {
       predicateAccount: string;
     }>
   > {
-    const { ethProvider, fuelProvider } = await this.getProviders();
+    const { ethProvider } = await this.getProviders();
     const ethAccounts: Array<string> = await ethProvider.request({
       method: 'eth_accounts',
     });
-    const _chainId = fuelProvider.getChainId();
+
     const accounts = ethAccounts.map((account) => ({
       ethAccount: account,
       predicateAccount: getPredicateAddress(
@@ -376,6 +405,7 @@ export class EVMWalletConnector extends FuelConnector {
         this.predicate.abi,
       ),
     }));
+
     return accounts;
   }
 }
@@ -399,6 +429,7 @@ export const getPredicateAddress = memoize(
       configurable,
     );
     const address = Address.fromB256(getPredicateRoot(predicateBytes));
+
     return address.toString();
   },
 );
