@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { EVMWalletConnector, defaultConnectors } from '@fuels/connectors';
+import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
 
 import * as Toast from '@radix-ui/react-toast';
@@ -21,10 +21,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <FuelProvider
         theme="dark"
         fuelConfig={{
-          connectors: [
-            ...defaultConnectors({ devMode: true }),
-            new EVMWalletConnector(),
-          ],
+          connectors: defaultConnectors({ devMode: true }),
         }}
       >
         <Toast.Provider>
