@@ -1,6 +1,7 @@
 {
   "name": "@fuel-connectors/evm-connector",
   "version": "0.1.1",
+  "private": true,
   "type": "module",
   "files": ["dist"],
   "main": "./dist/wallet-connector-evm.umd.cjs",
