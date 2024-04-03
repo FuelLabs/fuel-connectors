@@ -38,6 +38,12 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignore": ["**/node_modules", "**/.turbo", "**/build", "pnpm-lock.yaml"]
+    "ignore": [
+      "**/node_modules",
+      "**/.turbo",
+      "**/build",
+      "**/contracts",
+      "pnpm-lock.yaml"
+    ]
   }
 }
