@@ -110,7 +110,7 @@ export class EVMWalletConnector extends FuelConnector {
         throw new Error('Ethereum provider not found');
       }
 
-      this.fuelProvider = this.config.fuelProvider ?? null;
+      this.fuelProvider = (await this.config.fuelProvider) ?? null;
 
       if (!this.fuelProvider) {
         throw new Error('Fuel provider not found');
