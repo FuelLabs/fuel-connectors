@@ -36,14 +36,6 @@ export default function ContractCounter() {
       <code>{counter}</code>
       <div className="space-x-2">
         <Button
-          color="secondary"
-          onClick={() =>
-            alert(`The counter contract is deployed at ${COUNTER_CONTRACT_ID}`)
-          }
-        >
-          See Address
-        </Button>
-        <Button
           onClick={increment}
           disabled={isLoading || !hasBalance}
           loading={isLoading}
