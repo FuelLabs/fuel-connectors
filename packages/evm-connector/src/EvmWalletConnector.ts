@@ -67,7 +67,7 @@ export class EVMWalletConnector extends FuelConnector {
 
   async configProviders(config: EVMWalletConnectorConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || (await Provider.create(BETA_5_URL)),
+      fuelProvider: config.fuelProvider || Provider.create(BETA_5_URL),
       ethProvider: config.ethProvider || window.ethereum,
     });
   }
@@ -110,7 +110,7 @@ export class EVMWalletConnector extends FuelConnector {
         throw new Error('Ethereum provider not found');
       }
 
-      this.fuelProvider = this.config.fuelProvider ?? null;
+      this.fuelProvider = (await this.config.fuelProvider) ?? null;
 
       if (!this.fuelProvider) {
         throw new Error('Fuel provider not found');
