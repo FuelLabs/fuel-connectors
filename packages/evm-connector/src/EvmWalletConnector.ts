@@ -67,7 +67,7 @@ export class EVMWalletConnector extends FuelConnector {
 
   async configProviders(config: EVMWalletConnectorConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || (await Provider.create(BETA_5_URL)),
+      fuelProvider: config.fuelProvider || Provider.create(BETA_5_URL),
       ethProvider: config.ethProvider || window.ethereum,
     });
   }
