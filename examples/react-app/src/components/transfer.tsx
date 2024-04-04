@@ -35,7 +35,7 @@ export default function Transfer() {
         },
       );
 
-      await resp?.waitForResult();
+      const result = await resp?.waitForResult();
 
       setToast({
         open: true,
@@ -43,7 +43,12 @@ export default function Transfer() {
         children: (
           <p>
             Transfer successful! View it on the{' '}
-            <a href="#link-to-block-explorer" className="underline">
+            <a
+              href={`https://app.fuel.network/tx/${result?.id}`}
+              className="underline"
+              target="_blank"
+              rel="noreferrer"
+            >
               block explorer
             </a>
           </p>
