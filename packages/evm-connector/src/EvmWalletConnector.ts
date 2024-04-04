@@ -28,13 +28,13 @@ import { createPredicate, getPredicateAddress } from './utils/predicate';
 import { predicates } from './utils/predicateResources';
 
 export class EVMWalletConnector extends FuelConnector {
-  name = 'EVM wallet connector';
+  name = 'Metamask';
   metadata: ConnectorMetadata = {
     image: METAMASK_ICON,
     install: {
       action: 'Install',
-      description: 'Install a ethereum Wallet to connect to Fuel',
-      link: 'https://ethereum.org/en/wallets/find-wallet/',
+      description: 'Install Metamask Wallet to connect to Fuel',
+      link: 'https://metamask.io/download/',
     },
   };
 

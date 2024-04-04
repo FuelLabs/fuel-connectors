@@ -5,6 +5,7 @@ import { useWallet } from '../hooks/useWallet';
 import type { CustomError } from '../utils/customError';
 import { DEFAULT_AMOUNT } from './balance';
 import Button from './button';
+import ContractLink from './contract-link';
 import Feature from './feature';
 import Notification, { type Props as NotificationProps } from './notification';
 
@@ -32,31 +33,26 @@ export default function ContractCounter() {
   }, [wallet]);
 
   return (
-    <Feature title="Counter Contract">
-      <code>{counter}</code>
-      <div className="space-x-2">
-        <Button
-          color="secondary"
-          onClick={() =>
-            alert(`The counter contract is deployed at ${COUNTER_CONTRACT_ID}`)
-          }
-        >
-          See Address
-        </Button>
-        <Button
-          onClick={increment}
-          disabled={isLoading || !hasBalance}
-          loading={isLoading}
-          loadingText="Incrementing..."
-        >
-          Increment
-        </Button>
-        <Notification
-          setOpen={() => setToast({ ...toast, open: false })}
-          {...toast}
-        />
-      </div>
-    </Feature>
+    <div>
+      <Feature title="Counter Contract">
+        <code>{counter}</code>
+        <div className="space-x-2">
+          <Button
+            onClick={increment}
+            disabled={isLoading || !hasBalance}
+            loading={isLoading}
+            loadingText="Incrementing..."
+          >
+            Increment
+          </Button>
+          <Notification
+            setOpen={() => setToast({ ...toast, open: false })}
+            {...toast}
+          />
+        </div>
+      </Feature>
+      <ContractLink />
+    </div>
   );
 
   async function increment() {
