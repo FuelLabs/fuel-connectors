@@ -13,6 +13,11 @@ interface ICurrentConnector {
   title: string;
 }
 
+const DEFAULT_CONNECTOR: ICurrentConnector = {
+  logo: '',
+  title: 'Wallet Demo',
+};
+
 export const useWallet = () => {
   const { fuel } = useFuel();
   const { connect, isConnecting } = useConnectUI();
@@ -32,10 +37,8 @@ export const useWallet = () => {
     isFetching: isFetchingBalance,
   } = useBalance({ address });
 
-  const [currentConnector, setCurrentConnector] = useState<ICurrentConnector>({
-    logo: '',
-    title: 'Fuel Wallet',
-  });
+  const [currentConnector, setCurrentConnector] =
+    useState<ICurrentConnector>(DEFAULT_CONNECTOR);
 
   useEffect(() => {
     refetchConnected();
@@ -43,13 +46,13 @@ export const useWallet = () => {
 
   useEffect(() => {
     if (!isConnected) {
-      setCurrentConnector({ logo: '', title: 'Fuel Wallet' });
+      setCurrentConnector(DEFAULT_CONNECTOR);
       return;
     }
 
     const currentConnector = fuel.currentConnector();
 
-    const title = currentConnector?.name ?? 'Fuel Wallet';
+    const title = currentConnector?.name ?? DEFAULT_CONNECTOR.title;
 
     const logo =
       currentConnector && typeof currentConnector.metadata?.image === 'object'
