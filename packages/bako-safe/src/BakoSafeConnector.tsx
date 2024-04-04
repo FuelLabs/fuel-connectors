@@ -105,6 +105,10 @@ export class BakoSafeConnector extends FuelConnector {
       appUrl: this.appUrl,
     });
     this.socket.connect();
+
+    this.socket?.on(this.events.DEFAULT, (message) => {
+      this.emit(message.type, ...message.data);
+    });
     this.sessionId = sessionId;
   }
 
@@ -123,10 +127,6 @@ export class BakoSafeConnector extends FuelConnector {
   // ============================================================
   async connect() {
     return new Promise<boolean>((resolve) => {
-      this.socket?.on(this.events.DEFAULT, (message) => {
-        this.emit(message.type, ...message.data);
-      });
-
       const dappWindow = this.dAppWindow?.open('/');
 
       if (!dappWindow) {
