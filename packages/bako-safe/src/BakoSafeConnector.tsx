@@ -53,6 +53,7 @@ export class BakoSafeConnector extends FuelConnector {
   private sessionId?: string;
   private dAppWindow?: DAppWindow;
   private storage?: StorageAbstract;
+  private username?: string;
 
   constructor(config?: BakoSafeConnectorConfig) {
     super();
@@ -84,6 +85,12 @@ export class BakoSafeConnector extends FuelConnector {
     return sessionId;
   }
 
+  /**
+   * [important]
+   * this.socket.emit -> emit message to the server
+   * this.emit -> emit message to the dApp client
+   */
+
   private async setup() {
     if (!HAS_WINDOW) return;
     if (this.setupReady) return;
@@ -106,20 +113,29 @@ export class BakoSafeConnector extends FuelConnector {
     });
     this.socket.connect();
 
-    this.socket?.on(this.events.DEFAULT, (message) => {
-      this.emit(message.type, ...message.data);
-    });
     this.sessionId = sessionId;
+    this.username = `[WALLET]${sessionId}`;
+
+    this.socket?.on(this.events.DEFAULT, (message) => {
+      this.emit(message.type, {
+        data: message,
+        from: this.username,
+      });
+    });
   }
 
   private async checkWindow(window: Window) {
     const checkOpened = () => {
       if (window?.closed) {
-        this.emit(this.events.POPUP_CLOSED);
+        this.emit(this.events.POPUP_CLOSED, { from: this.username });
         clearInterval(timer);
       }
     };
     const timer = setInterval(checkOpened, 500);
+  }
+
+  private verifyMessageOrigin(message: string) {
+    return !(message === this.username);
   }
 
   // ============================================================
@@ -128,7 +144,6 @@ export class BakoSafeConnector extends FuelConnector {
   async connect() {
     return new Promise<boolean>((resolve) => {
       const dappWindow = this.dAppWindow?.open('/');
-
       if (!dappWindow) {
         resolve(false);
         return;
@@ -137,14 +152,16 @@ export class BakoSafeConnector extends FuelConnector {
       this.checkWindow(dappWindow);
 
       // @ts-ignore
-      this.on(this.events.POPUP_CLOSED, () => {
+      this.on(this.events.POPUP_CLOSED, ({ from }) => {
+        if (this.verifyMessageOrigin(from)) return;
         resolve(false);
       });
 
       // @ts-ignore
-      this.on(this.events.CONNECTION, (connection: boolean) => {
-        this.connected = connection;
-        resolve(connection);
+      this.on(this.events.CONNECTION, ({ data, from }) => {
+        if (this.verifyMessageOrigin(from)) return;
+        this.connected = data;
+        resolve(data);
       });
     });
   }
@@ -169,12 +186,14 @@ export class BakoSafeConnector extends FuelConnector {
 
       this.checkWindow(dappWindow);
       // @ts-ignore
-      this.on(this.events.POPUP_CLOSED, () => {
+      this.on(this.events.POPUP_CLOSED, ({ from }) => {
+        if (this.verifyMessageOrigin(from)) return;
         reject(new Error('Window closed'));
       });
 
       // @ts-ignore
-      this.on(this.events.POPUP_TRANSFER, () => {
+      this.on(this.events.POPUP_TRANSFER, ({ from }) => {
+        if (this.verifyMessageOrigin(from)) return;
         this.socket?.emit(this.events.TRANSACTION_SEND, {
           to: `${this.sessionId}:${window.origin}`,
           content: {
@@ -184,8 +203,9 @@ export class BakoSafeConnector extends FuelConnector {
         });
       });
       // @ts-ignore
-      this.on(this.events.TRANSACTION_CREATED, (content) => {
-        resolve(`0x${content}`);
+      this.on(this.events.TRANSACTION_CREATED, ({ data, from }) => {
+        if (this.verifyMessageOrigin(from)) return;
+        resolve(`0x${data}`);
       });
     });
   }
