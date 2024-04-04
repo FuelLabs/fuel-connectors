@@ -161,9 +161,18 @@ export class BakoSafeConnector extends FuelConnector {
   ) {
     return new Promise<string>((resolve, reject) => {
       const dappWindow = this.dAppWindow?.open('/dapp/transaction');
-      dappWindow?.addEventListener('close', () => {
-        reject('closed');
+
+      if (!dappWindow) {
+        reject(new Error('Window not opened'));
+        return;
+      }
+
+      this.checkWindow(dappWindow);
+      // @ts-ignore
+      this.on(this.events.POPUP_CLOSED, () => {
+        reject(new Error('Window closed'));
       });
+
       // @ts-ignore
       this.on(this.events.POPUP_TRANSFER, () => {
         this.socket?.emit(this.events.TRANSACTION_SEND, {
