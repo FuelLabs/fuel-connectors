@@ -1,16 +1,14 @@
 {
-  "name": "@fuel-connectors/ethereum-connector",
+  "name": "@fuel-connectors/walletconnect-connector",
   "version": "0.0.1",
   "type": "module",
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/wallet-connector-ethereum.umd.cjs",
-  "module": "./dist/wallet-connector-ethereum.js",
+  "files": ["dist"],
+  "main": "./dist/wallet-connector-walletconnect.umd.cjs",
+  "module": "./dist/wallet-connector-walletconnect.js",
   "exports": {
     ".": {
-      "import": "./dist/wallet-connector-ethereum.js",
-      "require": "./dist/wallet-connector-ethereum.umd.cjs"
+      "import": "./dist/wallet-connector-walletconnect.js",
+      "require": "./dist/wallet-connector-walletconnect.umd.cjs"
     }
   },
   "types": "./dist/index.d.ts",

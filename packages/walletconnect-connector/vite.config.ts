@@ -19,9 +19,9 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve('src/index.ts'),
-      name: '@fuels/wallet-connector-ethereum',
+      name: '@fuels/wallet-connector-walletconnect',
       // the proper extensions will be added
-      fileName: 'wallet-connector-ethereum',
+      fileName: 'wallet-connector-walletconnect',
     },
   },
 });
