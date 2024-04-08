@@ -1,5 +1,11 @@
 # @fuels/connectors
 
+## 0.2.1
+
+### Patch Changes
+
+- [#44](https://github.com/FuelLabs/fuel-connectors/pull/44) [`3263829`](https://github.com/FuelLabs/fuel-connectors/commit/32638296d83b56d4aa725082bdb120d536aa1044) Thanks [@luizstacio](https://github.com/luizstacio)! - fix build for browser
+
 ## 0.2.0
 
 ### Minor Changes
