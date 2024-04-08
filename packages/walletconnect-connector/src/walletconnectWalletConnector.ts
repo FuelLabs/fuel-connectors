@@ -8,7 +8,6 @@ import {
   disconnect,
   getAccount,
   injected,
-  reconnect,
 } from '@wagmi/core';
 import { mainnet } from '@wagmi/core/chains';
 import { type Web3Modal, createWeb3Modal } from '@web3modal/wagmi';
@@ -26,12 +25,11 @@ import {
   transactionRequestify,
 } from 'fuels';
 import { PredicateAccount } from './Predicate';
-import { BETA_5_URL, WINDOW } from './constants';
+import { BETA_5_URL } from './constants';
 import {
   type EthereumWalletConnectorConfig,
   EthereumWalletConnectorEvents,
 } from './types';
-import type { EIP1193Provider } from './utils/eip-1193';
 import { ETHEREUM_ICON } from './utils/ethereum-icon';
 import { createPredicate } from './utils/predicate';
 import { predicates } from './utils/predicateResources';
@@ -74,7 +72,6 @@ export class WalletconnectWalletConnector extends FuelConnector {
     this.setupEthereumEvents();
   }
 
-  // * WEB3MODAL AND WAGMI
   async configProviders(config: EthereumWalletConnectorConfig = {}) {
     const metadata = {
       name: 'Web3Modal',
@@ -101,7 +98,6 @@ export class WalletconnectWalletConnector extends FuelConnector {
         }),
       ],
     });
-    reconnect(this.ethConfig);
 
     this.ethModal = createWeb3Modal({
       wagmiConfig: this.ethConfig,
@@ -112,16 +108,14 @@ export class WalletconnectWalletConnector extends FuelConnector {
 
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || FuelProvider.create(BETA_5_URL),
-      ethProvider: this.ethConfig?.connectors[0]?.getProvider(),
+      ethProvider: config.ethProvider || null,
     });
   }
-  // * WEB3MODAL AND WAGMI
 
   setupEthereumEvents() {
     this._ethereumEvents = Number(
       setInterval(() => {
-        //@ts-ignore
-        if (WINDOW?.ethereum) {
+        if (this.ethProvider) {
           clearInterval(this._ethereumEvents);
           window.dispatchEvent(
             new CustomEvent('FuelConnector', { detail: this }),
@@ -131,26 +125,6 @@ export class WalletconnectWalletConnector extends FuelConnector {
     );
   }
 
-  // * WEB3MODAL AND WAGMI
-  async getLazyEthereum() {
-    reconnect(this.ethConfig as Config);
-
-    const ethProvider = await getAccount(
-      this.ethConfig as Config,
-    ).connector?.getProvider();
-
-    if (!ethProvider) {
-      if (WINDOW?.ethereum) {
-        //@ts-ignore
-        return WINDOW.ethereum;
-      }
-      return null;
-    }
-
-    return ethProvider;
-  }
-  // * WEB3MODAL AND WAGMI
-
   /**
    * ============================================================
    * Application communication methods
@@ -159,12 +133,6 @@ export class WalletconnectWalletConnector extends FuelConnector {
 
   async getProviders() {
     if (!this.fuelProvider || !this.ethProvider) {
-      this.ethProvider = (await this.getLazyEthereum()) as EIP1193Provider;
-
-      if (!this.ethProvider) {
-        throw new Error('Ethereum provider not found');
-      }
-
       this.fuelProvider = (await this.config.fuelProvider) ?? null;
 
       if (!this.fuelProvider) {
@@ -174,7 +142,6 @@ export class WalletconnectWalletConnector extends FuelConnector {
 
     return {
       fuelProvider: this.fuelProvider,
-      ethProvider: this.ethProvider,
     };
   }
 
@@ -187,20 +154,20 @@ export class WalletconnectWalletConnector extends FuelConnector {
   }
 
   async setupEventBridge() {
-    const { ethProvider } = await this.getProviders();
     //@ts-ignore
-    ethProvider.on(this.events.ACCOUNTS_CHANGED, async (accounts) => {
+    this.ethProvider.on(this.events.ACCOUNTS_CHANGED, async (accounts) => {
       this.emit('accounts', await this.accounts());
       if (this._currentAccount !== accounts[0]) {
         await this.setupCurrentAccount();
       }
     });
     //@ts-ignore
-    ethProvider.on(this.events.CONNECT, async (_arg) => {
+    this.ethProvider.on(this.events.CONNECT, async (_arg) => {
       this.emit('connection', await this.isConnected());
     });
+
     //@ts-ignore
-    ethProvider.on(this.events.DISCONNECT, async (_arg) => {
+    this.ethProvider.on(this.events.DISCONNECT, async (_arg) => {
       this.emit('connection', await this.isConnected());
     });
   }
@@ -220,7 +187,6 @@ export class WalletconnectWalletConnector extends FuelConnector {
 
   async ping(): Promise<boolean> {
     await this.configProviders();
-    await this.setup();
 
     return true;
   }
@@ -236,11 +202,13 @@ export class WalletconnectWalletConnector extends FuelConnector {
   }
 
   async accounts(): Promise<Array<string>> {
-    const { ethProvider } = await this.getProviders();
+    if (!this.ethProvider) {
+      return [];
+    }
 
     const accounts =
       //@ts-ignore
-      await this.predicateAccount.getPredicateAccounts(ethProvider);
+      await this.predicateAccount.getPredicateAccounts(this.ethProvider);
 
     return accounts.map((account) => account.predicateAccount);
   }
@@ -249,8 +217,14 @@ export class WalletconnectWalletConnector extends FuelConnector {
     if (!(await this.isConnected())) {
       await this.ethModal?.open();
 
-      this.ethModal?.subscribeEvents((event) => {
+      this.ethModal?.subscribeEvents(async (event) => {
         if (event.data.event === 'CONNECT_SUCCESS') {
+          this.ethProvider = await getAccount(
+            this.ethConfig as Config,
+          ).connector?.getProvider();
+
+          await this.setup();
+
           this.emit(this.events.connection, true);
 
           this.on(this.events.connection, (connection: boolean) => {
@@ -266,13 +240,11 @@ export class WalletconnectWalletConnector extends FuelConnector {
   }
 
   async disconnect(): Promise<boolean> {
-    if (await this.isConnected()) {
-      await disconnect(this.ethConfig as Config);
+    await disconnect(this.ethConfig as Config);
 
-      this.emit(this.events.connection, false);
-      this.emit(this.events.accounts, []);
-      this.emit(this.events.currentAccount, null);
-    }
+    this.emit(this.events.connection, false);
+    this.emit(this.events.accounts, []);
+    this.emit(this.events.currentAccount, null);
 
     return false;
   }
@@ -289,12 +261,12 @@ export class WalletconnectWalletConnector extends FuelConnector {
       throw Error('No connected accounts');
     }
 
-    const { ethProvider, fuelProvider } = await this.getProviders();
+    const { fuelProvider } = await this.getProviders();
     const chainId = fuelProvider.getChainId();
     const account = await this.predicateAccount.getPredicateFromAddress(
       address,
       //@ts-ignore
-      ethProvider,
+      this.ethProvider,
     );
     if (!account) {
       throw Error(`No account found for ${address}`);
@@ -320,7 +292,7 @@ export class WalletconnectWalletConnector extends FuelConnector {
 
     const txID = requestWithPredicateAttached.getTransactionId(chainId);
     //@ts-ignore
-    const signature = await ethProvider.request({
+    const signature = await this.ethProvider.request({
       method: 'personal_sign',
       params: [txID, account.ethAccount],
     });
