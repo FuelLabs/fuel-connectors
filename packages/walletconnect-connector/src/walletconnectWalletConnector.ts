@@ -240,11 +240,15 @@ export class WalletconnectWalletConnector extends FuelConnector {
   }
 
   async disconnect(): Promise<boolean> {
-    await disconnect(this.ethConfig as Config);
+    this.ethProvider = null;
 
     this.emit(this.events.connection, false);
     this.emit(this.events.accounts, []);
     this.emit(this.events.currentAccount, null);
+
+    await getAccount(this.ethConfig as Config).connector?.disconnect();
+
+    location.reload();
 
     return false;
   }
