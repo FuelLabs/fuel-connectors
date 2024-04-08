@@ -249,11 +249,14 @@ export class WalletconnectWalletConnector extends FuelConnector {
     if (!(await this.isConnected())) {
       await this.ethModal?.open();
 
-      this.emit(this.events.connection, true);
+      this.ethModal?.subscribeEvents((event) => {
+        if (event.data.event === 'CONNECT_SUCCESS') {
+          this.emit(this.events.connection, true);
 
-      // @ts-ignore
-      this.on(this.events.CONNECTION, (connection: boolean) => {
-        this.connected = connection;
+          this.on(this.events.connection, (connection: boolean) => {
+            this.connected = connection;
+          });
+        }
       });
 
       return true;
