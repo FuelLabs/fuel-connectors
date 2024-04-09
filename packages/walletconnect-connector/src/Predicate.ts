@@ -1,22 +1,22 @@
-import type { EIP1193Provider } from './utils/eip-1193';
 import { getPredicateAddress } from './utils/predicate';
 import { predicates } from './utils/predicateResources';
 
 export class PredicateAccount {
   private predicate = predicates['verification-predicate'];
 
-  async getPredicateFromAddress(address: string, ethProvider: EIP1193Provider) {
+  async getPredicateFromAddress(address: string, ethProvider: unknown) {
     const accounts = await this.getPredicateAccounts(ethProvider);
 
     return accounts.find((account) => account.predicateAccount === address);
   }
 
-  async getPredicateAccounts(ethProvider: EIP1193Provider): Promise<
+  async getPredicateAccounts(ethProvider: unknown): Promise<
     Array<{
       ethAccount: string;
       predicateAccount: string;
     }>
   > {
+    //@ts-ignore
     const ethAccounts: Array<string> = await ethProvider.request({
       method: 'eth_accounts',
     });

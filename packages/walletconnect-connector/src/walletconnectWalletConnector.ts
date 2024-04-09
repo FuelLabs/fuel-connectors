@@ -1,16 +1,7 @@
 import { hexToBytes } from '@ethereumjs/util';
 import { hexlify, splitSignature } from '@ethersproject/bytes';
-import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
-import {
-  http,
-  type Config,
-  createConfig,
-  disconnect,
-  getAccount,
-  injected,
-} from '@wagmi/core';
-import { mainnet } from '@wagmi/core/chains';
-import { type Web3Modal, createWeb3Modal } from '@web3modal/wagmi';
+import { type Config, getAccount } from '@wagmi/core';
+import type { Web3Modal } from '@web3modal/wagmi';
 import {
   type AbiMap,
   type Asset,
@@ -33,12 +24,16 @@ import {
 import { ETHEREUM_ICON } from './utils/ethereum-icon';
 import { createPredicate } from './utils/predicate';
 import { predicates } from './utils/predicateResources';
+import WagmiConfig from './utils/wagmiConfig';
 
 export class WalletconnectWalletConnector extends FuelConnector {
   name = 'Ethereum Wallets';
+
   connected = false;
   installed = false;
+
   events = { ...FuelConnectorEventTypes, ...EthereumWalletConnectorEvents };
+
   metadata: ConnectorMetadata = {
     image: ETHEREUM_ICON,
     install: {
@@ -48,13 +43,10 @@ export class WalletconnectWalletConnector extends FuelConnector {
     },
   };
 
-  ethConfig: Config | null = null;
-
-  wagmiProjectId = '0e0f5503e675e719c07e73ff5f38d31f';
-
+  ethConfig: Config;
   ethProvider: unknown | null = null;
   fuelProvider: FuelProvider | null = null;
-  ethModal: Web3Modal | null = null;
+  ethModal: Web3Modal;
 
   private predicateAccount: PredicateAccount;
   private predicate = predicates['verification-predicate'];
@@ -68,44 +60,16 @@ export class WalletconnectWalletConnector extends FuelConnector {
 
     this.predicateAccount = new PredicateAccount();
 
+    const wagmiConfig = new WagmiConfig();
+
+    this.ethConfig = wagmiConfig.getEthConfig();
+    this.ethModal = wagmiConfig.getEthModal();
+
     this.configProviders(config);
     this.setupEthereumEvents();
   }
 
   async configProviders(config: EthereumWalletConnectorConfig = {}) {
-    const metadata = {
-      name: 'Web3Modal',
-      description: 'Web3Modal Example',
-      url: 'https://web3modal.com', // url must match your domain & subdomain
-      icons: ['https://avatars.githubusercontent.com/u/37784886'],
-    };
-
-    this.ethConfig = createConfig({
-      chains: [mainnet],
-      transports: {
-        [mainnet.id]: http(),
-      },
-      connectors: [
-        walletConnect({
-          projectId: this.wagmiProjectId,
-          metadata,
-          showQrModal: false,
-        }),
-        injected({ shimDisconnect: true }),
-        coinbaseWallet({
-          appName: metadata.name,
-          appLogoUrl: metadata.icons[0],
-        }),
-      ],
-    });
-
-    this.ethModal = createWeb3Modal({
-      wagmiConfig: this.ethConfig,
-      projectId: this.wagmiProjectId,
-      enableAnalytics: true, // Optional - defaults to your Cloud configuration
-      enableOnramp: true, // Optional - false as default
-    });
-
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || FuelProvider.create(BETA_5_URL),
       ethProvider: config.ethProvider || null,
@@ -161,6 +125,7 @@ export class WalletconnectWalletConnector extends FuelConnector {
         await this.setupCurrentAccount();
       }
     });
+
     //@ts-ignore
     this.ethProvider.on(this.events.CONNECT, async (_arg) => {
       this.emit('connection', await this.isConnected());
@@ -220,7 +185,7 @@ export class WalletconnectWalletConnector extends FuelConnector {
       this.ethModal?.subscribeEvents(async (event) => {
         if (event.data.event === 'CONNECT_SUCCESS') {
           this.ethProvider = await getAccount(
-            this.ethConfig as Config,
+            this.ethConfig,
           ).connector?.getProvider();
 
           await this.setup();
@@ -322,7 +287,7 @@ export class WalletconnectWalletConnector extends FuelConnector {
       throw Error('No connected accounts');
     }
 
-    const account = getAccount(this.ethConfig as Config).address;
+    const account = getAccount(this.ethConfig).address;
 
     if (!account) {
       throw Error('No connected accounts');
