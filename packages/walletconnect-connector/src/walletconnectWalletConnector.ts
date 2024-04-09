@@ -1,6 +1,6 @@
 import { hexToBytes } from '@ethereumjs/util';
 import { hexlify, splitSignature } from '@ethersproject/bytes';
-import { type Config, getAccount } from '@wagmi/core';
+import { type Config, disconnect, getAccount } from '@wagmi/core';
 import type { Web3Modal } from '@web3modal/wagmi';
 import {
   type AbiMap,
@@ -96,7 +96,7 @@ export class WalletconnectWalletConnector extends FuelConnector {
    */
 
   async getProviders() {
-    if (!this.fuelProvider || !this.ethProvider) {
+    if (!this.fuelProvider) {
       this.fuelProvider = (await this.config.fuelProvider) ?? null;
 
       if (!this.fuelProvider) {
@@ -119,9 +119,9 @@ export class WalletconnectWalletConnector extends FuelConnector {
 
   async setupEventBridge() {
     //@ts-ignore
-    this.ethProvider.on(this.events.ACCOUNTS_CHANGED, async (accounts) => {
+    this.ethProvider.on(this.events.ACCOUNTS_CHANGED, async () => {
       this.emit('accounts', await this.accounts());
-      if (this._currentAccount !== accounts[0]) {
+      if (this._currentAccount !== getAccount(this.ethConfig).address) {
         await this.setupCurrentAccount();
       }
     });
@@ -138,9 +138,10 @@ export class WalletconnectWalletConnector extends FuelConnector {
   }
 
   async setupCurrentAccount() {
-    const [currentAccount = null] = await this.accounts();
+    const currentAccount = getAccount(this.ethConfig).address || null;
 
     this._currentAccount = currentAccount;
+
     this.emit('currentAccount', currentAccount);
   }
 
@@ -161,9 +162,9 @@ export class WalletconnectWalletConnector extends FuelConnector {
   }
 
   async isConnected(): Promise<boolean> {
-    const accounts = await this.accounts();
+    const account = getAccount(this.ethConfig);
 
-    return accounts.length > 0;
+    return account.isConnected || false;
   }
 
   async accounts(): Promise<Array<string>> {
@@ -171,9 +172,9 @@ export class WalletconnectWalletConnector extends FuelConnector {
       return [];
     }
 
-    const accounts =
-      //@ts-ignore
-      await this.predicateAccount.getPredicateAccounts(this.ethProvider);
+    const accounts = await this.predicateAccount.getPredicateAccounts(
+      this.ethConfig,
+    );
 
     return accounts.map((account) => account.predicateAccount);
   }
@@ -205,15 +206,11 @@ export class WalletconnectWalletConnector extends FuelConnector {
   }
 
   async disconnect(): Promise<boolean> {
-    this.ethProvider = null;
+    await disconnect(this.ethConfig);
 
     this.emit(this.events.connection, false);
     this.emit(this.events.accounts, []);
     this.emit(this.events.currentAccount, null);
-
-    await getAccount(this.ethConfig as Config).connector?.disconnect();
-
-    location.reload();
 
     return false;
   }
@@ -234,8 +231,7 @@ export class WalletconnectWalletConnector extends FuelConnector {
     const chainId = fuelProvider.getChainId();
     const account = await this.predicateAccount.getPredicateFromAddress(
       address,
-      //@ts-ignore
-      this.ethProvider,
+      this.ethConfig,
     );
     if (!account) {
       throw Error(`No account found for ${address}`);
