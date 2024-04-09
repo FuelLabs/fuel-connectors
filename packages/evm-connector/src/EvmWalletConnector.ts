@@ -288,6 +288,12 @@ export class EVMWalletConnector extends FuelConnector {
     const requestWithPredicateAttached =
       predicate.populateTransactionPredicateData(transactionRequest);
 
+    requestWithPredicateAttached.inputs.forEach((input) => {
+      if ('predicate' in input && input.predicate) {
+        input.witnessIndex = 0;
+      }
+    });
+
     const txID = requestWithPredicateAttached.getTransactionId(chainId);
     const signature = await ethProvider.request({
       method: 'personal_sign',
