@@ -7,7 +7,7 @@ describe('WalletConnect Connector', () => {
 
   beforeEach(async () => {
     // Class contains state, reset the state for each test
-    connector = new WalletConnectConnector();
+    connector = new WalletConnectConnector({ projectId: '0000' });
   });
 
   describe('signMessage()', () => {

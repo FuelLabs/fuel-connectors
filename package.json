@@ -9,7 +9,7 @@
     "build": "turbo build",
     "build:watch": "turbo build:watch",
     "ts:check": "turbo run ts:check",
-    "test": "vitest --silent",
+    "test": "vitest",
     "test:ci": "turbo run test -- --run --coverage.enabled --coverage.reporter=json-summary --coverage.reporter=json --coverage.thresholds.functions=50 --coverage.thresholds.lines=50 --coverage.thresholds.branches=50 --coverage.thresholds.statements=50",
     "lint:check": "biome check --apply-unsafe .",
     "lint:ci": "biome lint --max-diagnostics=1000 --diagnostic-level=error .",

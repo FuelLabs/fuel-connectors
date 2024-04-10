@@ -103,61 +103,6 @@ importers:
         specifier: 5.2.6
         version: 5.2.6(@types/node@20.12.4)
 
-  packages/burner-wallet-connector:
-    dependencies:
-      '@ethereumjs/util':
-        specifier: ^9.0.1
-        version: 9.0.3
-      '@ethersproject/bytes':
-        specifier: ^5.7.0
-        version: 5.7.0
-      memoizee:
-        specifier: ^0.4.15
-        version: 0.4.15
-    devDependencies:
-      '@fuel-ts/account':
-        specifier: ^0.79.0
-        version: 0.79.0(dexie@4.0.1)
-      '@fuel-ts/forc':
-        specifier: 0.79.0
-        version: 0.79.0
-      '@fuel-ts/fuel-core':
-        specifier: ^0.79.0
-        version: 0.79.0
-      '@types/memoizee':
-        specifier: ^0.4.11
-        version: 0.4.11
-      fuels:
-        specifier: ^0.79.0
-        version: 0.79.0(dexie@4.0.1)
-      jsdom:
-        specifier: 24.0.0
-        version: 24.0.0
-      ts-loader:
-        specifier: ^9.5.1
-        version: 9.5.1(typescript@5.4.3)(webpack@5.91.0)
-      ts-node:
-        specifier: ^10.9.2
-        version: 10.9.2(@types/node@20.12.4)(typescript@5.4.3)
-      tsup:
-        specifier: 8.0.2
-        version: 8.0.2(ts-node@10.9.2)(typescript@5.4.3)
-      tsx:
-        specifier: ^4.7.0
-        version: 4.7.2
-      typescript:
-        specifier: 5.4.3
-        version: 5.4.3
-      vite:
-        specifier: ^5.0.10
-        version: 5.2.6(@types/node@20.12.4)
-      vite-plugin-dts:
-        specifier: ^3.6.4
-        version: 3.8.1(@types/node@20.12.4)(typescript@5.4.3)(vite@5.2.6)
-      vitest:
-        specifier: ^1.4.0
-        version: 1.4.0(@types/node@20.12.4)(jsdom@24.0.0)
-
   packages/connectors:
     devDependencies:
       '@fuel-connectors/evm-connector':
