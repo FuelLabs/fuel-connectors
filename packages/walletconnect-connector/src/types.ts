@@ -1,11 +1,19 @@
-import type { Provider as FuelProvider } from 'fuels';
+import type { Config as WagmiConfig } from '@wagmi/core';
+import type { Provider as FuelProvider, JsonAbi } from 'fuels';
 
-export type EthereumWalletConnectorConfig = {
+export interface PredicateConfig {
+  abi: JsonAbi;
+  bytecode: Uint8Array;
+}
+
+export type WalletConnectConfig = {
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
-  ethProvider?: unknown | Promise<unknown>;
+  projectId?: string;
+  wagmiConfig?: WagmiConfig;
+  predicateConfig?: PredicateConfig;
 };
 
-export enum EthereumWalletConnectorEvents {
+export enum WalletConnectConnectorEvents {
   //accounts
   ACCOUNTS_CHANGED = 'accountsChanged',
 

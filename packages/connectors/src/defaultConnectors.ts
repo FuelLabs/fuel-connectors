@@ -2,7 +2,7 @@ import { EVMWalletConnector } from '@fuel-connectors/evm-connector';
 import { FuelWalletDevelopmentConnector } from '@fuel-connectors/fuel-development-wallet';
 import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
 import { FueletWalletConnector } from '@fuel-connectors/fuelet-wallet';
-import { WalletconnectWalletConnector } from '@fuel-connectors/walletconnect-connector';
+import { WalletConnectConnector } from '@fuel-connectors/walletconnect-connector';
 import type { FuelConnector } from 'fuels';
 
 type DefaultConnectors = {
@@ -16,7 +16,7 @@ export function defaultConnectors({
     new FuelWalletConnector(),
     new FueletWalletConnector(),
     new EVMWalletConnector(),
-    new WalletconnectWalletConnector(),
+    new WalletConnectConnector(),
   ];
 
   if (devMode) {

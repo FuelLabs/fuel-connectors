@@ -1,6 +1,12 @@
 import { hexToBytes } from '@ethereumjs/util';
 import { hexlify, splitSignature } from '@ethersproject/bytes';
-import { type Config, disconnect, getAccount } from '@wagmi/core';
+import {
+  type Config,
+  disconnect,
+  getAccount,
+  reconnect,
+  watchAccount,
+} from '@wagmi/core';
 import type { Web3Modal } from '@web3modal/wagmi';
 import {
   type AbiMap,
@@ -15,24 +21,22 @@ import {
   type Version,
   transactionRequestify,
 } from 'fuels';
-import { PredicateAccount } from './Predicate';
-import { BETA_5_URL } from './constants';
+import { BETA_5_URL, ETHEREUM_ICON } from './constants';
+import { predicates } from './predicates';
 import {
-  type EthereumWalletConnectorConfig,
-  EthereumWalletConnectorEvents,
+  type WalletConnectConfig,
+  WalletConnectConnectorEvents,
 } from './types';
-import { ETHEREUM_ICON } from './utils/ethereum-icon';
-import { createPredicate } from './utils/predicate';
-import { predicates } from './utils/predicateResources';
-import WagmiConfig from './utils/wagmiConfig';
+import { PredicateAccount } from './utils/Predicate';
+import { createModalConfig } from './utils/wagmiConfig';
 
-export class WalletconnectWalletConnector extends FuelConnector {
+export class WalletConnectConnector extends FuelConnector {
   name = 'Ethereum Wallets';
 
   connected = false;
   installed = false;
 
-  events = { ...FuelConnectorEventTypes, ...EthereumWalletConnectorEvents };
+  events = { ...FuelConnectorEventTypes, ...WalletConnectConnectorEvents };
 
   metadata: ConnectorMetadata = {
     image: ETHEREUM_ICON,
@@ -43,50 +47,35 @@ export class WalletconnectWalletConnector extends FuelConnector {
     },
   };
 
-  ethConfig: Config;
+  wagmiConfig: Config;
   ethProvider: unknown | null = null;
   fuelProvider: FuelProvider | null = null;
-  ethModal: Web3Modal;
+  web3Modal: Web3Modal;
 
   private predicateAccount: PredicateAccount;
-  private predicate = predicates['verification-predicate'];
-  private setupLock = false;
-  private _currentAccount: string | null = null;
-  private config: EthereumWalletConnectorConfig = {};
-  private _ethereumEvents = 0;
+  private config: WalletConnectConfig = {};
 
-  constructor(config: EthereumWalletConnectorConfig = {}) {
+  private _unsubs: Array<() => void> = [];
+
+  constructor(config: WalletConnectConfig = {}) {
     super();
 
-    this.predicateAccount = new PredicateAccount();
+    this.predicateAccount = new PredicateAccount(
+      config.predicateConfig ?? predicates.predicate,
+    );
 
-    const wagmiConfig = new WagmiConfig();
-
-    this.ethConfig = wagmiConfig.getEthConfig();
-    this.ethModal = wagmiConfig.getEthModal();
+    const { wagmiConfig, web3Modal } = createModalConfig(config);
+    this.wagmiConfig = wagmiConfig;
+    this.web3Modal = web3Modal;
 
     this.configProviders(config);
-    this.setupEthereumEvents();
+    this.setupWatchers();
   }
 
-  async configProviders(config: EthereumWalletConnectorConfig = {}) {
+  async configProviders(config: WalletConnectConfig = {}) {
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || FuelProvider.create(BETA_5_URL),
-      ethProvider: config.ethProvider || null,
     });
-  }
-
-  setupEthereumEvents() {
-    this._ethereumEvents = Number(
-      setInterval(() => {
-        if (this.ethProvider) {
-          clearInterval(this._ethereumEvents);
-          window.dispatchEvent(
-            new CustomEvent('FuelConnector', { detail: this }),
-          );
-        }
-      }, 500),
-    );
   }
 
   /**
@@ -94,6 +83,47 @@ export class WalletconnectWalletConnector extends FuelConnector {
    * Application communication methods
    * ============================================================
    */
+  evmAccounts(): Array<string> {
+    const accounts = getAccount(this.wagmiConfig).addresses;
+    return accounts as Array<string>;
+  }
+
+  setupWatchers() {
+    this._unsubs.push(
+      watchAccount(this.wagmiConfig, {
+        onChange: async (account) => {
+          switch (account.status) {
+            case 'connected': {
+              this.emit(this.events.connection, true);
+              this.emit(
+                this.events.currentAccount,
+                await this.predicateAccount.getPredicateAddress(
+                  account.address,
+                ),
+              );
+              this.emit(
+                this.events.accounts,
+                await this.predicateAccount.getPredicateAccounts(
+                  this.evmAccounts(),
+                ),
+              );
+              break;
+            }
+            case 'disconnected': {
+              this.emit(this.events.connection, false);
+              this.emit(this.events.currentAccount, null);
+              this.emit(this.events.accounts, []);
+              break;
+            }
+          }
+        },
+      }),
+    );
+  }
+
+  destroy() {
+    this._unsubs.forEach((unsub) => unsub());
+  }
 
   async getProviders() {
     if (!this.fuelProvider) {
@@ -109,51 +139,13 @@ export class WalletconnectWalletConnector extends FuelConnector {
     };
   }
 
-  async setup() {
-    if (this.setupLock) return;
-    this.setupLock = true;
-
-    await this.setupCurrentAccount();
-    await this.setupEventBridge();
-  }
-
-  async setupEventBridge() {
-    //@ts-ignore
-    this.ethProvider.on(this.events.ACCOUNTS_CHANGED, async () => {
-      this.emit('accounts', await this.accounts());
-      if (this._currentAccount !== getAccount(this.ethConfig).address) {
-        await this.setupCurrentAccount();
-      }
-    });
-
-    //@ts-ignore
-    this.ethProvider.on(this.events.CONNECT, async (_arg) => {
-      this.emit('connection', await this.isConnected());
-    });
-
-    //@ts-ignore
-    this.ethProvider.on(this.events.DISCONNECT, async (_arg) => {
-      this.emit('connection', await this.isConnected());
-    });
-  }
-
-  async setupCurrentAccount() {
-    const currentAccount = getAccount(this.ethConfig).address || null;
-
-    this._currentAccount = currentAccount;
-
-    this.emit('currentAccount', currentAccount);
-  }
-
   /**
    * ============================================================
    * Connector methods
    * ============================================================
    */
-
   async ping(): Promise<boolean> {
     await this.configProviders();
-
     return true;
   }
 
@@ -161,58 +153,52 @@ export class WalletconnectWalletConnector extends FuelConnector {
     return { app: '0.0.0', network: '0.0.0' };
   }
 
-  async isConnected(): Promise<boolean> {
-    const account = getAccount(this.ethConfig);
+  async requireConnection() {
+    const { state } = this.wagmiConfig;
+    if (state.status === 'disconnected' && state.connections.size > 0) {
+      await reconnect(this.wagmiConfig);
+    }
+  }
 
+  async isConnected(): Promise<boolean> {
+    await this.requireConnection();
+    const account = getAccount(this.wagmiConfig);
     return account.isConnected || false;
   }
 
-  async accounts(): Promise<Array<string>> {
-    if (!this.ethProvider) {
-      return [];
-    }
-
-    const accounts = await this.predicateAccount.getPredicateAccounts(
-      this.ethConfig,
-    );
-
-    return accounts.map((account) => account.predicateAccount);
-  }
-
   async connect(): Promise<boolean> {
-    if (!(await this.isConnected())) {
-      await this.ethModal?.open();
-
-      this.ethModal?.subscribeEvents(async (event) => {
-        if (event.data.event === 'CONNECT_SUCCESS') {
-          this.ethProvider = await getAccount(
-            this.ethConfig,
-          ).connector?.getProvider();
-
-          await this.setup();
-
-          this.emit(this.events.connection, true);
-
-          this.on(this.events.connection, (connection: boolean) => {
-            this.connected = connection;
-          });
+    return new Promise((resolve) => {
+      this.web3Modal.open();
+      const unsub = this.web3Modal.subscribeEvents(async (event) => {
+        switch (event.data.event) {
+          case 'CONNECT_SUCCESS': {
+            resolve(true);
+            unsub();
+            break;
+          }
+          case 'MODAL_CLOSE':
+          case 'CONNECT_ERROR': {
+            resolve(false);
+            unsub();
+            break;
+          }
         }
       });
-
-      return true;
-    }
-
-    return this.connected;
+    });
   }
 
   async disconnect(): Promise<boolean> {
-    await disconnect(this.ethConfig);
+    const { connector } = getAccount(this.wagmiConfig);
+    await disconnect(this.wagmiConfig, {
+      connector,
+    });
+    return this.isConnected();
+  }
 
-    this.emit(this.events.connection, false);
-    this.emit(this.events.accounts, []);
-    this.emit(this.events.currentAccount, null);
+  async accounts(): Promise<Array<string>> {
+    await this.requireConnection();
 
-    return false;
+    return this.predicateAccount.getPredicateAccounts(this.evmAccounts());
   }
 
   async signMessage(_address: string, _message: string): Promise<string> {
@@ -229,21 +215,19 @@ export class WalletconnectWalletConnector extends FuelConnector {
 
     const { fuelProvider } = await this.getProviders();
     const chainId = fuelProvider.getChainId();
-    const account = await this.predicateAccount.getPredicateFromAddress(
+    const evmAccount = await this.predicateAccount.getEVMAddress(
       address,
-      this.ethConfig,
+      this.evmAccounts(),
     );
-    if (!account) {
+    if (!evmAccount) {
       throw Error(`No account found for ${address}`);
     }
     const transactionRequest = transactionRequestify(transaction);
 
     // Create a predicate and set the witness index to call in predicate`
-    const predicate = createPredicate(
-      account.ethAccount,
+    const predicate = this.predicateAccount.createPredicate(
+      evmAccount,
       fuelProvider,
-      this.predicate.bytecode,
-      this.predicate.abi,
       [transactionRequest.witnesses.length],
     );
     predicate.connect(fuelProvider);
@@ -254,12 +238,14 @@ export class WalletconnectWalletConnector extends FuelConnector {
     // To each input of the request, attach the predicate and its data
     const requestWithPredicateAttached =
       predicate.populateTransactionPredicateData(transactionRequest);
-
     const txID = requestWithPredicateAttached.getTransactionId(chainId);
-    //@ts-ignore
-    const signature = await this.ethProvider.request({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    const provider: any = await getAccount(
+      this.wagmiConfig,
+    ).connector?.getProvider();
+    const signature = await provider.request({
       method: 'personal_sign',
-      params: [txID, account.ethAccount],
+      params: [txID, evmAccount],
     });
 
     // Transform the signature into compact form for Sway to understand
@@ -282,14 +268,7 @@ export class WalletconnectWalletConnector extends FuelConnector {
     if (!(await this.isConnected())) {
       throw Error('No connected accounts');
     }
-
-    const account = getAccount(this.ethConfig).address;
-
-    if (!account) {
-      throw Error('No connected accounts');
-    }
-
-    return account;
+    return getAccount(this.wagmiConfig).address || null;
   }
 
   async addAssets(_assets: Asset[]): Promise<boolean> {

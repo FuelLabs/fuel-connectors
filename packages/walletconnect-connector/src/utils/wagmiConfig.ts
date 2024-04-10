@@ -1,55 +1,41 @@
-import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
 import { http, type Config, createConfig, injected } from '@wagmi/core';
-import { mainnet } from '@wagmi/core/chains';
+import { mainnet, sepolia } from '@wagmi/core/chains';
 import { type Web3Modal, createWeb3Modal } from '@web3modal/wagmi';
+import type { WalletConnectConfig } from '../types';
 
-export default class WagmiConfig {
-  private WAGMI_PROJECT_ID = '0e0f5503e675e719c07e73ff5f38d31f';
-  private WAGMI_PROJECT_URL = 'http://localhost:5173';
+interface ModalConfig {
+  wagmiConfig: Config;
+  web3Modal: Web3Modal;
+}
 
-  private metadata = {
-    name: 'WalletConnect Connector',
-    description: 'WalletConnect Connector',
-    url: this.WAGMI_PROJECT_URL,
-    icons: ['https://avatars.githubusercontent.com/u/37784886'],
-  };
-
-  private ethConfig: Config;
-  private ethModal: Web3Modal;
-
-  constructor() {
-    this.ethConfig = createConfig({
-      chains: [mainnet],
+export function createModalConfig(config: WalletConnectConfig): ModalConfig {
+  const wagmiConfig =
+    config.wagmiConfig ??
+    createConfig({
+      chains: [sepolia, mainnet],
       transports: {
         [mainnet.id]: http(),
+        [sepolia.id]: http(),
       },
-      connectors: [
-        walletConnect({
-          projectId: this.WAGMI_PROJECT_ID,
-          metadata: this.metadata,
-          showQrModal: false,
-        }),
-        injected({ shimDisconnect: false }),
-        coinbaseWallet({
-          appName: this.metadata.name,
-          appLogoUrl: this.metadata.icons[0],
-          darkMode: true,
-          reloadOnDisconnect: true,
-        }),
-      ],
+      connectors: [injected({ shimDisconnect: false })],
     });
 
-    this.ethModal = createWeb3Modal({
-      wagmiConfig: this.ethConfig,
-      projectId: this.WAGMI_PROJECT_ID,
-    });
+  if (!config.projectId) {
+    console.warn(
+      '[WalletConnect Connector]: Get a project ID on https://cloud.walletconnect.com to use WalletConnect features.',
+    );
   }
 
-  getEthConfig() {
-    return this.ethConfig;
-  }
-
-  getEthModal() {
-    return this.ethModal;
-  }
+  return {
+    wagmiConfig,
+    web3Modal: createWeb3Modal({
+      wagmiConfig: {
+        ...wagmiConfig,
+        // @ts-ignore
+        enableWalletConnect: !!config.projectId,
+      },
+      enableAnalytics: false,
+      projectId: config.projectId ?? '00000000000000000000000000000000',
+    }),
+  };
 }

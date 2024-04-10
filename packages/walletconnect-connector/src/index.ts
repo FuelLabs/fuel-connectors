@@ -1,1 +1,2 @@
-export * from './walletconnectWalletConnector';
+export * from './WalletConnectConnector';
+export * from './types';
