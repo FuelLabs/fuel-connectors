@@ -238,6 +238,13 @@ export class WalletConnectConnector extends FuelConnector {
     // To each input of the request, attach the predicate and its data
     const requestWithPredicateAttached =
       predicate.populateTransactionPredicateData(transactionRequest);
+
+    requestWithPredicateAttached.inputs.forEach((input) => {
+      if ('predicate' in input && input.predicate) {
+        input.witnessIndex = 0;
+      }
+    });
+
     const txID = requestWithPredicateAttached.getTransactionId(chainId);
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     const provider: any = await getAccount(
