@@ -97,8 +97,23 @@ importers:
         specifier: 5.2.6
         version: 5.2.6(@types/node@20.12.4)
 
+  packages/burner-wallet-connector:
+    devDependencies:
+      fuels:
+        specifier: ^0.79.0
+        version: 0.79.0(dexie@4.0.1)
+      tsup:
+        specifier: 8.0.2
+        version: 8.0.2(ts-node@10.9.2)(typescript@5.4.3)
+      typescript:
+        specifier: 5.4.3
+        version: 5.4.3
+
   packages/connectors:
     devDependencies:
+      '@fuel-connectors/burner-wallet-connector':
+        specifier: workspace:*
+        version: link:../burner-wallet-connector
       '@fuel-connectors/evm-connector':
         specifier: workspace:*
         version: link:../evm-connector
@@ -2513,7 +2528,7 @@ packages:
   /@types/bn.js@5.1.5:
     resolution: {integrity: sha512-V46N0zwKRF5Q00AZ6hWtN0T8gGmDUaUzLWQvHFo5yThtVwK/VCenFY3wXVbOvNfajEpsTfQM4IN9k/d6gUVX3A==}
     dependencies:
-      '@types/node': 20.11.30
+      '@types/node': 20.12.4
 
   /@types/eslint-scope@3.7.7:
     resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
@@ -2569,12 +2584,12 @@ packages:
     resolution: {integrity: sha512-dHM6ZxwlmuZaRmUPfv1p+KrdD1Dci04FbdEm/9wEMouFqxYoFl5aMkt0VMAUtYRQDyYvD41WJLukhq/ha3YuTw==}
     dependencies:
       undici-types: 5.26.5
+    dev: true
 
   /@types/node@20.12.4:
     resolution: {integrity: sha512-E+Fa9z3wSQpzgYQdYmme5X3OTuejnnTx88A6p6vkkJosR3KBz+HpE3kqNm98VE6cfLFcISx7zW7MsJkH6KwbTw==}
     dependencies:
       undici-types: 5.26.5
-    dev: true
 
   /@types/normalize-package-data@2.4.4:
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -6391,23 +6406,12 @@ packages:
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
-      terser: 5.30.3
+      terser: 5.29.2
       webpack: 5.91.0(esbuild@0.19.12)
     dev: true
 
   /terser@5.29.2:
     resolution: {integrity: sha512-ZiGkhUBIM+7LwkNjXYJq8svgkd+QK3UUr0wJqY4MieaezBSAIPgbSPZyIx0idM6XWK5CMzSWa8MJIzmRcB8Caw==}
-    engines: {node: '>=10'}
-    hasBin: true
-    dependencies:
-      '@jridgewell/source-map': 0.3.6
-      acorn: 8.11.3
-      commander: 2.20.3
-      source-map-support: 0.5.21
-    dev: true
-
-  /terser@5.30.3:
-    resolution: {integrity: sha512-STdUgOUx8rLbMGO9IOwHLpCqolkDITFFQSMYYwKE1N2lY6MVSaeoi10z/EhWxRc6ybqoVmKSkhKYH/XUpl7vSA==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
