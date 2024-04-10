@@ -204,8 +204,10 @@ export class BakoSafeConnector extends FuelConnector {
       });
       // @ts-ignore
       this.on(this.events.TRANSACTION_CREATED, ({ data, from }) => {
+        //@ts-ignore
+        const txId = `0x${data.data[0]}`;
         if (this.verifyMessageOrigin(from)) return;
-        resolve(`0x${data}`);
+        resolve(txId);
       });
     });
   }
