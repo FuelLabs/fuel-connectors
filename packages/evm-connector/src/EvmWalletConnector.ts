@@ -28,13 +28,13 @@ import { createPredicate, getPredicateAddress } from './utils/predicate';
 import { predicates } from './utils/predicateResources';
 
 export class EVMWalletConnector extends FuelConnector {
-  name = 'EVM wallet connector';
+  name = 'Metamask';
   metadata: ConnectorMetadata = {
     image: METAMASK_ICON,
     install: {
       action: 'Install',
-      description: 'Install a ethereum Wallet to connect to Fuel',
-      link: 'https://ethereum.org/en/wallets/find-wallet/',
+      description: 'Install Metamask Wallet to connect to Fuel',
+      link: 'https://metamask.io/download/',
     },
   };
 
@@ -67,7 +67,7 @@ export class EVMWalletConnector extends FuelConnector {
 
   async configProviders(config: EVMWalletConnectorConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || (await Provider.create(BETA_5_URL)),
+      fuelProvider: config.fuelProvider || Provider.create(BETA_5_URL),
       ethProvider: config.ethProvider || window.ethereum,
     });
   }
@@ -110,7 +110,7 @@ export class EVMWalletConnector extends FuelConnector {
         throw new Error('Ethereum provider not found');
       }
 
-      this.fuelProvider = this.config.fuelProvider ?? null;
+      this.fuelProvider = (await this.config.fuelProvider) ?? null;
 
       if (!this.fuelProvider) {
         throw new Error('Fuel provider not found');
@@ -287,6 +287,12 @@ export class EVMWalletConnector extends FuelConnector {
     // To each input of the request, attach the predicate and its data
     const requestWithPredicateAttached =
       predicate.populateTransactionPredicateData(transactionRequest);
+
+    requestWithPredicateAttached.inputs.forEach((input) => {
+      if ('predicate' in input && input.predicate) {
+        input.witnessIndex = 0;
+      }
+    });
 
     const txID = requestWithPredicateAttached.getTransactionId(chainId);
     const signature = await ethProvider.request({

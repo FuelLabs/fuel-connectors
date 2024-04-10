@@ -1,5 +1,33 @@
 # @fuels/connectors
 
+## 0.2.2
+
+## 0.2.1
+
+### Patch Changes
+
+- [#44](https://github.com/FuelLabs/fuel-connectors/pull/44) [`3263829`](https://github.com/FuelLabs/fuel-connectors/commit/32638296d83b56d4aa725082bdb120d536aa1044) Thanks [@luizstacio](https://github.com/luizstacio)! - fix build for browser
+
+## 0.2.0
+
+### Minor Changes
+
+- [#28](https://github.com/FuelLabs/fuel-connectors/pull/28) [`50cbc26`](https://github.com/FuelLabs/fuel-connectors/commit/50cbc266df3b4d4c74643302960ff5d58d00a91c) Thanks [@pedropereiradev](https://github.com/pedropereiradev)! - feat: Add EVM Connector
+
+- [#28](https://github.com/FuelLabs/fuel-connectors/pull/28) [`50cbc26`](https://github.com/FuelLabs/fuel-connectors/commit/50cbc266df3b4d4c74643302960ff5d58d00a91c) Thanks [@pedropereiradev](https://github.com/pedropereiradev)! - refactor evm connector
+
+### Patch Changes
+
+- [#22](https://github.com/FuelLabs/fuel-connectors/pull/22) [`332976e`](https://github.com/FuelLabs/fuel-connectors/commit/332976ef690f8fc1d20879c493496e2f57185cb7) Thanks [@fuel-service-user](https://github.com/fuel-service-user)! - ci: update to tag latest
+
+- [#19](https://github.com/FuelLabs/fuel-connectors/pull/19) [`e75249b`](https://github.com/FuelLabs/fuel-connectors/commit/e75249b61a8c3c2e57dcea9e7c3ca9951081b47b) Thanks [@helciofranco](https://github.com/helciofranco)! - ci: remove redundant packages from the umbrella `@fuels/connectors` package
+
+- [#23](https://github.com/FuelLabs/fuel-connectors/pull/23) [`adf2fa0`](https://github.com/FuelLabs/fuel-connectors/commit/adf2fa0c9116b4b7a57755d455dc3c544cd72d98) Thanks [@fuel-service-user](https://github.com/fuel-service-user)! - ci: update to tag latest
+
+- [#19](https://github.com/FuelLabs/fuel-connectors/pull/19) [`e75249b`](https://github.com/FuelLabs/fuel-connectors/commit/e75249b61a8c3c2e57dcea9e7c3ca9951081b47b) Thanks [@helciofranco](https://github.com/helciofranco)! - chore: update fuels to latest version (0.78.0)
+
+- [#31](https://github.com/FuelLabs/fuel-connectors/pull/31) [`42d1054`](https://github.com/FuelLabs/fuel-connectors/commit/42d105443759ff6665dd4dbdaf3d5178b2138176) Thanks [@fuel-service-user](https://github.com/fuel-service-user)! - ci: update to tag latest
+
 ## 0.1.1
 
 ### Patch Changes
