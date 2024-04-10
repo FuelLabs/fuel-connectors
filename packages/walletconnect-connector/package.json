@@ -15,7 +15,7 @@
   "scripts": {
     "build:forc": "pnpm fuels-forc build --release --path ./predicate",
     "build:resources": "pnpm run build:forc && tsx ./scripts/generatePredicateResources.ts",
-    "build": "pnpm run build:resources && tsup --dts-only",
+    "build": "tsup --dts-only",
     "build:watch": "pnpm run build:resources && tsup --watch --dts-only",
     "ts:check": "tsc --noEmit",
     "test": "vitest"
