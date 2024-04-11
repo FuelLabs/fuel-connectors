@@ -23,7 +23,7 @@ import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import './index.css';
 
-const _queryClientt = new QueryClient();
+const queryClient = new QueryClient();
 
 // ============================================================
 // WalletConnect Connector configurations
