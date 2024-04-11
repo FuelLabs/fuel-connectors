@@ -59,7 +59,7 @@ const wagmiConfig = createConfig({
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <QueryClientProvider client={_queryClientt}>
+    <QueryClientProvider client={queryClient}>
       <FuelProvider
         theme="dark"
         fuelConfig={{
