@@ -14,6 +14,13 @@ import {
 } from 'fuels';
 import { BETA_5_URL, BURNER_WALLET_ICON } from './constants';
 import type { BurnerWalletConfig } from './types';
+import {
+  connectBurnerWallet,
+  disconnectBurnerWallet,
+  getBurnerWalletPrivateKey,
+  isBurnerWalletConnected,
+  setBurnerWalletPrivateKey,
+} from './utils/burnerWalletStorage';
 
 export class BurnerWalletConnector extends FuelConnector {
   name = 'Burner Wallet';
@@ -41,22 +48,23 @@ export class BurnerWalletConnector extends FuelConnector {
   constructor(config: BurnerWalletConfig = {}) {
     super();
 
+    this.config = config;
+
     this.configFuelProvider(config);
-    this.setupBurnerWallet(config);
+    this.setupBurnerWallet();
   }
 
   async configFuelProvider(config: BurnerWalletConfig = {}) {
-    this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || Provider.create(BETA_5_URL),
-    });
+    this.config.fuelProvider =
+      config.fuelProvider || Provider.create(BETA_5_URL);
   }
 
-  async setupBurnerWallet(config: BurnerWalletConfig = {}) {
-    if (config.privateKey) {
-      sessionStorage.setItem('burner-wallet-private-key', config.privateKey);
+  async setupBurnerWallet() {
+    if (this.config.privateKey) {
+      setBurnerWalletPrivateKey(this.config.privateKey);
     }
 
-    const privateKey = sessionStorage.getItem('burner-wallet-private-key');
+    const privateKey = getBurnerWalletPrivateKey();
 
     if (!privateKey) {
       this.burnerWallet = Wallet.generate({
@@ -66,10 +74,7 @@ export class BurnerWalletConnector extends FuelConnector {
       this.burnerWalletProvider = this.burnerWallet.provider;
       this.burnerWalletPrivateKey = this.burnerWallet.privateKey;
 
-      sessionStorage.setItem(
-        'burner-wallet-private-key',
-        this.burnerWalletPrivateKey,
-      );
+      setBurnerWalletPrivateKey(this.burnerWalletPrivateKey);
 
       return this.burnerWallet;
     }
@@ -102,6 +107,10 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async isConnected(): Promise<boolean> {
+    if (!isBurnerWalletConnected()) {
+      return false;
+    }
+
     const account = this.burnerWallet?.address.toString();
 
     return !!account && account.length > 0;
@@ -113,9 +122,13 @@ export class BurnerWalletConnector extends FuelConnector {
         throw Error('Burner Wallet Provider not found');
       }
 
+      await this.setupBurnerWallet();
+
       this.burnerWalletProvider = this.burnerWallet?.connect(
         this.burnerWalletProvider,
       ) as Provider;
+
+      connectBurnerWallet();
     }
 
     this.emit(this.events.connection, true);
@@ -143,9 +156,9 @@ export class BurnerWalletConnector extends FuelConnector {
       this.burnerWalletPrivateKey = null;
       this.burnerWalletProvider = null;
       this.burnerWallet = null;
-
-      localStorage.clear();
     }
+
+    disconnectBurnerWallet();
 
     this.emit(this.events.connection, false);
     this.emit(this.events.currentAccount, null);
