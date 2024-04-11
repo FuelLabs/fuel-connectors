@@ -12,21 +12,3 @@ export type WalletConnectConfig = {
   wagmiConfig?: WagmiConfig;
   predicateConfig?: PredicateConfig;
 };
-
-export enum WalletConnectConnectorEvents {
-  //accounts
-  ACCOUNTS_CHANGED = 'accountsChanged',
-
-  //chain
-  CHAIN_CHANGED = 'chainChanged',
-
-  //session
-  SESSION_EVENT = 'session_event',
-
-  //connection uri
-  DISPLAY_URI = 'display_uri',
-
-  //connections
-  CONNECT = 'connect',
-  DISCONNECT = 'disconnect',
-}

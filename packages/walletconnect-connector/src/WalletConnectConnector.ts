@@ -23,10 +23,7 @@ import {
 } from 'fuels';
 import { BETA_5_URL, ETHEREUM_ICON } from './constants';
 import { predicates } from './predicates';
-import {
-  type WalletConnectConfig,
-  WalletConnectConnectorEvents,
-} from './types';
+import type { WalletConnectConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
 import { createModalConfig } from './utils/wagmiConfig';
 
@@ -36,7 +33,7 @@ export class WalletConnectConnector extends FuelConnector {
   connected = false;
   installed = false;
 
-  events = { ...FuelConnectorEventTypes, ...WalletConnectConnectorEvents };
+  events = FuelConnectorEventTypes;
 
   metadata: ConnectorMetadata = {
     image: ETHEREUM_ICON,
