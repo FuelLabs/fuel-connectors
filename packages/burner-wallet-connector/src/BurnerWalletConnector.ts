@@ -102,7 +102,9 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async isConnected(): Promise<boolean> {
-    return this.burnerWallet?.address.toString() !== '';
+    const account = this.burnerWallet?.address.toString();
+
+    return !!account && account.length > 0;
   }
 
   async connect(): Promise<boolean> {
@@ -129,12 +131,20 @@ export class BurnerWalletConnector extends FuelConnector {
   async accounts(): Promise<string[]> {
     const account = this.burnerWallet?.address.toAddress();
 
+    if (!account) {
+      return [];
+    }
+
     return [account as `fuel${string}`];
   }
 
   async disconnect(): Promise<boolean> {
     if (await this.isConnected()) {
-      this.burnerWallet?.lock();
+      this.burnerWalletPrivateKey = null;
+      this.burnerWalletProvider = null;
+      this.burnerWallet = null;
+
+      localStorage.clear();
     }
 
     this.emit(this.events.connection, false);
