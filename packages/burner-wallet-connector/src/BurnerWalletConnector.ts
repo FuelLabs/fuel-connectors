@@ -235,10 +235,10 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async getAbi(_contractId: string): Promise<JsonAbi> {
-    throw Error('Cannot get contractId ABI for a predicate');
+    throw Error('Method not implemented.');
   }
 
   async hasAbi(_contractId: string): Promise<boolean> {
-    throw Error('A predicate account cannot have an ABI');
+    throw Error('Method not implemented.');
   }
 }
