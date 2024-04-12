@@ -99,6 +99,9 @@ importers:
 
   packages/burner-wallet-connector:
     devDependencies:
+      '@fuel-ts/account':
+        specifier: ^0.79.0
+        version: 0.79.0(dexie@4.0.1)
       fuels:
         specifier: ^0.79.0
         version: 0.79.0(dexie@4.0.1)
