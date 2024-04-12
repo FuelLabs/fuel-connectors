@@ -68,7 +68,7 @@ export class EVMWalletConnector extends FuelConnector {
   async configProviders(config: EVMWalletConnectorConfig = {}) {
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || Provider.create(BETA_5_URL),
-      ethProvider: config.ethProvider || (window.ethereum as EIP1193Provider),
+      ethProvider: config.ethProvider || window.ethereum,
     });
   }
 
@@ -90,7 +90,7 @@ export class EVMWalletConnector extends FuelConnector {
       return this.config.ethProvider;
     }
     if (WINDOW?.ethereum) {
-      return WINDOW.ethereum as EIP1193Provider;
+      return WINDOW.ethereum;
     }
 
     return null;
@@ -217,7 +217,8 @@ export class EVMWalletConnector extends FuelConnector {
 
       this.emit(this.events.connection, true);
 
-      this.on(this.events.connection, (connection: boolean) => {
+      // @ts-ignore
+      this.on(this.events.CONNECTION, (connection: boolean) => {
         this.connected = connection;
       });
 
