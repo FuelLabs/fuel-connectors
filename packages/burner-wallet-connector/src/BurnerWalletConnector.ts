@@ -33,8 +33,8 @@ export class BurnerWalletConnector extends FuelConnector {
   metadata: ConnectorMetadata = {
     image: BURNER_WALLET_ICON,
     install: {
-      action: 'install',
-      description: 'Install Burner Wallet to connect to Fuel',
+      action: '',
+      description: 'Burner Wallet to connect to Fuel',
       link: '',
     },
   };
