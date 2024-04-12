@@ -1,4 +1,4 @@
-import type { Asset } from 'fuels';
+import type { Asset, Network } from 'fuels';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { WalletConnectConnector } from '../WalletConnectConnector';
 
@@ -8,6 +8,26 @@ describe('WalletConnect Connector', () => {
   beforeEach(async () => {
     // Class contains state, reset the state for each test
     connector = new WalletConnectConnector({ projectId: '0000' });
+  });
+
+  describe('constructor()', () => {
+    test('initialize properties correctly', () => {
+      const walletWalletConnector = new WalletConnectConnector({
+        projectId: '0000',
+      });
+
+      expect(walletWalletConnector.name).to.equal('Ethereum Wallets');
+      expect(walletWalletConnector.connected).to.be.false;
+      expect(walletWalletConnector.installed).to.be.false;
+    });
+  });
+
+  describe('currenctAccount()', () => {
+    test('throws error', async () => {
+      await expect(() => connector.currentAccount()).rejects.toThrowError(
+        'No connected accounts',
+      );
+    });
   });
 
   describe('signMessage()', () => {
@@ -75,6 +95,24 @@ describe('WalletConnect Connector', () => {
       await expect(() => connector.addNetwork('')).rejects.toThrowError(
         'Method not implemented.',
       );
+    });
+  });
+
+  describe('selectNetwork()', () => {
+    test('throws error', async () => {
+      const network: Network = { url: '', chainId: 0 };
+      await expect(() => connector.selectNetwork(network)).rejects.toThrowError(
+        'Method not implemented.',
+      );
+    });
+  });
+
+  describe('currentNetwork()', () => {
+    test('returns fuel network', async () => {
+      const network = await connector.currentNetwork();
+
+      expect(network.url).to.equal(connector.fuelProvider?.url);
+      expect(network.chainId).to.equal(connector.fuelProvider?.getChainId());
     });
   });
 });
