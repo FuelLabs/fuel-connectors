@@ -1,16 +1,36 @@
-import { type Asset, type Network, Provider } from 'fuels';
-import { BurnerWalletConnector } from 'src/BurnerWalletConnector';
-import { BETA_5_URL } from 'src/constants';
-import { beforeAll, beforeEach, describe, expect, test } from 'vitest';
+import path from 'node:path';
+import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
+import {
+  type Asset,
+  type Network,
+  Provider,
+  Wallet,
+  WalletUnlocked,
+} from 'fuels';
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+} from 'vitest';
+import { BurnerWalletConnector } from '../BurnerWalletConnector';
 import { mockedStorage } from './mockedStorage';
-import { WALLET_WITH_COINS } from './wallets';
 
 describe('Burner Wallet Connector', () => {
   const storageMock = mockedStorage;
 
+  let fuelProvider: Provider;
   let connector: BurnerWalletConnector;
 
-  beforeAll(() => {
+  let stopProvider: () => void;
+
+  let wallet: WalletUnlocked;
+
+  const chainConfigPath = path.join(__dirname, 'chainConfig.json');
+
+  beforeAll(async () => {
     Object.defineProperty(global, 'sessionStorage', {
       value: storageMock,
     });
@@ -18,6 +38,24 @@ describe('Burner Wallet Connector', () => {
     Object.defineProperty(global, 'localStorage', {
       value: storageMock,
     });
+
+    const { stop, provider } = await launchNodeAndGetWallets({
+      launchNodeOptions: {
+        args: ['--chain', chainConfigPath],
+        loggingEnabled: false,
+      },
+    });
+
+    fuelProvider = provider;
+    stopProvider = stop;
+
+    wallet = Wallet.generate({
+      provider: fuelProvider,
+    });
+  });
+
+  afterAll(() => {
+    stopProvider?.();
   });
 
   beforeEach(async () => {
@@ -25,8 +63,52 @@ describe('Burner Wallet Connector', () => {
     sessionStorage.clear();
 
     connector = new BurnerWalletConnector({
-      privateKey: WALLET_WITH_COINS.privateKey,
-      fuelProvider: await Provider.create(BETA_5_URL),
+      fuelProvider,
+      privateKey: wallet.privateKey,
+    });
+  });
+
+  describe('constructor()', () => {
+    test('creates a new BurnerWalletConnector instance', () => {
+      expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
+
+      expect(connector.name).to.be.equal('Burner Wallet');
+      expect(connector.connected).to.be.false;
+      expect(connector.installed).to.be.false;
+    });
+  });
+
+  describe('configFuelProvider()', () => {
+    test('configures fuel provider', async () => {
+      const config = {
+        fuelProvider: fuelProvider,
+      };
+
+      await connector.configFuelProvider(config);
+
+      expect(connector.burnerWalletProvider).to.be.equal(fuelProvider);
+    });
+  });
+
+  describe('setupBurnerWallet()', () => {
+    test('sets up burner wallet', async () => {
+      await connector.setupBurnerWallet();
+
+      expect(connector.burnerWallet).to.be.an.instanceOf(WalletUnlocked);
+      expect(connector.burnerWalletProvider).to.be.an.instanceOf(Provider);
+      expect(connector.burnerWalletPrivateKey).to.be.a('string');
+    });
+
+    test('sets up burner wallet with private key', async () => {
+      const privateKey = wallet.privateKey;
+
+      localStorage.setItem('burnerWalletPrivateKey', privateKey);
+
+      await connector.setupBurnerWallet();
+
+      expect(connector.burnerWallet).to.be.an.instanceOf(WalletUnlocked);
+      expect(connector.burnerWalletProvider).to.be.an.instanceOf(Provider);
+      expect(connector.burnerWalletPrivateKey).to.be.a('string');
     });
   });
 
@@ -34,9 +116,8 @@ describe('Burner Wallet Connector', () => {
     test('connect to burner wallet', async () => {
       await connector.connect();
 
-      const connected = await connector.isConnected();
-
-      expect(connected).to.be.true;
+      const connectedAfterConnect = await connector.isConnected();
+      expect(connectedAfterConnect).to.be.true;
     });
   });
 
@@ -71,7 +152,7 @@ describe('Burner Wallet Connector', () => {
 
       const accounts = await connector.accounts();
 
-      expect(accounts).to.deep.equal([WALLET_WITH_COINS.address]);
+      expect(accounts).to.deep.equal([wallet.address.toString()]);
     });
   });
 
@@ -81,13 +162,15 @@ describe('Burner Wallet Connector', () => {
 
       const account = await connector.currentAccount();
 
-      expect(account).to.equal(WALLET_WITH_COINS.address);
+      expect(account).to.be.equal(wallet.address.toString());
     });
   });
 
   describe('ping()', () => {
     test('returns true', async () => {
-      const ping = await connector.ping();
+      const burnerWalletConnector = new BurnerWalletConnector();
+
+      const ping = await burnerWalletConnector.ping();
 
       expect(ping).to.be.true;
     });
@@ -99,25 +182,22 @@ describe('Burner Wallet Connector', () => {
 
       const network = await connector.currentNetwork();
 
-      const provider = await Provider.create(BETA_5_URL);
-
       expect(network.chainId).to.be.equal(
-        Number((await provider.getNetwork()).chainId),
+        Number((await fuelProvider.getNetwork()).chainId),
       );
-      expect(network.url).to.be.equal(BETA_5_URL);
+      expect(network.url).to.be.equal(fuelProvider.url);
     });
   });
 
   describe('networks()', () => {
     test('returns an array of fuel network info', async () => {
-      const provider = await Provider.create(BETA_5_URL);
       await connector.connect();
 
       const networks = await connector.networks();
       const network = networks.pop();
 
       const networkChainId = network?.chainId;
-      const connectorNetwork = await provider.getNetwork();
+      const connectorNetwork = await fuelProvider.getNetwork();
       const expectedChainId = connectorNetwork
         ? Number(connectorNetwork.chainId)
         : undefined;
@@ -125,7 +205,7 @@ describe('Burner Wallet Connector', () => {
       expect(networks).to.be.an('array');
 
       expect(networkChainId).to.be.equal(expectedChainId);
-      expect(network?.url).to.be.equal(BETA_5_URL);
+      expect(network?.url).to.be.equal(fuelProvider.url);
     });
   });
 
@@ -175,9 +255,11 @@ describe('Burner Wallet Connector', () => {
 
   describe('hasAbi()', () => {
     test('throws error', async () => {
-      await expect(() => connector.hasAbi('contractId')).rejects.toThrowError(
-        'Method not implemented.',
-      );
+      const connector = new BurnerWalletConnector();
+
+      await expect(
+        async () => await connector.hasAbi('contractId'),
+      ).rejects.toThrow('Method not implemented.');
     });
   });
 
