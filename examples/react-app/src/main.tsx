@@ -6,7 +6,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
 import { http, createConfig, injected } from '@wagmi/core';
-import { mainnet } from '@wagmi/core/chains';
+import { mainnet, sepolia } from '@wagmi/core/chains';
 
 import {
   EVMWalletConnector,
@@ -37,9 +37,10 @@ const METADATA = {
   icons: ['https://connectors.fuel.network/logo_white.png'],
 };
 const wagmiConfig = createConfig({
-  chains: [mainnet],
+  chains: [mainnet, sepolia],
   transports: {
     [mainnet.id]: http(),
+    [sepolia.id]: http(),
   },
   connectors: [
     injected({ shimDisconnect: false }),
