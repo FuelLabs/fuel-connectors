@@ -1,5 +1,13 @@
 # @fuel-connectors/evm-connector
 
+## 0.2.2
+
+### Patch Changes
+
+- [#46](https://github.com/FuelLabs/fuel-connectors/pull/46) [`df6ef2c`](https://github.com/FuelLabs/fuel-connectors/commit/df6ef2cefda1669f6e0ded378d093d72ab9dd1cc) Thanks [@luizstacio](https://github.com/luizstacio)! - fix: zero witnessIndex for predicate inputs
+
+## 0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
