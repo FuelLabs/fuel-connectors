@@ -10,11 +10,8 @@ import {
   test,
 } from 'vitest';
 import { BurnerWalletConnector } from '../BurnerWalletConnector';
-import { mockedStorage } from './mockedStorage';
 
 describe('Burner Wallet Connector', () => {
-  const storageMock = mockedStorage;
-
   let fuelProvider: Provider;
   let connector: BurnerWalletConnector;
 
@@ -23,14 +20,6 @@ describe('Burner Wallet Connector', () => {
   const chainConfigPath = path.join(__dirname, 'chainConfig.json');
 
   beforeAll(async () => {
-    Object.defineProperty(global, 'sessionStorage', {
-      value: storageMock,
-    });
-
-    Object.defineProperty(global, 'localStorage', {
-      value: storageMock,
-    });
-
     process.env.GENESIS_SECRET =
       '0x6e48a022f9d4ae187bca4e2645abd62198ae294ee484766edbdaadf78160dc68';
     const { stop, provider } = await launchNodeAndGetWallets({
