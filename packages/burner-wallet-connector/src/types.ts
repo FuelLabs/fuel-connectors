@@ -1,6 +1,6 @@
-import type { Provider as FuelProvider } from 'fuels';
+import type { Provider as FuelProvider, StorageAbstract } from 'fuels';
 
 export type BurnerWalletConfig = {
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
-  privateKey?: string;
+  storage?: StorageAbstract;
 };

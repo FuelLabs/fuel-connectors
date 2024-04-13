@@ -7,20 +7,20 @@ import {
   type JsonAbi,
   type Network,
   Provider,
+  type StorageAbstract,
   type TransactionRequestLike,
   type Version,
   Wallet,
   type WalletUnlocked,
 } from 'fuels';
-import { BETA_5_URL, BURNER_WALLET_ICON } from './constants';
-import type { BurnerWalletConfig } from './types';
 import {
-  connectBurnerWallet,
-  disconnectBurnerWallet,
-  getBurnerWalletPrivateKey,
-  isBurnerWalletConnected,
-  setBurnerWalletPrivateKey,
-} from './utils/burnerWalletStorage';
+  BETA_5_URL,
+  BURNER_WALLET_CONNECTED,
+  BURNER_WALLET_ICON,
+  BURNER_WALLET_PRIVATE_KEY,
+  WINDOW,
+} from './constants';
+import type { BurnerWalletConfig } from './types';
 
 export class BurnerWalletConnector extends FuelConnector {
   name = 'Burner Wallet';
@@ -44,11 +44,13 @@ export class BurnerWalletConnector extends FuelConnector {
   burnerWalletPrivateKey: string | null = null;
 
   private config: BurnerWalletConfig = {};
+  private storage: StorageAbstract;
 
   constructor(config: BurnerWalletConfig = {}) {
     super();
 
     this.config = config;
+    this.storage = this.getStorage(config.storage);
 
     this.configFuelProvider(config);
     this.setupBurnerWallet();
@@ -60,11 +62,11 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async setupBurnerWallet() {
-    if (this.config.privateKey) {
-      setBurnerWalletPrivateKey(this.config.privateKey);
-    }
+    const privateKey = await this.storage.getItem(BURNER_WALLET_PRIVATE_KEY);
 
-    const privateKey = getBurnerWalletPrivateKey();
+    if (privateKey) {
+      this.storage.setItem(BURNER_WALLET_ICON, privateKey);
+    }
 
     if (!privateKey) {
       this.burnerWallet = Wallet.generate({
@@ -74,7 +76,10 @@ export class BurnerWalletConnector extends FuelConnector {
       this.burnerWalletProvider = this.burnerWallet.provider;
       this.burnerWalletPrivateKey = this.burnerWallet.privateKey;
 
-      setBurnerWalletPrivateKey(this.burnerWalletPrivateKey);
+      this.storage.setItem(
+        BURNER_WALLET_PRIVATE_KEY,
+        this.burnerWalletPrivateKey,
+      );
 
       return this.burnerWallet;
     }
@@ -88,6 +93,16 @@ export class BurnerWalletConnector extends FuelConnector {
     this.burnerWalletPrivateKey = this.burnerWallet.privateKey;
 
     return this.burnerWallet;
+  }
+
+  private getStorage(storage?: StorageAbstract) {
+    const _storage =
+      storage ?? (WINDOW.sessionStorage as unknown as StorageAbstract);
+    if (!_storage) {
+      throw new Error('No storage provided');
+    }
+
+    return _storage;
   }
 
   /**
@@ -107,7 +122,10 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async isConnected(): Promise<boolean> {
-    if (!isBurnerWalletConnected()) {
+    const connected =
+      (await this.storage.getItem(BURNER_WALLET_CONNECTED)) === 'true';
+
+    if (!connected) {
       return false;
     }
 
@@ -128,7 +146,7 @@ export class BurnerWalletConnector extends FuelConnector {
         this.burnerWalletProvider,
       ) as Provider;
 
-      connectBurnerWallet();
+      this.storage.setItem(BURNER_WALLET_CONNECTED, 'true');
     }
 
     this.emit(this.events.connection, true);
@@ -158,7 +176,7 @@ export class BurnerWalletConnector extends FuelConnector {
       this.burnerWallet = null;
     }
 
-    disconnectBurnerWallet();
+    this.storage.setItem(BURNER_WALLET_CONNECTED, 'false');
 
     this.emit(this.events.connection, false);
     this.emit(this.events.currentAccount, null);
