@@ -1,6 +1,12 @@
 import path from 'node:path';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
-import type { Asset, Network, Provider } from 'fuels';
+import {
+  type Asset,
+  type Network,
+  type Provider,
+  type StorageAbstract,
+  Wallet,
+} from 'fuels';
 import {
   afterAll,
   beforeAll,
@@ -10,6 +16,9 @@ import {
   test,
 } from 'vitest';
 import { BurnerWalletConnector } from '../BurnerWalletConnector';
+import { BURNER_WALLET_PRIVATE_KEY } from '../constants';
+import type { BurnerWalletConfig } from '../types';
+import { mockedStorage } from './mockedStorage';
 
 describe('Burner Wallet Connector', () => {
   let fuelProvider: Provider;
@@ -20,6 +29,14 @@ describe('Burner Wallet Connector', () => {
   const chainConfigPath = path.join(__dirname, 'chainConfig.json');
 
   beforeAll(async () => {
+    Object.defineProperty(global, 'sessionStorage', {
+      value: mockedStorage,
+    });
+
+    Object.defineProperty(global, 'localStorage', {
+      value: mockedStorage,
+    });
+
     process.env.GENESIS_SECRET =
       '0x6e48a022f9d4ae187bca4e2645abd62198ae294ee484766edbdaadf78160dc68';
     const { stop, provider } = await launchNodeAndGetWallets({
@@ -51,17 +68,41 @@ describe('Burner Wallet Connector', () => {
       expect(connector.connected).to.be.false;
       expect(connector.installed).to.be.false;
     });
-  });
 
-  describe('configFuelProvider()', () => {
-    test('configures fuel provider', async () => {
-      const config = {
-        fuelProvider: fuelProvider,
+    test('creates a new BurnerWalletConnector instance with config using localStorage', async () => {
+      const wallet = Wallet.generate({
+        provider: fuelProvider,
+      });
+
+      localStorage.setItem(BURNER_WALLET_PRIVATE_KEY, wallet.privateKey);
+
+      const config: BurnerWalletConfig = {
+        fuelProvider,
+        storage: localStorage as unknown as StorageAbstract,
       };
+      const connector = new BurnerWalletConnector(config);
+      await connector.connect();
 
-      await connector.configFuelProvider(config);
+      expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
+      expect(connector.burnerWalletPrivateKey).to.be.equal(wallet.privateKey);
+    });
 
-      expect(connector.burnerWalletProvider).to.be.equal(fuelProvider);
+    test('creates a new BurnerWalletConnector instance with config using sessionStorage', async () => {
+      const wallet = Wallet.generate({
+        provider: fuelProvider,
+      });
+
+      sessionStorage.setItem(BURNER_WALLET_PRIVATE_KEY, wallet.privateKey);
+
+      const config: BurnerWalletConfig = {
+        fuelProvider,
+        storage: sessionStorage as unknown as StorageAbstract,
+      };
+      const connector = new BurnerWalletConnector(config);
+      await connector.connect();
+
+      expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
+      expect(connector.burnerWalletPrivateKey).to.be.equal(wallet.privateKey);
     });
   });
 
@@ -101,6 +142,14 @@ describe('Burner Wallet Connector', () => {
   });
 
   describe('accounts()', () => {
+    test('throws error when not connected', async () => {
+      const burnerWalletConnector = new BurnerWalletConnector();
+
+      await expect(() => burnerWalletConnector.accounts()).rejects.toThrow(
+        'Wallet not connected',
+      );
+    });
+
     test('get accounts', async () => {
       await connector.connect();
 
@@ -113,6 +162,14 @@ describe('Burner Wallet Connector', () => {
   });
 
   describe('currentAccount()', () => {
+    test('throws error when not connected', async () => {
+      const burnerWalletConnector = new BurnerWalletConnector();
+
+      await expect(() =>
+        burnerWalletConnector.currentAccount(),
+      ).rejects.toThrow('Wallet not connected');
+    });
+
     test('get current account', async () => {
       await connector.connect();
 
