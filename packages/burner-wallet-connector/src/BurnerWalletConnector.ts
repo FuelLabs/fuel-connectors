@@ -56,12 +56,12 @@ export class BurnerWalletConnector extends FuelConnector {
     this.setupBurnerWallet();
   }
 
-  async configFuelProvider(config: BurnerWalletConfig = {}) {
+  private async configFuelProvider(config: BurnerWalletConfig = {}) {
     this.config.fuelProvider =
       config.fuelProvider || Provider.create(BETA_5_URL);
   }
 
-  async setupBurnerWallet() {
+  private async setupBurnerWallet() {
     const privateKey = await this.storage.getItem(BURNER_WALLET_PRIVATE_KEY);
 
     if (privateKey) {
@@ -160,7 +160,11 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async accounts(): Promise<string[]> {
-    const account = this.burnerWallet?.address.toAddress();
+    if (!this.burnerWallet) {
+      throw Error('Wallet not connected');
+    }
+
+    const account = this.burnerWallet.address.toAddress();
 
     if (!account) {
       return [];
@@ -186,29 +190,45 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async signMessage(_address: string, _message: string): Promise<string> {
-    const signMessage = await this.burnerWallet?.signMessage(_message);
+    if (!this.burnerWallet) {
+      throw Error('Wallet not connected');
+    }
 
-    return signMessage as string;
+    if (_address !== this.burnerWallet.address.toString()) {
+      throw Error('Address not found for the connector');
+    }
+
+    const signMessage = await this.burnerWallet.signMessage(_message);
+
+    return signMessage;
   }
 
   async sendTransaction(
     _address: string,
     transaction: TransactionRequestLike,
   ): Promise<string> {
-    const transactionRequest = await this.burnerWallet?.sendTransaction(
+    if (!this.burnerWallet) {
+      throw Error('Wallet not connected');
+    }
+
+    if (_address !== this.burnerWallet.address.toString()) {
+      throw Error('Address not found for the connector');
+    }
+
+    const transactionRequest = await this.burnerWallet.sendTransaction(
       transaction,
       { awaitExecution: true },
     );
 
-    if (!transactionRequest) {
-      throw Error('Transaction request not found');
-    }
-
-    return transactionRequest?.id;
+    return transactionRequest.id;
   }
 
   async currentAccount(): Promise<string | null> {
-    return this.burnerWallet?.address.toString() || null;
+    if (!this.burnerWallet) {
+      throw Error('Wallet not connected');
+    }
+
+    return this.burnerWallet.address.toString() || null;
   }
 
   async addAssets(_assets: Asset[]): Promise<boolean> {
@@ -236,15 +256,11 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async currentNetwork(): Promise<Network> {
-    if (!this.burnerWalletProvider) {
-      throw Error('Burner Wallet Provider not found');
-    }
-
-    const { chainId } = await this.burnerWalletProvider.getNetwork();
+    const network = await this.burnerWalletProvider?.getNetwork();
 
     return {
-      chainId: Number(chainId),
-      url: this.burnerWalletProvider.url,
+      chainId: Number(network?.chainId),
+      url: this.burnerWalletProvider?.url ?? '',
     };
   }
 
