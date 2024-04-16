@@ -20,10 +20,8 @@ jobs:
         uses: FuelLabs/github-actions/setups/node@master
         with:
           node-version: 20.11.0
-
-      - name: Install pnpm
-        run: pnpm add -g pnpm@8.9.0
-
+          pnpm-version: 8.9.0
+      
       - uses: FuelLabs/github-actions/setups/docker@master
         with:
           username: ${{ github.repository_owner }}

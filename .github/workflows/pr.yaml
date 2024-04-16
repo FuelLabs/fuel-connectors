@@ -44,9 +44,8 @@ jobs:
 
       - name: CI Setup
         uses: FuelLabs/github-actions/setups/node@master
-
-      - name: Install pnpm
-        run: pnpm add -g pnpm@8.9.0
+        with:
+          pnpm-version: 8.9.0
 
       - name: Validate Changeset
         run: pnpm changeset status --since=origin/${{ github.base_ref }}
@@ -57,9 +56,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: FuelLabs/github-actions/setups/node@master
-
-      - name: Install pnpm
-        run: pnpm add -g pnpm@8.9.0
+        with:
+          pnpm-version: 8.9.0
 
       - run: pnpm audit --prod
 
@@ -76,9 +74,8 @@ jobs:
 
       - name: Setup Node
         uses: FuelLabs/github-actions/setups/node@master
-
-      - name: Install pnpm
-        run: pnpm add -g pnpm@8.9.0
+        with:
+          pnpm-version: 8.9.0
 
       - name: Run lint  & ts:check
         run: |
