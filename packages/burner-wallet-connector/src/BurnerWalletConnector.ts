@@ -181,6 +181,7 @@ export class BurnerWalletConnector extends FuelConnector {
     }
 
     this.storage.setItem(BURNER_WALLET_CONNECTED, 'false');
+    this.storage.removeItem(BURNER_WALLET_PRIVATE_KEY);
 
     this.emit(this.events.connection, false);
     this.emit(this.events.currentAccount, null);

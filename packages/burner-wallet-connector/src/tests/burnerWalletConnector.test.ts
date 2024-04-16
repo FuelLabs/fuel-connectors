@@ -136,8 +136,10 @@ describe('Burner Wallet Connector', () => {
       await connector.disconnect();
 
       const connected = await connector.isConnected();
+      const privateKey = sessionStorage.getItem(BURNER_WALLET_PRIVATE_KEY);
 
       expect(connected).to.be.false;
+      expect(privateKey).toBeNull();
     });
   });
 
