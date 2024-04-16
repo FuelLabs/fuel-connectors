@@ -31,6 +31,9 @@ jobs:
         uses: jwalton/gh-find-current-pr@v1
         id: findPr
 
+      - name: Install pnpm
+        run: npm install -g pnpm@8.9.0
+
       - name: Run Vitest
         run: |
           pnpm test:ci
