@@ -46,7 +46,7 @@ jobs:
         uses: FuelLabs/github-actions/setups/node@master
 
       - name: Install pnpm
-        run: npm install -g pnpm@8.9.0
+        run: pnpm add -g pnpm@8.9.0
 
       - name: Validate Changeset
         run: pnpm changeset status --since=origin/${{ github.base_ref }}
@@ -59,7 +59,7 @@ jobs:
       - uses: FuelLabs/github-actions/setups/node@master
       
       - name: Install pnpm
-        run: npm install -g pnpm@8.9.0
+        run: pnpm add -g pnpm@8.9.0
 
       - run: pnpm audit --prod
 
@@ -78,7 +78,7 @@ jobs:
         uses: FuelLabs/github-actions/setups/node@master
 
       - name: Install pnpm
-        run: npm install -g pnpm@8.9.0
+        run: pnpm add -g pnpm@8.9.0
 
       - name: Run lint  & ts:check
         run: |
