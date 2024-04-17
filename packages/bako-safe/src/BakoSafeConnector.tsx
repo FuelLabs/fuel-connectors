@@ -6,6 +6,7 @@ import {
   type Network,
   Provider,
   type StorageAbstract,
+  transactionRequestify,
   type TransactionRequestLike,
 } from 'fuels';
 import { type Socket, io } from 'socket.io-client';
@@ -20,6 +21,7 @@ import {
   HAS_WINDOW,
   HOST_URL,
   WINDOW,
+  SOCKET_URL
 } from './constants';
 import { RequestAPI } from './request';
 import { BAKOSAFEConnectorEvents, type BakoSafeConnectorConfig } from './types';
@@ -96,9 +98,9 @@ export class BakoSafeConnector extends FuelConnector {
     if (this.setupReady) return;
     this.setupReady = true;
     const sessionId = await this.getSessionId();
-    this.socket = io(this.host, {
+    this.socket = io(SOCKET_URL, {
       auth: {
-        username: `[WALLET]${sessionId}`,
+        username: '[CONNECTOR]',
         data: new Date(),
         sessionId: sessionId,
         origin: window.origin,
@@ -114,13 +116,25 @@ export class BakoSafeConnector extends FuelConnector {
     this.socket.connect();
 
     this.sessionId = sessionId;
-    this.username = `[WALLET]${sessionId}`;
+    this.username = `[CONNECTOR]`;
 
-    this.socket?.on(this.events.DEFAULT, (message) => {
-      this.emit(message.type, {
-        data: message,
-        from: this.username,
-      });
+    this.socket?.on(this.events.DEFAULT, ({data}) => {
+      console.log('[CONNECTOR]: RECEBIDO', data)
+      // const { type, to, ...rest } = data;
+      // console.log(data, type, to, ...rest)
+      if(data.to === this.username){
+        console.log('[IF_MIDDLEWARE]', {
+          evento: data.type,
+          data: {
+            ...data.data,
+            from: data.to,
+          },
+        })
+        this.emit(data.type, {
+          from: data.to,
+          data: data.data,
+        });
+      }
     });
   }
 
@@ -135,6 +149,8 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   private verifyMessageOrigin(message: string) {
+    console.log()
+    console.log('[MESSAGE_ORIGIN]', !(message === this.username))
     return !(message === this.username);
   }
 
@@ -143,26 +159,20 @@ export class BakoSafeConnector extends FuelConnector {
   // ============================================================
   async connect() {
     return new Promise<boolean>((resolve) => {
-      const dappWindow = this.dAppWindow?.open('/');
-      if (!dappWindow) {
-        resolve(false);
-        return;
-      }
-
-      this.checkWindow(dappWindow);
+      const cred = crypto.randomUUID()
+      this.dAppWindow?.open('/');
 
       // @ts-ignore
-      this.on(this.events.POPUP_CLOSED, ({ from }) => {
-        if (this.verifyMessageOrigin(from)) return;
-        resolve(false);
+      this.on('[AUTH_CONFIRMED]', (data) => {
+        console.log('[AUTH_CONFIRMED]', data)
+        if(data.id === cred){
+        }
+        const { connected } = data;
+        this.connected = connected;
+        resolve(connected);
       });
 
-      // @ts-ignore
-      this.on(this.events.CONNECTION, ({ data, from }) => {
-        if (this.verifyMessageOrigin(from)) return;
-        this.connected = data;
-        resolve(data);
-      });
+
     });
   }
 
@@ -176,23 +186,73 @@ export class BakoSafeConnector extends FuelConnector {
     _address: string,
     _transaction: TransactionRequestLike,
   ) {
-    return new Promise<string>((resolve, reject) => {
-      const dappWindow = this.dAppWindow?.open('/dapp/transaction');
+    console.log('[SEND_TX_CALLED]')
+    return new Promise<string>(async (resolve, reject) => {
 
-      if (!dappWindow) {
-        reject(new Error('Window not opened'));
-        return;
-      }
 
-      this.checkWindow(dappWindow);
+      
+
+      const tx = transactionRequestify(_transaction);
+      const network = await this.currentNetwork();
+      const tx_id = tx.getTransactionId(network.chainId);
+      const vault = _address
+      const {code, validAt, tx_blocked, metadata, user_address} = await this.api.get(`/connections/${this.sessionId}/transaction/${vault}/${tx_id}`);
+
+      console.log('[AGURDANDO EVENTO]')
+      //aguarda confirmacao de abertura da popup, para enviar as infos da tx
+      this.dAppWindow?.open('/dapp/transaction')
+      // envia uma request pra api, cadastranco um recover code, e todos os dados necessários para a
       // @ts-ignore
-      this.on(this.events.POPUP_CLOSED, ({ from }) => {
-        if (this.verifyMessageOrigin(from)) return;
-        reject(new Error('Window closed'));
-      });
+      this.on('[CONNECTED_RESOURCE]', (data) => {
+        console.log('[CONNECTED_RESOURCE]', data)
+        this.socket?.emit('message', {
+          room: this.sessionId,
+          to: '[UI]',
+          type: '[TX_PENDING]',
+          content: {
+            ...metadata,
+            code,
+            validAt,
+            tx_blocked,
+            transaction: _transaction,
+            provider: network.url,
+            user_address,
+          },
+        })
+      })
+
+      
+
+
+      // //envia o código para a popup
+      // setTimeout(async () => {
+        
+  
+      //   console.log('[RETURNED_CODE]', code)
+      // }, 3000)
+
+      //envia pela popup, as infos para a tx
+        // - popup com timer
+        // - txPayload
+        // - tx disponíveis
+        // - code
+
+      // aguarda api confirmar que popup publicou a tx
+        // - api confirma que tx foi publicada
+        // - api retorna txId
+      
+      //resolver a promise com o txId
+
+
+      // // @ts-ignore
+      // this.on(this.events.POPUP_CLOSED, ({ from }) => {
+      //   if (this.verifyMessageOrigin(from)) return;
+      //   reject(new Error('Window closed'));
+      // });
 
       // @ts-ignore
       this.on(this.events.POPUP_TRANSFER, ({ from }) => {
+        console.log('[SOLICITADO PARA ENVIAR TRANSACAO]', from);
         if (this.verifyMessageOrigin(from)) return;
         this.socket?.emit(this.events.TRANSACTION_SEND, {
           to: `${this.sessionId}:${window.origin}`,
@@ -204,6 +264,7 @@ export class BakoSafeConnector extends FuelConnector {
       });
       // @ts-ignore
       this.on(this.events.TRANSACTION_CREATED, ({ data, from }) => {
+        console.log('[TRANSACTION RECEBIDA DE VOLTA PELO DAPP]', data, from);
         //@ts-ignore
         const txId = `0x${data.data[0]}`;
         if (this.verifyMessageOrigin(from)) return;
@@ -225,6 +286,7 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   async isConnected() {
+    //this request goes to the api without sessionId
     const data = await this.api.get(`/connections/${this.sessionId}/state`);
     this.connected = data;
 
@@ -246,12 +308,8 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   async disconnect() {
-    this.socket?.emit(this.events.AUTH_DISCONECT_DAPP, {
-      to: `${this.sessionId}:${window.origin}`,
-      content: {
-        sessionId: this.sessionId,
-      },
-    });
+    //nao necessário esperar mensagens
+    await this.api.delete(`/connections/${this.sessionId}`);
     this.emit(this.events.CONNECTION, false);
     this.emit(this.events.ACCOUNTS, []);
     this.emit(this.events.CURRENT_ACCOUNT, null);

@@ -6,8 +6,12 @@ export const APP_IMAGE_DARK =
 export const APP_IMAGE_LIGHT =
   'https://safe.bako.global/BAKO_CONNECTOR_ICON.svg';
 
-export const APP_URL = 'https://safe.bako.global';
-export const HOST_URL = 'https://api-safe.bako.global';
+// export const APP_URL = 'https://safe.bako.global';
+// export const HOST_URL = 'https://api-safe.bako.global';
+
+export const APP_URL = 'http://localhost:5174';
+export const HOST_URL = 'http://localhost:3333';
+export const SOCKET_URL = 'http://localhost:3000';
 
 // Window object
 export const HAS_WINDOW = typeof window !== 'undefined';
