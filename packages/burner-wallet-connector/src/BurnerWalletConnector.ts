@@ -15,7 +15,6 @@ import {
 } from 'fuels';
 import {
   BETA_5_URL,
-  BURNER_WALLET_CONNECTED,
   BURNER_WALLET_ICON,
   BURNER_WALLET_PRIVATE_KEY,
   WINDOW,
@@ -23,6 +22,7 @@ import {
 import type { BurnerWalletConfig } from './types';
 
 export class BurnerWalletConnector extends FuelConnector {
+  static defaultProviderUrl: string = BETA_5_URL;
   name = 'Burner Wallet';
 
   connected = false;
@@ -39,65 +39,49 @@ export class BurnerWalletConnector extends FuelConnector {
     },
   };
 
-  burnerWallet: WalletUnlocked | null = null;
-  burnerWalletProvider: Provider | null = null;
-  burnerWalletPrivateKey: string | null = null;
-
-  private config: BurnerWalletConfig = {};
+  private burnerWallet: WalletUnlocked | null = null;
+  private burnerWalletProvider: Provider | null = null;
   private storage: StorageAbstract;
 
   constructor(config: BurnerWalletConfig = {}) {
     super();
-
-    this.config = config;
     this.storage = this.getStorage(config.storage);
-
-    this.configFuelProvider(config);
     this.setupBurnerWallet();
   }
 
-  private async configFuelProvider(config: BurnerWalletConfig = {}) {
-    this.config.fuelProvider =
-      config.fuelProvider || Provider.create(BETA_5_URL);
+  private async getProvider(config: BurnerWalletConfig = {}) {
+    if (!this.burnerWalletProvider) {
+      this.burnerWalletProvider = await (config.fuelProvider ||
+        Provider.create(BurnerWalletConnector.defaultProviderUrl));
+    }
+    return this.burnerWalletProvider;
   }
 
-  private async setupBurnerWallet() {
-    const privateKey = await this.storage.getItem(BURNER_WALLET_PRIVATE_KEY);
+  private generatePrivateKey() {
+    const privateKey = Wallet.generate().privateKey;
+    this.storage.setItem(BURNER_WALLET_PRIVATE_KEY, privateKey);
+    return privateKey;
+  }
 
-    if (privateKey) {
-      this.storage.setItem(BURNER_WALLET_ICON, privateKey);
+  private async setupBurnerWallet(createWallet = false) {
+    if (this.burnerWallet) return;
+    let privateKey = await this.storage.getItem(BURNER_WALLET_PRIVATE_KEY);
+    if (createWallet && !privateKey) {
+      privateKey = this.generatePrivateKey();
     }
-
-    if (!privateKey) {
-      this.burnerWallet = Wallet.generate({
-        provider: await this.config.fuelProvider,
-      });
-
-      this.burnerWalletProvider = this.burnerWallet.provider;
-      this.burnerWalletPrivateKey = this.burnerWallet.privateKey;
-
-      this.storage.setItem(
-        BURNER_WALLET_PRIVATE_KEY,
-        this.burnerWalletPrivateKey,
-      );
-
-      return this.burnerWallet;
-    }
+    if (!privateKey) return;
 
     this.burnerWallet = Wallet.fromPrivateKey(
       privateKey,
-      await this.config.fuelProvider,
+      await this.getProvider(),
     );
-
-    this.burnerWalletProvider = this.burnerWallet.provider;
-    this.burnerWalletPrivateKey = this.burnerWallet.privateKey;
 
     return this.burnerWallet;
   }
 
   private getStorage(storage?: StorageAbstract) {
     const _storage =
-      storage ?? (WINDOW.sessionStorage as unknown as StorageAbstract);
+      storage ?? (WINDOW.localStorage as unknown as StorageAbstract);
     if (!_storage) {
       throw new Error('No storage provided');
     }
@@ -111,9 +95,7 @@ export class BurnerWalletConnector extends FuelConnector {
    * ============================================================
    */
   async ping(): Promise<boolean> {
-    await this.configFuelProvider();
     await this.setupBurnerWallet();
-
     return true;
   }
 
@@ -122,41 +104,19 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async isConnected(): Promise<boolean> {
-    const connected =
-      (await this.storage.getItem(BURNER_WALLET_CONNECTED)) === 'true';
-
-    if (!connected) {
-      return false;
-    }
-
-    const account = this.burnerWallet?.address.toString();
-
-    return !!account && account.length > 0;
+    await this.setupBurnerWallet(false);
+    return !!this.burnerWallet;
   }
 
   async connect(): Promise<boolean> {
-    if (!(await this.isConnected())) {
-      if (!this.burnerWalletProvider) {
-        throw Error('Burner Wallet Provider not found');
-      }
-
-      await this.setupBurnerWallet();
-
-      this.burnerWalletProvider = this.burnerWallet?.connect(
-        this.burnerWalletProvider,
-      ) as Provider;
-
-      this.storage.setItem(BURNER_WALLET_CONNECTED, 'true');
-    }
+    await this.setupBurnerWallet(true);
+    const accountAddress = this.burnerWallet?.address.toAddress();
 
     this.emit(this.events.connection, true);
-    this.emit(
-      this.events.currentAccount,
-      this.burnerWallet?.address.toAddress(),
-    );
-    this.emit(this.events.accounts, [this.burnerWallet?.address.toAddress()]);
+    this.emit(this.events.currentAccount, accountAddress);
+    this.emit(this.events.accounts, [accountAddress]);
 
-    return this.connected;
+    return true;
   }
 
   async accounts(): Promise<string[]> {
@@ -174,32 +134,25 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async disconnect(): Promise<boolean> {
-    if (await this.isConnected()) {
-      this.burnerWalletPrivateKey = null;
-      this.burnerWalletProvider = null;
-      this.burnerWallet = null;
-    }
-
-    this.storage.setItem(BURNER_WALLET_CONNECTED, 'false');
+    this.burnerWalletProvider = null;
+    this.burnerWallet = null;
     this.storage.removeItem(BURNER_WALLET_PRIVATE_KEY);
-
     this.emit(this.events.connection, false);
     this.emit(this.events.currentAccount, null);
     this.emit(this.events.accounts, []);
-
     return this.connected;
   }
 
-  async signMessage(_address: string, _message: string): Promise<string> {
+  async signMessage(address: string, message: string): Promise<string> {
     if (!this.burnerWallet) {
       throw Error('Wallet not connected');
     }
 
-    if (_address !== this.burnerWallet.address.toString()) {
+    if (address !== this.burnerWallet.address.toString()) {
       throw Error('Address not found for the connector');
     }
 
-    const signMessage = await this.burnerWallet.signMessage(_message);
+    const signMessage = await this.burnerWallet.signMessage(message);
 
     return signMessage;
   }
@@ -257,11 +210,12 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async currentNetwork(): Promise<Network> {
-    const network = await this.burnerWalletProvider?.getNetwork();
+    const provider = await this.getProvider();
+    const network = await provider.getNetwork();
 
     return {
       chainId: Number(network?.chainId),
-      url: this.burnerWalletProvider?.url ?? '',
+      url: provider.url ?? '',
     };
   }
 

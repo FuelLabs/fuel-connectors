@@ -1,18 +1,18 @@
-export const mockedStorage: Storage = (() => {
+import type { StorageAbstract } from 'fuels';
+
+export const createMockedStorage: () => StorageAbstract = () => {
   let store: Record<string, string> = {};
 
   return {
-    getItem: (key: string): string => store[key] ?? null,
-    setItem: (key: string, value: string): void => {
+    getItem: async (key: string): Promise<string> => store[key] ?? null,
+    setItem: async (key: string, value: string): Promise<void> => {
       store[key] = value.toString();
     },
-    removeItem: (key: string): void => {
+    removeItem: async (key: string): Promise<void> => {
       delete store[key];
     },
-    clear: (): void => {
+    clear: async (): Promise<void> => {
       store = {};
     },
-    key: (_index: number): string | null => '',
-    length: Object.keys(store).length,
   };
-})();
+};
