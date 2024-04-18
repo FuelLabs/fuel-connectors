@@ -46,7 +46,7 @@ export default function App() {
                     <img
                       src={currentConnector.logo}
                       alt={currentConnector.title}
-                      className="w-20"
+                      className="w-20 h-20"
                     />
                   )}
                 </div>
