@@ -67,7 +67,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           connectors: [
             new FuelWalletConnector(),
             new FueletWalletConnector(),
-            new EVMWalletConnector(),
             new WalletConnectConnector({
               wagmiConfig,
               projectId: WC_PROJECT_ID,

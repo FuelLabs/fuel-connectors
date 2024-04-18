@@ -1,4 +1,4 @@
-import { EVMWalletConnector } from '@fuel-connectors/evm-connector';
+import { BurnerWalletConnector } from '@fuel-connectors/burner-wallet-connector';
 import { FuelWalletDevelopmentConnector } from '@fuel-connectors/fuel-development-wallet';
 import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
 import { FueletWalletConnector } from '@fuel-connectors/fuelet-wallet';
@@ -15,8 +15,8 @@ export function defaultConnectors({
   const connectors = [
     new FuelWalletConnector(),
     new FueletWalletConnector(),
-    new EVMWalletConnector(),
     new WalletConnectConnector(),
+    new BurnerWalletConnector(),
   ];
 
   if (devMode) {

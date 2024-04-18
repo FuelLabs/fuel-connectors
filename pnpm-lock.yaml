@@ -40,7 +40,7 @@ importers:
         version: 1.13.0
       vitest:
         specifier: 1.4.0
-        version: 1.4.0(@types/node@20.12.4)(jsdom@24.0.0)
+        version: 1.4.0(jsdom@24.0.0)
 
   examples/react-app:
     dependencies:
@@ -103,8 +103,41 @@ importers:
         specifier: 5.2.6
         version: 5.2.6(@types/node@20.12.4)
 
+  packages/burner-wallet-connector:
+    devDependencies:
+      '@fuel-ts/account':
+        specifier: ^0.79.0
+        version: 0.79.0(dexie@4.0.1)
+      '@fuel-ts/fuel-core':
+        specifier: ^0.79.0
+        version: 0.79.0
+      fuels:
+        specifier: ^0.79.0
+        version: 0.79.0(dexie@4.0.1)
+      jsdom:
+        specifier: 24.0.0
+        version: 24.0.0
+      tsup:
+        specifier: 8.0.2
+        version: 8.0.2(ts-node@10.9.2)(typescript@5.4.3)
+      typescript:
+        specifier: 5.4.3
+        version: 5.4.3
+      vite:
+        specifier: ^5.0.10
+        version: 5.2.6(@types/node@20.12.4)
+      vite-plugin-dts:
+        specifier: ^3.6.4
+        version: 3.8.1(@types/node@20.12.4)(typescript@5.4.3)(vite@5.2.6)
+      vitest:
+        specifier: ^1.4.0
+        version: 1.4.0(jsdom@24.0.0)
+
   packages/connectors:
     devDependencies:
+      '@fuel-connectors/burner-wallet-connector':
+        specifier: workspace:*
+        version: link:../burner-wallet-connector
       '@fuel-connectors/evm-connector':
         specifier: workspace:*
         version: link:../evm-connector
@@ -5185,7 +5218,7 @@ packages:
       strip-literal: 2.1.0
       test-exclude: 6.0.0
       v8-to-istanbul: 9.2.0
-      vitest: 1.4.0(@types/node@20.12.4)(jsdom@24.0.0)
+      vitest: 1.4.0(jsdom@24.0.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -12854,6 +12887,62 @@ packages:
         optional: true
     dependencies:
       '@types/node': 20.12.4
+      '@vitest/expect': 1.4.0
+      '@vitest/runner': 1.4.0
+      '@vitest/snapshot': 1.4.0
+      '@vitest/spy': 1.4.0
+      '@vitest/utils': 1.4.0
+      acorn-walk: 8.3.2
+      chai: 4.4.1
+      debug: 4.3.4
+      execa: 8.0.1
+      jsdom: 24.0.0
+      local-pkg: 0.5.0
+      magic-string: 0.30.9
+      pathe: 1.1.2
+      picocolors: 1.0.0
+      std-env: 3.7.0
+      strip-literal: 2.1.0
+      tinybench: 2.6.0
+      tinypool: 0.8.3
+      vite: 5.2.6(@types/node@20.12.4)
+      vite-node: 1.4.0(@types/node@20.12.4)
+      why-is-node-running: 2.2.2
+    transitivePeerDependencies:
+      - less
+      - lightningcss
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+    dev: true
+
+  /vitest@1.4.0(jsdom@24.0.0):
+    resolution: {integrity: sha512-gujzn0g7fmwf83/WzrDTnncZt2UiXP41mHuFYFrdwaLRVQ6JYQEiME2IfEjU3vcFL3VKa75XhI3lFgn+hfVsQw==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    hasBin: true
+    peerDependencies:
+      '@edge-runtime/vm': '*'
+      '@types/node': ^18.0.0 || >=20.0.0
+      '@vitest/browser': 1.4.0
+      '@vitest/ui': 1.4.0
+      happy-dom: '*'
+      jsdom: '*'
+    peerDependenciesMeta:
+      '@edge-runtime/vm':
+        optional: true
+      '@types/node':
+        optional: true
+      '@vitest/browser':
+        optional: true
+      '@vitest/ui':
+        optional: true
+      happy-dom:
+        optional: true
+      jsdom:
+        optional: true
+    dependencies:
       '@vitest/expect': 1.4.0
       '@vitest/runner': 1.4.0
       '@vitest/snapshot': 1.4.0
