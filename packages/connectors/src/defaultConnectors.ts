@@ -7,15 +7,17 @@ import type { FuelConnector } from 'fuels';
 
 type DefaultConnectors = {
   devMode?: boolean;
+  projectId?: string;
 };
 
 export function defaultConnectors({
   devMode,
+  projectId,
 }: DefaultConnectors = {}): Array<FuelConnector> {
   const connectors = [
     new FuelWalletConnector(),
     new FueletWalletConnector(),
-    new WalletConnectConnector(),
+    new WalletConnectConnector({ projectId }),
     new BurnerWalletConnector(),
   ];
 
