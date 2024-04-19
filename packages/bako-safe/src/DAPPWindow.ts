@@ -8,10 +8,11 @@ type PopupConfig = {
 };
 
 export class DAppWindow {
-  constructor(private config: PopupConfig) {}
+  constructor(private config: PopupConfig) {
+  }
 
   private get popupConfig() {
-    const { height, width } = this.config;
+    const { height, width} = this.config;
     return {
       top: window.innerHeight / 2 - height / 2,
       left: window.innerWidth / 2 - width / 2,
@@ -45,6 +46,7 @@ export class DAppWindow {
   makeFrame(method: string){
     console.log('[MAKE_FRAME]: ', method)
     const frame = document.createElement('iframe');
+    frame.id = `${this.config.sessionId}-iframe`;
     frame.src = `${this.config.appUrl}${method}${this.queryString}`;
     // frame.src = 'https://google.com'//`${this.config.appUrl}${method}${this.queryString}`;
     console.log('[frame.src]: ', frame.src)
@@ -59,6 +61,11 @@ export class DAppWindow {
     frame.style.border = 'none';
     
     document.body.appendChild(frame);
+  }
+
+  close(){
+    const frame = document.getElementById(`${this.config.sessionId}-iframe`);
+    if(frame) document.body.removeChild(frame)
   }
 
 

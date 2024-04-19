@@ -138,22 +138,6 @@ export class BakoSafeConnector extends FuelConnector {
     });
   }
 
-  private async checkWindow(window: Window) {
-    const checkOpened = () => {
-      if (window?.closed) {
-        this.emit(this.events.POPUP_CLOSED, { from: this.username });
-        clearInterval(timer);
-      }
-    };
-    const timer = setInterval(checkOpened, 500);
-  }
-
-  private verifyMessageOrigin(message: string) {
-    console.log()
-    console.log('[MESSAGE_ORIGIN]', !(message === this.username))
-    return !(message === this.username);
-  }
-
   // ============================================================
   // Connector methods
   // ============================================================
@@ -165,8 +149,8 @@ export class BakoSafeConnector extends FuelConnector {
       // @ts-ignore
       this.on('[AUTH_CONFIRMED]', (data) => {
         console.log('[AUTH_CONFIRMED]', data)
-        if(data.id === cred){
-        }
+        // if(data.id === cred){
+        // }
         const { connected } = data;
         this.connected = connected;
         resolve(connected);
@@ -188,88 +172,27 @@ export class BakoSafeConnector extends FuelConnector {
   ) {
     console.log('[SEND_TX_CALLED]')
     return new Promise<string>(async (resolve, reject) => {
-
-
-      
-
-      const tx = transactionRequestify(_transaction);
-      const network = await this.currentNetwork();
-      const tx_id = tx.getTransactionId(network.chainId);
-      const vault = _address
-      const {code, validAt, tx_blocked, metadata, user_address} = await this.api.get(`/connections/${this.sessionId}/transaction/${vault}/${tx_id}`);
-
-      console.log('[AGURDANDO EVENTO]')
-      //aguarda confirmacao de abertura da popup, para enviar as infos da tx
       this.dAppWindow?.open('/dapp/transaction')
-      // envia uma request pra api, cadastranco um recover code, e todos os dados necessários para a
       // @ts-ignore
       this.on('[CONNECTED_RESOURCE]', (data) => {
         console.log('[CONNECTED_RESOURCE]', data)
-        this.socket?.emit('message', {
-          room: this.sessionId,
-          to: '[UI]',
-          type: '[TX_PENDING]',
-          content: {
-            ...metadata,
-            code,
-            validAt,
-            tx_blocked,
-            transaction: _transaction,
-            provider: network.url,
-            user_address,
-          },
+        this.off('[TX_EVENT_REQUEST]', () => {})
+        this.socket?.emit('[TX_EVENT_REQUEST]', {
+          _transaction,
+          _address,
         })
       })
 
-      
-
-
-      // //envia o código para a popup
-      // setTimeout(async () => {
-        
-  
-      //   console.log('[RETURNED_CODE]', code)
-      // }, 3000)
-
-      //envia pela popup, as infos para a tx
-        // - popup com timer
-        // - txPayload
-        // - tx disponíveis
-        // - code
-
-      // aguarda api confirmar que popup publicou a tx
-        // - api confirma que tx foi publicada
-        // - api retorna txId
-      
-      //resolver a promise com o txId
-
-
-      // // @ts-ignore
-      // this.on(this.events.POPUP_CLOSED, ({ from }) => {
-      //   if (this.verifyMessageOrigin(from)) return;
-      //   reject(new Error('Window closed'));
-      // });
-
       // @ts-ignore
-      this.on(this.events.POPUP_TRANSFER, ({ from }) => {
-        console.log('[SOLICITADO PARA ENVIAR TRANSACAO]', from);
-        if (this.verifyMessageOrigin(from)) return;
-        this.socket?.emit(this.events.TRANSACTION_SEND, {
-          to: `${this.sessionId}:${window.origin}`,
-          content: {
-            address: _address,
-            transaction: _transaction,
-          },
-        });
-      });
-      // @ts-ignore
-      this.on(this.events.TRANSACTION_CREATED, ({ data, from }) => {
-        console.log('[TRANSACTION RECEBIDA DE VOLTA PELO DAPP]', data, from);
-        //@ts-ignore
-        const txId = `0x${data.data[0]}`;
-        if (this.verifyMessageOrigin(from)) return;
-        resolve(txId);
-      });
+      this.on('[TX_EVENT_CONFIRMED]', ({data}) => {
+        this.off('[TX_EVENT_REQUEST]', () => {})
+        console.log('[RESULTADO_TX]', data)
+        // @ts-ignore
+        console.log('[RESPOSTA]: ', `0x${data.id}`)
+        this.dAppWindow?.close();
+        // @ts-ignore
+        resolve(`0x${data.id}`)
+      })
     });
   }
 
