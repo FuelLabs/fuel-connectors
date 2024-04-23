@@ -68,7 +68,7 @@ export class EVMWalletConnector extends FuelConnector {
   async configProviders(config: EVMWalletConnectorConfig = {}) {
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || Provider.create(BETA_5_URL),
-      ethProvider: config.ethProvider || window.ethereum,
+      ethProvider: config.ethProvider || WINDOW?.ethereum,
     });
   }
 
@@ -77,7 +77,7 @@ export class EVMWalletConnector extends FuelConnector {
       setInterval(() => {
         if (WINDOW?.ethereum) {
           clearInterval(this._ethereumEvents);
-          window.dispatchEvent(
+          WINDOW.dispatchEvent(
             new CustomEvent('FuelConnector', { detail: this }),
           );
         }

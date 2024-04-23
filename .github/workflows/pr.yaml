@@ -58,7 +58,6 @@ jobs:
       - uses: FuelLabs/github-actions/setups/node@master
         with:
           pnpm-version: 8.9.0
-      
       - run: pnpm audit --prod
 
   lint:
