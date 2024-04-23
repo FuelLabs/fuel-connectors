@@ -30,7 +30,7 @@ export default function Notification(props: Props) {
                 !type && 'text-zinc-300',
               )}
             >
-              {type === 'success' && 'Succes'}
+              {type === 'success' && 'Success'}
               {type === 'error' && 'Error'}
             </Toast.Title>
             <Toast.Close className="">
