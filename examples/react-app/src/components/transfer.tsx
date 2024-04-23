@@ -23,7 +23,11 @@ export default function Transfer() {
   const handleTransfer = async () => {
     setLoading(true);
     try {
-      const receiverAddress = Address.fromString(receiver || DEFAULT_ADDRESS);
+      if (!receiver) {
+        throw Error('Invalid address');
+      }
+
+      const receiverAddress = Address.fromString(receiver);
 
       const resp = await wallet?.transfer(
         receiverAddress,
@@ -57,13 +61,15 @@ export default function Transfer() {
     } catch (err) {
       const error = err as CustomError;
       console.error(error.message);
+
       setToast({
         open: true,
         type: 'error',
-        children: `The transfer could not be processed: ${error.message.substring(
-          0,
-          32,
-        )}...`,
+        children: `The transfer could not be processed: ${
+          error.message.includes('Invalid B256 Address')
+            ? 'Invalid address'
+            : error.message.substring(0, 32)
+        }...`,
       });
     } finally {
       setLoading(false);
