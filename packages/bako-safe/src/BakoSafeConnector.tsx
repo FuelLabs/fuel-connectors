@@ -6,10 +6,8 @@ import {
   type Network,
   Provider,
   type StorageAbstract,
-  transactionRequestify,
   type TransactionRequestLike,
 } from 'fuels';
-import { type Socket, io } from 'socket.io-client';
 
 import { DAppWindow } from './DAPPWindow';
 import {
@@ -21,10 +19,10 @@ import {
   HAS_WINDOW,
   HOST_URL,
   WINDOW,
-  SOCKET_URL
 } from './constants';
 import { RequestAPI } from './request';
 import { BAKOSAFEConnectorEvents, type BakoSafeConnectorConfig } from './types';
+import { SocketClient } from './SocketClient';
 
 export class BakoSafeConnector extends FuelConnector {
   name = APP_NAME;
@@ -51,11 +49,10 @@ export class BakoSafeConnector extends FuelConnector {
   private readonly host: string;
   private readonly api: RequestAPI;
   private setupReady?: boolean;
-  private socket?: Socket;
+  private socket?: SocketClient;
   private sessionId?: string;
   private dAppWindow?: DAppWindow;
   private storage?: StorageAbstract;
-  private username?: string;
 
   constructor(config?: BakoSafeConnectorConfig) {
     super();
@@ -63,6 +60,7 @@ export class BakoSafeConnector extends FuelConnector {
     this.appUrl = config?.appUrl ?? APP_URL;
     this.api = new RequestAPI(this.host);
     this.storage = this.getStorage(config?.stroage);
+    this.setupReady = false;
   }
 
   // ============================================================
@@ -87,6 +85,30 @@ export class BakoSafeConnector extends FuelConnector {
     return sessionId;
   }
 
+  private checkWindow() {
+    // timeout to open
+    const open_interval = setInterval(() => {
+      const isOpen = this.dAppWindow?.isOpen;
+      if(!isOpen) {
+        this.emit('[CLIENT_DISCONNECTED]', {});
+        clearInterval(open_interval);
+      }
+    }, 2000);
+    // safari browser does not support window.opener
+    if(this.dAppWindow?.isSafariBrowser) return;
+    
+    // timeout to close
+    const interval = setInterval(() => {
+      const isOpen = this.dAppWindow?.opned && this.dAppWindow?.opned.closed;
+      if(isOpen) {
+        this.emit('[CLIENT_DISCONNECTED]', {});
+        clearInterval(interval);
+      }
+    }, 300);
+  }
+
+  
+
   /**
    * [important]
    * this.socket.emit -> emit message to the server
@@ -94,69 +116,65 @@ export class BakoSafeConnector extends FuelConnector {
    */
 
   private async setup() {
-    if (!HAS_WINDOW) return;
-    if (this.setupReady) return;
-    this.setupReady = true;
-    const sessionId = await this.getSessionId();
-    this.socket = io(SOCKET_URL, {
-      auth: {
-        username: '[CONNECTOR]',
-        data: new Date(),
-        sessionId: sessionId,
-        origin: window.origin,
-      },
-      autoConnect: false,
-    });
-    this.dAppWindow = new DAppWindow({
-      sessionId,
-      height: 800,
-      width: 450,
-      appUrl: this.appUrl,
-    });
-    this.socket.connect();
-
-    this.sessionId = sessionId;
-    this.username = `[CONNECTOR]`;
-
-    this.socket?.on(this.events.DEFAULT, ({data}) => {
-      console.log('[CONNECTOR]: RECEBIDO', data)
-      // const { type, to, ...rest } = data;
-      // console.log(data, type, to, ...rest)
-      if(data.to === this.username){
-        console.log('[IF_MIDDLEWARE]', {
-          evento: data.type,
-          data: {
-            ...data.data,
-            from: data.to,
-          },
-        })
-        this.emit(data.type, {
-          from: data.to,
-          data: data.data,
-        });
-      }
-    });
+      if (!HAS_WINDOW) return;
+      if (this.setupReady) return;
+      const sessionId = await this.getSessionId();
+  
+      this.sessionId = sessionId;
+  
+      this.socket = new SocketClient({
+        sessionId,
+        events: this,
+      });
+      
+      this.dAppWindow = new DAppWindow({
+        sessionId,
+        height: 800,
+        width: 450,
+        appUrl: this.appUrl,
+        request_id: this.socket.request_id,
+      });
+      
+      this.setupReady = true;
   }
 
   // ============================================================
   // Connector methods
   // ============================================================
   async connect() {
-    return new Promise<boolean>((resolve) => {
-      const cred = crypto.randomUUID()
-      this.dAppWindow?.open('/');
+    return new Promise<boolean>(async (resolve, reject) => {
+      // some browsers don't find the connection via ping, in others it doesn't work so well
+      const is_connected = await this.isConnected();
+      if(is_connected){
+        resolve(true)
+        return;
+      }
 
+      const request = '[AUTH_CONFIRMED]'
+      const connect_cancel = '[CLIENT_DISCONNECTED]'
+
+      // window controll
+      this.dAppWindow?.open('/', reject)
+      this.checkWindow()
+
+      
+      //events controll
       // @ts-ignore
-      this.on('[AUTH_CONFIRMED]', (data) => {
-        console.log('[AUTH_CONFIRMED]', data)
-        // if(data.id === cred){
-        // }
-        const { connected } = data;
-        this.connected = connected;
-        resolve(connected);
-      });
+      this.socket?.events.on(connect_cancel, () => { // cancel the transaction
+        this.dAppWindow?.close()
+        this.off(connect_cancel, () => {})
+        reject
+      })
+      // @ts-ignore
+      this.socket?.events.on(request, async (data) => {
+        this.socket?.events.off(request, () => {})
+        this.dAppWindow?.close()
+        this.emit(this.events.CONNECTION, data)
+        this.emit(this.events.ACCOUNTS, await this.accounts())
+        this.emit(this.events.CURRENT_ACCOUNT, await this.currentAccount())
 
-
+        resolve(true)
+      })
     });
   }
 
@@ -170,35 +188,47 @@ export class BakoSafeConnector extends FuelConnector {
     _address: string,
     _transaction: TransactionRequestLike,
   ) {
-    console.log('[SEND_TX_CALLED]')
     return new Promise<string>(async (resolve, reject) => {
-      this.dAppWindow?.open('/dapp/transaction')
+      const connect_confirm = '[CONNECTED]'
+      const connect_cancel = '[CLIENT_DISCONNECTED]'
+      const request_tx_pending = '[TX_EVENT_REQUEST]'
+      const request_tx_confirm = '[TX_EVENT_CONFIRMED]'
+
+      // window controll
+      this.dAppWindow?.open('/dapp/transaction', reject)
+      this.checkWindow()
+
+      //events controll
       // @ts-ignore
-      this.on('[CONNECTED_RESOURCE]', (data) => {
-        console.log('[CONNECTED_RESOURCE]', data)
-        this.off('[TX_EVENT_REQUEST]', () => {})
-        this.socket?.emit('[TX_EVENT_REQUEST]', {
+      this.socket?.events.on(connect_cancel, () => { // cancel the transaction
+        this.dAppWindow?.close()
+        this.off(connect_cancel, () => {})
+        reject()
+      })
+      
+      // @ts-ignore
+      this.socket?.events.on(connect_confirm, () => { // confirm bako ui connection
+        this.off(connect_confirm, () => {})
+        this.socket?.server.emit(request_tx_pending, {
           _transaction,
           _address,
         })
-      })
 
-      // @ts-ignore
-      this.on('[TX_EVENT_CONFIRMED]', ({data}) => {
-        this.off('[TX_EVENT_REQUEST]', () => {})
-        console.log('[RESULTADO_TX]', data)
         // @ts-ignore
-        console.log('[RESPOSTA]: ', `0x${data.id}`)
-        this.dAppWindow?.close();
-        // @ts-ignore
-        resolve(`0x${data.id}`)
+        this.socket?.events.on(request_tx_confirm, ({data}) => { // confirm the transaction
+          this.off(request_tx_pending, () => {})
+          this.dAppWindow?.close();
+          // @ts-ignore 
+          resolve(`0x${data.id}`)
+        })
+        
       })
     });
   }
 
   async ping() {
     await this.setup();
-    return !!this.socket;
+    return this.setupReady ?? false;
   }
 
   async version() {
@@ -210,10 +240,12 @@ export class BakoSafeConnector extends FuelConnector {
 
   async isConnected() {
     //this request goes to the api without sessionId
-    const data = await this.api.get(`/connections/${this.sessionId}/state`);
+    const sessionId = this.sessionId ?? (await this.getSessionId());
+    const data = await this.api.get(`/connections/${sessionId}/state`);
+
     this.connected = data;
 
-    return data && !!this.socket;
+    return data;
   }
 
   async accounts() {

@@ -5,10 +5,18 @@ type PopupConfig = {
   height: number;
   width: number;
   sessionId: string;
+  request_id: string;
 };
 
 export class DAppWindow {
+  isMobile: boolean = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  isSafariBrowser: boolean = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  request_id: string;
+  isOpen: boolean = false;
+  opned: Window | null = null;
+
   constructor(private config: PopupConfig) {
+    this.request_id = config.request_id;
   }
 
   private get popupConfig() {
@@ -21,65 +29,97 @@ export class DAppWindow {
     };
   }
 
-  open(method: string) {
-    try{
-      console.log('[opning]: ', `${this.config.appUrl}${method}${this.queryString}`)
-      const { left, top, width, height } = this.popupConfig;
-      const is = method.includes('/dapp/')
 
-      if(is){
-        return this.makeFrame(method)
-      }
-       
-      // //return this.makeFrame(method);
-      
-      // this.makeLink(method)
-      // return window.open()
+  open(method: string, reject: (e:Error) => void){
+    if(this.isOpen) reject(new Error('Window is already open'));
+    const isConnection = !method.includes('/dapp/')
 
-      return this.makeLink(method)
-    }catch(e){
-      console.error('[ERROR]', e)
+    if(!this.isSafariBrowser) {// if is not safari, we can use popup for both cases
+      this.makePopup(method);
     }
+    if(this.isSafariBrowser && isConnection){// to use webauthn, we need a new window
+      this.makeLink(method);
+    }
+    if(this.isSafariBrowser && !isConnection){// to confirm tx, we need a new popup
+      this.makeFrame(method);
+    }
+
+    return;
   }
 
-
-  makeFrame(method: string){
-    console.log('[MAKE_FRAME]: ', method)
-    const frame = document.createElement('iframe');
-    frame.id = `${this.config.sessionId}-iframe`;
-    frame.src = `${this.config.appUrl}${method}${this.queryString}`;
-    // frame.src = 'https://google.com'//`${this.config.appUrl}${method}${this.queryString}`;
-    console.log('[frame.src]: ', frame.src)
-    //const $app = document.createElement('iframe');
-    //console.log('[frame.src]: ', $app)
-    frame.style.position = 'absolute';
-    frame.style.zIndex = '99999999';
-    frame.style.top = '15%';
-    frame.style.left = '25%';
-    frame.style.width = '50%';
-    frame.style.height = '70%';
-    frame.style.border = 'none';
-    
-    document.body.appendChild(frame);
-  }
 
   close(){
     const frame = document.getElementById(`${this.config.sessionId}-iframe`);
     if(frame) document.body.removeChild(frame)
+    if(this.opned) this.opned.close();
+    this.isOpen = false;
   }
 
 
   makeLink(method: string){
     const link = `${this.config.appUrl}${method}${this.queryString}`;
-
     const a = document.createElement("a");
     a.setAttribute('href', link);
     a.setAttribute('target', '_blank');
     a.click();
+    this.isOpen = true;
+  }
+
+  makeFrame(method: string){
+    const w = this.small;
+    const frame = document.createElement('iframe');
+    frame.id = `${this.config.sessionId}-iframe`;
+    frame.src = `${this.config.appUrl}${method}${this.queryString}`;
+    frame.style.position = 'absolute';
+    frame.style.zIndex = '99999999';
+    frame.style.top = `${w.top}`;
+    frame.style.left = `${w.left}`;
+    frame.style.width =  w.width;
+    frame.style.height =  w.height;
+    frame.style.border = 'none';
+    
+    document.body.appendChild(frame);
+    this.isOpen = true;
+  }
+
+  makePopup(method: string){
+    const link = `${this.config.appUrl}${method}${this.queryString}`;
+    const popup = window.open(link, 'popup', `width=${this.popupConfig.width}, height=${this.popupConfig.height}, top=${this.popupConfig.top}, left=${this.popupConfig.left}`)
+    if(popup) this.opned = popup;
+    this.isOpen = true;
+    return popup;
   }
 
   private get queryString() {
     const { sessionId } = this.config;
-    return `?sessionId=${sessionId}&origin=${window.location.origin}&name=${APP_NAME}`;
+    return `?sessionId=${sessionId}&origin=${window.location.origin}&name=${APP_NAME}&request_id=${this.request_id}`;
   }
+
+  private get small() { // todo: update this to calculate by screen size changes
+    const breakponint = {
+      'md': {
+        top: 0,
+        left: 0,
+        limit: 650,
+        width: '100%',
+        height: '100%',
+      }, // 100%
+      'lg': {
+        top: `${(window.innerHeight - (window.innerHeight*0.7))/2}px`,
+        left: `${(window.innerWidth - (window.innerWidth*0.5))/2}px`,
+        limit: 1024,
+        width: '50%',
+        height: '70%',
+      }, // 75%
+      'xl': {
+        top: `${(window.innerHeight - 650)/2}px`,
+        left: `${(window.innerWidth - 500)/2}px`,
+        limit: 1440,
+        height: '650px',
+        width: '500px',
+      } // 400px
+    }
+    return window.innerWidth < breakponint.md.limit ? breakponint.md : window.innerWidth < breakponint.lg.limit ? breakponint.lg : breakponint.xl;
+  }
+
 }
