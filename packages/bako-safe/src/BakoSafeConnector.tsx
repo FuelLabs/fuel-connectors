@@ -193,6 +193,7 @@ export class BakoSafeConnector extends FuelConnector {
       const connect_cancel = '[CLIENT_DISCONNECTED]'
       const request_tx_pending = '[TX_EVENT_REQUEST]'
       const request_tx_confirm = '[TX_EVENT_CONFIRMED]'
+      const request_tx_timeout = '[TX_EVENT_TIMEOUT]'
 
       // window controll
       this.dAppWindow?.open('/dapp/transaction', reject)
@@ -204,6 +205,13 @@ export class BakoSafeConnector extends FuelConnector {
         this.dAppWindow?.close()
         this.off(connect_cancel, () => {})
         reject()
+      })
+
+      // @ts-ignore
+      this.socket?.events.on(request_tx_timeout, () => {
+        this.dAppWindow?.close()
+        this.off(request_tx_timeout, () => {})
+        reject(new Error('Transaction timeout'))
       })
       
       // @ts-ignore

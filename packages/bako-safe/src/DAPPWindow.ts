@@ -50,7 +50,9 @@ export class DAppWindow {
 
   close(){
     const frame = document.getElementById(`${this.config.sessionId}-iframe`);
+    const backdrop = document.getElementById(`${this.config.sessionId}-backdrop`);
     if(frame) document.body.removeChild(frame)
+    if(backdrop) document.body.removeChild(backdrop)
     if(this.opned) this.opned.close();
     this.isOpen = false;
   }
@@ -67,6 +69,7 @@ export class DAppWindow {
 
   makeFrame(method: string){
     const w = this.small;
+    //bako frame
     const frame = document.createElement('iframe');
     frame.id = `${this.config.sessionId}-iframe`;
     frame.src = `${this.config.appUrl}${method}${this.queryString}`;
@@ -76,8 +79,20 @@ export class DAppWindow {
     frame.style.left = `${w.left}`;
     frame.style.width =  w.width;
     frame.style.height =  w.height;
-    frame.style.border = 'none';
-    
+    frame.style.borderRadius = '16px';
+
+    //backdrop
+    const backdrop = document.createElement('div');
+    backdrop.id = `${this.config.sessionId}-backdrop`;
+    backdrop.style.position = 'fixed';
+    backdrop.style.top = '0';
+    backdrop.style.left = '0';
+    backdrop.style.width = '100%';
+    backdrop.style.height = '100%';
+    backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)'; 
+    backdrop.style.zIndex = '99999998'; 
+
+    document.body.appendChild(backdrop);
     document.body.appendChild(frame);
     this.isOpen = true;
   }
