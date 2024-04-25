@@ -10,6 +10,7 @@ import {
 } from 'fuels';
 
 import { DAppWindow } from './DAPPWindow';
+import { SocketClient } from './SocketClient';
 import {
   APP_DESCRIPTION,
   APP_IMAGE_DARK,
@@ -22,7 +23,6 @@ import {
 } from './constants';
 import { RequestAPI } from './request';
 import { BAKOSAFEConnectorEvents, type BakoSafeConnectorConfig } from './types';
-import { SocketClient } from './SocketClient';
 
 export class BakoSafeConnector extends FuelConnector {
   name = APP_NAME;
@@ -89,25 +89,24 @@ export class BakoSafeConnector extends FuelConnector {
     // timeout to open
     const open_interval = setInterval(() => {
       const isOpen = this.dAppWindow?.isOpen;
-      if(!isOpen) {
+      if (!isOpen) {
         this.emit('[CLIENT_DISCONNECTED]', {});
         clearInterval(open_interval);
       }
     }, 2000);
+    //todo: check connection on safari
     // safari browser does not support window.opener
-    if(this.dAppWindow?.isSafariBrowser) return;
-    
+    //if(this.dAppWindow?.isSafariBrowser) return;
+
     // timeout to close
     const interval = setInterval(() => {
-      const isOpen = this.dAppWindow?.opned && this.dAppWindow?.opned.closed;
-      if(isOpen) {
+      const isOpen = this.dAppWindow?.opned?.closed;
+      if (isOpen) {
         this.emit('[CLIENT_DISCONNECTED]', {});
         clearInterval(interval);
       }
     }, 300);
   }
-
-  
 
   /**
    * [important]
@@ -116,65 +115,66 @@ export class BakoSafeConnector extends FuelConnector {
    */
 
   private async setup() {
-      if (!HAS_WINDOW) return;
-      if (this.setupReady) return;
-      const sessionId = await this.getSessionId();
-  
-      this.sessionId = sessionId;
-  
-      this.socket = new SocketClient({
-        sessionId,
-        events: this,
-      });
-      
-      this.dAppWindow = new DAppWindow({
-        sessionId,
-        height: 800,
-        width: 450,
-        appUrl: this.appUrl,
-        request_id: this.socket.request_id,
-      });
-      
-      this.setupReady = true;
+    if (!HAS_WINDOW) return;
+    if (this.setupReady) return;
+    const sessionId = await this.getSessionId();
+
+    this.sessionId = sessionId;
+
+    this.socket = new SocketClient({
+      sessionId,
+      events: this,
+    });
+
+    this.dAppWindow = new DAppWindow({
+      sessionId,
+      height: 800,
+      width: 450,
+      appUrl: this.appUrl,
+      request_id: this.socket.request_id,
+    });
+
+    this.setupReady = true;
   }
 
   // ============================================================
   // Connector methods
   // ============================================================
   async connect() {
-    return new Promise<boolean>(async (resolve, reject) => {
-      // some browsers don't find the connection via ping, in others it doesn't work so well
-      const is_connected = await this.isConnected();
-      if(is_connected){
-        resolve(true)
-        return;
-      }
+    return new Promise<boolean>((resolve, reject) => {
+      const request = '[AUTH_CONFIRMED]';
+      const connect_cancel = '[CLIENT_DISCONNECTED]';
 
-      const request = '[AUTH_CONFIRMED]'
-      const connect_cancel = '[CLIENT_DISCONNECTED]'
+      return this.isConnected().then((is_connected) => {
+        // some browsers don't find the connection via ping, in others it doesn't work so well
+        if (is_connected) {
+          resolve(true);
+          return;
+        }
 
-      // window controll
-      this.dAppWindow?.open('/', reject)
-      this.checkWindow()
+        // window controll
+        this.dAppWindow?.open('/', reject);
+        this.checkWindow();
 
-      
-      //events controll
-      // @ts-ignore
-      this.socket?.events.on(connect_cancel, () => { // cancel the transaction
-        this.dAppWindow?.close()
-        this.off(connect_cancel, () => {})
-        reject(false)
-      })
-      // @ts-ignore
-      this.socket?.events.on(request, async (data) => {
-        this.socket?.events.off(request, () => {})
-        this.dAppWindow?.close()
-        this.emit(this.events.CONNECTION, data)
-        this.emit(this.events.ACCOUNTS, await this.accounts())
-        this.emit(this.events.CURRENT_ACCOUNT, await this.currentAccount())
+        //events controll
+        // @ts-ignore
+        this.socket?.events.on(connect_cancel, () => {
+          // cancel the transaction
+          this.dAppWindow?.close();
+          this.off(connect_cancel, () => {});
+          reject(false);
+        });
+        // @ts-ignore
+        this.socket?.events.on(request, async (data) => {
+          this.socket?.events.off(request, () => {});
+          this.dAppWindow?.close();
+          this.emit(this.events.CONNECTION, data);
+          this.emit(this.events.ACCOUNTS, await this.accounts());
+          this.emit(this.events.CURRENT_ACCOUNT, await this.currentAccount());
 
-        resolve(true)
-      })
+          resolve(true);
+        });
+      });
     });
   }
 
@@ -188,49 +188,51 @@ export class BakoSafeConnector extends FuelConnector {
     _address: string,
     _transaction: TransactionRequestLike,
   ) {
-    return new Promise<string>(async (resolve, reject) => {
-      const connect_confirm = '[CONNECTED]'
-      const connect_cancel = '[CLIENT_DISCONNECTED]'
-      const request_tx_pending = '[TX_EVENT_REQUEST]'
-      const request_tx_confirm = '[TX_EVENT_CONFIRMED]'
-      const request_tx_timeout = '[TX_EVENT_TIMEOUT]'
+    return new Promise<string>((resolve, reject) => {
+      const connect_confirm = '[CONNECTED]';
+      const connect_cancel = '[CLIENT_DISCONNECTED]';
+      const request_tx_pending = '[TX_EVENT_REQUEST]';
+      const request_tx_confirm = '[TX_EVENT_CONFIRMED]';
+      const request_tx_timeout = '[TX_EVENT_TIMEOUT]';
 
       // window controll
-      this.dAppWindow?.open('/dapp/transaction', reject)
-      this.checkWindow()
+      this.dAppWindow?.open('/dapp/transaction', reject);
+      this.checkWindow();
 
       //events controll
       // @ts-ignore
-      this.socket?.events.on(connect_cancel, () => { // cancel the transaction
-        this.dAppWindow?.close()
-        this.off(connect_cancel, () => {})
-        reject()
-      })
+      this.socket?.events.on(connect_cancel, () => {
+        // cancel the transaction
+        this.dAppWindow?.close();
+        this.off(connect_cancel, () => {});
+        reject();
+      });
 
       // @ts-ignore
       this.socket?.events.on(request_tx_timeout, () => {
-        this.dAppWindow?.close()
-        this.off(request_tx_timeout, () => {})
-        reject(new Error('Transaction timeout'))
-      })
-      
+        this.dAppWindow?.close();
+        this.off(request_tx_timeout, () => {});
+        reject(new Error('Transaction timeout'));
+      });
+
       // @ts-ignore
-      this.socket?.events.on(connect_confirm, () => { // confirm bako ui connection
-        this.off(connect_confirm, () => {})
+      this.socket?.events.on(connect_confirm, () => {
+        // confirm bako ui connection
+        this.off(connect_confirm, () => {});
         this.socket?.server.emit(request_tx_pending, {
           _transaction,
           _address,
-        })
+        });
 
         // @ts-ignore
-        this.socket?.events.on(request_tx_confirm, ({data}) => { // confirm the transaction
-          this.off(request_tx_pending, () => {})
+        this.socket?.events.on(request_tx_confirm, ({ data }) => {
+          // confirm the transaction
+          this.off(request_tx_pending, () => {});
           this.dAppWindow?.close();
-          // @ts-ignore 
-          resolve(`0x${data.id}`)
-        })
-        
-      })
+          // @ts-ignore
+          resolve(`0x${data.id}`);
+        });
+      });
     });
   }
 
