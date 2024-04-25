@@ -163,7 +163,7 @@ export class BakoSafeConnector extends FuelConnector {
       this.socket?.events.on(connect_cancel, () => { // cancel the transaction
         this.dAppWindow?.close()
         this.off(connect_cancel, () => {})
-        reject
+        reject(false)
       })
       // @ts-ignore
       this.socket?.events.on(request, async (data) => {
