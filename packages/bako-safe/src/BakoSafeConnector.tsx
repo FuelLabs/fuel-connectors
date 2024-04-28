@@ -191,7 +191,7 @@ export class BakoSafeConnector extends FuelConnector {
     return new Promise<string>((resolve, reject) => {
       const connect_confirm = '[CONNECTED]';
       const connect_cancel = '[CLIENT_DISCONNECTED]';
-      const request_tx_pending = '[TX_EVENT_REQUEST]';
+      const request_tx_pending = '[TX_EVENT_REQUESTED]';
       const request_tx_confirm = '[TX_EVENT_CONFIRMED]';
       const request_tx_timeout = '[TX_EVENT_TIMEOUT]';
 
@@ -227,7 +227,7 @@ export class BakoSafeConnector extends FuelConnector {
         // @ts-ignore
         this.socket?.events.on(request_tx_confirm, ({ data }) => {
           // confirm the transaction
-          this.off(request_tx_pending, () => {});
+          this.off(request_tx_confirm, () => {});
           this.dAppWindow?.close();
           // @ts-ignore
           resolve(`0x${data.id}`);

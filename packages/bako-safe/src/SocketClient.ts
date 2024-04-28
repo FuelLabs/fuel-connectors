@@ -47,8 +47,8 @@ export class SocketClient {
                 data
             })
             if(!data.request_id || data.request_id != this.request_id) return;
-            //const { data: content, to, request_id } = data; 
-            
+            //todo: emmit reject event
+
             if(data.to == default_socket_auth.username){
               this.events.emit(data.type, {
                 from: data.username,
