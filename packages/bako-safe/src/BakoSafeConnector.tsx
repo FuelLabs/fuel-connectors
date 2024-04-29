@@ -223,15 +223,15 @@ export class BakoSafeConnector extends FuelConnector {
           _transaction,
           _address,
         });
+      });
 
+      // @ts-ignore
+      this.socket?.events.on(request_tx_confirm, ({ data }) => {
+        // confirm the transaction
+        this.off(request_tx_confirm, () => {});
+        this.dAppWindow?.close();
         // @ts-ignore
-        this.socket?.events.on(request_tx_confirm, ({ data }) => {
-          // confirm the transaction
-          this.off(request_tx_confirm, () => {});
-          this.dAppWindow?.close();
-          // @ts-ignore
-          resolve(`0x${data.id}`);
-        });
+        resolve(`0x${data.id}`);
       });
     });
   }
