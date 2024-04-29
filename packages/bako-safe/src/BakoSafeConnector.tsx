@@ -15,7 +15,6 @@ import {
   APP_DESCRIPTION,
   APP_IMAGE_DARK,
   APP_IMAGE_LIGHT,
-  APP_NAME,
   APP_URL,
   HAS_WINDOW,
   HOST_URL,
@@ -25,7 +24,7 @@ import { RequestAPI } from './request';
 import { BAKOSAFEConnectorEvents, type BakoSafeConnectorConfig } from './types';
 
 export class BakoSafeConnector extends FuelConnector {
-  name = APP_NAME;
+  name = window.document.title;
   metadata = {
     image: {
       light: APP_IMAGE_LIGHT,
