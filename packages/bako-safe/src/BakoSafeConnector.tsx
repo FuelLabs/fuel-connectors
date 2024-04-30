@@ -145,35 +145,32 @@ export class BakoSafeConnector extends FuelConnector {
       const request = '[AUTH_CONFIRMED]';
       const connect_cancel = '[CLIENT_DISCONNECTED]';
 
-      return this.isConnected().then((is_connected) => {
-        // some browsers don't find the connection via ping, in others it doesn't work so well
-        if (is_connected) {
-          resolve(true);
-          return;
-        }
+      if (this.connected) {
+        resolve(true);
+        return;
+      }
 
-        // window controll
-        this.dAppWindow?.open('/', reject);
-        this.checkWindow();
+      // window controll
+      this.dAppWindow?.open('/', reject);
+      this.checkWindow();
 
-        //events controll
-        // @ts-ignore
-        this.socket?.events.on(connect_cancel, () => {
-          // cancel the transaction
-          this.dAppWindow?.close();
-          this.off(connect_cancel, () => {});
-          reject(false);
-        });
-        // @ts-ignore
-        this.socket?.events.on(request, async (data) => {
-          this.socket?.events.off(request, () => {});
-          this.dAppWindow?.close();
-          this.emit(this.events.CONNECTION, data);
-          this.emit(this.events.ACCOUNTS, await this.accounts());
-          this.emit(this.events.CURRENT_ACCOUNT, await this.currentAccount());
-
-          resolve(true);
-        });
+      //events controll
+      // @ts-ignore
+      this.socket?.events.on(connect_cancel, () => {
+        // cancel the transaction
+        this.dAppWindow?.close();
+        this.off(connect_cancel, () => {});
+        reject(false);
+      });
+      // @ts-ignore
+      this.socket?.events.on(request, async (data) => {
+        console.log('request', data);
+        this.socket?.events.off(request, () => {});
+        this.emit(this.events.CONNECTION, data);
+        this.emit(this.events.ACCOUNTS, await this.accounts());
+        this.emit(this.events.CURRENT_ACCOUNT, await this.currentAccount());
+        resolve(true);
+        this.dAppWindow?.close();
       });
     });
   }

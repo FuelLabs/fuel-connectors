@@ -9,13 +9,13 @@ export const APP_IMAGE_LIGHT =
 // export const APP_URL = 'https://safe.bako.global';
 // export const HOST_URL = 'https://api-safe.bako.global';
 
-//export const SOCKET_URL = 'http://localhost:3001';
+// export const APP_URL = 'https://bsafe-ui-git-staging-infinity-base.vercel.app/';
+// export const HOST_URL = 'https://stg-api.bsafe.pro';
+// export const SOCKET_URL = 'https://stg-api.bsafe.pro';
 
-export const APP_URL = 'https://bsafe-ui-git-staging-infinity-base.vercel.app/';
-export const HOST_URL = 'https://stg-api.bsafe.pro';
-// export const HOST_URL = 'http://localhost:3333';
-export const SOCKET_URL = 'https://stg-api.bsafe.pro';
-//export const APP_URL = 'http://localhost:5174';
+export const APP_URL = 'http://localhost:5174';
+export const HOST_URL = 'http://localhost:3333';
+export const SOCKET_URL = 'http://localhost:3001';
 
 // Window object
 export const HAS_WINDOW = typeof window !== 'undefined';

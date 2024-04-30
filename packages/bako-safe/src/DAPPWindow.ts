@@ -33,19 +33,20 @@ export class DAppWindow {
 
   open(method: string, reject: (e: Error) => void) {
     if (this.isOpen) reject(new Error('Window is already open'));
-    const isConnection = !method.includes('/dapp/');
+    const _isConnection = !method.includes('/dapp/');
 
     if (!this.isSafariBrowser) {
       // if is not safari, we can use popup for both cases
       this.makePopup(method);
     }
-    if (this.isSafariBrowser && isConnection) {
-      // to use webauthn, we need a new window
-      this.makeLink(method);
-    }
-    if (this.isSafariBrowser && !isConnection) {
+    // if (this.isSafariBrowser && isConnection) {
+    //   // to use webauthn, we need a new window
+    //   this.makeLink(method);
+    // }
+    if (this.isSafariBrowser) {
+      // && !isConnection) {
       // to confirm tx, we need a new popup
-      this.makeFrame(method);
+      this.makeFrame(method, true);
     }
 
     return;
@@ -71,12 +72,14 @@ export class DAppWindow {
     this.isOpen = true;
   }
 
-  makeFrame(method: string) {
+  makeFrame(method: string, isSafari = false) {
     const w = this.small;
     //bako frame
     const frame = document.createElement('iframe');
     frame.id = `${this.config.sessionId}-iframe`;
-    frame.src = `${this.config.appUrl}${method}${this.queryString}`;
+    frame.src = `${this.config.appUrl}${method}${this.queryString}${
+      isSafari ? '&byConnector=true' : ''
+    }`;
     frame.style.position = 'absolute';
     frame.style.zIndex = '99999999';
     frame.style.top = `${w.top}`;
