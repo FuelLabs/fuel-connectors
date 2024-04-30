@@ -12,7 +12,12 @@ import Notification, { type Props as NotificationProps } from './notification';
 export const COUNTER_CONTRACT_ID =
   '0x0a46aafb83b387155222893b52ed12e5a4b9d6cd06770786f2b5e4307a63b65c';
 
-export default function ContractCounter() {
+interface Props {
+  isSigning: boolean;
+  setIsSigning: (isSigning: boolean) => void;
+}
+
+export default function ContractCounter({ isSigning, setIsSigning }: Props) {
   const { balance, wallet } = useWallet();
 
   const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
@@ -39,7 +44,7 @@ export default function ContractCounter() {
         <div className="space-x-2">
           <Button
             onClick={increment}
-            disabled={isLoading || !hasBalance}
+            disabled={isLoading || !hasBalance || isSigning}
             loading={isLoading}
             loadingText="Incrementing..."
           >
@@ -58,6 +63,7 @@ export default function ContractCounter() {
   async function increment() {
     if (wallet) {
       setLoading(true);
+      setIsSigning(true);
       const contract = CounterContractAbi__factory.connect(
         COUNTER_CONTRACT_ID,
         wallet,
@@ -89,6 +95,7 @@ export default function ContractCounter() {
         });
       } finally {
         setLoading(false);
+        setIsSigning(false);
       }
     }
   }

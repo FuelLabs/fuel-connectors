@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Account from './components/account';
 import Balance from './components/balance';
 import Button from './components/button';
@@ -15,6 +16,8 @@ export default function App() {
     isFetching,
     connect,
   } = useWallet();
+
+  const [isSigning, setIsSigning] = useState(false);
 
   return (
     <main
@@ -100,10 +103,19 @@ export default function App() {
 
                   {isConnected && !isLoading && (
                     <section className="flex h-full flex-col justify-center space-y-6 px-4 py-8 sm:px-8 sm:py-8 md:px-10 md:py-12">
-                      <Account />
+                      <Account
+                        isSigning={isSigning}
+                        setIsSigning={setIsSigning}
+                      />
                       <Balance />
-                      <Counter />
-                      <Transfer />
+                      <Counter
+                        isSigning={isSigning}
+                        setIsSigning={setIsSigning}
+                      />
+                      <Transfer
+                        isSigning={isSigning}
+                        setIsSigning={setIsSigning}
+                      />
                     </section>
                   )}
                 </div>
