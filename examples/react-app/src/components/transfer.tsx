@@ -1,4 +1,4 @@
-import { Address, BaseAssetId } from 'fuels';
+import { Address, Provider } from 'fuels';
 import { useState } from 'react';
 import { useWallet } from '../hooks/useWallet';
 import type { CustomError } from '../utils/customError';
@@ -8,9 +8,12 @@ import Feature from './feature';
 import Notification, { type Props as NotificationProps } from './notification';
 
 const DEFAULT_ADDRESS = Address.fromRandom().toString();
+const DEFAULT_ASSET_ID = 'https://beta-5.fuel.network/graphql';
 
 export default function Transfer() {
   const { balance, wallet, refetchWallet } = useWallet();
+
+  const [provider] = useState(() => Provider.create(DEFAULT_ASSET_ID));
 
   const [receiver, setReceiver] = useState(DEFAULT_ADDRESS);
   const [isLoading, setLoading] = useState(false);
@@ -28,9 +31,8 @@ export default function Transfer() {
       const resp = await wallet?.transfer(
         receiverAddress,
         DEFAULT_AMOUNT,
-        BaseAssetId,
+        (await provider).getBaseAssetId(),
         {
-          gasPrice: 1,
           gasLimit: 10_000,
         },
       );
