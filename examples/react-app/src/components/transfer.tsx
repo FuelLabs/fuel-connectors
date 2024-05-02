@@ -8,12 +8,12 @@ import Feature from './feature';
 import Notification, { type Props as NotificationProps } from './notification';
 
 const DEFAULT_ADDRESS = Address.fromRandom().toString();
-const DEFAULT_ASSET_ID = 'https://beta-5.fuel.network/graphql';
+const DEFAULT_PROVIDER_URL = 'https://beta-5.fuel.network/graphql';
 
 export default function Transfer() {
   const { balance, wallet, refetchWallet } = useWallet();
 
-  const [provider] = useState(() => Provider.create(DEFAULT_ASSET_ID));
+  const [provider] = useState(() => Provider.create(DEFAULT_PROVIDER_URL));
 
   const [receiver, setReceiver] = useState(DEFAULT_ADDRESS);
   const [isLoading, setLoading] = useState(false);
