@@ -107,7 +107,10 @@ export default function App() {
                         isSigning={isSigning}
                         setIsSigning={setIsSigning}
                       />
-                      <Balance />
+                      <Balance
+                        isSigning={isSigning}
+                        setIsSigning={setIsSigning}
+                      />
                       <Counter
                         isSigning={isSigning}
                         setIsSigning={setIsSigning}
