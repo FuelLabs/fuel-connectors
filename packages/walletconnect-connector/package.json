@@ -33,9 +33,9 @@
     "viem": "2.9.9"
   },
   "devDependencies": {
-    "@fuel-ts/account": "^0.79.0",
-    "@fuel-ts/forc": "0.79.0",
-    "@fuel-ts/fuel-core": "^0.79.0",
+    "@fuel-ts/account": "^0.83.0",
+    "@fuel-ts/forc": "0.83.0",
+    "@fuel-ts/fuel-core": "^0.83.0",
     "@types/memoizee": "^0.4.11",
     "fuels": "^0.83.0",
     "jsdom": "24.0.0",
