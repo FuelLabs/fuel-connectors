@@ -8,12 +8,9 @@ import Feature from './feature';
 import Notification, { type Props as NotificationProps } from './notification';
 
 const DEFAULT_ADDRESS = Address.fromRandom().toString();
-const DEFAULT_PROVIDER_URL = 'https://beta-5.fuel.network/graphql';
 
 export default function Transfer() {
   const { balance, wallet, refetchWallet } = useWallet();
-
-  const [provider] = useState(() => Provider.create(DEFAULT_PROVIDER_URL));
 
   const [receiver, setReceiver] = useState(DEFAULT_ADDRESS);
   const [isLoading, setLoading] = useState(false);
@@ -31,7 +28,7 @@ export default function Transfer() {
       const resp = await wallet?.transfer(
         receiverAddress,
         DEFAULT_AMOUNT,
-        (await provider).getBaseAssetId(),
+        undefined,
         {
           gasLimit: 10_000,
         },
