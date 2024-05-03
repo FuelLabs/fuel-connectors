@@ -16,18 +16,6 @@ export const predicates = {
         },
         {
           typeId: 2,
-          type: 'struct EvmAddress',
-          components: [
-            {
-              name: 'value',
-              type: 0,
-              typeArguments: null,
-            },
-          ],
-          typeParameters: null,
-        },
-        {
-          typeId: 3,
           type: 'u64',
           components: null,
           typeParameters: null,
@@ -38,7 +26,7 @@ export const predicates = {
           inputs: [
             {
               name: 'witness_index',
-              type: 3,
+              type: 2,
               typeArguments: null,
             },
           ],
@@ -58,10 +46,10 @@ export const predicates = {
           name: 'SIGNER',
           configurableType: {
             name: '',
-            type: 2,
+            type: 0,
             typeArguments: [],
           },
-          offset: 1952,
+          offset: 3500,
         },
       ],
     },
