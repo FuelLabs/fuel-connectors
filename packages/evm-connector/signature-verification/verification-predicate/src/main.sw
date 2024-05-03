@@ -34,9 +34,7 @@ struct SignedData {
 
 configurable {
     /// The Ethereum address that signed the transaction.
-    SIGNER: EvmAddress = EvmAddress {
-        value: ZERO_B256,
-    },
+    SIGNER: b256 = ZERO_B256,
 }
 
 fn main(witness_index: u64) -> bool {
@@ -48,7 +46,7 @@ fn main(witness_index: u64) -> bool {
 
     // If the signers match then the predicate has validated the Tx.
     if result.is_ok() {
-        if SIGNER == result.unwrap() {
+        if SIGNER == result.unwrap().into() {
             return true;
         }
     }
