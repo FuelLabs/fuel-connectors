@@ -46,7 +46,7 @@ describe('EVM Wallet Connector', () => {
   const bytecode = predicates[predicate].bytecode;
   const abi = predicates[predicate].abi;
 
-  const chainConfigPath = path.join(__dirname, 'chainConfig.json');
+  const snapshotPath = path.join(__dirname, '');
 
   beforeAll(async () => {
     //Launch test node
@@ -54,7 +54,7 @@ describe('EVM Wallet Connector', () => {
       '0x6e48a022f9d4ae187bca4e2645abd62198ae294ee484766edbdaadf78160dc68';
     const { stop, provider } = await launchNodeAndGetWallets({
       launchNodeOptions: {
-        args: ['--chain', chainConfigPath],
+        args: ['--snapshot', snapshotPath],
         loggingEnabled: false,
       },
     });
