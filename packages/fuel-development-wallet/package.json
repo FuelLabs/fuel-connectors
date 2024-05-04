@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@fuel-connectors/fuel-wallet": "workspace:*",
-    "fuels": "0.83.0",
+    "fuels": "pr-2224",
     "tsup": "8.0.2",
     "typescript": "5.4.3",
     "undici": "6.10.1",

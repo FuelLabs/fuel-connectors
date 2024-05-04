@@ -33,11 +33,11 @@
     "viem": "2.9.9"
   },
   "devDependencies": {
-    "@fuel-ts/account": "^0.83.0",
-    "@fuel-ts/forc": "0.83.0",
-    "@fuel-ts/fuel-core": "^0.83.0",
+    "@fuel-ts/account": "pr-2224",
+    "@fuel-ts/forc": "pr-2224",
+    "@fuel-ts/fuel-core": "pr-2224",
     "@types/memoizee": "^0.4.11",
-    "fuels": "^0.83.0",
+    "fuels": "pr-2224",
     "jsdom": "24.0.0",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",

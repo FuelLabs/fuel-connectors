@@ -16,9 +16,7 @@ export const getPredicateAddress = memoize(
     predicateAbi: JsonAbi,
   ): string => {
     const configurable = {
-      SIGNER: Address.fromB256(
-        ethAddress.replace('0x', '0x000000000000000000000000'),
-      ).toEvmAddress(),
+      SIGNER: ethAddress.replace('0x', '0x000000000000000000000000'),
     };
 
     // @ts-ignore

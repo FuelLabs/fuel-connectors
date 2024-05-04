@@ -10,7 +10,6 @@ use std::{
     },
     vm::evm::{
         ecr::ec_recover_evm_address,
-        evm_address::EvmAddress,
     },
 };
 
