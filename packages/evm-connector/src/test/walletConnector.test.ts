@@ -4,6 +4,7 @@ import {
   type Asset,
   type Provider,
   ScriptTransactionRequest,
+  TransactionResponse,
   Wallet,
   WalletUnlocked,
   bn,
@@ -17,12 +18,13 @@ import {
   expect,
   test,
 } from 'vitest';
+import { predicates } from '../generated/predicate';
 import { createPredicate, getPredicateAddress } from '../utils/predicate';
-import { predicates } from '../utils/predicateResources';
 import { MockProvider } from './mockProvider';
 import { testEVMWalletConnector as EVMWalletConnector } from './testConnector';
 
 const predicate = 'verification-predicate';
+const MAX_FEE = bn(10000);
 
 describe('EVM Wallet Connector', () => {
   // Providers used to interact with wallets
@@ -187,12 +189,14 @@ describe('EVM Wallet Connector', () => {
       await fundingWallet
         .transfer(predicate.address, 1_000_000, baseAssetId, {
           gasLimit: 10000,
+          maxFee: MAX_FEE,
         })
         .then((resp) => resp.wait());
       // Transfer alt asset coins to predicate
       await fundingWallet
         .transfer(predicate.address, 1_000_000, ALT_ASSET_ID, {
           gasLimit: 10000,
+          maxFee: MAX_FEE,
         })
         .then((resp) => resp.wait());
 
@@ -216,6 +220,7 @@ describe('EVM Wallet Connector', () => {
       // Create transfer from predicate to recipient
       const transactionRequest = new ScriptTransactionRequest({
         gasLimit: 10000,
+        maxFee: MAX_FEE,
       });
       transactionRequest.addCoinOutput(
         recipientWallet.address,
@@ -244,7 +249,16 @@ describe('EVM Wallet Connector', () => {
       await connector.accounts();
 
       //  Send transaction using EvmWalletConnector
-      await connector.sendTransaction(predicateAccount1, transactionRequest);
+      const txId = await connector.sendTransaction(
+        predicateAccount1,
+        transactionRequest,
+      );
+
+      // wait for result of transaction
+      await new TransactionResponse(
+        txId,
+        fundingWallet.provider,
+      ).waitForResult();
 
       // Check balances are correct
       const predicateAltBalanceFinal = await predicate.getBalance(ALT_ASSET_ID);
@@ -273,12 +287,14 @@ describe('EVM Wallet Connector', () => {
       await fundingWallet
         .transfer(predicate.address, 1_000_000, baseAssetId, {
           gasLimit: 10000,
+          maxFee: MAX_FEE,
         })
         .then((resp) => resp.wait());
       // Transfer alt asset coins to predicate
       await fundingWallet
         .transfer(predicate.address, 1_000_000, ALT_ASSET_ID, {
           gasLimit: 10000,
+          maxFee: MAX_FEE,
         })
         .then((resp) => resp.wait());
 
@@ -302,6 +318,7 @@ describe('EVM Wallet Connector', () => {
       // Create transfer from predicate to recipient
       const transactionRequest = new ScriptTransactionRequest({
         gasLimit: 10000,
+        maxFee: MAX_FEE,
       });
       transactionRequest.addCoinOutput(
         recipientWallet.address,
@@ -330,7 +347,16 @@ describe('EVM Wallet Connector', () => {
       await connector.accounts();
 
       // Send transaction using EvmWalletConnector
-      await connector.sendTransaction(predicateAccount2, transactionRequest);
+      const txId = await connector.sendTransaction(
+        predicateAccount2,
+        transactionRequest,
+      );
+
+      // wait for result of transaction
+      await new TransactionResponse(
+        txId,
+        fundingWallet.provider,
+      ).waitForResult();
 
       // Check balances are correct
       const predicateAltBalanceFinal = await predicate.getBalance(ALT_ASSET_ID);
@@ -359,12 +385,14 @@ describe('EVM Wallet Connector', () => {
       await fundingWallet
         .transfer(predicate.address, 1_000_000, baseAssetId, {
           gasLimit: 10000,
+          maxFee: MAX_FEE,
         })
         .then((resp) => resp.wait());
       // Transfer alt asset coins to predicate
       await fundingWallet
         .transfer(predicate.address, 1_000_000, ALT_ASSET_ID, {
           gasLimit: 10000,
+          maxFee: MAX_FEE,
         })
         .then((resp) => resp.wait());
 
@@ -386,6 +414,7 @@ describe('EVM Wallet Connector', () => {
       // Create transfer from predicate to recipient
       const transactionRequest = new ScriptTransactionRequest({
         gasLimit: 10000,
+        maxFee: MAX_FEE,
       });
       transactionRequest.addCoinOutput(
         recipientWallet.address,

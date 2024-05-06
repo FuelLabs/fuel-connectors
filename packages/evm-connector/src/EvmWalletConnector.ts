@@ -18,6 +18,7 @@ import {
 
 import { PredicateAccount } from './Predicate';
 import { DEVNET_URL, WINDOW } from './constants';
+import { predicates } from './generated/predicate';
 import {
   type EVMWalletConnectorConfig,
   EVMWalletConnectorEvents,
@@ -25,7 +26,6 @@ import {
 import type { EIP1193Provider } from './utils/eip-1193';
 import { METAMASK_ICON } from './utils/metamask-icon';
 import { createPredicate, getPredicateAddress } from './utils/predicate';
-import { predicates } from './utils/predicateResources';
 
 export class EVMWalletConnector extends FuelConnector {
   name = 'Metamask';

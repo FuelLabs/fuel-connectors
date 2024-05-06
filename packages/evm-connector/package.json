@@ -14,9 +14,9 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build:forc": "pnpm fuels-forc build --release --path ./signature-verification",
-    "build:resources": "pnpm run build:forc && tsup --dts-only ./src/utils/generatePredicateResources.ts",
-    "build": "pnpm run build:resources && tsup --dts-only",
+    "build:forc": "pnpm fuels-forc build --release --path ./predicate",
+    "build:resources": "pnpm run build:forc && tsx ./scripts/generatePredicateResources.ts",
+    "build": "tsup --dts-only",
     "build:watch": "pnpm run build:resources && tsup --watch --dts-only",
     "ts:check": "tsc --noEmit",
     "test": "vitest"
