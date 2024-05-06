@@ -211,10 +211,10 @@ export class BurnerWalletConnector extends FuelConnector {
 
   async currentNetwork(): Promise<Network> {
     const provider = await this.getProvider();
-    const network = await provider.getNetwork();
+    const chainId = provider.getChainId();
 
     return {
-      chainId: Number(network?.chainId),
+      chainId,
       url: provider.url ?? '',
     };
   }

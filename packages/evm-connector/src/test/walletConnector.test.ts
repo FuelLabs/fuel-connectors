@@ -510,7 +510,7 @@ describe('EVM Wallet Connector', () => {
       const network = await connector.currentNetwork();
 
       expect(network.chainId.toString()).to.be.equal(
-        (await fuelProvider.getNetwork()).chainId.toString(),
+        fuelProvider.getChainId().toString(),
       );
       expect(network.url).to.be.equal(fuelProvider.url);
     });
@@ -522,10 +522,7 @@ describe('EVM Wallet Connector', () => {
       const network = networks.pop();
 
       const networkChainId = network?.chainId.toString();
-      const connectorNetwork = await connector.fuelProvider?.getNetwork();
-      const expectedChainId = connectorNetwork
-        ? connectorNetwork.chainId.toString()
-        : undefined;
+      const expectedChainId = fuelProvider.getChainId().toString();
       expect(networkChainId).to.be.equal(expectedChainId);
 
       expect(network?.url).to.be.equal(fuelProvider.url);

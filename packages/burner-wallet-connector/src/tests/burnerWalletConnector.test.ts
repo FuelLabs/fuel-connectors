@@ -195,9 +195,7 @@ describe('Burner Wallet Connector', () => {
 
       const network = await connector.currentNetwork();
 
-      expect(network.chainId).to.be.equal(
-        Number((await fuelProvider.getNetwork()).chainId),
-      );
+      expect(network.chainId).to.be.equal(fuelProvider.getChainId());
       expect(network.url).to.be.equal(fuelProvider.url);
     });
   });
@@ -211,10 +209,7 @@ describe('Burner Wallet Connector', () => {
       const network = networks.pop();
 
       const networkChainId = network?.chainId;
-      const connectorNetwork = await fuelProvider.getNetwork();
-      const expectedChainId = connectorNetwork
-        ? Number(connectorNetwork.chainId)
-        : undefined;
+      const expectedChainId = fuelProvider.getChainId();
 
       expect(networks).to.be.an('array');
 
