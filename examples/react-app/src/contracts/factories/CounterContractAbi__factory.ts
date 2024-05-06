@@ -4,9 +4,9 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.73.0
-  Forc version: 0.49.2
-  Fuel-Core version: 0.22.0
+  Fuels version: 0.83.0
+  Forc version: 0.56.0
+  Fuel-Core version: 0.24.3
 */
 
 import { Contract, ContractFactory, Interface } from 'fuels';
@@ -27,12 +27,6 @@ const _abi = {
   types: [
     {
       typeId: 0,
-      type: '()',
-      components: [],
-      typeParameters: null,
-    },
-    {
-      typeId: 1,
       type: 'u64',
       components: null,
       typeParameters: null,
@@ -40,11 +34,32 @@ const _abi = {
   ],
   functions: [
     {
-      inputs: [],
-      name: 'count',
+      inputs: [
+        {
+          name: 'amount',
+          type: 0,
+          typeArguments: null,
+        },
+      ],
+      name: 'decrement_counter',
       output: {
         name: '',
-        type: 1,
+        type: 0,
+        typeArguments: null,
+      },
+      attributes: [
+        {
+          name: 'storage',
+          arguments: ['write', 'read'],
+        },
+      ],
+    },
+    {
+      inputs: [],
+      name: 'get_count',
+      output: {
+        name: '',
+        type: 0,
         typeArguments: null,
       },
       attributes: [
@@ -55,8 +70,14 @@ const _abi = {
       ],
     },
     {
-      inputs: [],
-      name: 'increment',
+      inputs: [
+        {
+          name: 'amount',
+          type: 0,
+          typeArguments: null,
+        },
+      ],
+      name: 'increment_counter',
       output: {
         name: '',
         type: 0,
@@ -65,7 +86,7 @@ const _abi = {
       attributes: [
         {
           name: 'storage',
-          arguments: ['read', 'write'],
+          arguments: ['write', 'read'],
         },
       ],
     },
@@ -82,6 +103,7 @@ const _storageSlots: StorageSlot[] = [
   },
 ];
 
+// biome-ignore lint/complexity/noStaticOnlyClass: generated file
 export class CounterContractAbi__factory {
   static readonly abi = _abi;
 
