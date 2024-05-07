@@ -4,9 +4,9 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.73.0
-  Forc version: 0.49.2
-  Fuel-Core version: 0.22.0
+  Fuels version: 0.83.0
+  Forc version: 0.56.0
+  Fuel-Core version: 0.24.3
 */
 
 import type {
@@ -22,16 +22,31 @@ import type {
 
 interface CounterContractAbiInterface extends Interface {
   functions: {
-    count: FunctionFragment;
-    increment: FunctionFragment;
+    decrement_counter: FunctionFragment;
+    get_count: FunctionFragment;
+    increment_counter: FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: 'count', values: []): Uint8Array;
-  encodeFunctionData(functionFragment: 'increment', values: []): Uint8Array;
+  encodeFunctionData(
+    functionFragment: 'decrement_counter',
+    values: [BigNumberish],
+  ): Uint8Array;
+  encodeFunctionData(functionFragment: 'get_count', values: []): Uint8Array;
+  encodeFunctionData(
+    functionFragment: 'increment_counter',
+    values: [BigNumberish],
+  ): Uint8Array;
 
-  decodeFunctionData(functionFragment: 'count', data: BytesLike): DecodedValue;
   decodeFunctionData(
-    functionFragment: 'increment',
+    functionFragment: 'decrement_counter',
+    data: BytesLike,
+  ): DecodedValue;
+  decodeFunctionData(
+    functionFragment: 'get_count',
+    data: BytesLike,
+  ): DecodedValue;
+  decodeFunctionData(
+    functionFragment: 'increment_counter',
     data: BytesLike,
   ): DecodedValue;
 }
@@ -39,7 +54,8 @@ interface CounterContractAbiInterface extends Interface {
 export class CounterContractAbi extends Contract {
   interface: CounterContractAbiInterface;
   functions: {
-    count: InvokeFunction<[], BN>;
-    increment: InvokeFunction<[], void>;
+    decrement_counter: InvokeFunction<[amount: BigNumberish], BN>;
+    get_count: InvokeFunction<[], BN>;
+    increment_counter: InvokeFunction<[amount: BigNumberish], BN>;
   };
 }

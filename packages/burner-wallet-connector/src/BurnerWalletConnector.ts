@@ -14,15 +14,15 @@ import {
   type WalletUnlocked,
 } from 'fuels';
 import {
-  BETA_5_URL,
   BURNER_WALLET_ICON,
   BURNER_WALLET_PRIVATE_KEY,
+  DEVNET_URL,
   WINDOW,
 } from './constants';
 import type { BurnerWalletConfig } from './types';
 
 export class BurnerWalletConnector extends FuelConnector {
-  static defaultProviderUrl: string = BETA_5_URL;
+  static defaultProviderUrl: string = DEVNET_URL;
   name = 'Burner Wallet';
 
   connected = false;
@@ -211,10 +211,10 @@ export class BurnerWalletConnector extends FuelConnector {
 
   async currentNetwork(): Promise<Network> {
     const provider = await this.getProvider();
-    const network = await provider.getNetwork();
+    const chainId = provider.getChainId();
 
     return {
-      chainId: Number(network?.chainId),
+      chainId,
       url: provider.url ?? '',
     };
   }

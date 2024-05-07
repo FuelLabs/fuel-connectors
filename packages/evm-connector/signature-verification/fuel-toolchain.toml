@@ -1,6 +1,0 @@
-[toolchain]
-channel = "beta-5"
-
-[components]
-forc = "0.50.0"
-fuel-core = "0.22.0"
