@@ -1,4 +1,4 @@
-import { Address } from 'fuels';
+import { Address, bn } from 'fuels';
 import { useEffect, useState } from 'react';
 import { CounterContractAbi__factory } from '../contracts';
 import { useLogEvents } from '../hooks/use-log-events';
@@ -67,7 +67,7 @@ export default function ContractCounter() {
       try {
         await contract.functions
           .increment_counter(1)
-          .txParams({ gasLimit: 100_000 })
+          // .txParams({ gasLimit: bn(200_000), maxFee: bn(150_000) })
           .call();
 
         getCount();
