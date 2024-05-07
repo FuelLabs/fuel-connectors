@@ -11,7 +11,9 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "build:watch": "tsup --watch",
@@ -21,13 +23,13 @@
     "fuels": ">=0.78.0"
   },
   "devDependencies": {
+    "@fuel-connectors/burner-wallet-connector": "workspace:*",
+    "@fuel-connectors/evm-connector": "workspace:*",
     "@fuel-connectors/fuel-development-wallet": "workspace:*",
     "@fuel-connectors/fuel-wallet": "workspace:*",
     "@fuel-connectors/fuelet-wallet": "workspace:*",
-    "@fuel-connectors/evm-connector": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
-    "@fuel-connectors/burner-wallet-connector": "workspace:*",
-    "fuels": "0.79.0",
+    "fuels": "0.84.0",
     "terser": "5.29.2",
     "tsup": "8.0.2",
     "typescript": "5.4.3"

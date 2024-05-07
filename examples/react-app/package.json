@@ -15,7 +15,7 @@
     "@wagmi/connectors": "4.1.24",
     "@wagmi/core": "2.0.1",
     "clsx": "2.1.0",
-    "fuels": "0.79.0",
+    "fuels": "0.84.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
