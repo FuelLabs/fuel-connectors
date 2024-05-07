@@ -93,7 +93,6 @@ describe('FuelWalletConnector', () => {
       const connector = new FuelWalletConnector();
       const result = await connector.sendTransaction('0x123', {
         type: TransactionType.Create,
-        gasPrice: 100,
       });
       expect(result).toBe('0x123');
       expect(request).toHaveBeenCalled();
