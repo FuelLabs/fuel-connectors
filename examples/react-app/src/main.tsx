@@ -13,7 +13,7 @@ import {
   FuelWalletConnector,
   FuelWalletDevelopmentConnector,
   FueletWalletConnector,
-  WalletConnectConnector,
+  // WalletConnectConnector,
 } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
 
@@ -36,7 +36,7 @@ const METADATA = {
   url: location.href,
   icons: ['https://connectors.fuel.network/logo_white.png'],
 };
-const wagmiConfig = createConfig({
+const _wagmiConfig = createConfig({
   chains: [mainnet, sepolia],
   transports: {
     [mainnet.id]: http(),
@@ -67,10 +67,10 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           connectors: [
             new FuelWalletConnector(),
             new FueletWalletConnector(),
-            new WalletConnectConnector({
-              wagmiConfig,
-              projectId: WC_PROJECT_ID,
-            }),
+            // new WalletConnectConnector({
+            //   wagmiConfig,
+            //   projectId: WC_PROJECT_ID,
+            // }),
             new BurnerWalletConnector(),
             new FuelWalletDevelopmentConnector(),
           ],
