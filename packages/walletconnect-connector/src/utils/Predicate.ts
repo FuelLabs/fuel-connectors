@@ -38,7 +38,7 @@ export class PredicateAccount {
     <TInputData extends InputValue[]>(
       evmAddress: string,
       provider: Provider,
-      inputData: TInputData,
+      inputData?: TInputData,
     ): Predicate<TInputData> => {
       const configurable = {
         SIGNER: Address.fromEvmAddress(evmAddress).toEvmAddress(),

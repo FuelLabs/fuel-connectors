@@ -19,19 +19,21 @@ import {
   type Network,
   type TransactionRequestLike,
   type Version,
+  bn,
   transactionRequestify,
 } from 'fuels';
+import { VERSIONS } from '../versions/versions-dictionary';
 import { BETA_5_URL, ETHEREUM_ICON } from './constants';
-import { predicates } from './predicates';
-import type { WalletConnectConfig } from './types';
+import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
 import { createModalConfig } from './utils/wagmiConfig';
-
 export class WalletConnectConnector extends FuelConnector {
   name = 'Ethereum Wallets';
 
   connected = false;
   installed = false;
+
+  predicateAddress: string | null = null;
 
   events = FuelConnectorEventTypes;
 
@@ -49,7 +51,7 @@ export class WalletConnectConnector extends FuelConnector {
   fuelProvider: FuelProvider | null = null;
   web3Modal: Web3Modal;
 
-  private predicateAccount: PredicateAccount;
+  private predicateAccount: PredicateAccount | Promise<PredicateAccount>;
   private config: WalletConnectConfig = {};
 
   private _unsubs: Array<() => void> = [];
@@ -57,13 +59,11 @@ export class WalletConnectConnector extends FuelConnector {
   constructor(config: WalletConnectConfig = {}) {
     super();
 
-    this.predicateAccount = new PredicateAccount(
-      config.predicateConfig ?? predicates.predicate,
-    );
-
     const { wagmiConfig, web3Modal } = createModalConfig(config);
     this.wagmiConfig = wagmiConfig;
     this.web3Modal = web3Modal;
+
+    this.predicateAccount = this.setupPredicate(config.predicateConfig);
 
     this.configProviders(config);
     this.setupWatchers();
@@ -73,6 +73,78 @@ export class WalletConnectConnector extends FuelConnector {
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || FuelProvider.create(BETA_5_URL),
     });
+  }
+
+  async setupPredicate(
+    predicateConfig: PredicateConfig = {} as PredicateConfig,
+  ): Promise<PredicateAccount> {
+    if (predicateConfig.abi && predicateConfig.bytecode) {
+      this.predicateAccount = new PredicateAccount(predicateConfig);
+      this.predicateAddress = 'custom';
+
+      return this.predicateAccount;
+    }
+
+    const predicates = Object.entries(VERSIONS).map(([key, pred]) => ({
+      pred,
+      key,
+    }));
+
+    let predicateWithBalance: Predicate | null = null;
+
+    for (const pred of predicates) {
+      const predicateInstance = new PredicateAccount({
+        abi: pred.pred.predicate.abi,
+        bytecode: pred.pred.predicate.bytecode,
+      });
+
+      const account = getAccount(this.wagmiConfig);
+      const address = account.address;
+
+      if (!address) {
+        continue;
+      }
+
+      const { fuelProvider } = await this.getProviders();
+      const predicate = predicateInstance.createPredicate(
+        address,
+        fuelProvider,
+        [1],
+      );
+
+      const balance = await predicate.getBalance();
+
+      if (balance.toString() !== bn(0).toString()) {
+        predicateWithBalance = pred.pred;
+        this.predicateAddress = pred.key;
+        break;
+      }
+    }
+
+    if (predicateWithBalance) {
+      this.predicateAccount = new PredicateAccount({
+        abi: predicateWithBalance.predicate.abi,
+        bytecode: predicateWithBalance.predicate.bytecode,
+      });
+
+      return this.predicateAccount;
+    }
+
+    const newestPredicate = predicates.sort(
+      (a, b) => Number(b.pred.generatedAt) - Number(a.pred.generatedAt),
+    )[0];
+
+    if (newestPredicate) {
+      this.predicateAccount = new PredicateAccount({
+        abi: newestPredicate.pred.predicate.abi,
+        bytecode: newestPredicate.pred.predicate.bytecode,
+      });
+      this.predicateAddress = newestPredicate.key;
+
+      return this.predicateAccount;
+    }
+
+    throw new Error('No predicate found');
   }
 
   /**
@@ -89,20 +161,19 @@ export class WalletConnectConnector extends FuelConnector {
     this._unsubs.push(
       watchAccount(this.wagmiConfig, {
         onChange: async (account) => {
+          const predicateAccount = await this.predicateAccount;
+
           switch (account.status) {
             case 'connected': {
+              this.setupPredicate();
               this.emit(this.events.connection, true);
               this.emit(
                 this.events.currentAccount,
-                await this.predicateAccount.getPredicateAddress(
-                  account.address,
-                ),
+                predicateAccount.getPredicateAddress(account.address),
               );
               this.emit(
                 this.events.accounts,
-                await this.predicateAccount.getPredicateAccounts(
-                  this.evmAccounts(),
-                ),
+                predicateAccount.getPredicateAccounts(this.evmAccounts()),
               );
               break;
             }
@@ -194,8 +265,9 @@ export class WalletConnectConnector extends FuelConnector {
 
   async accounts(): Promise<Array<string>> {
     await this.requireConnection();
+    const predicateAccount = await this.predicateAccount;
 
-    return this.predicateAccount.getPredicateAccounts(this.evmAccounts());
+    return predicateAccount.getPredicateAccounts(this.evmAccounts());
   }
 
   async signMessage(_address: string, _message: string): Promise<string> {
@@ -212,7 +284,8 @@ export class WalletConnectConnector extends FuelConnector {
 
     const { fuelProvider } = await this.getProviders();
     const chainId = fuelProvider.getChainId();
-    const evmAccount = await this.predicateAccount.getEVMAddress(
+    const predicateAccount = await this.predicateAccount;
+    const evmAccount = predicateAccount.getEVMAddress(
       address,
       this.evmAccounts(),
     );
@@ -222,7 +295,7 @@ export class WalletConnectConnector extends FuelConnector {
     const transactionRequest = transactionRequestify(transaction);
 
     // Create a predicate and set the witness index to call in predicate`
-    const predicate = this.predicateAccount.createPredicate(
+    const predicate = predicateAccount.createPredicate(
       evmAccount,
       fuelProvider,
       [transactionRequest.witnesses.length],
