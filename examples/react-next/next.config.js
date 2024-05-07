@@ -2,16 +2,9 @@
 const nextConfig = {
   transpilePackages: ['@fuels/connectors'],
   webpack: (config) => {
-    config.externals.push(
-      {
-        'utf-8-validate': 'commonjs utf-8-validate',
-        bufferutil: 'commonjs bufferutil',
-        encoding: 'commonjs encoding',
-        module: 'commonjs module',
-      },
-      // https://github.com/WalletConnect/walletconnect-monorepo/issues/1908
-      'pino-pretty',
-    );
+    // https://github.com/WalletConnect/walletconnect-monorepo/issues/1908
+    // https://docs.walletconnect.com/web3modal/nextjs/about#extra-configuration
+    config.externals.push('pino-pretty', 'lokijs', 'encoding');
 
     return config;
   },
