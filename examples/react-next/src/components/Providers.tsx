@@ -7,7 +7,7 @@ import {
   FuelWalletConnector,
   FuelWalletDevelopmentConnector,
   FueletWalletConnector,
-  // WalletConnectConnector,
+  WalletConnectConnector,
 } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
 
@@ -23,7 +23,7 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
             new FuelWalletConnector(),
             new FuelWalletDevelopmentConnector(),
             new FueletWalletConnector(),
-            // new WalletConnectConnector(),
+            new WalletConnectConnector(),
           ],
         }}
       >
