@@ -21,7 +21,7 @@ export default function Balance() {
     <Feature title="Balance">
       <code>{balance ? `${balance?.format()} ETH` : <BalanceSkeleton />}</code>
       <a
-        href={`https://faucet-beta-5.fuel.network/?address=${address}`}
+        href={`https://faucet-devnet.fuel.network/?address=${address}`}
         target="_blank"
         className="btn btn-primary"
         rel="noreferrer"
