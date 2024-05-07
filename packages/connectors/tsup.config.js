@@ -5,7 +5,7 @@ export default defineConfig((options) => ({
   ...baseConfig(options, { withReact: false }),
   platform: 'browser',
   entry: ['src/index.ts'],
-  external: ['fuels'],
+  external: ['fuels', '@wagmi/core', '@web3modal/wagmi', 'viem'],
   noExternal: [
     '@fuel-connectors/fuel-development-wallet',
     '@fuel-connectors/fuel-wallet',
