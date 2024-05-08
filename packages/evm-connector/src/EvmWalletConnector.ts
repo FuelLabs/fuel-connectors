@@ -17,7 +17,8 @@ import {
 } from 'fuels';
 
 import { PredicateAccount } from './Predicate';
-import { BETA_5_URL, WINDOW } from './constants';
+import { DEVNET_URL, WINDOW } from './constants';
+import { predicates } from './generated/predicate';
 import {
   type EVMWalletConnectorConfig,
   EVMWalletConnectorEvents,
@@ -25,7 +26,6 @@ import {
 import type { EIP1193Provider } from './utils/eip-1193';
 import { METAMASK_ICON } from './utils/metamask-icon';
 import { createPredicate, getPredicateAddress } from './utils/predicate';
-import { predicates } from './utils/predicateResources';
 
 export class EVMWalletConnector extends FuelConnector {
   name = 'Metamask';
@@ -67,7 +67,7 @@ export class EVMWalletConnector extends FuelConnector {
 
   async configProviders(config: EVMWalletConnectorConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || Provider.create(BETA_5_URL),
+      fuelProvider: config.fuelProvider || Provider.create(DEVNET_URL),
       ethProvider: config.ethProvider || WINDOW?.ethereum,
     });
   }
@@ -287,6 +287,10 @@ export class EVMWalletConnector extends FuelConnector {
     // To each input of the request, attach the predicate and its data
     const requestWithPredicateAttached =
       predicate.populateTransactionPredicateData(transactionRequest);
+
+    // This solves the issue of InsufficientMaxFee for the predicate
+    // (requestWithPredicateAttached as any).gasLimit = bn(200_000);
+    // requestWithPredicateAttached.maxFee = bn(150_000);
 
     requestWithPredicateAttached.inputs.forEach((input) => {
       if ('predicate' in input && input.predicate) {

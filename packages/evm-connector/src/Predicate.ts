@@ -1,6 +1,6 @@
+import { predicates } from './generated/predicate';
 import type { EIP1193Provider } from './utils/eip-1193';
 import { getPredicateAddress } from './utils/predicate';
-import { predicates } from './utils/predicateResources';
 
 export class PredicateAccount {
   private predicate = predicates['verification-predicate'];

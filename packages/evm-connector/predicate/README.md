@@ -1,9 +1,5 @@
 # Overview
 
-The repository consists of
-
-- verification-predicate
-
 The predicate is employed to authenticate that the signer in a transaction corresponds to a particular EVM wallet.
 
 ## Building the projects
