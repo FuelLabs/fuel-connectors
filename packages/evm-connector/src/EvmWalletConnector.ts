@@ -87,16 +87,16 @@ export class EVMWalletConnector extends FuelConnector {
       return this.predicateAccount;
     }
 
-    const predicates = Object.entries(VERSIONS).map(([key, pred]) => ({
+    const predicateVersions = Object.entries(VERSIONS).map(([key, pred]) => ({
       pred,
       key,
     }));
     let predicateWithBalance: Predicate | null = null;
 
-    for (const pred of predicates) {
+    for (const predicateVersion of predicateVersions) {
       const predicateInstance = new PredicateAccount({
-        abi: pred.pred.predicate.abi,
-        bytecode: pred.pred.predicate.bytecode,
+        abi: predicateVersion.pred.predicate.abi,
+        bytecode: predicateVersion.pred.predicate.bytecode,
       });
 
       const { ethProvider } = await this.getProviders();
@@ -120,8 +120,8 @@ export class EVMWalletConnector extends FuelConnector {
       const balance = await predicate.getBalance();
 
       if (balance.toString() !== bn(0).toString()) {
-        predicateWithBalance = pred.pred;
-        this.predicateAddress = pred.key;
+        predicateWithBalance = predicateVersion.pred;
+        this.predicateAddress = predicateVersion.key;
 
         break;
       }
@@ -136,7 +136,7 @@ export class EVMWalletConnector extends FuelConnector {
       return this.predicateAccount;
     }
 
-    const newestPredicate = predicates.sort(
+    const newestPredicate = predicateVersions.sort(
       (a, b) => Number(b.pred.generatedAt) - Number(a.pred.generatedAt),
     )[0];
 
