@@ -3,16 +3,15 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig((options) => ({
   ...baseConfig(options, { withReact: false }),
-  platform: 'browser',
   entry: ['src/index.ts'],
   external: ['fuels'],
   noExternal: [
     '@fuel-connectors/fuel-development-wallet',
     '@fuel-connectors/fuel-wallet',
     '@fuel-connectors/fuelet-wallet',
-    '@fuel-connectors/burner-wallet-connector',
-    '@fuel-connectors/evm-connector',
-    '@fuel-connectors/walletconnect-connector',
+    // '@fuel-connectors/burner-wallet-connector',
+    // '@fuel-connectors/evm-connector',
+    // '@fuel-connectors/walletconnect-connector',
   ],
   minify: 'terser',
   dts: {
@@ -20,9 +19,9 @@ export default defineConfig((options) => ({
       '@fuel-connectors/fuel-development-wallet',
       '@fuel-connectors/fuel-wallet',
       '@fuel-connectors/fuelet-wallet',
-      '@fuel-connectors/burner-wallet-connector',
-      '@fuel-connectors/evm-connector',
-      '@fuel-connectors/walletconnect-connector',
+      // '@fuel-connectors/burner-wallet-connector',
+      // '@fuel-connectors/evm-connector',
+      // '@fuel-connectors/walletconnect-connector',
     ],
   },
   splitting: true,
