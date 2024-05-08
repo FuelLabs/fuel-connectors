@@ -22,27 +22,27 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.83.0"
+    "fuels": ">=0.84.0"
   },
   "dependencies": {
-    "@ethereumjs/util": "^9.0.1",
-    "@ethersproject/bytes": "^5.7.0",
-    "memoizee": "^0.4.15"
+    "@ethereumjs/util": "9.0.3",
+    "@ethersproject/bytes": "5.7.0",
+    "memoizee": "0.4.15"
   },
   "devDependencies": {
-    "@types/memoizee": "^0.4.11",
     "@fuel-ts/account": "0.84.0",
-    "@fuel-ts/fuel-core": "0.84.0",
     "@fuel-ts/forc": "0.84.0",
+    "@fuel-ts/fuel-core": "0.84.0",
+    "@types/memoizee": "0.4.11",
     "fuels": "0.84.0",
     "jsdom": "24.0.0",
-    "ts-loader": "^9.5.1",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.7.0",
-    "typescript": "5.4.3",
-    "vite": "^5.0.10",
-    "vite-plugin-dts": "^3.6.4",
-    "vitest": "^1.4.0",
-    "tsup": "8.0.2"
+    "ts-loader": "9.5.1",
+    "ts-node": "10.9.2",
+    "tsup": "8.0.2",
+    "tsx": "4.9.3",
+    "typescript": "5.4.5",
+    "vite": "5.2.11",
+    "vite-plugin-dts": "3.9.1",
+    "vitest": "1.6.0"
   }
 }

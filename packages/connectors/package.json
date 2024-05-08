@@ -18,18 +18,25 @@
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "fuels": ">=0.83.0"
+    "fuels": ">=0.84.0"
+  },
+  "dependencies": {
+    "@ethereumjs/util": "9.0.3",
+    "@ethersproject/bytes": "5.7.0",
+    "@wagmi/core": "2.9.1",
+    "@web3modal/wagmi": "4.1.11",
+    "viem": "2.10.2"
   },
   "devDependencies": {
+    "@fuel-connectors/burner-wallet-connector": "workspace:*",
+    "@fuel-connectors/evm-connector": "workspace:*",
     "@fuel-connectors/fuel-development-wallet": "workspace:*",
     "@fuel-connectors/fuel-wallet": "workspace:*",
     "@fuel-connectors/fuelet-wallet": "workspace:*",
-    "@fuel-connectors/evm-connector": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
-    "@fuel-connectors/burner-wallet-connector": "workspace:*",
     "fuels": "0.84.0",
-    "terser": "5.29.2",
+    "terser": "5.31.0",
     "tsup": "8.0.2",
-    "typescript": "5.4.3"
+    "typescript": "5.4.5"
   }
 }
