@@ -21,6 +21,8 @@
     "fuels": ">=0.84.0"
   },
   "dependencies": {
+    "@ethereumjs/util": "9.0.3",
+    "@ethersproject/bytes": "5.7.0",
     "@wagmi/core": "2.9.1",
     "@web3modal/wagmi": "4.1.11",
     "viem": "2.10.1"
