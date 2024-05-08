@@ -13,7 +13,7 @@ export default defineConfig((options) => ({
     '@fuel-connectors/evm-connector',
     '@fuel-connectors/walletconnect-connector',
   ],
-  // minify: 'terser',
+  minify: 'terser',
   dts: {
     resolve: [
       '@fuel-connectors/fuel-development-wallet',
