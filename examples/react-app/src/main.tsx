@@ -9,6 +9,7 @@ import { http, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
 
 import {
+  BurnerWalletConnector,
   FuelWalletConnector,
   FuelWalletDevelopmentConnector,
   FueletWalletConnector,
@@ -71,6 +72,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               projectId: WC_PROJECT_ID,
             }),
             new FuelWalletDevelopmentConnector(),
+            new BurnerWalletConnector(),
           ],
         }}
       >
