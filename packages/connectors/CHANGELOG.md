@@ -1,5 +1,13 @@
 # @fuels/connectors
 
+## 0.4.0
+
+### Minor Changes
+
+- [#73](https://github.com/FuelLabs/fuel-connectors/pull/73) [`6fb5d3f`](https://github.com/FuelLabs/fuel-connectors/commit/6fb5d3f5baf0a35fd179c049a0cb112c04139e20) Thanks [@helciofranco](https://github.com/helciofranco)! - fix: bundle only browser-compatible connectors in the main bundle
+
+- [#66](https://github.com/FuelLabs/fuel-connectors/pull/66) [`0c95324`](https://github.com/FuelLabs/fuel-connectors/commit/0c9532431278cdecb8642d0fc2d4add65dcf482c) Thanks [@luizstacio](https://github.com/luizstacio)! - fix: add missing dependencies to allow nextjs to build
+
 ## 0.3.0
 
 ### Minor Changes
