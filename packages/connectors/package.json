@@ -9,6 +9,16 @@
       "require": "./dist/index.js",
       "import": "./dist/index.mjs",
       "types": "./dist/index.d.ts"
+    },
+    "./walletconnect": {
+      "require": "./dist/walletconnect-connector/index.js",
+      "import": "./dist/walletconnect-connector/index.mjs",
+      "types": "./dist/walletconnect-connector/src/index.d.ts"
+    },
+    "./evm": {
+      "require": "./dist/evm-connector/index.js",
+      "import": "./dist/evm-connector/index.mjs",
+      "types": "./dist/evm-connector/src/index.d.ts"
     }
   },
   "files": ["dist"],
