@@ -41,25 +41,34 @@ jobs:
         if: ${{ always() && steps.findPr.outputs.number }}
         with:
           name: 'Fuel Wallet'
-          working-directory: ./packages/fuel-wallet
-          json-summary-path: ./coverage/coverage-summary.json
-          json-final-path: ./coverage/coverage-final.json
-
+          json-summary-path: ./packages/fuel-wallet/coverage/coverage-summary.json
+          json-final-path: ./packages/fuel-wallet/coverage/coverage-final.json
       - name: Publish Fuel Development Wallet Coverage
         uses: davelosert/vitest-coverage-report-action@v2
         if: ${{ always() && steps.findPr.outputs.number }}
         with:
           name: 'Fuel Development Wallet'
-          working-directory: ./packages/fuel-development-wallet
-          json-summary-path: ./coverage/coverage-summary.json
-          json-final-path: ./coverage/coverage-final.json
-
+          json-summary-path: ./packages/fuel-development-wallet/coverage/coverage-summary.json
+          json-final-path: ./packages/fuel-development-wallet/coverage/coverage-final.json
       - name: Publish Fuelet Wallet Coverage
         uses: davelosert/vitest-coverage-report-action@v2
         if: ${{ always() && steps.findPr.outputs.number }}
         with:
           name: 'Fuelet Wallet'
-          working-directory: ./packages/fuelet-wallet
-          json-summary-path: ./coverage/coverage-summary.json
-          json-final-path: ./coverage/coverage-final.json
+          json-summary-path: ./packages/fuelet-wallet/coverage/coverage-summary.json
+          json-final-path: ./packages/fuelet-wallet/coverage/coverage-final.json
+      - name: Publish WalletConnect Coverage
+        uses: davelosert/vitest-coverage-report-action@v2
+        if: ${{ always() && steps.findPr.outputs.number }}
+        with:
+          name: 'WalletConnect'
+          json-summary-path: ./packages/walletconnect-connector/coverage/coverage-summary.json
+          json-final-path: ./packages/walletconnect-connector/coverage/coverage-final.json
+      - name: Publish BurnerWallet Coverage
+        uses: davelosert/vitest-coverage-report-action@v2
+        if: ${{ always() && steps.findPr.outputs.number }}
+        with:
+          name: 'BurnerWallet'
+          json-summary-path: ./packages/burner-wallet-connector/coverage/coverage-summary.json
+          json-final-path: ./packages/burner-wallet-connector/coverage/coverage-final.json
 
