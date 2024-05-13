@@ -1,4 +1,4 @@
-import { Address, BaseAssetId } from 'fuels';
+import { Address, Provider } from 'fuels';
 import { useState } from 'react';
 import { useWallet } from '../hooks/useWallet';
 import type { CustomError } from '../utils/customError';
@@ -28,9 +28,8 @@ export default function Transfer() {
       const resp = await wallet?.transfer(
         receiverAddress,
         DEFAULT_AMOUNT,
-        BaseAssetId,
+        undefined,
         {
-          gasPrice: 1,
           gasLimit: 10_000,
         },
       );

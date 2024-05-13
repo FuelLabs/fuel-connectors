@@ -21,7 +21,7 @@ export class PredicateAccount {
 
   getPredicateAddress = memoize((evmAddress: string): string => {
     const configurable = {
-      SIGNER: Address.fromEvmAddress(evmAddress).toEvmAddress(),
+      SIGNER: Address.fromEvmAddress(evmAddress).toB256(),
     };
     // @ts-ignore
     const { predicateBytes } = Predicate.processPredicateData(
@@ -41,7 +41,7 @@ export class PredicateAccount {
       inputData?: TInputData,
     ): Predicate<TInputData> => {
       const configurable = {
-        SIGNER: Address.fromEvmAddress(evmAddress).toEvmAddress(),
+        SIGNER: Address.fromEvmAddress(evmAddress).toB256(),
       };
       const predicate = new Predicate({
         bytecode: arrayify(this.bytecode),

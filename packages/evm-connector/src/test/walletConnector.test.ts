@@ -2,7 +2,6 @@ import path from 'node:path';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
 import {
   type Asset,
-  BaseAssetId,
   type Provider,
   ScriptTransactionRequest,
   Wallet,
@@ -25,17 +24,21 @@ import { testEVMWalletConnector as EVMWalletConnector } from './testConnector';
 import { Utils } from './utils/versions';
 
 const predicate =
-  VERSIONS['0x71c672d2e4bcc988eb23ab33b92e10a1c50818c86c4dd3ee03435a34e750a35d']
+  VERSIONS['0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33']
     .predicate;
+
+const MAX_FEE = bn(10000);
 
 describe('EVM Wallet Connector', () => {
   // Providers used to interact with wallets
   let ethProvider: MockProvider;
   let fuelProvider: Provider;
 
+  let baseAssetId: string;
+
   let stopProvider: () => void;
 
-  const chainConfigPath = path.join(__dirname, 'chainConfig.json');
+  const snapshotPath = path.join(__dirname, '');
 
   beforeAll(async () => {
     //Launch test node
@@ -43,12 +46,14 @@ describe('EVM Wallet Connector', () => {
       '0x6e48a022f9d4ae187bca4e2645abd62198ae294ee484766edbdaadf78160dc68';
     const { stop, provider } = await launchNodeAndGetWallets({
       launchNodeOptions: {
-        args: ['--chain', chainConfigPath],
+        args: ['--snapshot', snapshotPath],
         loggingEnabled: false,
       },
     });
 
     fuelProvider = provider;
+    baseAssetId = fuelProvider.getBaseAssetId();
+
     stopProvider = stop;
   });
 
@@ -212,16 +217,16 @@ describe('EVM Wallet Connector', () => {
 
       // Transfer base asset coins to predicate
       await fundingWallet
-        .transfer(createdPredicate.address, 1_000_000, BaseAssetId, {
+        .transfer(createdPredicate.address, 1_000_000, baseAssetId, {
           gasLimit: 10000,
-          gasPrice: 1,
+          maxFee: MAX_FEE,
         })
         .then((resp) => resp.wait());
       // Transfer alt asset coins to predicate
       await fundingWallet
         .transfer(createdPredicate.address, 1_000_000, ALT_ASSET_ID, {
           gasLimit: 10000,
-          gasPrice: 1,
+          maxFee: MAX_FEE,
         })
         .then((resp) => resp.wait());
 
@@ -245,7 +250,7 @@ describe('EVM Wallet Connector', () => {
       // Create transfer from predicate to recipient
       const transactionRequest = new ScriptTransactionRequest({
         gasLimit: 10000,
-        gasPrice: 1,
+        maxFee: MAX_FEE,
       });
       transactionRequest.addCoinOutput(
         recipientWallet.address,
@@ -256,7 +261,7 @@ describe('EVM Wallet Connector', () => {
       // fund transaction
       const resources = await createdPredicate.getResourcesToSpend([
         {
-          assetId: BaseAssetId,
+          assetId: baseAssetId,
           amount: bn(1_000_000),
         },
         {
@@ -298,6 +303,7 @@ describe('EVM Wallet Connector', () => {
       const connector = new EVMWalletConnector({
         ethProvider,
         fuelProvider,
+        predicateConfig: predicate,
       });
 
       const createdPredicate = predicateAccount.createPredicate(
@@ -310,16 +316,16 @@ describe('EVM Wallet Connector', () => {
 
       // Transfer base asset coins to predicate
       await fundingWallet
-        .transfer(createdPredicate.address, 1_000_000, BaseAssetId, {
+        .transfer(createdPredicate.address, 1_000_000, baseAssetId, {
           gasLimit: 10000,
-          gasPrice: 1,
+          maxFee: MAX_FEE,
         })
         .then((resp) => resp.wait());
       // Transfer alt asset coins to predicate
       await fundingWallet
         .transfer(createdPredicate.address, 1_000_000, ALT_ASSET_ID, {
           gasLimit: 10000,
-          gasPrice: 1,
+          maxFee: MAX_FEE,
         })
         .then((resp) => resp.wait());
 
@@ -343,7 +349,7 @@ describe('EVM Wallet Connector', () => {
       // Create transfer from predicate to recipient
       const transactionRequest = new ScriptTransactionRequest({
         gasLimit: 10000,
-        gasPrice: 1,
+        maxFee: MAX_FEE,
       });
       transactionRequest.addCoinOutput(
         recipientWallet.address,
@@ -354,7 +360,7 @@ describe('EVM Wallet Connector', () => {
       // fund transaction
       const resources = await createdPredicate.getResourcesToSpend([
         {
-          assetId: BaseAssetId,
+          assetId: baseAssetId,
           amount: bn(1_000_000),
         },
         {
@@ -412,16 +418,16 @@ describe('EVM Wallet Connector', () => {
 
       // Transfer base asset coins to predicate
       await fundingWallet
-        .transfer(createdPredicate.address, 1_000_000, BaseAssetId, {
+        .transfer(createdPredicate.address, 1_000_000, baseAssetId, {
           gasLimit: 10000,
-          gasPrice: 1,
+          maxFee: MAX_FEE,
         })
         .then((resp) => resp.wait());
       // Transfer alt asset coins to predicate
       await fundingWallet
         .transfer(createdPredicate.address, 1_000_000, ALT_ASSET_ID, {
           gasLimit: 10000,
-          gasPrice: 1,
+          maxFee: MAX_FEE,
         })
         .then((resp) => resp.wait());
 
@@ -443,7 +449,7 @@ describe('EVM Wallet Connector', () => {
       // Create transfer from predicate to recipient
       const transactionRequest = new ScriptTransactionRequest({
         gasLimit: 10000,
-        gasPrice: 1,
+        maxFee: MAX_FEE,
       });
       transactionRequest.addCoinOutput(
         recipientWallet.address,
@@ -454,7 +460,7 @@ describe('EVM Wallet Connector', () => {
       // fund transaction
       const resources = await createdPredicate.getResourcesToSpend([
         {
-          assetId: BaseAssetId,
+          assetId: baseAssetId,
           amount: bn(1_000_000),
         },
         {
@@ -485,7 +491,7 @@ describe('EVM Wallet Connector', () => {
   describe('setupPredicate()', () => {
     test('Should instantiate a predicate with given config', async () => {
       const version =
-        '0xad8bfa6ad9c15d9d57af61964c2372ed1fa1ace00aeefbc8ed5cf07192510d68';
+        '0xb4eef551b1342c6230036ea8f75e1ef88fa72299d581a3f18c92bca43674fb86';
 
       const evmConnector = new EVMWalletConnector({
         ethProvider,
@@ -515,7 +521,7 @@ describe('EVM Wallet Connector', () => {
       const ALT_ASSET_ID =
         '0x0101010101010101010101010101010101010101010101010101010101010101';
       const version =
-        '0xad8bfa6ad9c15d9d57af61964c2372ed1fa1ace00aeefbc8ed5cf07192510d68';
+        '0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33';
 
       const accounts = ethProvider.getAccounts();
 
@@ -539,16 +545,16 @@ describe('EVM Wallet Connector', () => {
 
       // Transfer base asset coins to predicate
       await fundingWallet
-        .transfer(createdPredicate.address, 1_000_000, BaseAssetId, {
+        .transfer(createdPredicate.address, 1_000_000, baseAssetId, {
           gasLimit: 10000,
-          gasPrice: 1,
+          maxFee: MAX_FEE,
         })
         .then((resp) => resp.wait());
       // Transfer alt asset coins to predicate
       await fundingWallet
         .transfer(createdPredicate.address, 1_000_000, ALT_ASSET_ID, {
           gasLimit: 10000,
-          gasPrice: 1,
+          maxFee: MAX_FEE,
         })
         .then((resp) => resp.wait());
 
@@ -665,7 +671,7 @@ describe('EVM Wallet Connector', () => {
       const network = await connector.currentNetwork();
 
       expect(network.chainId.toString()).to.be.equal(
-        (await fuelProvider.getNetwork()).chainId.toString(),
+        fuelProvider.getChainId().toString(),
       );
       expect(network.url).to.be.equal(fuelProvider.url);
     });
@@ -682,10 +688,7 @@ describe('EVM Wallet Connector', () => {
       const network = networks.pop();
 
       const networkChainId = network?.chainId.toString();
-      const connectorNetwork = await connector.fuelProvider?.getNetwork();
-      const expectedChainId = connectorNetwork
-        ? connectorNetwork.chainId.toString()
-        : undefined;
+      const expectedChainId = fuelProvider.getChainId().toString();
       expect(networkChainId).to.be.equal(expectedChainId);
 
       expect(network?.url).to.be.equal(fuelProvider.url);

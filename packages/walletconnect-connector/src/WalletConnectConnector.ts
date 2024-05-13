@@ -23,7 +23,7 @@ import {
   transactionRequestify,
 } from 'fuels';
 import { VERSIONS } from '../versions/versions-dictionary';
-import { BETA_5_URL, ETHEREUM_ICON } from './constants';
+import { DEVNET_URL, ETHEREUM_ICON } from './constants';
 import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
 import { createModalConfig } from './utils/wagmiConfig';
@@ -34,6 +34,7 @@ export class WalletConnectConnector extends FuelConnector {
   installed = false;
 
   predicateAddress: string | null = null;
+  customPredicate: PredicateConfig | null;
 
   events = FuelConnectorEventTypes;
 
@@ -51,7 +52,7 @@ export class WalletConnectConnector extends FuelConnector {
   fuelProvider: FuelProvider | null = null;
   web3Modal: Web3Modal;
 
-  private predicateAccount: PredicateAccount | Promise<PredicateAccount>;
+  private predicateAccount: PredicateAccount | null = null;
   private config: WalletConnectConfig = {};
 
   private _unsubs: Array<() => void> = [];
@@ -63,7 +64,7 @@ export class WalletConnectConnector extends FuelConnector {
     this.wagmiConfig = wagmiConfig;
     this.web3Modal = web3Modal;
 
-    this.predicateAccount = this.setupPredicate(config.predicateConfig);
+    this.customPredicate = config.predicateConfig || null;
 
     this.configProviders(config);
     this.setupWatchers();
@@ -71,31 +72,29 @@ export class WalletConnectConnector extends FuelConnector {
 
   async configProviders(config: WalletConnectConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(BETA_5_URL),
+      fuelProvider: config.fuelProvider || FuelProvider.create(DEVNET_URL),
     });
   }
 
-  async setupPredicate(
-    predicateConfig: PredicateConfig = {} as PredicateConfig,
-  ): Promise<PredicateAccount> {
-    if (predicateConfig.abi && predicateConfig.bytecode) {
-      this.predicateAccount = new PredicateAccount(predicateConfig);
+  async setupPredicate(): Promise<PredicateAccount> {
+    if (this.customPredicate?.abi && this.customPredicate?.bytecode) {
+      this.predicateAccount = new PredicateAccount(this.customPredicate);
       this.predicateAddress = 'custom';
 
       return this.predicateAccount;
     }
 
-    const predicates = Object.entries(VERSIONS).map(([key, pred]) => ({
+    const predicateVersions = Object.entries(VERSIONS).map(([key, pred]) => ({
       pred,
       key,
     }));
 
     let predicateWithBalance: Predicate | null = null;
 
-    for (const pred of predicates) {
+    for (const predicateVersion of predicateVersions) {
       const predicateInstance = new PredicateAccount({
-        abi: pred.pred.predicate.abi,
-        bytecode: pred.pred.predicate.bytecode,
+        abi: predicateVersion.pred.predicate.abi,
+        bytecode: predicateVersion.pred.predicate.bytecode,
       });
 
       const account = getAccount(this.wagmiConfig);
@@ -115,8 +114,8 @@ export class WalletConnectConnector extends FuelConnector {
       const balance = await predicate.getBalance();
 
       if (balance.toString() !== bn(0).toString()) {
-        predicateWithBalance = pred.pred;
-        this.predicateAddress = pred.key;
+        predicateWithBalance = predicateVersion.pred;
+        this.predicateAddress = predicateVersion.key;
         break;
       }
     }
@@ -130,7 +129,7 @@ export class WalletConnectConnector extends FuelConnector {
       return this.predicateAccount;
     }
 
-    const newestPredicate = predicates.sort(
+    const newestPredicate = predicateVersions.sort(
       (a, b) => Number(b.pred.generatedAt) - Number(a.pred.generatedAt),
     )[0];
 
@@ -165,15 +164,16 @@ export class WalletConnectConnector extends FuelConnector {
 
           switch (account.status) {
             case 'connected': {
-              this.setupPredicate();
+              await this.setupPredicate();
+
               this.emit(this.events.connection, true);
               this.emit(
                 this.events.currentAccount,
-                predicateAccount.getPredicateAddress(account.address),
+                predicateAccount?.getPredicateAddress(account.address),
               );
               this.emit(
                 this.events.accounts,
-                predicateAccount.getPredicateAccounts(this.evmAccounts()),
+                predicateAccount?.getPredicateAccounts(this.evmAccounts()),
               );
               break;
             }
@@ -264,10 +264,13 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async accounts(): Promise<Array<string>> {
-    await this.requireConnection();
-    const predicateAccount = await this.predicateAccount;
+    if (!this.predicateAccount) {
+      throw Error('No predicate account found');
+    }
 
-    return predicateAccount.getPredicateAccounts(this.evmAccounts());
+    await this.requireConnection();
+
+    return this.predicateAccount.getPredicateAccounts(this.evmAccounts());
   }
 
   async signMessage(_address: string, _message: string): Promise<string> {
@@ -282,10 +285,13 @@ export class WalletConnectConnector extends FuelConnector {
       throw Error('No connected accounts');
     }
 
+    if (!this.predicateAccount) {
+      throw Error('No predicate account found');
+    }
+
     const { fuelProvider } = await this.getProviders();
     const chainId = fuelProvider.getChainId();
-    const predicateAccount = await this.predicateAccount;
-    const evmAccount = predicateAccount.getEVMAddress(
+    const evmAccount = this.predicateAccount.getEVMAddress(
       address,
       this.evmAccounts(),
     );
@@ -295,7 +301,7 @@ export class WalletConnectConnector extends FuelConnector {
     const transactionRequest = transactionRequestify(transaction);
 
     // Create a predicate and set the witness index to call in predicate`
-    const predicate = predicateAccount.createPredicate(
+    const predicate = this.predicateAccount.createPredicate(
       evmAccount,
       fuelProvider,
       [transactionRequest.witnesses.length],
@@ -308,6 +314,10 @@ export class WalletConnectConnector extends FuelConnector {
     // To each input of the request, attach the predicate and its data
     const requestWithPredicateAttached =
       predicate.populateTransactionPredicateData(transactionRequest);
+
+    // This solves the issue of InsufficientMaxFee for the predicate
+    // (requestWithPredicateAttached as any).gasLimit = bn(200_000);
+    // requestWithPredicateAttached.maxFee = bn(150_000);
 
     requestWithPredicateAttached.inputs.forEach((input) => {
       if ('predicate' in input && input.predicate) {

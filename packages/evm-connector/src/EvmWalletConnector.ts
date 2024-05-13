@@ -19,7 +19,7 @@ import {
 
 import { VERSIONS } from '../versions/versions-dictionary';
 import { PredicateAccount } from './Predicate';
-import { BETA_5_URL, WINDOW } from './constants';
+import { DEVNET_URL, WINDOW } from './constants';
 import {
   type EVMWalletConnectorConfig,
   EVMWalletConnectorEvents,
@@ -47,14 +47,14 @@ export class EVMWalletConnector extends FuelConnector {
   fuelProvider: Provider | null = null;
 
   predicateAddress: string | null = null;
-  predicate: PredicateConfig | null;
+  customPredicate: PredicateConfig | null;
 
   events = {
     ...FuelConnectorEventTypes,
     ...EVMWalletConnectorEvents,
   };
 
-  predicateAccount: PredicateAccount | Promise<PredicateAccount>;
+  predicateAccount: PredicateAccount | null = null;
 
   private setupLock = false;
   private _currentAccount: string | null = null;
@@ -64,24 +64,22 @@ export class EVMWalletConnector extends FuelConnector {
   constructor(config: EVMWalletConnectorConfig = {}) {
     super();
 
+    this.customPredicate = config.predicateConfig || null;
+
     this.configProviders(config);
-
-    this.predicate = config.predicateConfig || null;
-    this.predicateAccount = this.setupPredicate();
-
     this.setupEthereumEvents();
   }
 
   async configProviders(config: EVMWalletConnectorConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || Provider.create(BETA_5_URL),
+      fuelProvider: config.fuelProvider || Provider.create(DEVNET_URL),
       ethProvider: config.ethProvider || WINDOW?.ethereum,
     });
   }
 
   async setupPredicate(): Promise<PredicateAccount> {
-    if (this.predicate?.abi && this.predicate?.bytecode) {
-      this.predicateAccount = new PredicateAccount(this.predicate);
+    if (this.customPredicate?.abi && this.customPredicate?.bytecode) {
+      this.predicateAccount = new PredicateAccount(this.customPredicate);
       this.predicateAddress = 'custom';
 
       return this.predicateAccount;
@@ -91,6 +89,7 @@ export class EVMWalletConnector extends FuelConnector {
       pred,
       key,
     }));
+
     let predicateWithBalance: Predicate | null = null;
 
     for (const predicateVersion of predicateVersions) {
@@ -101,20 +100,22 @@ export class EVMWalletConnector extends FuelConnector {
 
       const { ethProvider } = await this.getProviders();
 
-      const account = await ethProvider.request({
+      const accounts = await ethProvider.request({
         method: 'eth_accounts',
       });
 
-      const address = account[0];
+      const address = accounts[0];
 
       if (!address) {
         continue;
       }
 
       const { fuelProvider } = await this.getProviders();
+
       const predicate = predicateInstance.createPredicate(
         address,
         fuelProvider,
+        [1],
       );
 
       const balance = await predicate.getBalance();
@@ -224,8 +225,8 @@ export class EVMWalletConnector extends FuelConnector {
     ethProvider.on(this.events.ACCOUNTS_CHANGED, async (accounts) => {
       this.emit('accounts', await this.accounts());
       if (this._currentAccount !== accounts[0]) {
-        await this.setupPredicate();
         await this.setupCurrentAccount();
+        await this.setupPredicate();
       }
     });
 
@@ -255,6 +256,7 @@ export class EVMWalletConnector extends FuelConnector {
   async ping(): Promise<boolean> {
     await this.getProviders();
     await this.setup();
+    await this.setupPredicate();
 
     return true;
   }
@@ -270,10 +272,13 @@ export class EVMWalletConnector extends FuelConnector {
   }
 
   async accounts(): Promise<Array<string>> {
-    const predicateAccount = await this.predicateAccount;
+    if (!this.predicateAccount) {
+      return [];
+    }
+
     const ethAccounts = await this.evmAccounts();
 
-    return predicateAccount.getPredicateAccounts(ethAccounts);
+    return this.predicateAccount.getPredicateAccounts(ethAccounts);
   }
 
   async connect(): Promise<boolean> {
@@ -348,8 +353,12 @@ export class EVMWalletConnector extends FuelConnector {
     }
     const { ethProvider, fuelProvider } = await this.getProviders();
     const chainId = fuelProvider.getChainId();
-    const predicateAccount = await this.predicateAccount;
-    const evmAccount = predicateAccount.getEVMAddress(
+
+    if (!this.predicateAccount) {
+      throw Error('No predicate account found');
+    }
+
+    const evmAccount = this.predicateAccount.getEVMAddress(
       address,
       await this.evmAccounts(),
     );
@@ -359,7 +368,7 @@ export class EVMWalletConnector extends FuelConnector {
     const transactionRequest = transactionRequestify(transaction);
 
     // Create a predicate and set the witness index to call in predicate`
-    const predicate = predicateAccount.createPredicate(
+    const predicate = this.predicateAccount.createPredicate(
       evmAccount,
       fuelProvider,
       [transactionRequest.witnesses.length],
@@ -372,6 +381,10 @@ export class EVMWalletConnector extends FuelConnector {
     // To each input of the request, attach the predicate and its data
     const requestWithPredicateAttached =
       predicate.populateTransactionPredicateData(transactionRequest);
+
+    // This solves the issue of InsufficientMaxFee for the predicate
+    // (requestWithPredicateAttached as any).gasLimit = bn(200_000);
+    // requestWithPredicateAttached.maxFee = bn(150_000);
 
     requestWithPredicateAttached.inputs.forEach((input) => {
       if ('predicate' in input && input.predicate) {
@@ -406,7 +419,10 @@ export class EVMWalletConnector extends FuelConnector {
       throw Error('No connected accounts');
     }
 
-    const predicateAccount = await this.predicateAccount;
+    if (!this.predicateAccount) {
+      throw Error('No predicate account found');
+    }
+
     const { ethProvider } = await this.getProviders();
     const ethAccounts: string[] = await ethProvider.request({
       method: 'eth_accounts',
@@ -420,7 +436,7 @@ export class EVMWalletConnector extends FuelConnector {
 
     // Eth Wallet (MetaMask at least) return the current select account as the first
     // item in the accounts list.
-    return predicateAccount.getPredicateAddress(currentEthAccount);
+    return this.predicateAccount.getPredicateAddress(currentEthAccount);
   }
 
   async addAssets(_assets: Asset[]): Promise<boolean> {

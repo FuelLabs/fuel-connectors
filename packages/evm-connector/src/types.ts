@@ -48,7 +48,7 @@ export interface Predicate {
         configurableType: {
           name: string;
           type: number;
-          typeArguments: never[];
+          typeArguments: never[] | null;
         };
         offset: number;
       }[];
