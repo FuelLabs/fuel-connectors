@@ -22,6 +22,7 @@ import * as Toast from '@radix-ui/react-toast';
 import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import './index.css';
+import { SolanaConnector } from '@fuels/connectors/solana';
 
 const queryClient = new QueryClient();
 
@@ -69,6 +70,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
             new FueletWalletConnector(),
             new WalletConnectConnector({
               wagmiConfig,
+              projectId: WC_PROJECT_ID,
+            }),
+            new SolanaConnector({
               projectId: WC_PROJECT_ID,
             }),
             new FuelWalletDevelopmentConnector(),
