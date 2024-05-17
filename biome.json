@@ -43,7 +43,8 @@
       "**/.turbo",
       "**/build",
       "**/contracts",
-      "pnpm-lock.yaml"
+      "pnpm-lock.yaml",
+      "**/factories/**/*.ts"
     ]
   }
 }
