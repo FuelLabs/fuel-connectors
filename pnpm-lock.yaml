@@ -243,9 +243,6 @@ importers:
       '@fuel-ts/account':
         specifier: 0.84.0
         version: 0.84.0
-      '@fuel-ts/forc':
-        specifier: 0.84.0
-        version: 0.84.0
       '@fuel-ts/fuel-core':
         specifier: 0.84.0
         version: 0.84.0
