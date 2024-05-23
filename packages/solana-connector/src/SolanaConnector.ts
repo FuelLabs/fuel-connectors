@@ -10,9 +10,14 @@ import {
   type Network,
   type TransactionRequestLike,
   type Version,
+  hexlify,
+  sha256,
+  transactionRequestify,
 } from 'fuels';
 import { DEVNET_URL, SOLANA_ICON } from './constants';
+import { predicates } from './generated/predicate';
 import type { PredicateConfig, SolanaConfig } from './types';
+import { PredicateAccount } from './utils/Predicate';
 import { createSolanaProvider } from './utils/solanaProvider';
 // import type { PredicateAccount } from "./utils/Predicate";
 
@@ -39,13 +44,19 @@ export class SolanaConnector extends FuelConnector {
   predicateAddress: string | null = null;
   customPredicate: PredicateConfig | null;
 
-  // private predicateAccount: PredicateAccount;
+  private predicateAccount: PredicateAccount;
   private config: SolanaConfig = {};
+
+  private encoder = new TextEncoder();
 
   // private _unsubs: Array<() => void> = [];
 
   constructor(config: SolanaConfig = {}) {
     super();
+
+    this.predicateAccount = new PredicateAccount(
+      config.predicateConfig ?? predicates['verification-predicate'],
+    );
 
     this.customPredicate = config.predicateConfig || null;
 
@@ -53,7 +64,6 @@ export class SolanaConnector extends FuelConnector {
     this.walletConnectModal = walletConnectModal;
 
     this.configProviders(config);
-    // this.setupWatchers();
   }
 
   async configProviders(config: SolanaConfig = {}) {
@@ -236,12 +246,50 @@ export class SolanaConnector extends FuelConnector {
     throw new Error('A predicate account cannot sign messages.');
   }
 
-  //TODO: Implement this method
+  // * TODO: Test this method
   async sendTransaction(
-    _address: string,
-    _transaction: TransactionRequestLike,
+    address: string,
+    transaction: TransactionRequestLike,
   ): Promise<string> {
-    return '';
+    const { fuelProvider } = await this.getProviders();
+
+    const sha256Address = sha256(this.encoder.encode(address));
+
+    const chainId = fuelProvider.getChainId();
+    const account = this.predicateAccount.getPredicateAddress(sha256Address);
+
+    if (!account) {
+      throw new Error(`No account found for ${sha256Address}`);
+    }
+
+    const transactionRequest = transactionRequestify(transaction);
+
+    // Create a predicate and set the witness index to call in the predicate
+    const predicate = this.predicateAccount.createPredicate(
+      fuelProvider,
+      address,
+    );
+    predicate.connect(fuelProvider);
+
+    // To each input of the request, attach the predicate and its data
+    const requestWithPredicateAttached =
+      predicate.populateTransactionPredicateData(transactionRequest);
+
+    const txId = requestWithPredicateAttached.getTransactionId(chainId);
+    const u8TxId = this.encoder.encode(txId);
+
+    const signedMessage = await this.walletConnectModal
+      .getWalletProvider()
+      ?._wallet.signMessage(u8TxId, 'utf8');
+
+    const signature = hexlify(signedMessage.signature);
+
+    transactionRequest.witnesses.push(signature);
+
+    const response = await predicate.sendTransaction(transactionRequest);
+    const result = await response.waitForResult();
+
+    return result.id ?? '';
   }
 
   // * TODO: Test this method
@@ -293,11 +341,10 @@ export class SolanaConnector extends FuelConnector {
   }
 
   async currentNetwork(): Promise<Network> {
-    // const { fuelProvider } = await this.getProviders();
-    // const chainId = fuelProvider.getChainId();
+    const { fuelProvider } = await this.getProviders();
+    const chainId = fuelProvider.getChainId();
 
-    // return { url: fuelProvider.url, chainId: chainId };
-    return { url: '', chainId: 0 };
+    return { url: fuelProvider.url, chainId: chainId };
   }
 
   async addAbi(_abiMap: AbiMap): Promise<boolean> {
