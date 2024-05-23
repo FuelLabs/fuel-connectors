@@ -43,6 +43,7 @@
       "**/.turbo",
       "**/build",
       "**/contracts",
+      "**/examples/**/types",
       "pnpm-lock.yaml"
     ]
   }
