@@ -18,11 +18,11 @@ importers:
         specifier: 2.27.1
         version: 2.27.1
       '@fuels/ts-config':
-        specifier: 0.19.0
-        version: 0.19.0(typescript@5.2.2)
+        specifier: 0.20.0
+        version: 0.20.0(typescript@5.2.2)
       '@fuels/tsup-config':
-        specifier: 0.19.0
-        version: 0.19.0(tsup@7.2.0)
+        specifier: 0.20.0
+        version: 0.20.0(tsup@7.2.0)
       '@vitest/coverage-v8':
         specifier: 1.6.0
         version: 1.6.0(vitest@1.6.0)
@@ -48,8 +48,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/connectors
       '@fuels/react':
-        specifier: 0.19.0
-        version: 0.19.0(@tanstack/react-query@5.35.1)(@types/react-dom@18.3.0)(@types/react@18.3.1)(fuels@0.86.0)(react-dom@18.3.1)(react@18.3.1)
+        specifier: 0.20.0
+        version: 0.20.0(@tanstack/react-query@5.35.1)(@types/react-dom@18.3.0)(@types/react@18.3.1)(fuels@0.86.0)(react-dom@18.3.1)(react@18.3.1)
       '@radix-ui/react-toast':
         specifier: 1.1.5
         version: 1.1.5(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
@@ -109,8 +109,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/connectors
       '@fuels/react':
-        specifier: 0.19.0
-        version: 0.19.0(@tanstack/react-query@5.35.1)(@types/react-dom@18.3.0)(@types/react@18.3.1)(fuels@0.86.0)(react-dom@18.3.1)(react@18.3.1)
+        specifier: 0.20.0
+        version: 0.20.0(@tanstack/react-query@5.35.1)(@types/react-dom@18.3.0)(@types/react@18.3.1)(fuels@0.86.0)(react-dom@18.3.1)(react@18.3.1)
       '@tanstack/react-query':
         specifier: 5.35.1
         version: 5.35.1(react@18.3.1)
@@ -3035,11 +3035,11 @@ packages:
       chalk: 4.1.2
       cli-table: 0.3.11
 
-  /@fuels/react@0.19.0(@tanstack/react-query@5.35.1)(@types/react-dom@18.3.0)(@types/react@18.3.1)(fuels@0.86.0)(react-dom@18.3.1)(react@18.3.1):
-    resolution: {integrity: sha512-Cq+fnCHUSIi7jiFyC0yPnWL+sE4cYfSbftr1KBvQNO12HMVzm2BE9F9veGOres3gGXvKOH7kPELtlSn5rHxF/w==}
+  /@fuels/react@0.20.0(@tanstack/react-query@5.35.1)(@types/react-dom@18.3.0)(@types/react@18.3.1)(fuels@0.86.0)(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-oAjHUegWY6qiOQA2xMN1qz9HmNfhccL2dZdaD/fGe6LEqzCwmtJE5z5MLy6IussB+u9AaOulJouqv9bgcbY6/A==}
     peerDependencies:
       '@tanstack/react-query': '>=5.0.0'
-      fuels: '>=0.84.0'
+      fuels: '>=0.86.0'
       react: ^18.2.0
     dependencies:
       '@radix-ui/react-dialog': 1.0.5(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
@@ -3053,16 +3053,16 @@ packages:
       - react-dom
     dev: false
 
-  /@fuels/ts-config@0.19.0(typescript@5.2.2):
-    resolution: {integrity: sha512-nCQ4UJlbS56Yj5C5nW/WNTOBXnNejW0DCE9gBQM1uInR0bqRu5w5qXd/nx2Wy8yYMhGh0C3AC44E4DOavcQrAQ==}
+  /@fuels/ts-config@0.20.0(typescript@5.2.2):
+    resolution: {integrity: sha512-wFPifVVz2z/YXuYJ/qLFRKIAVq98ZtrrX9TlcKuL5E4ar32VGLRFTtoujEwFVcWRWmdkxA9ulcCiV3fEojdqlQ==}
     peerDependencies:
       typescript: 5.2.2
     dependencies:
       typescript: 5.2.2
     dev: true
 
-  /@fuels/tsup-config@0.19.0(tsup@7.2.0):
-    resolution: {integrity: sha512-PbdSd84336Q7x57+BS2cGlBHAZ7jYYUlBsTRbvWXhK/x2pyfQ0OKxN80qtH1uEE2JozOD85Me1X85GGrrDCGWQ==}
+  /@fuels/tsup-config@0.20.0(tsup@7.2.0):
+    resolution: {integrity: sha512-KCoD35LqdMF6wcsVYLoUfaOoOtBPyxhw4qJ1vCyGltmOHiOUcgRoa/TvuMDv08uhc72c4VofPVuNlyE0JeU6tw==}
     peerDependencies:
       tsup: ^7.2.0
     dependencies:
