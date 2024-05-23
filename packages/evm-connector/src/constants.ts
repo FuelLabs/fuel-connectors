@@ -7,4 +7,4 @@ declare global {
 }
 const HAS_WINDOW = typeof window !== 'undefined';
 export const WINDOW = HAS_WINDOW ? window : null;
-export const DEVNET_URL = 'https://testnet.fuel.network/v1/graphql';
+export const TESTNET_URL = 'https://testnet.fuel.network/v1/graphql';

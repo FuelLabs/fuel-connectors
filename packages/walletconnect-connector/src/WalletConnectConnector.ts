@@ -21,7 +21,7 @@ import {
   type Version,
   transactionRequestify,
 } from 'fuels';
-import { DEVNET_URL, ETHEREUM_ICON } from './constants';
+import { ETHEREUM_ICON, TESTNET_URL } from './constants';
 import { predicates } from './generated/predicate';
 import type { WalletConnectConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
@@ -71,7 +71,7 @@ export class WalletConnectConnector extends FuelConnector {
 
   async configProviders(config: WalletConnectConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(DEVNET_URL),
+      fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
     });
   }
 

@@ -17,7 +17,7 @@ import {
 } from 'fuels';
 
 import { PredicateAccount } from './Predicate';
-import { DEVNET_URL, WINDOW } from './constants';
+import { TESTNET_URL, WINDOW } from './constants';
 import { predicates } from './generated/predicate';
 import {
   type EVMWalletConnectorConfig,
@@ -67,7 +67,7 @@ export class EVMWalletConnector extends FuelConnector {
 
   async configProviders(config: EVMWalletConnectorConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || Provider.create(DEVNET_URL),
+      fuelProvider: config.fuelProvider || Provider.create(TESTNET_URL),
       ethProvider: config.ethProvider || WINDOW?.ethereum,
     });
   }
