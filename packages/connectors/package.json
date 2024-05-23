@@ -28,7 +28,7 @@
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "fuels": ">=0.84.0"
+    "fuels": ">=0.86.0"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -44,7 +44,7 @@
     "@fuel-connectors/fuel-wallet": "workspace:*",
     "@fuel-connectors/fuelet-wallet": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
-    "fuels": "0.84.0",
+    "fuels": "0.86.0",
     "terser": "5.31.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5"
