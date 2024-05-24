@@ -52,9 +52,9 @@ export class WalletConnectConnector extends FuelConnector {
   fuelProvider: FuelProvider | null = null;
   web3Modal: Web3Modal;
 
-  private predicateAccount: PredicateAccount | null = null;
-  private config: WalletConnectConfig = {};
+  predicateAccount: PredicateAccount | null = null;
 
+  private config: WalletConnectConfig = {};
   private _unsubs: Array<() => void> = [];
 
   constructor(config: WalletConnectConfig = {}) {
