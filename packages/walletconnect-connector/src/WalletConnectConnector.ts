@@ -24,7 +24,7 @@ import {
 } from 'fuels';
 
 import { VERSIONS } from '../versions/versions-dictionary';
-import { DEVNET_URL, ETHEREUM_ICON } from './constants';
+import { ETHEREUM_ICON, TESTNET_URL } from './constants';
 import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
 import { createModalConfig } from './utils/wagmiConfig';
