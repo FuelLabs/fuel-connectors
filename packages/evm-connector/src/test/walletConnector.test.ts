@@ -38,7 +38,7 @@ describe('EVM Wallet Connector', () => {
 
   let stopProvider: () => void;
 
-  const snapshotPath = path.join(__dirname, '');
+  const snapshotPath = path.join(__dirname, 'chain_config');
 
   beforeAll(async () => {
     //Launch test node
