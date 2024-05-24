@@ -24,13 +24,15 @@ export default function Transfer() {
     setLoading(true);
     try {
       const receiverAddress = Address.fromString(receiver || DEFAULT_ADDRESS);
+      const asset_id = wallet?.provider.getBaseAssetId();
 
       const resp = await wallet?.transfer(
         receiverAddress,
         DEFAULT_AMOUNT,
-        undefined,
+        asset_id,
         {
-          gasLimit: 10_000,
+          gasLimit: 150_000,
+          maxFee: 150_000,
         },
       );
 

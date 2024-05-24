@@ -13,11 +13,11 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.84.0"
+    "fuels": ">=0.88.1"
   },
   "devDependencies": {
     "@fuel-connectors/fuel-wallet": "workspace:*",
-    "fuels": "0.84.0",
+    "fuels": "0.88.1",
     "tsup": "8.0.2",
     "typescript": "5.4.5",
     "undici": "6.16.0",
