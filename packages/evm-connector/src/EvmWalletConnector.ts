@@ -19,7 +19,7 @@ import {
 
 import { VERSIONS } from '../versions/versions-dictionary';
 import { PredicateAccount } from './Predicate';
-import { DEVNET_URL, WINDOW } from './constants';
+import { TESTNET_URL, WINDOW } from './constants';
 import {
   type EVMWalletConnectorConfig,
   EVMWalletConnectorEvents,
