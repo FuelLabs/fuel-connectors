@@ -11,7 +11,7 @@ This package enables users to use their **wallets** to sign transactions on Fuel
 ### Install
 
 ```sh
-npm install fuels @fuel/connectors
+npm install fuels @fuels/connectors
 ```
 
 ### Usage

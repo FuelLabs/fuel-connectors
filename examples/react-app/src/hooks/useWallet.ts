@@ -20,7 +20,11 @@ const DEFAULT_CONNECTOR: ICurrentConnector = {
 
 export const useWallet = () => {
   const { fuel } = useFuel();
-  const { connect, isConnecting } = useConnectUI();
+  const {
+    connect,
+    isConnecting,
+    isLoading: isLoadingConnectors,
+  } = useConnectUI();
   const { isConnected, refetch: refetchConnected } = useIsConnected();
   const {
     accounts,
@@ -75,6 +79,7 @@ export const useWallet = () => {
     isConnecting,
     isLoading,
     isFetching,
+    isLoadingConnectors,
     wallet,
     connect,
     refetchConnected,

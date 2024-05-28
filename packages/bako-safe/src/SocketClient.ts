@@ -1,7 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import { SOCKET_URL } from "./constants";
-import { BakoSafeConnector } from "./BakoSafeConnector";
-import { request } from 'http';
+import {BakoSafeConnector} from "./BakoSafeConnector";
+
 
 export interface ISocketAuth {
     username: string;
@@ -18,7 +18,7 @@ export interface ICreateClientSocket {
 const default_socket_auth: Omit<ISocketAuth, 'sessionId'> = {
     username: '[CONNECTOR]',
     data: new Date(),
-    origin: window.origin,
+    origin: window.origin ?? 'https://safe.bako.global',
 }
 
 

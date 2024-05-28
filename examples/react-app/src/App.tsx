@@ -10,6 +10,7 @@ export default function App() {
     currentConnector,
     isConnected,
     isConnecting,
+    isLoadingConnectors,
     isLoading,
     isFetching,
     connect,
@@ -45,7 +46,7 @@ export default function App() {
                     <img
                       src={currentConnector.logo}
                       alt={currentConnector.title}
-                      className="w-20"
+                      className="w-20 h-20"
                     />
                   )}
                 </div>
@@ -79,8 +80,12 @@ export default function App() {
                     <section className="flex h-full flex-col items-center justify-center px-4 py-8 sm:px-8 sm:py-8 md:px-10 md:py-12">
                       <Button
                         onClick={connect}
-                        loading={isConnecting}
-                        loadingText="Connecting"
+                        loading={isConnecting || isLoadingConnectors}
+                        loadingText={
+                          isLoadingConnectors
+                            ? 'Connect Wallet'
+                            : 'Connecting...'
+                        }
                       >
                         Connect Wallet
                       </Button>

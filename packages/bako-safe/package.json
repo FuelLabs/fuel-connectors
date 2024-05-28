@@ -1,5 +1,5 @@
 {
-  "name": "@fuel-connectors/bako-safe",
+  "name": "@fuel-connectors/bakosafe-connector",
   "version": "0.0.1",
   "private": true,
   "types": "./dist/index.d.ts",
@@ -13,15 +13,15 @@
     "test": "vitest"
   },
   "dependencies": {
-    "socket.io-client": "4.7.2",
-    "axios": "1.5.1"
+    "socket.io-client": "4.7.2"
   },
   "peerDependencies": {
-    "fuels": ">=0.78.0"
+    "fuels": ">=0.88.1",
+    "socket.io-client": "4.7.2"
   },
   "devDependencies": {
     "tsup": "8.0.2",
-    "fuels": "0.78.0",
+    "fuels": "0.88.1",
     "typescript": "5.4.2",
     "undici": "6.9.0"
   }

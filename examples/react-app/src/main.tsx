@@ -4,7 +4,17 @@ import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { defaultConnectors } from '@fuels/connectors';
+import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
+import { http, createConfig, injected } from '@wagmi/core';
+import { mainnet, sepolia } from '@wagmi/core/chains';
+
+import {
+  BurnerWalletConnector,
+  FuelWalletConnector,
+  FuelWalletDevelopmentConnector,
+  FueletWalletConnector,
+} from '@fuels/connectors';
+import { WalletConnectConnector } from '@fuels/connectors/walletconnect';
 import { FuelProvider } from '@fuels/react';
 
 import * as Toast from '@radix-ui/react-toast';
@@ -15,13 +25,55 @@ import './index.css';
 
 const queryClient = new QueryClient();
 
+// ============================================================
+// WalletConnect Connector configurations
+// https://docs.walletconnect.com/web3modal/javascript/about
+// ============================================================
+const WC_PROJECT_ID = import.meta.env.VITE_APP_WC_PROJECT_ID;
+const METADATA = {
+  name: 'Wallet Demo',
+  description: 'Fuel Wallets Demo',
+  url: location.href,
+  icons: ['https://connectors.fuel.network/logo_white.png'],
+};
+const wagmiConfig = createConfig({
+  chains: [mainnet, sepolia],
+  transports: {
+    [mainnet.id]: http(),
+    [sepolia.id]: http(),
+  },
+  connectors: [
+    injected({ shimDisconnect: false }),
+    walletConnect({
+      projectId: WC_PROJECT_ID,
+      metadata: METADATA,
+      showQrModal: false,
+    }),
+    coinbaseWallet({
+      appName: METADATA.name,
+      appLogoUrl: METADATA.icons[0],
+      darkMode: true,
+      reloadOnDisconnect: true,
+    }),
+  ],
+});
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <FuelProvider
         theme="dark"
         fuelConfig={{
-          connectors: defaultConnectors({ devMode: true }),
+          connectors: [
+            new FuelWalletConnector(),
+            new FueletWalletConnector(),
+            new WalletConnectConnector({
+              wagmiConfig,
+              projectId: WC_PROJECT_ID,
+            }),
+            new FuelWalletDevelopmentConnector(),
+            new BurnerWalletConnector(),
+          ],
         }}
       >
         <Toast.Provider>
