@@ -32,7 +32,7 @@ export default function App() {
       setToast({
         open: true,
         type: 'error',
-        children: <p>Account not authorized</p>,
+        children: <p>Account not connected</p>,
       });
 
       disconnect();
