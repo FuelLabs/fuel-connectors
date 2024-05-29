@@ -21,7 +21,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.88.1"
+    "fuels": ">=0.89.0"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -29,10 +29,9 @@
     "memoizee": "0.4.15"
   },
   "devDependencies": {
-    "@fuel-ts/account": "0.88.1",
-    "@fuel-ts/fuel-core": "0.88.1",
+    "@fuel-ts/account": "0.89.0",
     "@types/memoizee": "0.4.11",
-    "fuels": "0.88.1",
+    "fuels": "0.89.0",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
