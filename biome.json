@@ -44,6 +44,7 @@
       "**/build",
       "**/contracts",
       "pnpm-lock.yaml",
+      "**/examples/react-app/src/types",
       "**/factories/**/*.ts"
     ]
   }

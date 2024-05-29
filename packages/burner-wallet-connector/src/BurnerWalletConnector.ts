@@ -16,13 +16,13 @@ import {
 import {
   BURNER_WALLET_ICON,
   BURNER_WALLET_PRIVATE_KEY,
-  DEVNET_URL,
+  TESTNET_URL,
   WINDOW,
 } from './constants';
 import type { BurnerWalletConfig } from './types';
 
 export class BurnerWalletConnector extends FuelConnector {
-  static defaultProviderUrl: string = DEVNET_URL;
+  static defaultProviderUrl: string = TESTNET_URL;
   name = 'Burner Wallet';
 
   connected = false;
