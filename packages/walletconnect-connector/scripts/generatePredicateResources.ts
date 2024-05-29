@@ -5,25 +5,19 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const predicates = ['predicate'];
-
 let code = 'export const predicates = {\n';
 
-predicates.forEach((predicate) => {
-  const outputDirectory = `${__dirname}/../${predicate}/out/release`;
-  const abiPath = `${outputDirectory}/${predicate}-abi.json`;
-  const bytecodePath = `${outputDirectory}/${predicate}.bin`;
+const outputDirectory = `${__dirname}/../predicate/out/release`;
+const abiPath = `${outputDirectory}/verification-predicate-abi.json`;
+const bytecodePath = `${outputDirectory}/verification-predicate.bin`;
 
-  const abi = fs.readFileSync(abiPath, 'utf8');
-  const bytecode = fs.readFileSync(bytecodePath);
+const abi = fs.readFileSync(abiPath, 'utf8');
+const bytecode = fs.readFileSync(bytecodePath);
 
-  code += `  '${predicate}': {\n`;
-  code += `    abi: ${abi},\n`;
-  code += `    bytecode: base64ToUint8Array('${bytecode.toString(
-    'base64',
-  )}'),\n`;
-  code += '  },\n';
-});
+code += `  'verification-predicate': {\n`;
+code += `    abi: ${abi},\n`;
+code += `    bytecode: base64ToUint8Array('${bytecode.toString('base64')}'),\n`;
+code += '  },\n';
 
 code += `
 };
@@ -38,5 +32,5 @@ function base64ToUint8Array(base64: string) {
 }
 `;
 
-fs.writeFileSync(`${__dirname}/../src/predicates/index.ts`, code);
+fs.writeFileSync(`${__dirname}/../src/generated/predicate.ts`, code);
 console.log('Generated');

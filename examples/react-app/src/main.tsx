@@ -9,11 +9,12 @@ import { http, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
 
 import {
+  BurnerWalletConnector,
   FuelWalletConnector,
   FuelWalletDevelopmentConnector,
   FueletWalletConnector,
-  WalletConnectConnector,
 } from '@fuels/connectors';
+import { WalletConnectConnector } from '@fuels/connectors/walletconnect';
 import { FuelProvider } from '@fuels/react';
 
 import * as Toast from '@radix-ui/react-toast';
@@ -71,6 +72,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               projectId: WC_PROJECT_ID,
             }),
             new FuelWalletDevelopmentConnector(),
+            new BurnerWalletConnector(),
           ],
         }}
       >
