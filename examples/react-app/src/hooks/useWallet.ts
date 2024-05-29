@@ -1,5 +1,5 @@
 import {
-  useAccounts,
+  useAccount,
   useBalance,
   useConnectUI,
   useFuel,
@@ -27,12 +27,13 @@ export const useWallet = () => {
   } = useConnectUI();
   const { isConnected, refetch: refetchConnected } = useIsConnected();
   const {
-    accounts,
-    isLoading: isLoadingAccounts,
-    isFetching: isFetchingAccounts,
-  } = useAccounts();
+    account,
+    isLoading: isLoadingAccount,
+    isFetching: isFetchingAccount,
+  } = useAccount();
 
-  const address = accounts[0];
+  const address = account ?? '';
+
   const { wallet, refetch: refetchWallet } = useFuelWallet(address);
 
   const {
@@ -66,13 +67,13 @@ export const useWallet = () => {
     setCurrentConnector({ logo, title });
   }, [fuel.currentConnector, isConnected]);
 
-  const isLoading = [isLoadingAccounts, isLoadingBalance].some(Boolean);
+  const isLoading = [isLoadingAccount, isLoadingBalance].some(Boolean);
 
-  const isFetching = [isFetchingAccounts, isFetchingBalance].some(Boolean);
+  const isFetching = [isFetchingAccount, isFetchingBalance].some(Boolean);
 
   return {
     address,
-    accounts,
+    account,
     balance,
     currentConnector,
     isConnected,
