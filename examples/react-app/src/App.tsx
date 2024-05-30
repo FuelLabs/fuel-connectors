@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useDisconnect } from '@fuels/react';
 import { useEffect, useState } from 'react';
 import Account from './components/account';
