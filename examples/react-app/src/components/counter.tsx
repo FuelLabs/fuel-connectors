@@ -1,7 +1,8 @@
+import { bn } from 'fuels';
 import { useEffect, useState } from 'react';
-import { CounterContractAbi__factory } from '../contracts';
 import { useLogEvents } from '../hooks/use-log-events';
 import { useWallet } from '../hooks/useWallet';
+import { CounterAbi__factory } from '../types';
 import type { CustomError } from '../utils/customError';
 import { DEFAULT_AMOUNT } from './balance';
 import Button from './button';
@@ -10,7 +11,7 @@ import Feature from './feature';
 import Notification, { type Props as NotificationProps } from './notification';
 
 export const COUNTER_CONTRACT_ID =
-  '0x0a46aafb83b387155222893b52ed12e5a4b9d6cd06770786f2b5e4307a63b65c';
+  '0x14355ad56cddcff339a017eb32c913b95b7cd892b610241c27de056cbeda3c25';
 
 interface Props {
   isSigning: boolean;
@@ -70,8 +71,8 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
       );
       try {
         await contract.functions
-          .increment()
-          .txParams({ gasPrice: 1, gasLimit: 100_000 })
+          .increment_counter(1)
+          .txParams({ gasLimit: bn(200_000), maxFee: bn(150_000) })
           .call();
 
         getCount();
@@ -103,15 +104,15 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
   async function getCount() {
     if (!wallet) return;
 
-    const counterContract = CounterContractAbi__factory.connect(
+    const counterContract = CounterAbi__factory.connect(
       COUNTER_CONTRACT_ID,
       wallet,
     );
 
     try {
       const { value } = await counterContract.functions
-        .count()
-        .txParams({ gasPrice: 1, gasLimit: 100_000 })
+        .get_count()
+        .txParams({ gasLimit: 100_000 })
         .get();
       setCounter(value.toNumber());
     } catch (error) {

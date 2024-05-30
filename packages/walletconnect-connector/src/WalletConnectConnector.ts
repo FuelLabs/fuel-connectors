@@ -21,8 +21,8 @@ import {
   type Version,
   transactionRequestify,
 } from 'fuels';
-import { BETA_5_URL, ETHEREUM_ICON } from './constants';
-import { predicates } from './predicates';
+import { ETHEREUM_ICON, TESTNET_URL } from './constants';
+import { predicates } from './generated/predicate';
 import type { WalletConnectConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
 import { createModalConfig } from './utils/wagmiConfig';
@@ -58,7 +58,7 @@ export class WalletConnectConnector extends FuelConnector {
     super();
 
     this.predicateAccount = new PredicateAccount(
-      config.predicateConfig ?? predicates.predicate,
+      config.predicateConfig ?? predicates['verification-predicate'],
     );
 
     const { wagmiConfig, web3Modal } = createModalConfig(config);
@@ -71,7 +71,7 @@ export class WalletConnectConnector extends FuelConnector {
 
   async configProviders(config: WalletConnectConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(BETA_5_URL),
+      fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
     });
   }
 
@@ -225,7 +225,7 @@ export class WalletConnectConnector extends FuelConnector {
     const predicate = this.predicateAccount.createPredicate(
       evmAccount,
       fuelProvider,
-      [transactionRequest.witnesses.length],
+      [transactionRequest.witnesses.length - 1],
     );
     predicate.connect(fuelProvider);
 
@@ -272,7 +272,9 @@ export class WalletConnectConnector extends FuelConnector {
     if (!(await this.isConnected())) {
       throw Error('No connected accounts');
     }
-    return getAccount(this.wagmiConfig).address || null;
+    const ethAccount = getAccount(this.wagmiConfig).address || null;
+
+    return this.predicateAccount.getPredicateAddress(ethAccount as string);
   }
 
   async addAssets(_assets: Asset[]): Promise<boolean> {

@@ -17,7 +17,8 @@ import {
 } from 'fuels';
 
 import { PredicateAccount } from './Predicate';
-import { BETA_5_URL, WINDOW } from './constants';
+import { TESTNET_URL, WINDOW } from './constants';
+import { predicates } from './generated/predicate';
 import {
   type EVMWalletConnectorConfig,
   EVMWalletConnectorEvents,
@@ -25,7 +26,6 @@ import {
 import type { EIP1193Provider } from './utils/eip-1193';
 import { METAMASK_ICON } from './utils/metamask-icon';
 import { createPredicate, getPredicateAddress } from './utils/predicate';
-import { predicates } from './utils/predicateResources';
 
 export class EVMWalletConnector extends FuelConnector {
   name = 'Metamask';
@@ -67,7 +67,7 @@ export class EVMWalletConnector extends FuelConnector {
 
   async configProviders(config: EVMWalletConnectorConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || Provider.create(BETA_5_URL),
+      fuelProvider: config.fuelProvider || Provider.create(TESTNET_URL),
       ethProvider: config.ethProvider || WINDOW?.ethereum,
     });
   }
@@ -198,22 +198,6 @@ export class EVMWalletConnector extends FuelConnector {
           },
         ],
       });
-
-      const wallet_chain_id = await ethProvider.request({
-        method: 'eth_chainId',
-        params: [],
-      });
-
-      if (wallet_chain_id !== '0x1') {
-        await ethProvider.request({
-          method: 'wallet_switchEthereumChain',
-          params: [
-            {
-              chainId: '0x1',
-            },
-          ],
-        });
-      }
 
       this.emit(this.events.connection, true);
 

@@ -1,4 +1,4 @@
-import { Address, BaseAssetId } from 'fuels';
+import { Address, Provider } from 'fuels';
 import { useState } from 'react';
 import { useWallet } from '../hooks/useWallet';
 import type { CustomError } from '../utils/customError';
@@ -29,15 +29,20 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
     setLoading(true);
     setIsSigning(true);
     try {
-      const receiverAddress = Address.fromString(receiver || DEFAULT_ADDRESS);
+      if (!receiver) {
+        throw Error('Invalid address');
+      }
+
+      const receiverAddress = Address.fromString(receiver);
+      const asset_id = wallet?.provider.getBaseAssetId();
 
       const resp = await wallet?.transfer(
         receiverAddress,
         DEFAULT_AMOUNT,
-        BaseAssetId,
+        asset_id,
         {
-          gasPrice: 1,
-          gasLimit: 10_000,
+          gasLimit: 150_000,
+          maxFee: 150_000,
         },
       );
 
@@ -63,13 +68,15 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
     } catch (err) {
       const error = err as CustomError;
       console.error(error.message);
+
       setToast({
         open: true,
         type: 'error',
-        children: `The transfer could not be processed: ${error.message.substring(
-          0,
-          32,
-        )}...`,
+        children: `The transfer could not be processed: ${
+          error.message.includes('Invalid B256 Address')
+            ? 'Invalid address'
+            : error.message.substring(0, 32)
+        }...`,
       });
     } finally {
       setLoading(false);
