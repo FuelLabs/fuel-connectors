@@ -1,5 +1,11 @@
 # @fuel-connectors/walletconnect-connector
 
+## 0.5.1
+
+### Patch Changes
+
+- [#65](https://github.com/FuelLabs/fuel-connectors/pull/65) [`7235ac5`](https://github.com/FuelLabs/fuel-connectors/commit/7235ac59077492f9fd3c34a91c52ae7b42ac6ad9) Thanks [@pedropereiradev](https://github.com/pedropereiradev)! - fix current account tu return bech32 address
+
 ## 0.5.0
 
 ### Minor Changes
