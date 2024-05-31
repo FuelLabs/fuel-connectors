@@ -5,11 +5,16 @@ import Feature from './feature';
 
 export const DEFAULT_AMOUNT = bn.parseUnits('0.0001');
 
+interface Props {
+  isSigning: boolean;
+  setIsSigning: (isSigning: boolean) => void;
+}
+
 const BalanceSkeleton = () => (
   <div className="h-6 w-28 animate-pulse bg-gray-800" />
 );
 
-export default function Balance() {
+export default function Balance({ isSigning }: Props) {
   const { refetchWallet, balance, address } = useWallet();
 
   useEffect(() => {
@@ -23,8 +28,17 @@ export default function Balance() {
       <a
         href={`https://faucet-testnet.fuel.network/?address=${address}`}
         target="_blank"
-        className="btn btn-primary"
+        className={`btn ${
+          isSigning
+            ? 'cursor-not-allowed border border-zinc-400/25 bg-zinc-950 text-zinc-400'
+            : 'btn-primary'
+        }`}
         rel="noreferrer"
+        onClick={(e) => {
+          if (isSigning) {
+            e.preventDefault();
+          }
+        }}
       >
         Get coins
       </a>

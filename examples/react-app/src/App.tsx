@@ -23,6 +23,7 @@ export default function App() {
     address,
   } = useWallet();
 
+  const [isSigning, setIsSigning] = useState(false);
   const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
     open: false,
   });
@@ -123,10 +124,22 @@ export default function App() {
 
                   {isConnected && !isLoading && (
                     <section className="flex h-full flex-col justify-center space-y-6 px-4 py-8 sm:px-8 sm:py-8 md:px-10 md:py-12">
-                      <Account />
-                      <Balance />
-                      <Counter />
-                      <Transfer />
+                      <Account
+                        isSigning={isSigning}
+                        setIsSigning={setIsSigning}
+                      />
+                      <Balance
+                        isSigning={isSigning}
+                        setIsSigning={setIsSigning}
+                      />
+                      <Counter
+                        isSigning={isSigning}
+                        setIsSigning={setIsSigning}
+                      />
+                      <Transfer
+                        isSigning={isSigning}
+                        setIsSigning={setIsSigning}
+                      />
                     </section>
                   )}
                 </div>

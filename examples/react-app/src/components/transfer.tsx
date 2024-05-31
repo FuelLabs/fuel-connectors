@@ -9,7 +9,12 @@ import Notification, { type Props as NotificationProps } from './notification';
 
 const DEFAULT_ADDRESS = Address.fromRandom().toString();
 
-export default function Transfer() {
+interface Props {
+  isSigning: boolean;
+  setIsSigning: (isSigning: boolean) => void;
+}
+
+export default function Transfer({ isSigning, setIsSigning }: Props) {
   const { balance, wallet, refetchWallet } = useWallet();
 
   const [receiver, setReceiver] = useState(DEFAULT_ADDRESS);
@@ -22,6 +27,7 @@ export default function Transfer() {
 
   const handleTransfer = async () => {
     setLoading(true);
+    setIsSigning(true);
     try {
       if (!receiver) {
         throw Error('Invalid address');
@@ -74,6 +80,7 @@ export default function Transfer() {
       });
     } finally {
       setLoading(false);
+      setIsSigning(false);
       refetchWallet();
     }
   };
@@ -90,7 +97,7 @@ export default function Transfer() {
 
       <Button
         onClick={handleTransfer}
-        disabled={isLoading || !hasBalance}
+        disabled={isLoading || !hasBalance || isSigning}
         className="mt-1 shrink-0 md:mt-2"
         loading={isLoading}
         loadingText="Transferring..."
