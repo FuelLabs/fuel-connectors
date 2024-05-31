@@ -1,11 +1,17 @@
+import { useDisconnect } from '@fuels/react';
+import { useEffect, useState } from 'react';
 import Account from './components/account';
 import Balance from './components/balance';
 import Button from './components/button';
 import Counter from './components/counter';
+import Notification, {
+  type Props as NotificationProps,
+} from './components/notification';
 import Transfer from './components/transfer';
 import { useWallet } from './hooks/useWallet';
 
 export default function App() {
+  const { disconnect } = useDisconnect();
   const {
     currentConnector,
     isConnected,
@@ -14,7 +20,24 @@ export default function App() {
     isLoading,
     isFetching,
     connect,
+    address,
   } = useWallet();
+
+  const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
+    open: false,
+  });
+
+  useEffect(() => {
+    if (isConnected && !address && !isFetching) {
+      setToast({
+        open: true,
+        type: 'error',
+        children: <p>Account not connected</p>,
+      });
+
+      disconnect();
+    }
+  }, [address, disconnect, isConnected, isFetching]);
 
   return (
     <main
@@ -112,6 +135,10 @@ export default function App() {
           </div>
         </div>
       </div>
+      <Notification
+        setOpen={() => setToast({ ...toast, open: false })}
+        {...toast}
+      />
     </main>
   );
 }

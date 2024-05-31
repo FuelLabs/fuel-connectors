@@ -294,23 +294,6 @@ export class EVMWalletConnector extends FuelConnector {
         ],
       });
 
-      const wallet_chain_id = await ethProvider.request({
-        method: 'eth_chainId',
-        params: [],
-      });
-
-      if (wallet_chain_id !== '0x1') {
-        await ethProvider.request({
-          method: 'wallet_switchEthereumChain',
-          params: [
-            {
-              chainId: '0x1',
-            },
-          ],
-        });
-      }
-
-      await this.setupPredicate();
       this.emit(this.events.connection, true);
 
       return true;

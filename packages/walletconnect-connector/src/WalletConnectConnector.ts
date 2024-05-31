@@ -352,7 +352,9 @@ export class WalletConnectConnector extends FuelConnector {
     if (!(await this.isConnected())) {
       throw Error('No connected accounts');
     }
-    return getAccount(this.wagmiConfig).address || null;
+    const ethAccount = getAccount(this.wagmiConfig).address || null;
+
+    return this.predicateAccount.getPredicateAddress(ethAccount as string);
   }
 
   async addAssets(_assets: Asset[]): Promise<boolean> {
