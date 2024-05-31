@@ -354,7 +354,9 @@ export class WalletConnectConnector extends FuelConnector {
     }
     const ethAccount = getAccount(this.wagmiConfig).address || null;
 
-    return this.predicateAccount.getPredicateAddress(ethAccount as string);
+    return (
+      this.predicateAccount?.getPredicateAddress(ethAccount as string) ?? null
+    );
   }
 
   async addAssets(_assets: Asset[]): Promise<boolean> {

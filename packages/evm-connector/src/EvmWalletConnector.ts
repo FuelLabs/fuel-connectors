@@ -294,6 +294,7 @@ export class EVMWalletConnector extends FuelConnector {
         ],
       });
 
+      await this.setupPredicate();
       this.emit(this.events.connection, true);
 
       return true;
