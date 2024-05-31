@@ -17,7 +17,7 @@ import {
 } from 'fuels';
 
 import { PredicateAccount } from './Predicate';
-import { DEVNET_URL, WINDOW } from './constants';
+import { TESTNET_URL, WINDOW } from './constants';
 import { predicates } from './generated/predicate';
 import {
   type EVMWalletConnectorConfig,
@@ -67,7 +67,7 @@ export class EVMWalletConnector extends FuelConnector {
 
   async configProviders(config: EVMWalletConnectorConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || Provider.create(DEVNET_URL),
+      fuelProvider: config.fuelProvider || Provider.create(TESTNET_URL),
       ethProvider: config.ethProvider || WINDOW?.ethereum,
     });
   }
@@ -199,22 +199,6 @@ export class EVMWalletConnector extends FuelConnector {
         ],
       });
 
-      const wallet_chain_id = await ethProvider.request({
-        method: 'eth_chainId',
-        params: [],
-      });
-
-      if (wallet_chain_id !== '0x1') {
-        await ethProvider.request({
-          method: 'wallet_switchEthereumChain',
-          params: [
-            {
-              chainId: '0x1',
-            },
-          ],
-        });
-      }
-
       this.emit(this.events.connection, true);
 
       // @ts-ignore
@@ -287,10 +271,6 @@ export class EVMWalletConnector extends FuelConnector {
     // To each input of the request, attach the predicate and its data
     const requestWithPredicateAttached =
       predicate.populateTransactionPredicateData(transactionRequest);
-
-    // This solves the issue of InsufficientMaxFee for the predicate
-    // (requestWithPredicateAttached as any).gasLimit = bn(200_000);
-    // requestWithPredicateAttached.maxFee = bn(150_000);
 
     requestWithPredicateAttached.inputs.forEach((input) => {
       if ('predicate' in input && input.predicate) {

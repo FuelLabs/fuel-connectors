@@ -48,7 +48,7 @@ describe('EVM Wallet Connector', () => {
   const bytecode = predicates[predicate].bytecode;
   const abi = predicates[predicate].abi;
 
-  const snapshotPath = path.join(__dirname, '');
+  const snapshotPath = path.join(__dirname, './chain_config');
 
   beforeAll(async () => {
     //Launch test node
