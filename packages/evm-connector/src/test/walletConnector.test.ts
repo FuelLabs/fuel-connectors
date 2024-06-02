@@ -24,7 +24,7 @@ import { MockProvider } from './mockProvider';
 import { testEVMWalletConnector as EVMWalletConnector } from './testConnector';
 
 const predicate = 'verification-predicate';
-const MAX_FEE = bn(10000);
+const MAX_FEE = bn(11000);
 
 describe('EVM Wallet Connector', () => {
   // Providers used to interact with wallets

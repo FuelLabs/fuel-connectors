@@ -4,8 +4,8 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.88.1
-  Forc version: 0.59.0
+  Fuels version: 0.89.0
+  Forc version: 0.60.0
   Fuel-Core version: 0.26.0
 */
 
@@ -78,33 +78,31 @@ const _storageSlots: StorageSlot[] = [
   }
 ];
 
-export class CounterAbi__factory {
-  static readonly abi = _abi;
+export const CounterAbi__factory = {
+  abi: _abi,
 
-  static readonly storageSlots = _storageSlots;
+  storageSlots: _storageSlots,
 
-  static createInterface(): CounterAbiInterface {
+  createInterface(): CounterAbiInterface {
     return new Interface(_abi) as unknown as CounterAbiInterface
-  }
+  },
 
-  static connect(
+  connect(
     id: string | AbstractAddress,
     accountOrProvider: Account | Provider
   ): CounterAbi {
     return new Contract(id, _abi, accountOrProvider) as unknown as CounterAbi
-  }
+  },
 
-  static async deployContract(
+  async deployContract(
     bytecode: BytesLike,
     wallet: Account,
     options: DeployContractOptions = {}
   ): Promise<CounterAbi> {
     const factory = new ContractFactory(bytecode, _abi, wallet);
 
-    const { storageSlots } = CounterAbi__factory;
-
     const contract = await factory.deployContract({
-      storageSlots,
+      storageSlots: _storageSlots,
       ...options,
     });
 
