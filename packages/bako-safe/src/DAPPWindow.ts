@@ -1,6 +1,5 @@
 import { APP_NAME, WINDOW } from './constants';
 
-
 type PopupConfig = {
   appUrl: string;
   height: number;
@@ -99,6 +98,7 @@ export class DAppWindow {
     backdrop.style.height = '100%';
     backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
     backdrop.style.zIndex = '99999998';
+    backdrop.addEventListener('click', () => this.close()); // if user click on backdrop, close the frame
 
     document.body.appendChild(backdrop);
     document.body.appendChild(frame);
