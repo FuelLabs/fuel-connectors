@@ -1,4 +1,5 @@
-import { APP_NAME } from './constants';
+import { APP_NAME, WINDOW } from './constants';
+
 
 type PopupConfig = {
   appUrl: string;
@@ -24,8 +25,8 @@ export class DAppWindow {
   private get popupConfig() {
     const { height, width } = this.config;
     return {
-      top: window.innerHeight / 2 - height / 2,
-      left: window.innerWidth / 2 - width / 2,
+      top: WINDOW.innerHeight / 2 - height / 2,
+      left: WINDOW.innerWidth / 2 - width / 2,
       width,
       height,
     };
@@ -40,7 +41,7 @@ export class DAppWindow {
       this.makePopup(method);
     }
     // if (this.isSafariBrowser && isConnection) {
-    //   // to use webauthn, we need a new window
+    //   // to use webauthn, we need a new WINDOW
     //   this.makeLink(method);
     // }
     if (this.isSafariBrowser) {
@@ -106,7 +107,7 @@ export class DAppWindow {
 
   makePopup(method: string) {
     const link = `${this.config.appUrl}${method}${this.queryString}`;
-    const popup = window.open(
+    const popup = WINDOW.open(
       link,
       'popup',
       `width=${this.popupConfig.width}, height=${this.popupConfig.height}, top=${this.popupConfig.top}, left=${this.popupConfig.left}`,
@@ -118,7 +119,7 @@ export class DAppWindow {
 
   private get queryString() {
     const { sessionId } = this.config;
-    return `?sessionId=${sessionId}&origin=${window.location.origin}&name=${window.document.title}&request_id=${this.request_id}`;
+    return `?sessionId=${sessionId}&origin=${WINDOW.location.origin}&name=${WINDOW.document.title}&request_id=${this.request_id}`;
   }
 
   private get small() {
@@ -132,23 +133,23 @@ export class DAppWindow {
         height: '100%',
       }, // 100%
       lg: {
-        top: `${(window.innerHeight - window.innerHeight * 0.7) / 2}px`,
-        left: `${(window.innerWidth - window.innerWidth * 0.5) / 2}px`,
+        top: `${(WINDOW.innerHeight - WINDOW.innerHeight * 0.7) / 2}px`,
+        left: `${(WINDOW.innerWidth - WINDOW.innerWidth * 0.5) / 2}px`,
         limit: 1024,
         width: '50%',
         height: '70%',
       }, // 75%
       xl: {
-        top: `${(window.innerHeight - 650) / 2}px`,
-        left: `${(window.innerWidth - 500) / 2}px`,
+        top: `${(WINDOW.innerHeight - 650) / 2}px`,
+        left: `${(WINDOW.innerWidth - 500) / 2}px`,
         limit: 1440,
         height: '650px',
         width: '500px',
       }, // 400px
     };
-    return window.innerWidth < breakponint.md.limit
+    return WINDOW.innerWidth < breakponint.md.limit
       ? breakponint.md
-      : window.innerWidth < breakponint.lg.limit
+      : WINDOW.innerWidth < breakponint.lg.limit
         ? breakponint.lg
         : breakponint.xl;
   }
