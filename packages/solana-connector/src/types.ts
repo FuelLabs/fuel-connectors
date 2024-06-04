@@ -1,3 +1,4 @@
+import type { ProviderType } from '@web3modal/solana/dist/types/src/utils/scaffold';
 import type { Provider as FuelProvider, JsonAbi } from 'fuels';
 
 export interface PredicateConfig {
@@ -9,6 +10,7 @@ export type SolanaConfig = {
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
   projectId?: string;
   predicateConfig?: PredicateConfig;
+  solanaConfig?: ProviderType;
 };
 
 export interface GetAccounts {

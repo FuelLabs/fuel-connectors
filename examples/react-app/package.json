@@ -12,6 +12,8 @@
     "@fuels/react": "0.20.0",
     "@radix-ui/react-toast": "1.1.5",
     "@tanstack/react-query": "5.35.1",
+    "@web3modal/common": "4.2.3",
+    "@web3modal/solana": "4.2.3",
     "@wagmi/connectors": "4.3.3",
     "@wagmi/core": "2.9.1",
     "clsx": "2.1.1",

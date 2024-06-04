@@ -1,5 +1,6 @@
 import {
   Address,
+  type InputValue,
   type JsonAbi,
   Predicate,
   type Provider,
@@ -38,7 +39,7 @@ export class PredicateAccount {
   });
 
   createPredicate = memoize(
-    (provider: Provider, svmAddress: string): Predicate<unknown> => {
+    (svmAddress: string, provider: Provider): Predicate<InputValue[]> => {
       const address = sha256(this.encoder.encode(svmAddress));
 
       const configurable = {
@@ -56,13 +57,13 @@ export class PredicateAccount {
     },
   );
 
-  getEVMAddress(address: string, evmAccounts: Array<string> = []) {
-    return evmAccounts.find(
+  getSVMAddress(address: string, svmAccounts: Array<string> = []) {
+    return svmAccounts.find(
       (account) => this.getPredicateAddress(account) === address,
     );
   }
 
-  getPredicateAccounts(evmAccounts: Array<string> = []): Array<string> {
-    return evmAccounts.map((account) => this.getPredicateAddress(account));
+  getPredicateAccounts(svmAccounts: Array<string> = []): Array<string> {
+    return svmAccounts.map((account) => this.getPredicateAddress(account));
   }
 }

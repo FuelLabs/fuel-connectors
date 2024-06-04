@@ -19,23 +19,21 @@ interface ModalConfig {
 }
 
 export function createSolanaProvider(config: SolanaConfig): ModalConfig {
-  const solanaConfig = defaultSolanaConfig({
-    chains,
-    projectId: config.projectId ?? DEFAULT_PROJECT_ID,
-    metadata: {
-      name: 'Web3Modal',
-      description: 'Web3Modal Laboratory',
-      url: 'https://lab.web3modal.com',
-      icons: ['https://avatars.githubusercontent.com/u/37784886'],
-    },
-  });
+  const solanaConfig =
+    config.solanaConfig ??
+    defaultSolanaConfig({
+      chains,
+      projectId: config.projectId ?? DEFAULT_PROJECT_ID,
+      metadata: {
+        name: 'Web3Modal',
+        description: 'Web3Modal Laboratory',
+        url: 'https://lab.web3modal.com',
+        icons: ['https://avatars.githubusercontent.com/u/37784886'],
+      },
+    });
 
   const walletConnectModal = createWeb3Modal({
-    solanaConfig: {
-      ...solanaConfig,
-      // @ts-ignore
-      enableWalletConnect: !!config.projectId,
-    },
+    solanaConfig,
     chains,
     enableAnalytics: false,
     projectId: config.projectId ?? DEFAULT_PROJECT_ID,

@@ -11,19 +11,16 @@ import {
   type TransactionRequestLike,
   type Version,
   hexlify,
-  sha256,
   transactionRequestify,
 } from 'fuels';
-import { DEVNET_URL, SOLANA_ICON } from './constants';
+import { SOLANA_ICON, TESTNET_URL } from './constants';
 import { predicates } from './generated/predicate';
-import type { PredicateConfig, SolanaConfig } from './types';
+import type { SolanaConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
 import { createSolanaProvider } from './utils/solanaProvider';
-// import type { PredicateAccount } from "./utils/Predicate";
 
 export class SolanaConnector extends FuelConnector {
   name = 'Solana Wallets';
-
   connected = false;
   installed = false;
 
@@ -38,18 +35,13 @@ export class SolanaConnector extends FuelConnector {
     },
   };
 
-  walletConnectModal: Web3Modal;
+  web3Modal: Web3Modal;
   fuelProvider: FuelProvider | null = null;
-
   predicateAddress: string | null = null;
-  customPredicate: PredicateConfig | null;
 
   private predicateAccount: PredicateAccount;
   private config: SolanaConfig = {};
-
   private encoder = new TextEncoder();
-
-  // private _unsubs: Array<() => void> = [];
 
   constructor(config: SolanaConfig = {}) {
     super();
@@ -58,83 +50,69 @@ export class SolanaConnector extends FuelConnector {
       config.predicateConfig ?? predicates['verification-predicate'],
     );
 
-    this.customPredicate = config.predicateConfig || null;
-
     const { walletConnectModal } = createSolanaProvider(config);
-    this.walletConnectModal = walletConnectModal;
+    this.web3Modal = walletConnectModal;
 
     this.configProviders(config);
+    this.setupWatchers();
   }
 
   async configProviders(config: SolanaConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(DEVNET_URL),
+      fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
     });
   }
 
-  // TODO: Implement this method
-  async setupPredicate() {}
   /**
    * ============================================================
    * Application communication methods
    * ============================================================
    */
+  svmAccounts(): Array<string> {
+    if (!this.web3Modal) {
+      return [];
+    }
 
-  // * TODO: Test this method
-  async svmAccounts(): Promise<Array<string>> {
-    // if (!this.solanaProvider) {
-    //   return [];
-    // }
+    const account = this.web3Modal.getAddress();
 
-    // const accounts: GetAccounts = await this.solanaProvider.request({
-    //   method: SolanaMethods.GET_ACCOUNTS,
-    //   params: {},
-    // });
-
-    // const accountsAddresses = accounts.result.map((account) => account.pubkey);
-
-    // return accountsAddresses;
-    return [];
+    return account ? [account] : [];
   }
 
-  // * TODO: Test this method
-  // async setupWatchers() {
-  //   const { solanaProvider, walletConnectModal } = await this.getProviders();
+  setupWatchers() {
+    this.web3Modal.subscribeEvents((event) => {
+      console.log(event.data.event);
 
-  //   solanaProvider.on(SolanaEvents.DISPLAY_URI, async (uri: string) => {
-  //     console.log("Display URI", uri);
+      switch (event.data.event) {
+        case 'CONNECT_SUCCESS': {
+          console.log(
+            '>>>>> CONNECT_SUCCESS',
+            this.predicateAccount.getPredicateAddress(
+              this.web3Modal.getAddress() ?? '',
+            ),
+          );
 
-  //     await walletConnectModal.openModal({ uri });
-  //   });
-
-  //   solanaProvider.on(
-  //     SolanaEvents.SESSION_PING,
-  //     ({ id, topic }: { id: unknown; topic: unknown }) => {
-  //       console.log("Session ping", id, topic);
-  //     }
-  //   );
-
-  //   solanaProvider.on(
-  //     SolanaEvents.SESSION_EVENT,
-  //     ({ event, chainId }: { event: unknown; chainId: unknown }) => {
-  //       console.log("Session event", event, chainId);
-  //     }
-  //   );
-
-  //   solanaProvider.on(
-  //     SolanaEvents.SESSION_UPDATE,
-  //     ({ topic, params }: { topic: unknown; params: unknown }) => {
-  //       console.log("Session update", topic, params);
-  //     }
-  //   );
-
-  //   solanaProvider.on(
-  //     SolanaEvents.SESSION_DELETE,
-  //     ({ id, topic }: { id: unknown; topic: unknown }) => {
-  //       console.log("Session delete", id, topic);
-  //     }
-  //   );
-  // }
+          this.emit(this.events.connection, true);
+          this.emit(
+            this.events.currentAccount,
+            this.predicateAccount.getPredicateAddress(
+              this.web3Modal.getAddress() ?? '',
+            ),
+          );
+          this.emit(
+            this.events.accounts,
+            this.predicateAccount.getPredicateAccounts(this.svmAccounts()),
+          );
+          break;
+        }
+        case 'DISCONNECT_SUCCESS': {
+          this.emit(this.events.connection, false);
+          this.emit(this.events.currentAccount, null);
+          this.emit(this.events.accounts, []);
+          break;
+        }
+      }
+    });
+  }
 
   async getProviders() {
     if (!this.fuelProvider) {
@@ -145,24 +123,13 @@ export class SolanaConnector extends FuelConnector {
       }
     }
 
-    // if (!this.solanaProvider || !this.walletConnectModal) {
-    // const { /* solanaProvider, */ walletConnectModal } =
-    // await createSolanaProvider(this.config);
-
-    // this.solanaProvider = solanaProvider;
-    // this.walletConnectModal = walletConnectModal;
-
-    //   if (!this.solanaProvider) {
-    //     throw new Error("Solana provider not found");
-    //   }
-    // }
-
     return {
       fuelProvider: this.fuelProvider,
-      // solanaProvider: this.solanaProvider,
-      walletConnectModal: this.walletConnectModal,
     };
   }
+
+  //TODO - Implement
+  async requireConnection() {}
 
   /**
    * ============================================================
@@ -170,10 +137,7 @@ export class SolanaConnector extends FuelConnector {
    * ============================================================
    */
   async ping(): Promise<boolean> {
-    // await this.configProviders();
-    // await this.getProviders();
-    // await this.setupWatchers();
-
+    await this.configProviders();
     return true;
   }
 
@@ -181,95 +145,88 @@ export class SolanaConnector extends FuelConnector {
     return { app: '0.0.0', network: '0.0.0' };
   }
 
-  //TODO: Implement this method
-  async requireConnection() {}
-
-  // * TODO: Test this method
   async isConnected(): Promise<boolean> {
-    // const accounts = await this.svmAccounts();
-    const accounts = [];
+    await this.requireConnection();
+    const accounts = this.svmAccounts();
 
     return accounts.length > 0;
   }
 
-  // * TODO: Test this method
   async connect(): Promise<boolean> {
-    if (!(await this.isConnected())) {
-      await this.walletConnectModal.open();
-
-      // await solanaProvider.connect({
-      //   namespaces: {
-      //     solana: {
-      //       methods: solanaMethods,
-      //       chains: solanaChains,
-      //       events: solanaEvents,
-      //     },
-      //   },
-      // });
-
-      // walletConnectModal.closeModal();
-
-      this.emit(this.events.connection, true);
-
-      this.on(this.events.connection, (connection: boolean) => {
-        this.connected = connection;
+    return new Promise((resolve) => {
+      this.web3Modal.open();
+      const unsub = this.web3Modal.subscribeEvents(async (event) => {
+        switch (event.data.event) {
+          case 'CONNECT_SUCCESS': {
+            resolve(true);
+            unsub();
+            break;
+          }
+          case 'MODAL_CLOSE':
+          case 'CONNECT_ERROR': {
+            resolve(false);
+            unsub();
+            break;
+          }
+        }
       });
-
-      return true;
-    }
-
-    return this.connected;
+    });
   }
 
-  //TODO: Implement this method
   async disconnect(): Promise<boolean> {
-    // const { solanaProvider } = await this.getProviders();
+    this.web3Modal.disconnect();
 
-    // await solanaProvider.disconnect();
-
-    // this.emit(this.events.connection, false);
-    // this.emit(this.events.accounts, []);
-    // this.emit(this.events.currentAccount, null);
+    this.emit(this.events.connection, false);
+    this.emit(this.events.accounts, []);
+    this.emit(this.events.currentAccount, null);
 
     return this.isConnected();
   }
 
-  //* TODO: Test this method
   async accounts(): Promise<string[]> {
-    // return this.svmAccounts();
+    await this.requireConnection();
 
-    return [];
-    // TODO - Get predicate addresses
+    const accounts = this.predicateAccount.getPredicateAccounts(
+      this.svmAccounts(),
+    );
+
+    return accounts;
   }
 
   async signMessage(_address: string, _message: string): Promise<string> {
     throw new Error('A predicate account cannot sign messages.');
   }
 
-  // * TODO: Test this method
   async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
   ): Promise<string> {
+    if (!(await this.isConnected())) {
+      throw Error('No connected accounts');
+    }
+
     const { fuelProvider } = await this.getProviders();
-
-    const sha256Address = sha256(this.encoder.encode(address));
-
     const chainId = fuelProvider.getChainId();
-    const account = this.predicateAccount.getPredicateAddress(sha256Address);
+    const svmAccount = this.predicateAccount.getSVMAddress(
+      address,
+      this.svmAccounts(),
+    );
 
-    if (!account) {
-      throw new Error(`No account found for ${sha256Address}`);
+    if (!svmAccount) {
+      throw new Error(`No account found for ${address}`);
     }
 
     const transactionRequest = transactionRequestify(transaction);
 
     // Create a predicate and set the witness index to call in the predicate
     const predicate = this.predicateAccount.createPredicate(
+      svmAccount,
       fuelProvider,
-      address,
     );
     predicate.connect(fuelProvider);
+
+    // Attach missing inputs (including estimated predicate gas usage) / outputs to the request
+    // await predicate.provider.estimatePredicates(transactionRequest);
 
     // To each input of the request, attach the predicate and its data
     const requestWithPredicateAttached =
@@ -278,42 +235,41 @@ export class SolanaConnector extends FuelConnector {
     const txId = requestWithPredicateAttached.getTransactionId(chainId);
     const u8TxId = this.encoder.encode(txId);
 
-    const signedMessage = await this.walletConnectModal
+    const signedMessage = await this.web3Modal
       .getWalletProvider()
-      ?._wallet.signMessage(u8TxId, 'utf8');
+      //@ts-ignore
+      ?._wallet.signMessage(u8TxId, 'hex');
+
+    console.log('>>>>> signedMessage', signedMessage);
 
     const signature = hexlify(signedMessage.signature);
-
     transactionRequest.witnesses.push(signature);
 
-    const response = await predicate.sendTransaction(transactionRequest);
-    const result = await response.waitForResult();
+    await fuelProvider.estimatePredicates(transactionRequest);
+    await fuelProvider.estimateTxGasAndFee({
+      transactionRequest,
+    });
 
-    return result.id ?? '';
+    const response = await predicate.sendTransaction(transactionRequest);
+
+    return response.id;
   }
 
-  // * TODO: Test this method
   async currentAccount(): Promise<string | null> {
-    // if (!(await this.isConnected())) {
-    //   throw Error("No connected accounts");
-    // }
+    if (!(await this.isConnected())) {
+      throw Error('No connected accounts');
+    }
 
-    // const { solanaProvider } = await this.getProviders();
+    const svmAccount = this.web3Modal.getAddress();
 
-    // const solanaAccounts: GetAccounts = await solanaProvider.request({
-    //   method: SolanaMethods.GET_ACCOUNTS,
-    // });
+    if (!svmAccount) {
+      throw Error('No Solana account selected');
+    }
 
-    // const currentAccount = solanaAccounts.result?.[0]?.pubkey;
+    const currentAccount =
+      this.predicateAccount.getPredicateAddress(svmAccount);
 
-    // if (!currentAccount) {
-    //   throw Error("No Solana account selected");
-    // }
-
-    // return currentAccount;
-    return '';
-
-    // TODO - Get predicate address
+    return currentAccount;
   }
 
   async addAssets(_assets: Asset[]): Promise<boolean> {
