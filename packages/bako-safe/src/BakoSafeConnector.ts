@@ -163,10 +163,10 @@ export class BakoSafeConnector extends FuelConnector {
         reject(false);
       });
 
-      //@ts-ignore
       this.on(
+        //@ts-ignore
         BakoSafeConnectorEvents.AUTH_CONFIRMED,
-        async ({ data }: IResponseAuthConfirmed) => {
+        async ({ data }: { data: IResponseAuthConfirmed }) => {
           const connected = data.connected;
           const accounts = await this.accounts();
           const currentAccount = await this.currentAccount();
@@ -204,8 +204,9 @@ export class BakoSafeConnector extends FuelConnector {
       this.checkWindow();
 
       //events controll
-      //@ts-ignore
-      this.socket?.events.on(
+
+      this.on(
+        //@ts-ignore
         BakoSafeConnectorEvents.CLIENT_DISCONNECTED,
         () => {
           this.dAppWindow?.close();
@@ -214,23 +215,23 @@ export class BakoSafeConnector extends FuelConnector {
       );
 
       // @ts-ignore
-      this.socket?.events.on(BakoSafeConnectorEvents.TX_TIMEOUT, () => {
+      this.on(BakoSafeConnectorEvents.TX_TIMEOUT, () => {
         this.dAppWindow?.close();
         reject(new Error('Transaction timeout'));
       });
 
       // @ts-ignore
-      this.socket?.events.on(BakoSafeConnectorEvents.CLIENT_CONNECTED, () => {
+      this.on(BakoSafeConnectorEvents.CLIENT_CONNECTED, () => {
         this.socket?.server.emit(BakoSafeConnectorEvents.TX_PENDING, {
           _transaction,
           _address,
         });
       });
 
-      // @ts-ignore
-      this.socket?.events.on(
+      this.on(
+        // @ts-ignore
         BakoSafeConnectorEvents.TX_CONFIRMED,
-        ({ data }: IResponseTxCofirmed) => {
+        ({ data }: { data: IResponseTxCofirmed }) => {
           this.dAppWindow?.close();
           resolve(`0x${data.id}`);
         },
