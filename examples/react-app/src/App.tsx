@@ -1,11 +1,17 @@
+import { useDisconnect } from '@fuels/react';
+import { useEffect, useState } from 'react';
 import Account from './components/account';
 import Balance from './components/balance';
 import Button from './components/button';
 import Counter from './components/counter';
+import Notification, {
+  type Props as NotificationProps,
+} from './components/notification';
 import Transfer from './components/transfer';
 import { useWallet } from './hooks/useWallet';
 
 export default function App() {
+  const { disconnect } = useDisconnect();
   const {
     currentConnector,
     isConnected,
@@ -14,7 +20,25 @@ export default function App() {
     isLoading,
     isFetching,
     connect,
+    address,
   } = useWallet();
+
+  const [isSigning, setIsSigning] = useState(false);
+  const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
+    open: false,
+  });
+
+  useEffect(() => {
+    if (isConnected && !address && !isFetching) {
+      setToast({
+        open: true,
+        type: 'error',
+        children: <p>Account not connected</p>,
+      });
+
+      disconnect();
+    }
+  }, [address, disconnect, isConnected, isFetching]);
 
   return (
     <main
@@ -100,10 +124,22 @@ export default function App() {
 
                   {isConnected && !isLoading && (
                     <section className="flex h-full flex-col justify-center space-y-6 px-4 py-8 sm:px-8 sm:py-8 md:px-10 md:py-12">
-                      <Account />
-                      <Balance />
-                      <Counter />
-                      <Transfer />
+                      <Account
+                        isSigning={isSigning}
+                        setIsSigning={setIsSigning}
+                      />
+                      <Balance
+                        isSigning={isSigning}
+                        setIsSigning={setIsSigning}
+                      />
+                      <Counter
+                        isSigning={isSigning}
+                        setIsSigning={setIsSigning}
+                      />
+                      <Transfer
+                        isSigning={isSigning}
+                        setIsSigning={setIsSigning}
+                      />
                     </section>
                   )}
                 </div>
@@ -112,6 +148,10 @@ export default function App() {
           </div>
         </div>
       </div>
+      <Notification
+        setOpen={() => setToast({ ...toast, open: false })}
+        {...toast}
+      />
     </main>
   );
 }

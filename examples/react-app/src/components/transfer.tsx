@@ -9,7 +9,12 @@ import Notification, { type Props as NotificationProps } from './notification';
 
 const DEFAULT_ADDRESS = Address.fromRandom().toString();
 
-export default function Transfer() {
+interface Props {
+  isSigning: boolean;
+  setIsSigning: (isSigning: boolean) => void;
+}
+
+export default function Transfer({ isSigning, setIsSigning }: Props) {
   const { balance, wallet, refetchWallet } = useWallet();
 
   const [receiver, setReceiver] = useState(DEFAULT_ADDRESS);
@@ -22,8 +27,13 @@ export default function Transfer() {
 
   const handleTransfer = async () => {
     setLoading(true);
+    setIsSigning(true);
     try {
-      const receiverAddress = Address.fromString(receiver || DEFAULT_ADDRESS);
+      if (!receiver) {
+        throw Error('Invalid address');
+      }
+
+      const receiverAddress = Address.fromString(receiver);
       const asset_id = wallet?.provider.getBaseAssetId();
 
       const resp = await wallet?.transfer(
@@ -58,16 +68,19 @@ export default function Transfer() {
     } catch (err) {
       const error = err as CustomError;
       console.error(error.message);
+
       setToast({
         open: true,
         type: 'error',
-        children: `The transfer could not be processed: ${error.message.substring(
-          0,
-          32,
-        )}...`,
+        children: `The transfer could not be processed: ${
+          error.message.includes('Invalid B256 Address')
+            ? 'Invalid address'
+            : error.message.substring(0, 32)
+        }...`,
       });
     } finally {
       setLoading(false);
+      setIsSigning(false);
       refetchWallet();
     }
   };
@@ -84,7 +97,7 @@ export default function Transfer() {
 
       <Button
         onClick={handleTransfer}
-        disabled={isLoading || !hasBalance}
+        disabled={isLoading || !hasBalance || isSigning}
         className="mt-1 shrink-0 md:mt-2"
         loading={isLoading}
         loadingText="Transferring..."
