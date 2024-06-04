@@ -1,28 +1,27 @@
-import type { StorageAbstract } from 'fuels';
+import type { StorageAbstract, TransactionRequestLike } from 'fuels';
+import type { BakoSafeConnector } from './BakoSafeConnector';
 
-export enum BAKOSAFEConnectorEvents {
-  //accounts
-  ACCOUNTS = 'accounts',
-  CURRENT_ACCOUNT = 'currentAccount',
-
-  // transfer
-  TRANSACTION_CREATED = '[TRANSACTION_CREATED]',
-  TRANSACTION_SEND = '[TRANSACTION_SEND]',
-
-  //popup auth
-  AUTH_CONFIRMED = '[AUTH_CONFIRMED]',
-  AUTH_REJECTED = '[AUTH_REJECTED]',
-  AUTH_DISCONECT_DAPP = '[AUTH_DISCONECT_DAPP]',
-  AUTH_DISCONECT_CONFIRM = '[AUTH_DISCONECT_CONFIRM]',
-
-  //connections
-  CONNECTION = 'connection',
-  POPUP_TRANSFER = '[POPUP_TRANSFER]_connected',
-  CONNECTED_NETWORK = '[CONNECTED_NETWORK]',
-  POPUP_CLOSED = '[POPUP_CLOSED]',
-
+export enum BakoSafeConnectorEvents {
   //default
   DEFAULT = 'message',
+
+  //client
+  CLIENT_DISCONNECTED = '[CLIENT_DISCONNECTED]',
+  CLIENT_CONNECTED = '[CONNECTED]',
+
+  //transactions
+  TX_PENDING = '[TX_EVENT_REQUESTED]',
+  TX_CONFIRMED = '[TX_EVENT_CONFIRMED]',
+  TX_TIMEOUT = '[TX_EVENT_TIMEOUT]',
+
+  //auth
+  AUTH_CONFIRMED = '[AUTH_CONFIRMED]',
+}
+
+export enum BakoSafeUsernames {
+  CONNECTOR = '[CONNECTOR]',
+  CLIENT = '[UI]',
+  SERVER = '[API]',
 }
 
 export type BakoSafeConnectorConfig = {
@@ -30,3 +29,36 @@ export type BakoSafeConnectorConfig = {
   appUrl?: string;
   stroage?: StorageAbstract;
 };
+
+export interface ISocketAuth {
+  username: string;
+  data: Date;
+  origin: string;
+  sessionId: string;
+}
+
+export interface ISocketMessage<T> {
+  username: BakoSafeUsernames;
+  room: string;
+  to: BakoSafeUsernames;
+  type: BakoSafeConnectorEvents;
+  data: T;
+}
+
+export interface ICreateClientSocket {
+  sessionId: string;
+  events: BakoSafeConnector;
+}
+
+export interface IRequestTxPending {
+  _transaction: TransactionRequestLike;
+  _address: string;
+}
+
+export interface IResponseTxCofirmed {
+  id: string;
+}
+
+export interface IResponseAuthConfirmed {
+  connected: boolean;
+}

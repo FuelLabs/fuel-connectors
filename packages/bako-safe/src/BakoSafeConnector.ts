@@ -22,7 +22,12 @@ import {
   WINDOW,
 } from './constants';
 import { RequestAPI } from './request';
-import { BAKOSAFEConnectorEvents, type BakoSafeConnectorConfig } from './types';
+import {
+  type BakoSafeConnectorConfig,
+  BakoSafeConnectorEvents,
+  type IResponseAuthConfirmed,
+  type IResponseTxCofirmed,
+} from './types';
 
 export class BakoSafeConnector extends FuelConnector {
   name = APP_NAME;
@@ -41,8 +46,8 @@ export class BakoSafeConnector extends FuelConnector {
   connected = false;
 
   events = {
+    ...BakoSafeConnectorEvents,
     ...FuelConnectorEventTypes,
-    ...BAKOSAFEConnectorEvents,
   };
 
   private readonly appUrl: string;
@@ -90,7 +95,7 @@ export class BakoSafeConnector extends FuelConnector {
     const open_interval = setInterval(() => {
       const isOpen = this.dAppWindow?.isOpen;
       if (!isOpen) {
-        this.emit('[CLIENT_DISCONNECTED]', {});
+        this.emit(BakoSafeConnectorEvents.CLIENT_DISCONNECTED, {});
         clearInterval(open_interval);
       }
     }, 2000);
@@ -102,7 +107,7 @@ export class BakoSafeConnector extends FuelConnector {
     const interval = setInterval(() => {
       const isOpen = this.dAppWindow?.opned?.closed;
       if (isOpen) {
-        this.emit('[CLIENT_DISCONNECTED]', {});
+        this.emit(BakoSafeConnectorEvents.CLIENT_DISCONNECTED, {});
         clearInterval(interval);
       }
     }, 300);
@@ -142,9 +147,6 @@ export class BakoSafeConnector extends FuelConnector {
   // ============================================================
   async connect() {
     return new Promise<boolean>((resolve, reject) => {
-      const request = '[AUTH_CONFIRMED]';
-      const connect_cancel = '[CLIENT_DISCONNECTED]';
-
       if (this.connected) {
         resolve(true);
         return;
@@ -156,22 +158,33 @@ export class BakoSafeConnector extends FuelConnector {
 
       //events controll
       // @ts-ignore
-      this.socket?.events.on(connect_cancel, () => {
-        // cancel the transaction
+      this.on(BakoSafeConnectorEvents.CLIENT_DISCONNECTED, () => {
         this.dAppWindow?.close();
-        this.off(connect_cancel, () => {});
         reject(false);
       });
-      // @ts-ignore
-      this.socket?.events.on(request, async (data) => {
-        console.log('request', data);
-        this.socket?.events.off(request, () => {});
-        this.emit(this.events.CONNECTION, data);
-        this.emit(this.events.ACCOUNTS, await this.accounts());
-        this.emit(this.events.CURRENT_ACCOUNT, await this.currentAccount());
-        resolve(true);
-        this.dAppWindow?.close();
-      });
+
+      //@ts-ignore
+      this.on(
+        BakoSafeConnectorEvents.AUTH_CONFIRMED,
+        async ({ data }: IResponseAuthConfirmed) => {
+          const connected = data.connected;
+          const accounts = await this.accounts();
+          const currentAccount = await this.currentAccount();
+
+          console.log({
+            connected,
+            accounts,
+            currentAccount,
+          });
+
+          this.emit(this.events.connection, connected);
+          this.emit(this.events.accounts, accounts);
+          this.emit(this.events.currentAccount, currentAccount);
+
+          this.dAppWindow?.close();
+          resolve(connected);
+        },
+      );
     });
   }
 
@@ -186,50 +199,42 @@ export class BakoSafeConnector extends FuelConnector {
     _transaction: TransactionRequestLike,
   ) {
     return new Promise<string>((resolve, reject) => {
-      const connect_confirm = '[CONNECTED]';
-      const connect_cancel = '[CLIENT_DISCONNECTED]';
-      const request_tx_pending = '[TX_EVENT_REQUESTED]';
-      const request_tx_confirm = '[TX_EVENT_CONFIRMED]';
-      const request_tx_timeout = '[TX_EVENT_TIMEOUT]';
-
       // window controll
       this.dAppWindow?.open('/dapp/transaction', reject);
       this.checkWindow();
 
       //events controll
-      // @ts-ignore
-      this.socket?.events.on(connect_cancel, () => {
-        // cancel the transaction
-        this.dAppWindow?.close();
-        this.off(connect_cancel, () => {});
-        reject();
-      });
+      //@ts-ignore
+      this.socket?.events.on(
+        BakoSafeConnectorEvents.CLIENT_DISCONNECTED,
+        () => {
+          this.dAppWindow?.close();
+          reject();
+        },
+      );
 
       // @ts-ignore
-      this.socket?.events.on(request_tx_timeout, () => {
+      this.socket?.events.on(BakoSafeConnectorEvents.TX_TIMEOUT, () => {
         this.dAppWindow?.close();
-        this.off(request_tx_timeout, () => {});
         reject(new Error('Transaction timeout'));
       });
 
       // @ts-ignore
-      this.socket?.events.on(connect_confirm, () => {
-        // confirm bako ui connection
-        this.off(connect_confirm, () => {});
-        this.socket?.server.emit(request_tx_pending, {
+      this.socket?.events.on(BakoSafeConnectorEvents.CLIENT_CONNECTED, () => {
+        this.socket?.server.emit(BakoSafeConnectorEvents.TX_PENDING, {
           _transaction,
           _address,
         });
       });
 
       // @ts-ignore
-      this.socket?.events.on(request_tx_confirm, ({ data }) => {
-        // confirm the transaction
-        this.off(request_tx_confirm, () => {});
-        this.dAppWindow?.close();
-        // @ts-ignore
-        resolve(`0x${data.id}`);
-      });
+      this.socket?.events.on(
+        BakoSafeConnectorEvents.TX_CONFIRMED,
+        ({ data }: IResponseTxCofirmed) => {
+          this.dAppWindow?.close();
+          resolve(`0x${data.id}`);
+        },
+      );
     });
   }
 
@@ -266,15 +271,18 @@ export class BakoSafeConnector extends FuelConnector {
     const data = await this.api.get(
       `/connections/${this.sessionId}/currentAccount`,
     );
-    return data;
+
+    const isInvalid = data && JSON.stringify(data) === JSON.stringify({});
+
+    return isInvalid ? null : data;
   }
 
   async disconnect() {
     //nao necessário esperar mensagens
     await this.api.delete(`/connections/${this.sessionId}`);
-    this.emit(this.events.CONNECTION, false);
-    this.emit(this.events.ACCOUNTS, []);
-    this.emit(this.events.CURRENT_ACCOUNT, null);
+    this.emit(this.events.connection, false);
+    this.emit(this.events.accounts, []);
+    this.emit(this.events.currentAccount, null);
     return false;
   }
 

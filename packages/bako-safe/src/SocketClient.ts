@@ -1,79 +1,58 @@
-import { io, Socket } from "socket.io-client";
-import { SOCKET_URL } from "./constants";
-import {BakoSafeConnector} from "./BakoSafeConnector";
-import { WINDOW } from './constants'
-
-export interface ISocketAuth {
-    username: string;
-    data: Date;
-    origin: string;
-    sessionId: string;
-}
-
-export interface ICreateClientSocket {
-    sessionId: string;
-    events: BakoSafeConnector
-}
+import { type Socket, io } from 'socket.io-client';
+import type { BakoSafeConnector } from './BakoSafeConnector';
+import { SOCKET_URL } from './constants';
+import { WINDOW } from './constants';
+import {
+  BakoSafeConnectorEvents,
+  BakoSafeUsernames,
+  type ICreateClientSocket,
+  type IResponseAuthConfirmed,
+  type IResponseTxCofirmed,
+  type ISocketAuth,
+  type ISocketMessage,
+} from './types';
 
 const default_socket_auth: Omit<ISocketAuth, 'sessionId'> = {
-    username: '[CONNECTOR]',
-    data: new Date(),
-    origin: WINDOW.origin ?? 'https://safe.bako.global',
-}
-
+  username: BakoSafeUsernames.CONNECTOR,
+  data: new Date(),
+  origin: WINDOW.origin ?? 'https://safe.bako.global',
+};
 
 export class SocketClient {
-    server: Socket;
-    events: BakoSafeConnector;
-    request_id: string;
+  server: Socket;
+  events: BakoSafeConnector;
+  request_id: string;
 
-    constructor({sessionId, events}: ICreateClientSocket) {
-        this.request_id = crypto.randomUUID()
-        
-        this.server = io(SOCKET_URL, {
-            auth: {
-                ...default_socket_auth,
-                sessionId,  
-                request_id: this.request_id
-            },
-            autoConnect: false,
-            reconnection: false,
-        });
-        this.events = events;
-        this.server?.on('message', (data) => {
-            console.log('[MESSAGE]: ', {
-                valid: data.to == default_socket_auth.username,
-                auth: default_socket_auth.username,
-                data
-            })
-            if(!data.request_id || data.request_id != this.request_id) return;
-            //todo: emmit reject event
+  constructor({ sessionId, events }: ICreateClientSocket) {
+    this.request_id = crypto.randomUUID();
 
-            if(data.to == default_socket_auth.username){
-              this.events.emit(data.type, {
-                from: data.username,
-                data: data.data,
-              });
-            }
-        });
+    this.server = io(SOCKET_URL, {
+      auth: {
+        ...default_socket_auth,
+        sessionId,
+        request_id: this.request_id,
+      },
+      autoConnect: false,
+      reconnection: false,
+    });
 
-        this.server.connect();
-    }
+    this.events = events;
+    this.server?.on(
+      BakoSafeConnectorEvents.DEFAULT,
+      (data: ISocketMessage<IResponseTxCofirmed | IResponseAuthConfirmed>) => {
+        if (data.to === default_socket_auth.username) {
+          this.events.emit(data.type, {
+            from: data.username,
+            data: data.data,
+          });
+        }
+      },
+    );
 
-    //emite an request to servidor
-    request(
-        to: string, 
-        type: string, 
-        data: {[key: string]: any} = {})
-    {
-        this.server.emit('message', {
-            to,
-            type,
-            data
-        });
-   }
+    this.server.connect();
+  }
 
-    get isConnected() {
-        return this.server.connected;
-    }
+  get isConnected() {
+    return this.server.connected;
+  }
 }
