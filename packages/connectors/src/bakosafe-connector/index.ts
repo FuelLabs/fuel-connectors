@@ -1,1 +1,1 @@
-export * from '@fuel-connectors/bakosafe-connector';
+export * from '@fuel-connectors/bako-safe';

@@ -219,7 +219,7 @@ importers:
         specifier: 2.10.2
         version: 2.10.2(typescript@5.4.5)
     devDependencies:
-      '@fuel-connectors/bakosafe-connector':
+      '@fuel-connectors/bako-safe':
         specifier: workspace:*
         version: link:../bako-safe
       '@fuel-connectors/burner-wallet-connector':

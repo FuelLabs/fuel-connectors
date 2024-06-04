@@ -1,4 +1,4 @@
-import { BakoSafeConnector } from '@fuel-connectors/bakosafe-connector';
+import { BakoSafeConnector } from '@fuel-connectors/bako-safe';
 import { BurnerWalletConnector } from '@fuel-connectors/burner-wallet-connector';
 import { EVMWalletConnector } from '@fuel-connectors/evm-connector';
 import { FuelWalletDevelopmentConnector } from '@fuel-connectors/fuel-development-wallet';
