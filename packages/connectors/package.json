@@ -19,6 +19,11 @@
       "require": "./dist/evm-connector/index.js",
       "import": "./dist/evm-connector/index.mjs",
       "types": "./dist/evm-connector/src/index.d.ts"
+    },
+    "./solana": {
+      "require": "./dist/solana-connector/index.js",
+      "import": "./dist/solana-connector/index.mjs",
+      "types": "./dist/solana-connector/src/index.d.ts"
     }
   },
   "files": ["dist"],
@@ -34,6 +39,8 @@
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
     "@wagmi/core": "2.9.1",
+    "@web3modal/common": "4.2.3",
+    "@web3modal/solana": "4.2.3",
     "@web3modal/wagmi": "4.1.11",
     "viem": "2.10.2"
   },
@@ -44,6 +51,7 @@
     "@fuel-connectors/fuel-wallet": "workspace:*",
     "@fuel-connectors/fuelet-wallet": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
+    "@fuel-connectors/solana-connector": "workspace:*",
     "fuels": "0.88.1",
     "terser": "5.31.0",
     "tsup": "8.0.2",

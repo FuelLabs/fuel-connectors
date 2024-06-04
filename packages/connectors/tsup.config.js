@@ -7,6 +7,7 @@ export default defineConfig((options) => ({
     'src/index.ts',
     'src/walletconnect-connector/index.ts',
     'src/evm-connector/index.ts',
+    'src/solana-connector/index.ts',
   ],
   external: ['fuels'],
   noExternal: [
@@ -16,6 +17,7 @@ export default defineConfig((options) => ({
     '@fuel-connectors/burner-wallet-connector',
     '@fuel-connectors/evm-connector',
     '@fuel-connectors/walletconnect-connector',
+    '@fuel-connectors/solana-connector',
   ],
   minify: 'terser',
   dts: {
@@ -26,6 +28,7 @@ export default defineConfig((options) => ({
       '@fuel-connectors/burner-wallet-connector',
       '@fuel-connectors/evm-connector',
       '@fuel-connectors/walletconnect-connector',
+      '@fuel-connectors/solana-connector',
     ],
   },
   splitting: true,

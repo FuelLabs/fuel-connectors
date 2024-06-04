@@ -22,6 +22,7 @@ import * as Toast from '@radix-ui/react-toast';
 import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import './index.css';
+import { SolanaConnector } from '@fuels/connectors/solana';
 
 const queryClient = new QueryClient();
 
@@ -36,7 +37,7 @@ const METADATA = {
   url: location.href,
   icons: ['https://connectors.fuel.network/logo_white.png'],
 };
-const wagmiConfig = createConfig({
+const _wagmiConfig = createConfig({
   chains: [mainnet, sepolia],
   transports: {
     [mainnet.id]: http(),
@@ -67,8 +68,11 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           connectors: [
             new FuelWalletConnector(),
             new FueletWalletConnector(),
-            new WalletConnectConnector({
-              wagmiConfig,
+            // new WalletConnectConnector({
+            //   wagmiConfig,
+            //   projectId: WC_PROJECT_ID,
+            // }),
+            new SolanaConnector({
               projectId: WC_PROJECT_ID,
             }),
             new FuelWalletDevelopmentConnector(),
