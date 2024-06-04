@@ -23,9 +23,9 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
           connectors: [
             new FuelWalletConnector(),
             new FuelWalletDevelopmentConnector(),
+            new BakoSafeConnector(),
             new FueletWalletConnector(),
             new WalletConnectConnector(),
-            new BakoSafeConnector(),
           ],
         }}
       >

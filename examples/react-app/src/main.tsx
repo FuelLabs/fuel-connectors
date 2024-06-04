@@ -67,6 +67,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         fuelConfig={{
           connectors: [
             new FuelWalletConnector(),
+            new BakoSafeConnector(),
             new FueletWalletConnector(),
             new WalletConnectConnector({
               wagmiConfig,
@@ -74,7 +75,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
             }),
             new FuelWalletDevelopmentConnector(),
             new BurnerWalletConnector(),
-            new BakoSafeConnector(),
           ],
         }}
       >
