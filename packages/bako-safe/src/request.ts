@@ -14,7 +14,7 @@ export class RequestAPI {
     return data;
   }
 
-  async post(pathname: string, body: any) {
+  async post(pathname: string, body: BodyInit) {
     const data = await fetch(urlJoin(this.baseUrl, pathname), {
       method: 'POST',
       headers: {
@@ -25,11 +25,9 @@ export class RequestAPI {
     return data;
   }
 
-
   async delete(pathname: string) {
     await fetch(urlJoin(this.baseUrl, pathname), {
       method: 'DELETE',
     });
   }
 }
-
