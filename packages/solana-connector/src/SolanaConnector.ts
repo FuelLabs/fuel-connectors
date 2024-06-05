@@ -223,10 +223,11 @@ export class SolanaConnector extends FuelConnector {
       svmAccount,
       fuelProvider,
     );
-    predicate.connect(fuelProvider);
 
     // Attach missing inputs (including estimated predicate gas usage) / outputs to the request
-    // await predicate.provider.estimatePredicates(transactionRequest);
+    await predicate.provider.estimateTxDependencies(transactionRequest);
+
+    predicate.connect(fuelProvider);
 
     // To each input of the request, attach the predicate and its data
     const requestWithPredicateAttached =
@@ -238,17 +239,12 @@ export class SolanaConnector extends FuelConnector {
     const signedMessage = await this.web3Modal
       .getWalletProvider()
       //@ts-ignore
-      ?._wallet.signMessage(u8TxId, 'hex');
-
-    console.log('>>>>> signedMessage', signedMessage);
+      ?._wallet.signMessage(u8TxId, 'utf8');
 
     const signature = hexlify(signedMessage.signature);
     transactionRequest.witnesses.push(signature);
 
-    await fuelProvider.estimatePredicates(transactionRequest);
-    await fuelProvider.estimateTxGasAndFee({
-      transactionRequest,
-    });
+    await predicate.provider.estimatePredicates(transactionRequest);
 
     const response = await predicate.sendTransaction(transactionRequest);
 
