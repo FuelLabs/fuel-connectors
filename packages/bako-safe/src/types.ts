@@ -27,7 +27,7 @@ export enum BakoSafeUsernames {
 export type BakoSafeConnectorConfig = {
   host?: string;
   appUrl?: string;
-  stroage?: StorageAbstract;
+  storage?: StorageAbstract;
 };
 
 export interface ISocketAuth {
