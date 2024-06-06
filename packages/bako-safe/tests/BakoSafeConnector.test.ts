@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 
-import type { StorageAbstract } from 'fuels';
+import { Address, type StorageAbstract } from 'fuels';
 import { BakoSafeConnector } from '../src/BakoSafeConnector';
 import { BakoStorage } from '../src/BakoStorage';
-import { APP_NAME } from '../src/constants';
+import { APP_NAME, APP_NETWORK, APP_VERSION } from '../src/constants';
 
 describe('BakoSafeConnector', () => {
   const storage: StorageAbstract = new BakoStorage();
@@ -17,9 +17,40 @@ describe('BakoSafeConnector', () => {
     expect(connector.installed).toBe(true);
   });
 
-  test('should throw error if no storage provided', async () => {
-    expect(() => {
-      new BakoSafeConnector();
-    }).toThrowError('No storage provided');
+  test('ping', async () => {
+    const connector = new BakoSafeConnector();
+    const ping = await connector.ping();
+
+    expect(ping).toEqual(false);
+  });
+
+  test('version', async () => {
+    const connector = new BakoSafeConnector();
+    const { app, network } = await connector.version();
+
+    expect(app).toEqual(APP_VERSION);
+    expect(network).toEqual(APP_NETWORK);
+  });
+
+  test('assets', async () => {
+    const connector = new BakoSafeConnector();
+    const assets = await connector.assets();
+
+    expect(assets).toEqual([]);
+  });
+
+  test('signMessage', async () => {
+    const connector = new BakoSafeConnector();
+
+    expect(
+      connector.signMessage(Address.fromRandom().toAddress(), 'message'),
+    ).rejects.toThrowError('Method not implemented.');
+  });
+
+  test('disconnect', async () => {
+    const connector = new BakoSafeConnector();
+    const disconnect = await connector.disconnect();
+
+    expect(disconnect).toEqual(false);
   });
 });

@@ -1,3 +1,5 @@
+export const APP_VERSION = '0.0.0';
+export const APP_NETWORK = '0.0.0';
 export const APP_NAME = 'Bako Safe';
 export const APP_DESCRIPTION =
   'Bako Safe is a connector to safe.bako.global, a non-custodial vault for your crypto assets.';

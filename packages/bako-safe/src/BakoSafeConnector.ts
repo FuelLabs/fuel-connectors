@@ -17,7 +17,9 @@ import {
   APP_IMAGE_DARK,
   APP_IMAGE_LIGHT,
   APP_NAME,
+  APP_NETWORK,
   APP_URL,
+  APP_VERSION,
   HAS_WINDOW,
   HOST_URL,
   WINDOW,
@@ -246,8 +248,8 @@ export class BakoSafeConnector extends FuelConnector {
 
   async version() {
     return {
-      app: '0.0.0',
-      network: '0.0.0',
+      app: APP_VERSION,
+      network: APP_NETWORK,
     };
   }
 
