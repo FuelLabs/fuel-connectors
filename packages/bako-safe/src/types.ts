@@ -1,5 +1,6 @@
 import type { StorageAbstract, TransactionRequestLike } from 'fuels';
 import type { BakoSafeConnector } from './BakoSafeConnector';
+import type { RequestAPI } from './request';
 
 export enum BakoSafeConnectorEvents {
   //default
@@ -28,6 +29,7 @@ export type BakoSafeConnectorConfig = {
   host?: string;
   appUrl?: string;
   storage?: StorageAbstract;
+  api?: RequestAPI;
 };
 
 export interface ISocketAuth {

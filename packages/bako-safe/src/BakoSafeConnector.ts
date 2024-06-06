@@ -66,7 +66,7 @@ export class BakoSafeConnector extends FuelConnector {
     super();
     this.host = config?.host ?? HOST_URL;
     this.appUrl = config?.appUrl ?? APP_URL;
-    this.api = new RequestAPI(this.host);
+    this.api = config?.api ?? new RequestAPI(this.host);
     this.storage = this.getStorage(config?.storage);
     this.setupReady = false;
   }
