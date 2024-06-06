@@ -27,7 +27,7 @@ export class DAppWindow {
       top: WINDOW.innerHeight / 2 - height / 2,
       left: WINDOW.innerWidth / 2 - width / 2,
       width,
-      height,
+      height: WINDOW.innerHeight >= height ? height : WINDOW.innerHeight,
     };
   }
 
