@@ -1,34 +1,12 @@
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 
-import { StorageAbstract } from 'fuels';
+import type { StorageAbstract } from 'fuels';
 import { BakoSafeConnector } from '../src/BakoSafeConnector';
+import { BakoStorage } from '../src/BakoStorage';
 import { APP_NAME } from '../src/constants';
 
 describe('BakoSafeConnector', () => {
-  let storage: StorageAbstract;
-  beforeAll(() => {
-    class Storage extends StorageAbstract {
-      data: { [key: string]: string } = {};
-
-      async getItem(key: string): Promise<string | null | undefined> {
-        return this.data[key];
-      }
-
-      async setItem(key: string, value: string): Promise<void> {
-        this.data[key] = value;
-      }
-
-      async removeItem(key: string): Promise<void> {
-        delete this.data[key];
-      }
-
-      async clear(): Promise<void> {
-        this.data = {};
-      }
-    }
-
-    storage = new Storage();
-  });
+  const storage: StorageAbstract = new BakoStorage();
 
   test('constructor initializes properties correctly', async () => {
     const connector = new BakoSafeConnector({

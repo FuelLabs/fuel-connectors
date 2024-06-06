@@ -9,6 +9,7 @@ import {
   type TransactionRequestLike,
 } from 'fuels';
 
+import { BakoStorage } from './BakoStorage';
 import { DAppWindow } from './DAPPWindow';
 import { SocketClient } from './SocketClient';
 import {
@@ -72,8 +73,7 @@ export class BakoSafeConnector extends FuelConnector {
   // Bako Safe application specific methods
   // ============================================================
   private getStorage(storage?: StorageAbstract) {
-    const _storage =
-      storage ?? (WINDOW.localStorage as unknown as StorageAbstract);
+    const _storage = storage ?? WINDOW.localStorage ?? new BakoStorage();
     if (!_storage) {
       throw new Error('No storage provided');
     }
