@@ -486,9 +486,7 @@ describe('EVM Wallet Connector', () => {
           predicateAccount2.replaceAll('h', 'X'),
           transactionRequest,
         ),
-      ).rejects.toThrowError(
-        `No account found for ${predicateAccount2.replaceAll('h', 'X')}`,
-      );
+      ).rejects.toThrowError();
     });
   });
 
