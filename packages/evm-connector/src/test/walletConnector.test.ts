@@ -1,12 +1,17 @@
 import path from 'node:path';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
 import {
+  Address,
   type Asset,
+  InputType,
+  type Predicate,
   type Provider,
   ScriptTransactionRequest,
   Wallet,
   WalletUnlocked,
+  arrayify,
   bn,
+  hexlify,
 } from 'fuels';
 import {
   afterAll,
@@ -24,10 +29,68 @@ import { testEVMWalletConnector as EVMWalletConnector } from './testConnector';
 import { Utils } from './utils/versions';
 
 const predicate =
-  VERSIONS['0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33']
+  VERSIONS['0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac']
     .predicate;
 
-const MAX_FEE = bn(10000);
+const MAX_FEE = bn(10_000);
+
+async function createTransaction(
+  predicate: Predicate<number[]>,
+  address: string,
+) {
+  const ALT_ASSET_ID =
+    '0x0101010101010101010101010101010101010101010101010101010101010101';
+
+  try {
+    const tx = new ScriptTransactionRequest({
+      gasLimit: bn(10_000),
+      maxFee: MAX_FEE,
+    });
+
+    const provider = predicate.provider;
+
+    const coins = await predicate.getResourcesToSpend([
+      {
+        assetId: provider.getBaseAssetId(),
+        amount: bn.parseUnits('0.001'),
+      },
+      {
+        assetId: ALT_ASSET_ID,
+        amount: bn.parseUnits('0.001'),
+      },
+    ]);
+
+    tx.addResources(coins);
+
+    tx.inputs?.forEach((input) => {
+      if (
+        input.type === InputType.Coin &&
+        hexlify(input.owner) === predicate.address.toB256()
+      ) {
+        input.predicate = arrayify(predicate.bytes);
+      }
+    });
+
+    tx.addCoinOutput(
+      Address.fromString(address),
+      bn.parseUnits('0.0001'),
+      provider.getBaseAssetId(),
+    );
+
+    tx.addCoinOutput(
+      Address.fromString(address),
+      bn.parseUnits('0.0001'),
+      ALT_ASSET_ID,
+    );
+
+    return tx;
+  } catch (e) {
+    throw new Error(
+      //@ts-ignore
+      e?.response?.errors[0].message ?? e,
+    );
+  }
+}
 
 describe('EVM Wallet Connector', () => {
   // Providers used to interact with wallets
@@ -198,22 +261,21 @@ describe('EVM Wallet Connector', () => {
       '0x0101010101010101010101010101010101010101010101010101010101010101';
 
     test('transfer when the current signer is passed in', async () => {
+      const version =
+        '0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac';
+
       const accounts = ethProvider.getAccounts();
       const predicateAccount = new PredicateAccount(predicate);
       const ethAccount1 = accounts[0] as string;
 
-      const connector = new EVMWalletConnector({
-        ethProvider,
-        fuelProvider,
-      });
+      const accountAddress = predicateAccount.getPredicateAddress(ethAccount1);
+      const fundingWallet = new WalletUnlocked('0x01', fuelProvider);
 
       const createdPredicate = predicateAccount.createPredicate(
         ethAccount1,
         fuelProvider,
+        [0],
       );
-
-      const accountAddress = predicateAccount.getPredicateAddress(ethAccount1);
-      const fundingWallet = new WalletUnlocked('0x01', fuelProvider);
 
       // Transfer base asset coins to predicate
       await fundingWallet
@@ -230,6 +292,23 @@ describe('EVM Wallet Connector', () => {
         })
         .then((resp) => resp.wait());
 
+      // Create a recipient Wallet
+      const recipientWallet = Wallet.generate({ provider: fuelProvider });
+      const recipientBalanceInitial =
+        await recipientWallet.getBalance(ALT_ASSET_ID);
+
+      // Create transfer from predicate to recipient
+      const transactionRequest = await createTransaction(
+        createdPredicate,
+        recipientWallet.address.toString(),
+      );
+
+      const connector = new EVMWalletConnector({
+        ethProvider,
+        fuelProvider,
+        predicateConfig: VERSIONS[version].predicate,
+      });
+
       // Check predicate balances
       const predicateETHBalanceInitial = await createdPredicate.getBalance();
       const predicateAltBalanceInitial =
@@ -239,38 +318,6 @@ describe('EVM Wallet Connector', () => {
       expect(predicateETHBalanceInitial.gte(1000000));
       expect(predicateAltBalanceInitial.gte(1000000));
 
-      // Amount to transfer
-      const amountToTransfer = 10;
-
-      // Create a recipient Wallet
-      const recipientWallet = Wallet.generate({ provider: fuelProvider });
-      const recipientBalanceInitial =
-        await recipientWallet.getBalance(ALT_ASSET_ID);
-
-      // Create transfer from predicate to recipient
-      const transactionRequest = new ScriptTransactionRequest({
-        gasLimit: 10000,
-        maxFee: MAX_FEE,
-      });
-      transactionRequest.addCoinOutput(
-        recipientWallet.address,
-        amountToTransfer,
-        ALT_ASSET_ID,
-      );
-
-      // fund transaction
-      const resources = await createdPredicate.getResourcesToSpend([
-        {
-          assetId: baseAssetId,
-          amount: bn(1_000_000),
-        },
-        {
-          assetId: ALT_ASSET_ID,
-          amount: bn(1_000_000),
-        },
-      ]);
-      transactionRequest.addResources(resources);
-
       // Connect ETH account
       await connector.connect();
 
@@ -278,7 +325,6 @@ describe('EVM Wallet Connector', () => {
       // Temporary hack here?
       await connector.accounts();
 
-      //  Send transaction using EvmWalletConnector
       await connector.sendTransaction(accountAddress, transactionRequest);
 
       // Check balances are correct
@@ -288,31 +334,29 @@ describe('EVM Wallet Connector', () => {
         await recipientWallet.getBalance(ALT_ASSET_ID);
 
       expect(predicateAltBalanceFinal.toString()).eq(
-        predicateAltBalanceInitial.sub(amountToTransfer).toString(),
+        predicateAltBalanceInitial.sub(bn.parseUnits('0.0001')).toString(),
       );
       expect(recipientBalanceFinal.toString()).eq(
-        recipientBalanceInitial.add(amountToTransfer).toString(),
+        recipientBalanceInitial.add(bn.parseUnits('0.0001')).toString(),
       );
     });
 
     test('transfer when a different valid signer is passed in', async () => {
+      const version =
+        '0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac';
+
       const accounts = ethProvider.getAccounts();
       const predicateAccount = new PredicateAccount(predicate);
       const ethAccount1 = accounts[1] as string;
 
-      const connector = new EVMWalletConnector({
-        ethProvider,
-        fuelProvider,
-        predicateConfig: predicate,
-      });
+      const accountAddress = predicateAccount.getPredicateAddress(ethAccount1);
+      const fundingWallet = new WalletUnlocked('0x01', fuelProvider);
 
       const createdPredicate = predicateAccount.createPredicate(
         ethAccount1,
         fuelProvider,
+        [0],
       );
-
-      const accountAddress = predicateAccount.getPredicateAddress(ethAccount1);
-      const fundingWallet = new WalletUnlocked('0x01', fuelProvider);
 
       // Transfer base asset coins to predicate
       await fundingWallet
@@ -329,6 +373,23 @@ describe('EVM Wallet Connector', () => {
         })
         .then((resp) => resp.wait());
 
+      // Create a recipient Wallet
+      const recipientWallet = Wallet.generate({ provider: fuelProvider });
+      const recipientBalanceInitial =
+        await recipientWallet.getBalance(ALT_ASSET_ID);
+
+      // Create transfer from predicate to recipient
+      const transactionRequest = await createTransaction(
+        createdPredicate,
+        recipientWallet.address.toString(),
+      );
+
+      const connector = new EVMWalletConnector({
+        ethProvider,
+        fuelProvider,
+        predicateConfig: VERSIONS[version].predicate,
+      });
+
       // Check predicate balances
       const predicateETHBalanceInitial = await createdPredicate.getBalance();
       const predicateAltBalanceInitial =
@@ -338,38 +399,6 @@ describe('EVM Wallet Connector', () => {
       expect(predicateETHBalanceInitial.gte(1000000));
       expect(predicateAltBalanceInitial.gte(1000000));
 
-      // Amount to transfer
-      const amountToTransfer = 10;
-
-      // Create a recipient Wallet
-      const recipientWallet = Wallet.generate({ provider: fuelProvider });
-      const recipientBalanceInitial =
-        await recipientWallet.getBalance(ALT_ASSET_ID);
-
-      // Create transfer from predicate to recipient
-      const transactionRequest = new ScriptTransactionRequest({
-        gasLimit: 10000,
-        maxFee: MAX_FEE,
-      });
-      transactionRequest.addCoinOutput(
-        recipientWallet.address,
-        amountToTransfer,
-        ALT_ASSET_ID,
-      );
-
-      // fund transaction
-      const resources = await createdPredicate.getResourcesToSpend([
-        {
-          assetId: baseAssetId,
-          amount: bn(1_000_000),
-        },
-        {
-          assetId: ALT_ASSET_ID,
-          amount: bn(1_000_000),
-        },
-      ]);
-      transactionRequest.addResources(resources);
-
       // Connect ETH account
       await connector.connect();
 
@@ -377,7 +406,6 @@ describe('EVM Wallet Connector', () => {
       // Temporary hack here?
       await connector.accounts();
 
-      // Send transaction using EvmWalletConnector
       await connector.sendTransaction(accountAddress, transactionRequest);
 
       // Check balances are correct
@@ -387,10 +415,10 @@ describe('EVM Wallet Connector', () => {
         await recipientWallet.getBalance(ALT_ASSET_ID);
 
       expect(predicateAltBalanceFinal.toString()).eq(
-        predicateAltBalanceInitial.sub(amountToTransfer).toString(),
+        predicateAltBalanceInitial.sub(bn.parseUnits('0.0001')).toString(),
       );
       expect(recipientBalanceFinal.toString()).eq(
-        recipientBalanceInitial.add(amountToTransfer).toString(),
+        recipientBalanceInitial.add(bn.parseUnits('0.0001')).toString(),
       );
     });
 
@@ -412,6 +440,7 @@ describe('EVM Wallet Connector', () => {
       const createdPredicate = predicateAccount.createPredicate(
         ethAccount1,
         fuelProvider,
+        [0],
       );
 
       const fundingWallet = new WalletUnlocked('0x01', fuelProvider);
@@ -431,6 +460,11 @@ describe('EVM Wallet Connector', () => {
         })
         .then((resp) => resp.wait());
 
+      const transactionRequest = await createTransaction(
+        createdPredicate,
+        fundingWallet.address.toString(),
+      );
+
       // Check predicate balances
       const predicateETHBalanceInitial = await createdPredicate.getBalance();
       const predicateAltBalanceInitial =
@@ -439,36 +473,6 @@ describe('EVM Wallet Connector', () => {
       // Check predicate has the balance required
       expect(predicateETHBalanceInitial.gte(1000000));
       expect(predicateAltBalanceInitial.gte(1000000));
-
-      // Amount to transfer
-      const amountToTransfer = 10;
-
-      // Create a recipient Wallet
-      const recipientWallet = Wallet.generate({ provider: fuelProvider });
-
-      // Create transfer from predicate to recipient
-      const transactionRequest = new ScriptTransactionRequest({
-        gasLimit: 10000,
-        maxFee: MAX_FEE,
-      });
-      transactionRequest.addCoinOutput(
-        recipientWallet.address,
-        amountToTransfer,
-        ALT_ASSET_ID,
-      );
-
-      // fund transaction
-      const resources = await createdPredicate.getResourcesToSpend([
-        {
-          assetId: baseAssetId,
-          amount: bn(1_000_000),
-        },
-        {
-          assetId: ALT_ASSET_ID,
-          amount: bn(1_000_000),
-        },
-      ]);
-      transactionRequest.addResources(resources);
 
       // Connect ETH account
       await connector.connect();
@@ -491,7 +495,7 @@ describe('EVM Wallet Connector', () => {
   describe('setupPredicate()', () => {
     test('Should instantiate a predicate with given config', async () => {
       const version =
-        '0xb4eef551b1342c6230036ea8f75e1ef88fa72299d581a3f18c92bca43674fb86';
+        '0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac';
 
       const evmConnector = new EVMWalletConnector({
         ethProvider,
@@ -521,7 +525,7 @@ describe('EVM Wallet Connector', () => {
       const ALT_ASSET_ID =
         '0x0101010101010101010101010101010101010101010101010101010101010101';
       const version =
-        '0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33';
+        '0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac';
 
       const accounts = ethProvider.getAccounts();
 

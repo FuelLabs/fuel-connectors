@@ -2,11 +2,7 @@ import { type Provider, bn } from 'fuels';
 
 import { PredicateAccount } from '../Predicate';
 import { EVMWalletConnector } from '../index';
-import type {
-  EVMWalletConnectorConfig,
-  Predicate,
-  PredicateConfig,
-} from '../types';
+import type { EVMWalletConnectorConfig, Predicate } from '../types';
 import type { EIP1193Provider } from '../utils/eip-1193';
 import { MockProvider } from './mockProvider';
 import { VERSIONS } from './mocked-versions/versions-dictionary';
