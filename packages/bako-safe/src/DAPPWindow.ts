@@ -1,4 +1,4 @@
-import { APP_NAME, WINDOW } from './constants';
+import { WINDOW } from './constants';
 
 type PopupConfig = {
   appUrl: string;
