@@ -9,7 +9,7 @@ import {
   type TransactionRequestLike,
 } from 'fuels';
 
-import { BakoStorage } from './BakoStorage';
+import { BakoStorage } from './BakoSafeStorage';
 import { DAppWindow } from './DAPPWindow';
 import { SocketClient } from './SocketClient';
 import {
@@ -22,6 +22,7 @@ import {
   APP_VERSION,
   HAS_WINDOW,
   HOST_URL,
+  SESSION_ID,
   WINDOW,
 } from './constants';
 import { RequestAPI } from './request';
@@ -84,10 +85,10 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   private async getSessionId() {
-    let sessionId: string = (await this.storage?.getItem('sessionId')) || '';
+    let sessionId: string = (await this.storage?.getItem(SESSION_ID)) || '';
     if (!sessionId) {
       sessionId = crypto.randomUUID();
-      await this.storage?.setItem('sessionId', sessionId);
+      await this.storage?.setItem(SESSION_ID, sessionId);
     }
     return sessionId;
   }
@@ -172,12 +173,6 @@ export class BakoSafeConnector extends FuelConnector {
           const connected = data.connected;
           const accounts = await this.accounts();
           const currentAccount = await this.currentAccount();
-
-          console.log({
-            connected,
-            accounts,
-            currentAccount,
-          });
 
           this.emit(this.events.connection, connected);
           this.emit(this.events.accounts, accounts);

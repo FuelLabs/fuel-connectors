@@ -24,3 +24,6 @@ export const SOCKET_URL = 'https://api-safe.bako.global';
 export const HAS_WINDOW = typeof window !== 'undefined';
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export const WINDOW: any = HAS_WINDOW ? window : {};
+
+//storage
+export const SESSION_ID = 'sessionId';

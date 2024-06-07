@@ -8,10 +8,10 @@ import {
   type StorageAbstract,
 } from 'fuels';
 import { BakoSafeConnector } from '../src/BakoSafeConnector';
-import { BakoStorage } from '../src/BakoStorage';
+import { BakoStorage } from '../src/BakoSafeStorage';
 import { APP_NAME, APP_NETWORK, APP_VERSION } from '../src/constants';
 import { MockedRequestAPI } from './mocks/api';
-import { CURRENT_NETWORK, NETWORKS, STATE } from './mocks/constantes';
+import { CURRENT_NETWORK, STATE } from './mocks/constantes';
 
 describe('BakoSafeConnector', () => {
   const storage: StorageAbstract = new BakoStorage();
@@ -74,11 +74,26 @@ describe('currentNetwork()', () => {
     });
 
     const current_network = await connector.currentNetwork();
-    console.log('[test]: ', current_network);
     expect(current_network).toEqual({
       chainId: 0,
       url: CURRENT_NETWORK,
     });
+  });
+});
+
+describe('isConnected()', () => {
+  test('return connection state', async () => {
+    const storage: StorageAbstract = new BakoStorage();
+    await storage.setItem('sessionId', 'fake_session_id');
+
+    const connector = new BakoSafeConnector({
+      api: new MockedRequestAPI(),
+      storage,
+    });
+
+    const state = await connector.isConnected();
+
+    expect(state).toEqual(STATE);
   });
 });
 

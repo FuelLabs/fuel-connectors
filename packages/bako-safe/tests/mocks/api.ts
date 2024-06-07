@@ -28,10 +28,6 @@ export class MockedRequestAPI {
     }
   }
 
-  async post(_pathname: string, _body: BodyInit) {
-    return {};
-  }
-
   async delete(_pathname: string) {
     return;
   }

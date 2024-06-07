@@ -1,6 +1,6 @@
 import { type Socket, io } from 'socket.io-client';
 import type { BakoSafeConnector } from './BakoSafeConnector';
-import { SOCKET_URL } from './constants';
+import { APP_URL, SOCKET_URL } from './constants';
 import { WINDOW } from './constants';
 import {
   BakoSafeConnectorEvents,
@@ -15,7 +15,7 @@ import {
 const default_socket_auth: Omit<ISocketAuth, 'sessionId'> = {
   username: BakoSafeUsernames.CONNECTOR,
   data: new Date(),
-  origin: WINDOW.origin ?? 'https://safe.bako.global',
+  origin: WINDOW.origin ?? APP_URL,
 };
 
 export class SocketClient {
