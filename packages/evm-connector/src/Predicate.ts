@@ -1,35 +1,66 @@
-import { predicates } from './generated/predicate';
-import type { EIP1193Provider } from './utils/eip-1193';
-import { getPredicateAddress } from './utils/predicate';
+import { arrayify } from '@ethersproject/bytes';
+import {
+  Address,
+  type InputValue,
+  type JsonAbi,
+  Predicate,
+  type Provider,
+  getPredicateRoot,
+} from 'fuels';
+import memoize from 'memoizee';
+import type { PredicateConfig } from './types';
 
 export class PredicateAccount {
-  private predicate = predicates['verification-predicate'];
+  private abi: JsonAbi;
+  private bytecode: Uint8Array;
 
-  async getPredicateFromAddress(address: string, ethProvider: EIP1193Provider) {
-    const accounts = await this.getPredicateAccounts(ethProvider);
-
-    return accounts.find((account) => account.predicateAccount === address);
+  constructor({ abi, bytecode }: PredicateConfig) {
+    this.abi = abi;
+    this.bytecode = bytecode;
   }
 
-  async getPredicateAccounts(ethProvider: EIP1193Provider): Promise<
-    Array<{
-      ethAccount: string;
-      predicateAccount: string;
-    }>
-  > {
-    const ethAccounts: Array<string> = await ethProvider.request({
-      method: 'eth_accounts',
-    });
+  getPredicateAddress = memoize((evmAddress: string): string => {
+    const configurable = {
+      SIGNER: Address.fromEvmAddress(evmAddress).toB256(),
+    };
+    // @ts-ignore
+    const { predicateBytes } = Predicate.processPredicateData(
+      this.bytecode,
+      this.abi,
+      configurable,
+    );
+    const address = Address.fromB256(getPredicateRoot(predicateBytes));
 
-    const accounts = ethAccounts.map((account) => ({
-      ethAccount: account,
-      predicateAccount: getPredicateAddress(
-        account,
-        this.predicate.bytecode,
-        this.predicate.abi,
-      ),
-    }));
+    return address.toString();
+  });
 
-    return accounts;
+  createPredicate = memoize(
+    <TInputData extends InputValue[]>(
+      evmAddress: string,
+      provider: Provider,
+      inputData?: TInputData,
+    ): Predicate<TInputData> => {
+      const configurable = {
+        SIGNER: Address.fromEvmAddress(evmAddress).toB256(),
+      };
+      const predicate = new Predicate({
+        bytecode: arrayify(this.bytecode),
+        abi: this.abi,
+        provider,
+        configurableConstants: configurable,
+        inputData,
+      });
+      return predicate;
+    },
+  );
+
+  getEVMAddress(address: string, evmAccounts: Array<string> = []) {
+    return evmAccounts.find(
+      (account) => this.getPredicateAddress(account) === address,
+    );
+  }
+
+  getPredicateAccounts(evmAccounts: Array<string> = []): Array<string> {
+    return evmAccounts.map((account) => this.getPredicateAddress(account));
   }
 }
