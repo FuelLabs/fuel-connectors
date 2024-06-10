@@ -1,6 +1,8 @@
 import type { Asset, Network } from 'fuels';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { WalletConnectConnector } from '../WalletConnectConnector';
+import { PredicateAccount } from '../utils/Predicate';
+import { VERSIONS } from './mocked-versions/versions-dictionary';
 
 describe('WalletConnect Connector', () => {
   let connector: WalletConnectConnector;
@@ -41,6 +43,29 @@ describe('WalletConnect Connector', () => {
   describe('assets()', () => {
     test('returns an empty array', async () => {
       expect(await connector.assets()).to.deep.equal([]);
+    });
+  });
+
+  describe('setupPredicate()', () => {
+    test('should setup predicate with given config', async () => {
+      const version =
+        '0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33';
+
+      const walletConectconnector = new WalletConnectConnector({
+        predicateConfig: VERSIONS[version].predicate,
+      });
+
+      const predicateAccount = await walletConectconnector.setupPredicate();
+
+      expect(predicateAccount).to.be.instanceOf(PredicateAccount);
+    });
+
+    test('Should setup predicate without given config', async () => {
+      const walletConectconnector = new WalletConnectConnector();
+
+      const predicateAccount = await walletConectconnector.setupPredicate();
+
+      expect(predicateAccount).to.be.instanceOf(PredicateAccount);
     });
   });
 
