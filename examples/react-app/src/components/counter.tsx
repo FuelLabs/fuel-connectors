@@ -66,8 +66,8 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
       setLoading(true);
       setIsSigning(true);
       const contract = CounterAbi__factory.connect(
-        COUNTER_CONTRACT_ID, 
-        wallet  
+        COUNTER_CONTRACT_ID,
+        wallet
       );
       try {
         await contract.functions
