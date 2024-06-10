@@ -7,7 +7,6 @@ export default defineConfig((options) => ({
     'src/index.ts',
     'src/walletconnect-connector/index.ts',
     'src/evm-connector/index.ts',
-    'src/bako-safe/index.ts',
   ],
   external: ['fuels'],
   noExternal: [
