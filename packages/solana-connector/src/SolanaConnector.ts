@@ -153,6 +153,23 @@ export class SolanaConnector extends FuelConnector {
   }
 
   async connect(): Promise<boolean> {
+    //@ts-ignore
+    if (this.web3Modal.getIsConnectedState()) {
+      this.emit(this.events.connection, true);
+      this.emit(
+        this.events.currentAccount,
+        this.predicateAccount.getPredicateAddress(
+          this.web3Modal.getAddress() ?? '',
+        ),
+      );
+      this.emit(
+        this.events.accounts,
+        this.predicateAccount.getPredicateAccounts(this.svmAccounts()),
+      );
+
+      return true;
+    }
+
     return new Promise((resolve) => {
       this.web3Modal.open();
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
@@ -239,9 +256,9 @@ export class SolanaConnector extends FuelConnector {
     const signedMessage = await this.web3Modal
       .getWalletProvider()
       //@ts-ignore
-      ?._wallet.signMessage(u8TxId, 'utf8');
+      ?.signMessage(u8TxId, 'utf8');
 
-    const signature = hexlify(signedMessage.signature);
+    const signature = hexlify(signedMessage);
     transactionRequest.witnesses.push(signature);
 
     await predicate.provider.estimatePredicates(transactionRequest);
