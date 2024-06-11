@@ -1,6 +1,6 @@
 {
   "name": "@fuels/connectors",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -35,7 +35,8 @@
     "@ethersproject/bytes": "5.7.0",
     "@wagmi/core": "2.9.1",
     "@web3modal/wagmi": "4.1.11",
-    "viem": "2.10.2"
+    "viem": "2.10.2",
+    "socket.io-client": "4.7.2"
   },
   "devDependencies": {
     "@fuel-connectors/burner-wallet-connector": "workspace:*",
@@ -44,6 +45,7 @@
     "@fuel-connectors/fuel-wallet": "workspace:*",
     "@fuel-connectors/fuelet-wallet": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
+    "@fuel-connectors/bako-safe": "workspace:*",
     "fuels": "0.88.1",
     "terser": "5.31.0",
     "tsup": "8.0.2",

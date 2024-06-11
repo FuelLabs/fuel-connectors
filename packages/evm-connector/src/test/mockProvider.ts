@@ -7,6 +7,7 @@ import {
   privateToAddress,
   toRpcSig,
 } from '@ethereumjs/util';
+import { randomBytes } from 'fuels';
 
 interface IMockProvider {
   request(args: {
@@ -53,10 +54,7 @@ export class MockProvider extends EventEmitter implements IMockProvider {
   constructor(numAccounts = 3) {
     super();
     for (let i = 0; i < numAccounts; i += 1) {
-      // const privateKey = randomBytes(32);
-      const privateKey = hexToBytes(
-        '0x96dfa8c25bdae93fa0b6460079f8bb18aaec70c8451b5e32251cbc22f0dbf308',
-      );
+      const privateKey = randomBytes(32);
       const address = bytesToHex(privateToAddress(privateKey));
       this.accounts.push({ address, privateKey: privateKey });
     }
