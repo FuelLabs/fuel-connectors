@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import {
+  BakoSafeConnector,
   FuelWalletConnector,
   FuelWalletDevelopmentConnector,
   FueletWalletConnector,
@@ -22,6 +23,7 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
           connectors: [
             new FuelWalletConnector(),
             new FuelWalletDevelopmentConnector(),
+            new BakoSafeConnector(),
             new FueletWalletConnector(),
             new WalletConnectConnector(),
           ],

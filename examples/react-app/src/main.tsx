@@ -9,6 +9,7 @@ import { http, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
 
 import {
+  BakoSafeConnector,
   BurnerWalletConnector,
   FuelWalletConnector,
   FuelWalletDevelopmentConnector,
@@ -66,6 +67,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         fuelConfig={{
           connectors: [
             new FuelWalletConnector(),
+            new BakoSafeConnector(),
             new FueletWalletConnector(),
             new WalletConnectConnector({
               wagmiConfig,
