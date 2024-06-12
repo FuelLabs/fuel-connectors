@@ -1,5 +1,5 @@
 ---
-"@fuel-connectors/bako-safe": major
+"@fuel-connectors/bako-safe": minor
 ---
 
 Add bako-safe connector
