@@ -42,6 +42,7 @@ export class SolanaConnector extends FuelConnector {
   private predicateAccount: PredicateAccount;
   private config: SolanaConfig = {};
   private encoder = new TextEncoder();
+  private svmAddress: string | null = null;
 
   constructor(config: SolanaConfig = {}) {
     super();
@@ -84,13 +85,6 @@ export class SolanaConnector extends FuelConnector {
 
       switch (event.data.event) {
         case 'CONNECT_SUCCESS': {
-          console.log(
-            '>>>>> CONNECT_SUCCESS',
-            this.predicateAccount.getPredicateAddress(
-              this.web3Modal.getAddress() ?? '',
-            ),
-          );
-
           this.emit(this.events.connection, true);
           this.emit(
             this.events.currentAccount,
@@ -102,6 +96,7 @@ export class SolanaConnector extends FuelConnector {
             this.events.accounts,
             this.predicateAccount.getPredicateAccounts(this.svmAccounts()),
           );
+          this.svmAddress = this.web3Modal.getAddress() ?? '';
           break;
         }
         case 'DISCONNECT_SUCCESS': {
@@ -112,6 +107,28 @@ export class SolanaConnector extends FuelConnector {
         }
       }
     });
+
+    // Poll for account changes due a problem with the event listener not firing on account changes
+    setInterval(() => {
+      const address = this.web3Modal.getAddress();
+      if (address && address !== this.svmAddress) {
+        this.emit(this.events.currentAccount, address);
+        this.emit(
+          this.events.accounts,
+          this.predicateAccount.getPredicateAccounts(this.svmAccounts()),
+        );
+
+        this.svmAddress = address;
+      }
+
+      if (!address && this.svmAddress) {
+        this.emit(this.events.connection, false);
+        this.emit(this.events.currentAccount, null);
+        this.emit(this.events.accounts, []);
+
+        this.svmAddress = null;
+      }
+    }, 300);
   }
 
   async getProviders() {
