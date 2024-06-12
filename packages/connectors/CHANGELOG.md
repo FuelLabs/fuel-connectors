@@ -1,5 +1,11 @@
 # @fuels/connectors
 
+## 0.6.0
+
+### Minor Changes
+
+- [#105](https://github.com/FuelLabs/fuel-connectors/pull/105) [`e3c1b65`](https://github.com/FuelLabs/fuel-connectors/commit/e3c1b653a8830ea70e5e9875e6acc4e269980c0a) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - Include WalletConnect to defaultConnectors
+
 ## 0.5.1
 
 ## 0.5.0
