@@ -43,14 +43,13 @@ export class PredicateAccount {
       const configurable = {
         SIGNER: Address.fromEvmAddress(evmAddress).toB256(),
       };
-      const predicate = new Predicate({
+      return new Predicate({
         bytecode: arrayify(this.bytecode),
         abi: this.abi,
         provider,
         configurableConstants: configurable,
         inputData,
       });
-      return predicate;
     },
   );
 
