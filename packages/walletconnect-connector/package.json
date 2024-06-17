@@ -3,7 +3,9 @@
   "private": true,
   "version": "0.5.1",
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/wallet-connector-walletconnect.umd.cjs",
   "module": "./dist/wallet-connector-walletconnect.js",
   "exports": {
@@ -30,7 +32,8 @@
     "@wagmi/core": "2.9.1",
     "@web3modal/wagmi": "4.1.11",
     "memoizee": "0.4.15",
-    "viem": "2.10.2"
+    "viem": "2.10.2",
+    "vite-tsconfig-paths": "4.3.2"
   },
   "devDependencies": {
     "@fuel-ts/account": "0.88.1",
