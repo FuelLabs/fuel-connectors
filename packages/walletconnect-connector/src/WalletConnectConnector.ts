@@ -19,14 +19,16 @@ import {
   type Network,
   type TransactionRequestLike,
   type Version,
+  type InputValue,
+  Predicate as FuelPredicate,
   bn,
   transactionRequestify,
 } from 'fuels';
 
-import { VERSIONS } from '../versions/versions-dictionary';
+import { PredicateAccount } from '@fuel-packages/evm-connector/src/Predicate';
+import { VERSIONS } from '@fuel-packages/evm-connector/versions/versions-dictionary';
 import { ETHEREUM_ICON, TESTNET_URL } from './constants';
 import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
-import { PredicateAccount } from './utils/Predicate';
 import { createModalConfig } from './utils/wagmiConfig';
 export class WalletConnectConnector extends FuelConnector {
   name = 'Ethereum Wallets';
@@ -49,7 +51,7 @@ export class WalletConnectConnector extends FuelConnector {
   };
 
   wagmiConfig: Config;
-  ethProvider: unknown | null = null;
+  ethProvider: unknown = null;
   fuelProvider: FuelProvider | null = null;
   web3Modal: Web3Modal;
 
@@ -73,7 +75,7 @@ export class WalletConnectConnector extends FuelConnector {
 
   async configProviders(config: WalletConnectConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
+      fuelProvider: config.fuelProvider || await FuelProvider.create(TESTNET_URL),
     });
   }
 
@@ -131,7 +133,7 @@ export class WalletConnectConnector extends FuelConnector {
     }
 
     const newestPredicate = predicateVersions.sort(
-      (a, b) => Number(b.pred.generatedAt) - Number(a.pred.generatedAt),
+      (a, b) => Number(b.pred.generatedAt) - Number(a.pred.generatedAt)
     )[0];
 
     if (newestPredicate) {
@@ -161,7 +163,7 @@ export class WalletConnectConnector extends FuelConnector {
     this._unsubs.push(
       watchAccount(this.wagmiConfig, {
         onChange: async (account) => {
-          const predicateAccount = await this.predicateAccount;
+          const predicateAccount = this.predicateAccount;
 
           switch (account.status) {
             case 'connected': {
@@ -302,7 +304,7 @@ export class WalletConnectConnector extends FuelConnector {
     const transactionRequest = transactionRequestify(transaction);
 
     // Create a predicate and set the witness index to call in predicate`
-    const predicate = this.predicateAccount.createPredicate(
+    const predicate: FuelPredicate<InputValue[]>  = this.predicateAccount.createPredicate(
       evmAccount,
       fuelProvider,
       [transactionRequest.witnesses.length - 1],
@@ -352,7 +354,7 @@ export class WalletConnectConnector extends FuelConnector {
     if (!(await this.isConnected())) {
       throw Error('No connected accounts');
     }
-    const ethAccount = getAccount(this.wagmiConfig).address || null;
+    const ethAccount = getAccount(this.wagmiConfig).address ?? null;
 
     return (
       this.predicateAccount?.getPredicateAddress(ethAccount as string) ?? null
