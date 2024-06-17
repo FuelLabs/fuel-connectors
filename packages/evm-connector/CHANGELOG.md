@@ -1,5 +1,11 @@
 # @fuel-connectors/evm-connector
 
+## 0.6.0
+
+### Minor Changes
+
+- [#69](https://github.com/FuelLabs/fuel-connectors/pull/69) [`31ee2a5`](https://github.com/FuelLabs/fuel-connectors/commit/31ee2a551100bf9c3113d6397d95ac1b5646f4b3) Thanks [@pedropereiradev](https://github.com/pedropereiradev)! - Predicate versioning for predicate based connectors implemented
+
 ## 0.5.1
 
 ## 0.5.0
