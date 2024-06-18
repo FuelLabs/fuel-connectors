@@ -20,7 +20,7 @@ import {
   type TransactionRequestLike,
   type Version,
   type InputValue,
-  Predicate as FuelPredicate,
+  type Predicate as FuelPredicate,
   bn,
   transactionRequestify,
 } from 'fuels';
