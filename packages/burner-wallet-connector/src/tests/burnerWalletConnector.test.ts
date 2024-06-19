@@ -107,6 +107,30 @@ describe('Burner Wallet Connector', () => {
       );
     });
 
+    test('creates a new BurnerWalletConnector instance with sessionStorage when local storage has already been set', async () => {
+      const storage = createMockedStorage();
+      const wallet1 = Wallet.generate();
+      const wallet2 = Wallet.generate();
+
+      global.localStorage.setItem(
+        BURNER_WALLET_PRIVATE_KEY,
+        wallet1.privateKey,
+      );
+
+      storage.setItem(BURNER_WALLET_PRIVATE_KEY, wallet2.privateKey);
+
+      const config: BurnerWalletConfig = {
+        storage,
+      };
+      const connector = new BurnerWalletConnector(config);
+      await connector.connect();
+
+      expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
+      expect(await connector.currentAccount()).to.be.equal(
+        wallet2.address.toString(),
+      );
+    });
+
     test('creates a new BurnerWalletConnector instance with non default Provider url', async () => {
       const nonDefaultProvider = await Provider.create(TESTNET_URL);
 
