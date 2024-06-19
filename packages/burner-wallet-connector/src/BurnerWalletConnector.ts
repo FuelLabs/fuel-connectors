@@ -12,18 +12,18 @@ import {
   type Version,
   Wallet,
   type WalletUnlocked,
-} from 'fuels';
+} from "fuels";
 import {
   BURNER_WALLET_ICON,
   BURNER_WALLET_PRIVATE_KEY,
   TESTNET_URL,
   WINDOW,
-} from './constants';
-import type { BurnerWalletConfig } from './types';
+} from "./constants";
+import type { BurnerWalletConfig } from "./types";
 
 export class BurnerWalletConnector extends FuelConnector {
   static defaultProviderUrl: string = TESTNET_URL;
-  name = 'Burner Wallet';
+  name = "Burner Wallet";
 
   connected = false;
   installed = false;
@@ -33,26 +33,37 @@ export class BurnerWalletConnector extends FuelConnector {
   metadata: ConnectorMetadata = {
     image: BURNER_WALLET_ICON,
     install: {
-      action: '',
-      description: 'Burner Wallet to connect to Fuel',
-      link: '',
+      action: "",
+      description: "Burner Wallet to connect to Fuel",
+      link: "",
     },
   };
 
   private burnerWallet: WalletUnlocked | null = null;
-  private burnerWalletProvider: Provider | null = null;
+  private burnerWalletProvider: Provider | Promise<Provider> | null = null;
   private storage: StorageAbstract;
 
   constructor(config: BurnerWalletConfig = {}) {
     super();
     this.storage = this.getStorage(config.storage);
-    this.setupBurnerWallet();
+
+    this.configProvider(config);
+    this.setupBurnerWallet(false);
   }
 
-  private async getProvider(config: BurnerWalletConfig = {}) {
+  private async configProvider(config: BurnerWalletConfig = {}) {
+    this.burnerWalletProvider =
+      config.fuelProvider ||
+      this.burnerWalletProvider ||
+      Provider.create(BurnerWalletConnector.defaultProviderUrl);
+  }
+
+  private async getProvider() {
     if (!this.burnerWalletProvider) {
-      this.burnerWalletProvider = await (config.fuelProvider ||
-        Provider.create(BurnerWalletConnector.defaultProviderUrl));
+      this.burnerWalletProvider = await this.burnerWalletProvider;
+      if (!this.burnerWalletProvider) {
+        throw new Error("Fuel provider not found.");
+      }
     }
     return this.burnerWalletProvider;
   }
@@ -73,7 +84,7 @@ export class BurnerWalletConnector extends FuelConnector {
 
     this.burnerWallet = Wallet.fromPrivateKey(
       privateKey,
-      await this.getProvider(),
+      await this.getProvider()
     );
 
     return this.burnerWallet;
@@ -83,7 +94,7 @@ export class BurnerWalletConnector extends FuelConnector {
     const _storage =
       storage ?? (WINDOW.localStorage as unknown as StorageAbstract);
     if (!_storage) {
-      throw new Error('No storage provided');
+      throw new Error("No storage provided");
     }
 
     return _storage;
@@ -100,7 +111,7 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async version(): Promise<Version> {
-    return { app: '0.0.0', network: '0.0.0' };
+    return { app: "0.0.0", network: "0.0.0" };
   }
 
   async isConnected(): Promise<boolean> {
@@ -121,7 +132,7 @@ export class BurnerWalletConnector extends FuelConnector {
 
   async accounts(): Promise<string[]> {
     if (!this.burnerWallet) {
-      throw Error('Wallet not connected');
+      throw Error("Wallet not connected");
     }
 
     const account = this.burnerWallet.address.toAddress();
@@ -145,11 +156,11 @@ export class BurnerWalletConnector extends FuelConnector {
 
   async signMessage(address: string, message: string): Promise<string> {
     if (!this.burnerWallet) {
-      throw Error('Wallet not connected');
+      throw Error("Wallet not connected");
     }
 
     if (address !== this.burnerWallet.address.toString()) {
-      throw Error('Address not found for the connector');
+      throw Error("Address not found for the connector");
     }
 
     const signMessage = await this.burnerWallet.signMessage(message);
@@ -159,19 +170,19 @@ export class BurnerWalletConnector extends FuelConnector {
 
   async sendTransaction(
     _address: string,
-    transaction: TransactionRequestLike,
+    transaction: TransactionRequestLike
   ): Promise<string> {
     if (!this.burnerWallet) {
-      throw Error('Wallet not connected');
+      throw Error("Wallet not connected");
     }
 
     if (_address !== this.burnerWallet.address.toString()) {
-      throw Error('Address not found for the connector');
+      throw Error("Address not found for the connector");
     }
 
     const transactionRequest = await this.burnerWallet.sendTransaction(
       transaction,
-      { awaitExecution: true },
+      { awaitExecution: true }
     );
 
     return transactionRequest.id;
@@ -179,18 +190,18 @@ export class BurnerWalletConnector extends FuelConnector {
 
   async currentAccount(): Promise<string | null> {
     if (!this.burnerWallet) {
-      throw Error('Wallet not connected');
+      throw Error("Wallet not connected");
     }
 
     return this.burnerWallet.address.toString() || null;
   }
 
   async addAssets(_assets: Asset[]): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 
   async addAsset(_asset: Asset): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 
   async assets(): Promise<Array<Asset>> {
@@ -198,11 +209,11 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async addNetwork(_networkUrl: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 
   async selectNetwork(_network: Network): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 
   async networks(): Promise<Network[]> {
@@ -215,19 +226,19 @@ export class BurnerWalletConnector extends FuelConnector {
 
     return {
       chainId,
-      url: provider.url ?? '',
+      url: provider.url ?? "",
     };
   }
 
   async addAbi(_abiMap: AbiMap): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 
   async getAbi(_contractId: string): Promise<JsonAbi> {
-    throw Error('Method not implemented.');
+    throw Error("Method not implemented.");
   }
 
   async hasAbi(_contractId: string): Promise<boolean> {
-    throw Error('Method not implemented.');
+    throw Error("Method not implemented.");
   }
 }
