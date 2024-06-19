@@ -1,4 +1,3 @@
-import { EventsController } from '@web3modal/core';
 import { type Asset, type Network, Provider } from 'fuels';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { WalletConnectConnector } from '../WalletConnectConnector';
