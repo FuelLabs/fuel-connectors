@@ -114,7 +114,6 @@ describe('Burner Wallet Connector', () => {
         fuelProvider: nonDefaultProvider,
       };
       const connector = new BurnerWalletConnector(config);
-      await connector.connect();
 
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
       expect(await connector.currentNetwork()).to.be.deep.equal({
@@ -129,9 +128,8 @@ describe('Burner Wallet Connector', () => {
       const config: BurnerWalletConfig = {
         fuelProvider: nonDefaultProvider,
       };
-      const connector = new BurnerWalletConnector(config);
-      await connector.connect();
 
+      const connector = new BurnerWalletConnector(config);
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
       expect(await connector.currentNetwork()).to.be.deep.equal({
         chainId: 0,

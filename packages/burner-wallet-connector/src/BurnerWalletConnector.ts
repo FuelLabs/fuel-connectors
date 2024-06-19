@@ -60,10 +60,7 @@ export class BurnerWalletConnector extends FuelConnector {
 
   private async getProvider() {
     if (!this.burnerWalletProvider) {
-      this.burnerWalletProvider = await this.burnerWalletProvider;
-      if (!this.burnerWalletProvider) {
-        throw new Error('Fuel provider not found.');
-      }
+      throw new Error('Fuel provider not found.');
     }
     return this.burnerWalletProvider;
   }
