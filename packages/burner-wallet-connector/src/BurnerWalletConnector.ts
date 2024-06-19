@@ -52,9 +52,9 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   private async configProvider(config: BurnerWalletConfig = {}) {
+    if (this.burnerWalletProvider) return;
     this.burnerWalletProvider =
       config.fuelProvider ||
-      this.burnerWalletProvider ||
       Provider.create(BurnerWalletConnector.defaultProviderUrl);
   }
 
