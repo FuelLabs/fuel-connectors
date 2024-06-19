@@ -1,8 +1,12 @@
-import type { Asset, Network } from 'fuels';
+import { EventsController } from '@web3modal/core';
+import { type Asset, type Network, Provider } from 'fuels';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { WalletConnectConnector } from '../WalletConnectConnector';
+import { TESTNET_URL } from '../constants';
 import { PredicateAccount } from '../utils/Predicate';
 import { VERSIONS } from './mocked-versions/versions-dictionary';
+
+const NON_DEFAULT_URL = 'http://localhost:4000/v1/graphql';
 
 describe('WalletConnect Connector', () => {
   let connector: WalletConnectConnector;
@@ -13,14 +17,65 @@ describe('WalletConnect Connector', () => {
   });
 
   describe('constructor()', () => {
-    test('initialize properties correctly', () => {
+    test('initialize properties correctly', async () => {
       const walletWalletConnector = new WalletConnectConnector({
         projectId: '0000',
       });
+      await walletWalletConnector.ping();
 
+      expect(walletWalletConnector).to.be.an.instanceOf(WalletConnectConnector);
       expect(walletWalletConnector.name).to.equal('Ethereum Wallets');
       expect(walletWalletConnector.connected).to.be.false;
       expect(walletWalletConnector.installed).to.be.false;
+      expect(await walletWalletConnector.currentNetwork()).to.be.deep.equal({
+        chainId: 0,
+        url: TESTNET_URL,
+      });
+    });
+
+    test('can construct a WalletConnectConnector with a non default Provider', async () => {
+      const nonDefaultProvider = await Provider.create(NON_DEFAULT_URL);
+      const walletWalletConnector = new WalletConnectConnector({
+        fuelProvider: nonDefaultProvider,
+        projectId: '0000',
+      });
+      await walletWalletConnector.ping();
+
+      expect(walletWalletConnector).to.be.an.instanceOf(WalletConnectConnector);
+      expect(walletWalletConnector.name).to.equal('Ethereum Wallets');
+      expect(walletWalletConnector.connected).to.be.false;
+      expect(walletWalletConnector.installed).to.be.false;
+      expect(await walletWalletConnector.currentNetwork()).to.be.deep.equal({
+        chainId: 0,
+        url: NON_DEFAULT_URL,
+      });
+    });
+
+    test('can construct a WalletConnectConnector with a non default Promise Provider', async () => {
+      const nonDefaultProvider = Provider.create(NON_DEFAULT_URL);
+      const walletWalletConnector = new WalletConnectConnector({
+        fuelProvider: nonDefaultProvider,
+        projectId: '0000',
+      });
+      await walletWalletConnector.ping();
+
+      expect(walletWalletConnector).to.be.an.instanceOf(WalletConnectConnector);
+      expect(walletWalletConnector.name).to.equal('Ethereum Wallets');
+      expect(walletWalletConnector.connected).to.be.false;
+      expect(walletWalletConnector.installed).to.be.false;
+      expect(await walletWalletConnector.currentNetwork()).to.be.deep.equal({
+        chainId: 0,
+        url: NON_DEFAULT_URL,
+      });
+    });
+  });
+
+  describe('isConnected()', () => {
+    test('false when not connected', async () => {
+      const connector = new WalletConnectConnector();
+
+      const connectedAfterConnect = await connector.isConnected();
+      expect(connectedAfterConnect).to.be.false;
     });
   });
 
