@@ -9,73 +9,69 @@
   Fuel-Core version: 0.26.0
 */
 
-import { Interface, Contract, ContractFactory } from "fuels";
-import type { Provider, Account, AbstractAddress, BytesLike, DeployContractOptions, StorageSlot } from "fuels";
-import type { CounterAbi, CounterAbiInterface } from "../CounterAbi";
+import { Interface, Contract, ContractFactory } from 'fuels';
+import type {
+  Provider,
+  Account,
+  AbstractAddress,
+  BytesLike,
+  DeployContractOptions,
+  StorageSlot,
+} from 'fuels';
+import type { CounterAbi, CounterAbiInterface } from '../CounterAbi';
 
 const _abi = {
-  "encoding": "1",
-  "types": [
+  encoding: '1',
+  types: [
     {
-      "typeId": 0,
-      "type": "u64",
-      "components": null,
-      "typeParameters": null
-    }
+      typeId: 0,
+      type: 'u64',
+      components: null,
+      typeParameters: null,
+    },
   ],
-  "functions": [
+  functions: [
     {
-      "inputs": [],
-      "name": "get_count",
-      "output": {
-        "name": "",
-        "type": 0,
-        "typeArguments": null
+      inputs: [],
+      name: 'get_count',
+      output: {
+        name: '',
+        type: 0,
+        typeArguments: null,
       },
-      "attributes": [
+      attributes: [
         {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
+          name: 'storage',
+          arguments: ['read'],
+        },
+      ],
     },
     {
-      "inputs": [
-        {
-          "name": "amount",
-          "type": 0,
-          "typeArguments": null
-        }
-      ],
-      "name": "increment_counter",
-      "output": {
-        "name": "",
-        "type": 0,
-        "typeArguments": null
+      inputs: [],
+      name: 'increment_counter',
+      output: {
+        name: '',
+        type: 0,
+        typeArguments: null,
       },
-      "attributes": [
+      attributes: [
         {
-          "name": "storage",
-          "arguments": [
-            "read",
-            "write"
-          ]
-        }
-      ]
-    }
+          name: 'storage',
+          arguments: ['read', 'write'],
+        },
+      ],
+    },
   ],
-  "loggedTypes": [],
-  "messagesTypes": [],
-  "configurables": []
+  loggedTypes: [],
+  messagesTypes: [],
+  configurables: [],
 };
 
 const _storageSlots: StorageSlot[] = [
   {
-    "key": "f383b0ce51358be57daa3b725fe44acdb2d880604e367199080b4379c41bb6ed",
-    "value": "0000000000000000000000000000000000000000000000000000000000000000"
-  }
+    key: 'f383b0ce51358be57daa3b725fe44acdb2d880604e367199080b4379c41bb6ed',
+    value: '0000000000000000000000000000000000000000000000000000000000000000',
+  },
 ];
 
 export class CounterAbi__factory {
@@ -84,20 +80,20 @@ export class CounterAbi__factory {
   static readonly storageSlots = _storageSlots;
 
   static createInterface(): CounterAbiInterface {
-    return new Interface(_abi) as unknown as CounterAbiInterface
+    return new Interface(_abi) as unknown as CounterAbiInterface;
   }
 
   static connect(
     id: string | AbstractAddress,
-    accountOrProvider: Account | Provider
+    accountOrProvider: Account | Provider,
   ): CounterAbi {
-    return new Contract(id, _abi, accountOrProvider) as unknown as CounterAbi
+    return new Contract(id, _abi, accountOrProvider) as unknown as CounterAbi;
   }
 
   static async deployContract(
     bytecode: BytesLike,
     wallet: Account,
-    options: DeployContractOptions = {}
+    options: DeployContractOptions = {},
   ): Promise<CounterAbi> {
     const factory = new ContractFactory(bytecode, _abi, wallet);
 

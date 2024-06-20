@@ -27,7 +27,7 @@ interface CounterAbiInterface extends Interface {
   };
 
   encodeFunctionData(functionFragment: 'get_count', values: []): Uint8Array;
-  encodeFunctionData(functionFragment: 'increment_counter', values: [BigNumberish]): Uint8Array;
+  encodeFunctionData(functionFragment: 'increment_counter', values: []): Uint8Array;
 
   decodeFunctionData(functionFragment: 'get_count', data: BytesLike): DecodedValue;
   decodeFunctionData(functionFragment: 'increment_counter', data: BytesLike): DecodedValue;
@@ -37,6 +37,6 @@ export class CounterAbi extends Contract {
   interface: CounterAbiInterface;
   functions: {
     get_count: InvokeFunction<[], BN>;
-    increment_counter: InvokeFunction<[amount: BigNumberish], BN>;
+    increment_counter: InvokeFunction<[], BN>;
   };
 }
