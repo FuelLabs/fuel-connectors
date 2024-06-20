@@ -3,15 +3,13 @@ import { useEffect, useState } from 'react';
 import { useLogEvents } from '../hooks/use-log-events';
 import { useWallet } from '../hooks/useWallet';
 import { CounterAbi__factory } from '../types';
+import { counter as COUNTER_CONTRACT_ID } from '../types/contract-ids.json';
 import type { CustomError } from '../utils/customError';
 import { DEFAULT_AMOUNT } from './balance';
 import Button from './button';
 import ContractLink from './contract-link';
 import Feature from './feature';
 import Notification, { type Props as NotificationProps } from './notification';
-
-export const COUNTER_CONTRACT_ID =
-  '0x14355ad56cddcff339a017eb32c913b95b7cd892b610241c27de056cbeda3c25';
 
 interface Props {
   isSigning: boolean;
@@ -65,13 +63,10 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
     if (wallet) {
       setLoading(true);
       setIsSigning(true);
-      const contract = CounterAbi__factory.connect(
-        COUNTER_CONTRACT_ID,
-        wallet,
-      );
+      const contract = CounterAbi__factory.connect(COUNTER_CONTRACT_ID, wallet);
       try {
         await contract.functions
-          .increment_counter(1)
+          .increment_counter()
           .txParams({ gasLimit: bn(200_000), maxFee: bn(150_000) })
           .call();
 

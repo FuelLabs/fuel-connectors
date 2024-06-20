@@ -1,4 +1,4 @@
-import { COUNTER_CONTRACT_ID } from './counter';
+import { counter as COUNTER_CONTRACT_ID } from '../types/contract-ids.json';
 
 export default function ContractLink() {
   return (
