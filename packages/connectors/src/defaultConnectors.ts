@@ -17,7 +17,6 @@ export function defaultConnectors({
     new FuelWalletConnector(),
     new BakoSafeConnector(),
     new FueletWalletConnector(),
-    new BakoSafeConnector(),
     new WalletConnectConnector(),
     new BurnerWalletConnector(),
   ];
