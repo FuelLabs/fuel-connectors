@@ -15,6 +15,7 @@ export function defaultConnectors({
 }: DefaultConnectors = {}): Array<FuelConnector> {
   const connectors = [
     new FuelWalletConnector(),
+    new BakoSafeConnector(),
     new FueletWalletConnector(),
     new BakoSafeConnector(),
     new WalletConnectConnector(),
