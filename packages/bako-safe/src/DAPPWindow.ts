@@ -36,7 +36,6 @@ export class DAppWindow {
 
   open(method: string, reject: (e: Error) => void) {
     if (this.isOpen) reject(new Error('Window is already open'));
-    const _isConnection = !method.includes('/dapp/');
 
     if (!this.isSafariBrowser) {
       // if is not safari, we can use popup for both cases
@@ -76,6 +75,9 @@ export class DAppWindow {
   }
 
   makeFrame(method: string, isSafari = false) {
+    //go to top
+    document.scrollingElement?.scrollTo(0, 0);
+
     const w = this.small;
     //bako frame
     const frame = document.createElement('iframe');
