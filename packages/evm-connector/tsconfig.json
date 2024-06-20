@@ -10,6 +10,7 @@
     "declaration": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
     "outDir": "./dist"
   },
   "exclude": ["./dist/**/*"]

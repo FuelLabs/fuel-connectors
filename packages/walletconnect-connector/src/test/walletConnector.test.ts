@@ -1,8 +1,8 @@
 import type { Asset, Network } from 'fuels';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { WalletConnectConnector } from '../WalletConnectConnector';
-import { PredicateAccount } from '../utils/Predicate';
-import { VERSIONS } from './mocked-versions/versions-dictionary';
+import { PredicateAccount } from '@fuel-packages/evm-connector/src/Predicate';
+import {VERSIONS} from "./mocked-versions/versions-dictionary";
 
 describe('WalletConnect Connector', () => {
   let connector: WalletConnectConnector;
@@ -24,7 +24,7 @@ describe('WalletConnect Connector', () => {
     });
   });
 
-  describe('currenctAccount()', () => {
+  describe('currentAccount()', () => {
     test('throws error', async () => {
       await expect(() => connector.currentAccount()).rejects.toThrowError(
         'No connected accounts',
@@ -51,19 +51,19 @@ describe('WalletConnect Connector', () => {
       const version =
         '0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33';
 
-      const walletConectconnector = new WalletConnectConnector({
+      const walletConnectConnector = new WalletConnectConnector({
         predicateConfig: VERSIONS[version].predicate,
       });
 
-      const predicateAccount = await walletConectconnector.setupPredicate();
+      const predicateAccount = await walletConnectConnector.setupPredicate();
 
       expect(predicateAccount).to.be.instanceOf(PredicateAccount);
     });
 
     test('Should setup predicate without given config', async () => {
-      const walletConectconnector = new WalletConnectConnector();
+      const walletConnectConnector = new WalletConnectConnector();
 
-      const predicateAccount = await walletConectconnector.setupPredicate();
+      const predicateAccount = await walletConnectConnector.setupPredicate();
 
       expect(predicateAccount).to.be.instanceOf(PredicateAccount);
     });

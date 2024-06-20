@@ -2,7 +2,7 @@ import { type Provider, bn } from 'fuels';
 
 import { getAccount } from '@wagmi/core';
 import { type Predicate, WalletConnectConnector } from '../index';
-import { PredicateAccount } from '../utils/Predicate';
+import { PredicateAccount } from '@fuel-packages/evm-connector/src/Predicate';
 import { VERSIONS } from './mocked-versions/versions-dictionary';
 
 export class testWalletConnectConnector extends WalletConnectConnector {
