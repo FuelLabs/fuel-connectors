@@ -214,7 +214,7 @@ export class WalletConnectConnector extends FuelConnector {
    * ============================================================
    */
   async ping(): Promise<boolean> {
-    await this.configProviders();
+    await this.getProviders();
     return true;
   }
 
