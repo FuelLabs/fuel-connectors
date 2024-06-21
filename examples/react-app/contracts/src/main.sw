@@ -5,7 +5,7 @@ abi CounterContract {
   fn get_count() -> u64;
 
   #[storage(read, write)]
-  fn increment_counter(amount: u64) -> u64;
+  fn increment_counter() -> u64;
 }
 
 storage {
@@ -19,8 +19,8 @@ impl CounterContract for Contract {
   }
 
   #[storage(read, write)]
-  fn increment_counter(amount: u64) -> u64 {
-    let incremented = storage.counter.try_read().unwrap_or(0) + amount;
+  fn increment_counter() -> u64 {
+    let incremented = storage.counter.try_read().unwrap_or(0) + 1;
     storage.counter.write(incremented);
     incremented
   }
