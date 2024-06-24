@@ -19,7 +19,10 @@ import {
   type Network,
   type TransactionRequestLike,
   type Version,
+  ZeroBytes32,
   bn,
+  calculateGasFee,
+  concat,
   transactionRequestify,
 } from 'fuels';
 
@@ -28,6 +31,7 @@ import { ETHEREUM_ICON, TESTNET_URL } from './constants';
 import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
 import { createModalConfig } from './utils/wagmiConfig';
+
 export class WalletConnectConnector extends FuelConnector {
   name = 'Ethereum Wallets';
 
@@ -214,7 +218,7 @@ export class WalletConnectConnector extends FuelConnector {
    * ============================================================
    */
   async ping(): Promise<boolean> {
-    await this.configProviders();
+    await this.getProviders();
     return true;
   }
 
@@ -300,28 +304,64 @@ export class WalletConnectConnector extends FuelConnector {
       throw Error(`No account found for ${address}`);
     }
     const transactionRequest = transactionRequestify(transaction);
+    const transactionFee = transactionRequest.maxFee.toNumber();
+
+    const predicateSignatureIndex = transactionRequest.witnesses.length - 1;
 
     // Create a predicate and set the witness index to call in predicate`
     const predicate = this.predicateAccount.createPredicate(
       evmAccount,
       fuelProvider,
-      [transactionRequest.witnesses.length - 1],
+      [predicateSignatureIndex],
     );
     predicate.connect(fuelProvider);
-
-    // Attach missing inputs (including estimated predicate gas usage) / outputs to the request
-    await predicate.provider.estimateTxDependencies(transactionRequest);
 
     // To each input of the request, attach the predicate and its data
     const requestWithPredicateAttached =
       predicate.populateTransactionPredicateData(transactionRequest);
 
+    const maxGasUsed =
+      await this.predicateAccount.getMaxPredicateGasUsed(fuelProvider);
+
+    let predictedGasUsedPredicate = bn(0);
     requestWithPredicateAttached.inputs.forEach((input) => {
       if ('predicate' in input && input.predicate) {
         input.witnessIndex = 0;
+        predictedGasUsedPredicate = predictedGasUsedPredicate.add(maxGasUsed);
       }
     });
 
+    // Add a placeholder for the predicate signature to count on bytes measurement from start. It will be replaced later
+    requestWithPredicateAttached.witnesses[predicateSignatureIndex] = concat([
+      ZeroBytes32,
+      ZeroBytes32,
+    ]);
+
+    const { gasPriceFactor } = await predicate.provider.getGasConfig();
+    const { maxFee, gasPrice } = await predicate.provider.estimateTxGasAndFee({
+      transactionRequest: requestWithPredicateAttached,
+    });
+
+    const predicateSuccessFeeDiff = calculateGasFee({
+      gas: predictedGasUsedPredicate,
+      priceFactor: gasPriceFactor,
+      gasPrice,
+    });
+
+    const feeWithFat = maxFee.add(predicateSuccessFeeDiff);
+    const isNeededFatFee = feeWithFat.gt(transactionFee);
+
+    if (isNeededFatFee) {
+      // add more 10 just in case sdk fee estimation is not accurate
+      requestWithPredicateAttached.maxFee = feeWithFat.add(10);
+    }
+
+    // Attach missing inputs (including estimated predicate gas usage) / outputs to the request
+    await predicate.provider.estimateTxDependencies(
+      requestWithPredicateAttached,
+    );
+
+    // gets the transactionID in fuel and ask to sign in eth wallet
     const txID = requestWithPredicateAttached.getTransactionId(chainId);
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     const provider: any = await getAccount(
@@ -334,7 +374,8 @@ export class WalletConnectConnector extends FuelConnector {
 
     // Transform the signature into compact form for Sway to understand
     const compactSignature = splitSignature(hexToBytes(signature)).compact;
-    transactionRequest.witnesses.push(compactSignature);
+    requestWithPredicateAttached.witnesses[predicateSignatureIndex] =
+      compactSignature;
 
     const transactionWithPredicateEstimated =
       await fuelProvider.estimatePredicates(requestWithPredicateAttached);
