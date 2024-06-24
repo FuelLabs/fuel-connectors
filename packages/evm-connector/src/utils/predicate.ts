@@ -72,5 +72,6 @@ export const getSignatureIndex = (witnesses: BytesLike[]) => {
       item.every((value) => value === 0),
   );
 
+  // if it is a placeholder witness, we can safely replace it, otherwise we will consider a new element.
   return hasPlaceholderWitness ? witnesses.length - 1 : witnesses.length;
 };
