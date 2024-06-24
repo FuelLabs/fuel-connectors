@@ -28,6 +28,7 @@ import {
 } from './types';
 import type { EIP1193Provider } from './utils/eip-1193';
 import { METAMASK_ICON } from './utils/metamask-icon';
+import { getSignatureIndex } from './utils/predicate';
 
 export class EVMWalletConnector extends FuelConnector {
   name = 'Metamask';
@@ -351,11 +352,13 @@ export class EVMWalletConnector extends FuelConnector {
     }
     const transactionRequest = transactionRequestify(transaction);
 
+    const signatureIndex = getSignatureIndex(transactionRequest.witnesses);
+
     // Create a predicate and set the witness index to call in predicate`
     const predicate = this.predicateAccount.createPredicate(
       evmAccount,
       fuelProvider,
-      [transactionRequest.witnesses.length],
+      [signatureIndex],
     );
     predicate.connect(fuelProvider);
 

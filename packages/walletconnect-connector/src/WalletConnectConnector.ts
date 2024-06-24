@@ -31,6 +31,7 @@ import { ETHEREUM_ICON, TESTNET_URL } from './constants';
 import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
 import { createModalConfig } from './utils/wagmiConfig';
+import { getSignatureIndex } from './utils/witness';
 
 export class WalletConnectConnector extends FuelConnector {
   name = 'Ethereum Wallets';
@@ -306,7 +307,9 @@ export class WalletConnectConnector extends FuelConnector {
     const transactionRequest = transactionRequestify(transaction);
     const transactionFee = transactionRequest.maxFee.toNumber();
 
-    const predicateSignatureIndex = transactionRequest.witnesses.length - 1;
+    const predicateSignatureIndex = getSignatureIndex(
+      transactionRequest.witnesses,
+    );
 
     // Create a predicate and set the witness index to call in predicate`
     const predicate = this.predicateAccount.createPredicate(
