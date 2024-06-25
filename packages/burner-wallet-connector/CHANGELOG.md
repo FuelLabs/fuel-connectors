@@ -1,5 +1,11 @@
 # @fuel-connectors/burner-wallet-connector
 
+## 0.7.0
+
+### Patch Changes
+
+- [#122](https://github.com/FuelLabs/fuel-connectors/pull/122) [`eee5a71`](https://github.com/FuelLabs/fuel-connectors/commit/eee5a71c30c61838bc9d811ddc6c814925c68d04) Thanks [@matt-user](https://github.com/matt-user)! - Can now set custom providers in the Burner wallet connector
+
 ## 0.6.0
 
 ## 0.5.1
