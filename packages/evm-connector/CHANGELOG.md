@@ -1,5 +1,11 @@
 # @fuel-connectors/evm-connector
 
+## 0.7.0
+
+### Patch Changes
+
+- [#112](https://github.com/FuelLabs/fuel-connectors/pull/112) [`a87a9a4`](https://github.com/FuelLabs/fuel-connectors/commit/a87a9a4f33b96dc796f66ff80c279a232653d8ac) Thanks [@Torres-ssf](https://github.com/Torres-ssf)! - fix: wrong signature index at `EVMWalletConnector`
+
 ## 0.6.0
 
 ### Minor Changes
