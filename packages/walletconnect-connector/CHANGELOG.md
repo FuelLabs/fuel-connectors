@@ -1,5 +1,11 @@
 # @fuel-connectors/walletconnect-connector
 
+## 0.7.0
+
+### Minor Changes
+
+- [#129](https://github.com/FuelLabs/fuel-connectors/pull/129) [`204bf27`](https://github.com/FuelLabs/fuel-connectors/commit/204bf2707d78c65f8e4ad0ecafa0a6d01b80a94c) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - Fix transaction fees in WalletConnectConnector. Now users don't need to force maxFee or gasLimit
+
 ## 0.6.0
 
 ### Minor Changes

@@ -65,10 +65,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
       setIsSigning(true);
       const contract = CounterAbi__factory.connect(COUNTER_CONTRACT_ID, wallet);
       try {
-        await contract.functions
-          .increment_counter()
-          .txParams({ gasLimit: bn(200_000), maxFee: bn(150_000) })
-          .call();
+        await contract.functions.increment_counter().call();
 
         getCount();
 

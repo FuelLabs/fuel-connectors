@@ -40,19 +40,27 @@ export class BurnerWalletConnector extends FuelConnector {
   };
 
   private burnerWallet: WalletUnlocked | null = null;
-  private burnerWalletProvider: Provider | null = null;
+  private burnerWalletProvider: Provider | Promise<Provider> | null = null;
   private storage: StorageAbstract;
 
   constructor(config: BurnerWalletConfig = {}) {
     super();
     this.storage = this.getStorage(config.storage);
-    this.setupBurnerWallet();
+
+    this.configProvider(config);
+    this.setupBurnerWallet(false);
   }
 
-  private async getProvider(config: BurnerWalletConfig = {}) {
+  private async configProvider(config: BurnerWalletConfig = {}) {
+    if (this.burnerWalletProvider) return;
+    this.burnerWalletProvider =
+      config.fuelProvider ||
+      Provider.create(BurnerWalletConnector.defaultProviderUrl);
+  }
+
+  private async getProvider() {
     if (!this.burnerWalletProvider) {
-      this.burnerWalletProvider = await (config.fuelProvider ||
-        Provider.create(BurnerWalletConnector.defaultProviderUrl));
+      throw new Error('Fuel provider not found.');
     }
     return this.burnerWalletProvider;
   }
