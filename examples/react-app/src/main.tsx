@@ -15,6 +15,7 @@ import {
   FuelWalletDevelopmentConnector,
   FueletWalletConnector,
 } from '@fuels/connectors';
+import { SolanaConnector } from '@fuels/connectors/solana';
 import { WalletConnectConnector } from '@fuels/connectors/walletconnect';
 import { FuelProvider } from '@fuels/react';
 
@@ -75,6 +76,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
             }),
             new FuelWalletDevelopmentConnector(),
             new BurnerWalletConnector(),
+            new SolanaConnector({
+              projectId: WC_PROJECT_ID,
+            }),
           ],
         }}
       >

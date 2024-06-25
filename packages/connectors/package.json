@@ -19,6 +19,11 @@
       "require": "./dist/evm-connector/index.js",
       "import": "./dist/evm-connector/index.mjs",
       "types": "./dist/evm-connector/src/index.d.ts"
+    },
+    "./solana": {
+      "require": "./dist/solana-connector/index.js",
+      "import": "./dist/solana-connector/index.mjs",
+      "types": "./dist/solana-connector/src/index.d.ts"
     }
   },
   "files": ["dist"],
@@ -36,7 +41,11 @@
     "@wagmi/core": "2.9.1",
     "@web3modal/wagmi": "4.1.11",
     "viem": "2.10.2",
-    "socket.io-client": "4.7.2"
+    "socket.io-client": "4.7.2",
+    "@web3modal/common": "4.2.3",
+    "@web3modal/solana": "4.2.3",
+    "@solana/web3.js": "1.93.1",
+    "rpc-websockets": "7.11.0"
   },
   "devDependencies": {
     "@fuel-connectors/burner-wallet-connector": "workspace:*",
@@ -46,6 +55,7 @@
     "@fuel-connectors/fuelet-wallet": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
     "@fuel-connectors/bako-safe": "workspace:*",
+    "@fuel-connectors/solana-connector": "workspace:*",
     "fuels": "0.88.1",
     "terser": "5.31.0",
     "tsup": "8.0.2",
