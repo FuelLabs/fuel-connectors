@@ -6,7 +6,7 @@ import {
 import { SolanaChains } from '../constants';
 import type { SolanaConfig } from '../types';
 
-const DEFAULT_PROJECT_ID = 'a424aaaa79c1949c6bf08f3c0874bed3';
+const DEFAULT_PROJECT_ID = '00000000000000000000000000000000';
 
 const chains = [
   SolanaChains.MAINNET,
