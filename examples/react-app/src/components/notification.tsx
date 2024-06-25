@@ -33,13 +33,8 @@ export default function Notification(props: Props) {
               {type === 'success' && 'Success'}
               {type === 'error' && 'Error'}
             </Toast.Title>
-            <Toast.Close className="">
-              <button
-                type="button"
-                className="rounded border border-zinc-500/10 bg-zinc-800 px-1.5 py-[1px] text-sm text-zinc-400"
-              >
-                Close
-              </button>
+            <Toast.Close className="rounded border border-zinc-500/10 bg-zinc-800 px-1.5 py-[1px] text-sm text-zinc-400">
+              Close
             </Toast.Close>
           </div>
           <Toast.Description className={clsx('text-[15px] text-zinc-50/90')}>

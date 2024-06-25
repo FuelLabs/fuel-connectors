@@ -76,7 +76,7 @@ export default function App() {
                 <a
                   href="https://github.com/FuelLabs/fuel-connectors"
                   target="_blank"
-                  className="block pt-4 text-green-500/80 transition-colors hover:text-green-500"
+                  className="inline-block pt-4 text-green-500/80 transition-colors hover:text-green-500"
                   rel="noreferrer"
                 >
                   Build your own wallet integration
