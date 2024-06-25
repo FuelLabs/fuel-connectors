@@ -254,6 +254,11 @@ export class EVMWalletConnector extends FuelConnector {
    * ============================================================
    */
 
+  /**
+   * Check connection status and setup predicate.
+   *
+   * @returns Returns true if connected and predicate setup was successful.
+   */
   async ping(): Promise<boolean> {
     await this.getProviders();
     await this.setup();
@@ -262,16 +267,31 @@ export class EVMWalletConnector extends FuelConnector {
     return true;
   }
 
+  /**
+   * Get the version information of the application and network.
+   *
+   * @returns Returns the application and network version information.
+   */
   async version(): Promise<Version> {
     return { app: '0.0.0', network: '0.0.0' };
   }
 
+  /**
+   * Check if the connector is currently connected to any Ethereum accounts.
+   *
+   * @returns Returns true if there are connected Ethereum accounts, otherwise false.
+   */
   async isConnected(): Promise<boolean> {
     const accounts = await this.accounts();
 
     return accounts.length > 0;
   }
 
+  /**
+   * Retrieve the list of Ethereum accounts currently connected through the connector.
+   *
+   * @returns Returns an array of Ethereum account addresses.
+   */
   async accounts(): Promise<Array<string>> {
     if (!this.predicateAccount) {
       return [];
@@ -282,6 +302,11 @@ export class EVMWalletConnector extends FuelConnector {
     return this.predicateAccount.getPredicateAccounts(ethAccounts);
   }
 
+  /**
+   * Initiate connection to Metamask and setup predicate account.
+   *
+   * @returns Returns true if connection and setup were successful.
+   */
   async connect(): Promise<boolean> {
     if (!(await this.isConnected())) {
       const { ethProvider } = await this.getProviders();
@@ -304,6 +329,11 @@ export class EVMWalletConnector extends FuelConnector {
     return this.connected;
   }
 
+  /**
+   * Disconnect from Metamask and clear current account details.
+   *
+   * @returns {Promise<boolean>} Returns true if disconnection was successful.
+   */
   async disconnect(): Promise<boolean> {
     if (await this.isConnected()) {
       const { ethProvider } = await this.getProviders();
@@ -329,6 +359,11 @@ export class EVMWalletConnector extends FuelConnector {
     throw new Error('A predicate account cannot sign messages');
   }
 
+  /**
+   * Retrieve the current Ethereum account selected in Metamask via the connector.
+   *
+   * @returns Returns the current Ethereum account address, or null if not connected.
+   */
   async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
