@@ -75,9 +75,6 @@ export class DAppWindow {
   }
 
   makeFrame(method: string, isSafari = false) {
-    //go to top
-    document.scrollingElement?.scrollTo(0, 0);
-
     const w = this.small;
     //bako frame
     const frame = document.createElement('iframe');
@@ -85,7 +82,7 @@ export class DAppWindow {
     frame.src = `${this.config.appUrl}${method}${this.queryString}${
       isSafari ? '&byConnector=true' : ''
     }`;
-    frame.style.position = 'absolute';
+    frame.style.position = 'fixed';
     frame.style.zIndex = '99999999';
     frame.style.top = `${w.top}`;
     frame.style.left = `${w.left}`;
