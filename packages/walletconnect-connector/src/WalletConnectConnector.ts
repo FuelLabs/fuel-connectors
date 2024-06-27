@@ -235,7 +235,6 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async isConnected(): Promise<boolean> {
-    await this.requireConnection();
     const account = getAccount(this.wagmiConfig);
     return account.isConnected || false;
   }
