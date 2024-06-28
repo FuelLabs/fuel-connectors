@@ -56,7 +56,7 @@ describe('WalletConnect Connector', () => {
       expect(walletWalletConnector).to.be.an.instanceOf(WalletConnectConnector);
       expect(walletWalletConnector.name).to.equal('Ethereum Wallets');
       expect(walletWalletConnector.connected).to.be.false;
-      expect(walletWalletConnector.installed).to.be.false;
+      expect(walletWalletConnector.installed).to.be.true;
       expect(await walletWalletConnector.currentNetwork()).to.be.deep.equal({
         chainId: 0,
         url: TESTNET_URL,
@@ -74,7 +74,7 @@ describe('WalletConnect Connector', () => {
       expect(walletWalletConnector).to.be.an.instanceOf(WalletConnectConnector);
       expect(walletWalletConnector.name).to.equal('Ethereum Wallets');
       expect(walletWalletConnector.connected).to.be.false;
-      expect(walletWalletConnector.installed).to.be.false;
+      expect(walletWalletConnector.installed).to.be.true;
       expect(await walletWalletConnector.currentNetwork()).to.be.deep.equal({
         chainId: 0,
         url: fuelProvider.url,
@@ -92,7 +92,7 @@ describe('WalletConnect Connector', () => {
       expect(walletWalletConnector).to.be.an.instanceOf(WalletConnectConnector);
       expect(walletWalletConnector.name).to.equal('Ethereum Wallets');
       expect(walletWalletConnector.connected).to.be.false;
-      expect(walletWalletConnector.installed).to.be.false;
+      expect(walletWalletConnector.installed).to.be.true;
       expect(await walletWalletConnector.currentNetwork()).to.be.deep.equal({
         chainId: 0,
         url: fuelProvider.url,
