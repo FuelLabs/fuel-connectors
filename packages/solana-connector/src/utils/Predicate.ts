@@ -104,7 +104,7 @@ export class PredicateAccount {
       this.getSmallTxId(txId),
       keypair.secretKey,
     );
-    request.witnesses = [signature, keypair.publicKey.toBytes()];
+    request.witnesses = [signature];
     await fakePredicate.provider.estimatePredicates(request);
     const predicateInput = request.inputs[0];
     if (predicateInput && 'predicate' in predicateInput) {
