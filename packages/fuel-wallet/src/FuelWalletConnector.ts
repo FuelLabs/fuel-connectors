@@ -4,6 +4,7 @@ import {
   type ConnectorMetadata,
   type FuelABI,
   FuelConnector,
+  FuelConnectorEventType,
   FuelConnectorEventTypes,
   type Network,
   Provider,
@@ -65,7 +66,7 @@ export class FuelWalletConnector extends FuelConnector {
       this.ping()
         .then(() => {
           window.dispatchEvent(
-            new CustomEvent('FuelConnector', { detail: this }),
+            new CustomEvent(FuelConnectorEventType, { detail: this }),
           );
         })
         .catch(() => {});
