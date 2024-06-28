@@ -276,7 +276,6 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   async disconnect() {
-    //nao necessário esperar mensagens
     await this.api.delete(`/connections/${this.sessionId}`);
     this.emit(this.events.connection, false);
     this.emit(this.events.accounts, []);
