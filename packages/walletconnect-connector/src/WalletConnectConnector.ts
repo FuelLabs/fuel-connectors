@@ -234,6 +234,7 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async isConnected(): Promise<boolean> {
+    await this.requireConnection();
     const account = getAccount(this.wagmiConfig);
     return account.isConnected || false;
   }
@@ -264,7 +265,10 @@ export class WalletConnectConnector extends FuelConnector {
     await disconnect(this.wagmiConfig, {
       connector,
     });
-    return this.isConnected();
+
+    const account = getAccount(this.wagmiConfig);
+
+    return account.isConnected || false;
   }
 
   async accounts(): Promise<Array<string>> {
