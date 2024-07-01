@@ -261,14 +261,12 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async disconnect(): Promise<boolean> {
-    const { connector } = getAccount(this.wagmiConfig);
+    const { connector, isConnected } = getAccount(this.wagmiConfig);
     await disconnect(this.wagmiConfig, {
       connector,
     });
 
-    const account = getAccount(this.wagmiConfig);
-
-    return account.isConnected || false;
+    return isConnected || false;
   }
 
   async accounts(): Promise<Array<string>> {
