@@ -1,5 +1,11 @@
 # @fuel-connectors/walletconnect-connector
 
+## 0.8.1
+
+### Patch Changes
+
+- [#138](https://github.com/FuelLabs/fuel-connectors/pull/138) [`fd7eaf2`](https://github.com/FuelLabs/fuel-connectors/commit/fd7eaf204e23d566a1e9287923131431908570e1) Thanks [@mvares](https://github.com/mvares)! - fix: maintain disconnected after refresh
+
 ## 0.8.0
 
 ### Minor Changes
