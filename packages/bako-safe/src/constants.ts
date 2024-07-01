@@ -9,8 +9,8 @@ export const APP_IMAGE_LIGHT =
   'https://safe.bako.global/BAKO_CONNECTOR_ICON.svg';
 
 export const APP_URL = 'https://safe.bako.global';
-export const HOST_URL = 'https://api-safe.bako.global';
-export const SOCKET_URL = 'https://api-safe.bako.global';
+export const HOST_URL = 'https://api.bako.global';
+export const SOCKET_URL = 'https://api.bako.global';
 
 // Window object
 export const HAS_WINDOW = typeof window !== 'undefined';

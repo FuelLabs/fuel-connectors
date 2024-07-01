@@ -1,5 +1,12 @@
 # @fuel-connectors/walletconnect-connector
 
+## 0.8.0
+
+### Minor Changes
+
+- [#139](https://github.com/FuelLabs/fuel-connectors/pull/139) [`a6af7f3`](https://github.com/FuelLabs/fuel-connectors/commit/a6af7f3417dddb571f54d80feb231e4ee088d3ec) Thanks [@helciofranco](https://github.com/helciofranco)! - `ping` method should never take more than 1 second.
+  Specially when it's the `WalletConnect`, since it doesn't relate to the Fuel network directly.
+
 ## 0.7.0
 
 ### Minor Changes
