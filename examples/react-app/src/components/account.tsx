@@ -1,4 +1,4 @@
-import { useDisconnect } from '@fuels/react';
+import { useAccounts, useDisconnect } from '@fuels/react';
 import { useWallet } from '../hooks/useWallet';
 import Button from './button';
 import Feature from './feature';
@@ -10,6 +10,9 @@ interface Props {
 
 export default function ConnectedAccount({ isSigning }: Props) {
   const { address } = useWallet();
+  const { accounts } = useAccounts();
+
+  console.log('asd accounts', accounts);
 
   const { disconnect } = useDisconnect();
 

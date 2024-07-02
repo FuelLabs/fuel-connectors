@@ -229,6 +229,7 @@ export class WalletConnectConnector extends FuelConnector {
   async requireConnection() {
     const { state } = this.wagmiConfig;
     if (state.status === 'disconnected' && state.connections.size > 0) {
+      console.log('asd reconnect', this.wagmiConfig);
       await reconnect(this.wagmiConfig);
     }
   }
@@ -243,6 +244,8 @@ export class WalletConnectConnector extends FuelConnector {
     return new Promise((resolve) => {
       this.web3Modal.open();
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
+        console.log('asd listened event', event);
+        console.log('asd listened event.data.event', event.data.event);
         switch (event.data.event) {
           case 'CONNECT_SUCCESS': {
             resolve(true);
@@ -265,6 +268,9 @@ export class WalletConnectConnector extends FuelConnector {
     await disconnect(this.wagmiConfig, {
       connector,
     });
+
+    const account = getAccount(this.wagmiConfig);
+    console.log('asd disconnect', account);
 
     return isConnected || false;
   }
