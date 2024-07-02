@@ -21,7 +21,9 @@
       "types": "./dist/evm-connector/src/index.d.ts"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "build:watch": "tsup --watch",
@@ -35,18 +37,18 @@
     "@ethersproject/bytes": "5.7.0",
     "@wagmi/core": "2.9.1",
     "@web3modal/wagmi": "4.1.11",
-    "viem": "2.10.2",
-    "socket.io-client": "4.7.2"
+    "socket.io-client": "4.7.2",
+    "viem": "2.10.2"
   },
   "devDependencies": {
+    "@fuel-connectors/bako-safe": "workspace:*",
     "@fuel-connectors/burner-wallet-connector": "workspace:*",
     "@fuel-connectors/evm-connector": "workspace:*",
     "@fuel-connectors/fuel-development-wallet": "workspace:*",
     "@fuel-connectors/fuel-wallet": "workspace:*",
     "@fuel-connectors/fuelet-wallet": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
-    "@fuel-connectors/bako-safe": "workspace:*",
-    "fuels": "0.88.1",
+    "fuels": "0.90.0",
     "terser": "5.31.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5"
