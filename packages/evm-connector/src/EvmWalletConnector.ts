@@ -18,18 +18,20 @@ import {
   transactionRequestify,
 } from 'fuels';
 
-import { VERSIONS } from '../versions/versions-dictionary';
-import { PredicateAccount } from './Predicate';
-import { TESTNET_URL, WINDOW } from './constants';
 import {
+  EthereumWalletAdapter,
+  PredicateFactory,
+  getSignatureIndex,
+} from '@fuel-connectors/common';
+import { VERSIONS } from '../versions/versions-dictionary';
+import { METAMASK_ICON, TESTNET_URL, WINDOW } from './constants';
+import {
+  type EIP1193Provider,
   type EVMWalletConnectorConfig,
   EVMWalletConnectorEvents,
   type Predicate,
   type PredicateConfig,
 } from './types';
-import type { EIP1193Provider } from './utils/eip-1193';
-import { METAMASK_ICON } from './utils/metamask-icon';
-import { getSignatureIndex } from './utils/predicate';
 
 export class EVMWalletConnector extends FuelConnector {
   name = 'Metamask';
@@ -44,10 +46,8 @@ export class EVMWalletConnector extends FuelConnector {
 
   installed = true;
   connected = false;
-
   ethProvider: EIP1193Provider | null = null;
   fuelProvider: Provider | null = null;
-
   predicateAddress: string | null = null;
   customPredicate: PredicateConfig | null;
 
@@ -56,7 +56,7 @@ export class EVMWalletConnector extends FuelConnector {
     ...EVMWalletConnectorEvents,
   };
 
-  predicateAccount: PredicateAccount | null = null;
+  predicateAccount: PredicateFactory | null = null;
 
   private setupLock = false;
   private _currentAccount: string | null = null;
@@ -79,9 +79,12 @@ export class EVMWalletConnector extends FuelConnector {
     });
   }
 
-  async setupPredicate(): Promise<PredicateAccount> {
+  async setupPredicate(): Promise<PredicateFactory> {
     if (this.customPredicate?.abi && this.customPredicate?.bytecode) {
-      this.predicateAccount = new PredicateAccount(this.customPredicate);
+      this.predicateAccount = new PredicateFactory(
+        new EthereumWalletAdapter(),
+        this.customPredicate,
+      );
       this.predicateAddress = 'custom';
 
       return this.predicateAccount;
@@ -95,31 +98,21 @@ export class EVMWalletConnector extends FuelConnector {
     let predicateWithBalance: Predicate | null = null;
 
     for (const predicateVersion of predicateVersions) {
-      const predicateInstance = new PredicateAccount({
-        abi: predicateVersion.pred.predicate.abi,
-        bytecode: predicateVersion.pred.predicate.bytecode,
-      });
+      const predicateInstance = new PredicateFactory(
+        new EthereumWalletAdapter(),
+        {
+          abi: predicateVersion.pred.predicate.abi,
+          bytecode: predicateVersion.pred.predicate.bytecode,
+        },
+      );
 
-      const { ethProvider } = await this.getProviders();
-
-      const accounts = await ethProvider.request({
-        method: 'eth_accounts',
-      });
-
-      const address = accounts[0];
-
+      const address: string = (await this.evmAccounts())[0] as string;
       if (!address) {
         continue;
       }
 
       const { fuelProvider } = await this.getProviders();
-
-      const predicate = predicateInstance.createPredicate(
-        address,
-        fuelProvider,
-        [1],
-      );
-
+      const predicate = predicateInstance.build(address, fuelProvider, [1]);
       const balance = await predicate.getBalance();
 
       if (balance.toString() !== bn(0).toString()) {
@@ -131,10 +124,13 @@ export class EVMWalletConnector extends FuelConnector {
     }
 
     if (predicateWithBalance) {
-      this.predicateAccount = new PredicateAccount({
-        abi: predicateWithBalance.predicate.abi,
-        bytecode: predicateWithBalance.predicate.bytecode,
-      });
+      this.predicateAccount = new PredicateFactory(
+        new EthereumWalletAdapter(),
+        {
+          abi: predicateWithBalance.predicate.abi,
+          bytecode: predicateWithBalance.predicate.bytecode,
+        },
+      );
 
       return this.predicateAccount;
     }
@@ -144,10 +140,13 @@ export class EVMWalletConnector extends FuelConnector {
     )[0];
 
     if (newestPredicate) {
-      this.predicateAccount = new PredicateAccount({
-        abi: newestPredicate.pred.predicate.abi,
-        bytecode: newestPredicate.pred.predicate.bytecode,
-      });
+      this.predicateAccount = new PredicateFactory(
+        new EthereumWalletAdapter(),
+        {
+          abi: newestPredicate.pred.predicate.abi,
+          bytecode: newestPredicate.pred.predicate.bytecode,
+        },
+      );
       this.predicateAddress = newestPredicate.key;
 
       return this.predicateAccount;
@@ -280,7 +279,7 @@ export class EVMWalletConnector extends FuelConnector {
 
     const ethAccounts = await this.evmAccounts();
 
-    return this.predicateAccount.getPredicateAccounts(ethAccounts);
+    return this.predicateAccount.getPredicateAddresses(ethAccounts);
   }
 
   async connect(): Promise<boolean> {
@@ -344,7 +343,7 @@ export class EVMWalletConnector extends FuelConnector {
       throw Error('No predicate account found');
     }
 
-    const evmAccount = this.predicateAccount.getEVMAddress(
+    const evmAccount = this.predicateAccount.getAccountAddress(
       address,
       await this.evmAccounts(),
     );
@@ -356,11 +355,9 @@ export class EVMWalletConnector extends FuelConnector {
     const signatureIndex = getSignatureIndex(transactionRequest.witnesses);
 
     // Create a predicate and set the witness index to call in predicate`
-    const predicate = this.predicateAccount.createPredicate(
-      evmAccount,
-      fuelProvider,
-      [signatureIndex],
-    );
+    const predicate = this.predicateAccount.build(evmAccount, fuelProvider, [
+      signatureIndex,
+    ]);
     predicate.connect(fuelProvider);
 
     // Attach missing inputs (including estimated predicate gas usage) / outputs to the request
@@ -377,10 +374,10 @@ export class EVMWalletConnector extends FuelConnector {
     });
 
     const txID = requestWithPredicateAttached.getTransactionId(chainId);
-    const signature = await ethProvider.request({
+    const signature = (await ethProvider.request({
       method: 'personal_sign',
       params: [txID, evmAccount],
-    });
+    })) as string;
 
     // Transform the signature into compact form for Sway to understand
     const compactSignature = splitSignature(hexToBytes(signature)).compact;
@@ -408,9 +405,9 @@ export class EVMWalletConnector extends FuelConnector {
     }
 
     const { ethProvider } = await this.getProviders();
-    const ethAccounts: string[] = await ethProvider.request({
+    const ethAccounts: string[] = (await ethProvider.request({
       method: 'eth_accounts',
-    });
+    })) as string[];
 
     const currentEthAccount = ethAccounts[0];
 

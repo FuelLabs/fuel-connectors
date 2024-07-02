@@ -1,7 +1,7 @@
 import { http, type Config, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
 import { type Web3Modal, createWeb3Modal } from '@web3modal/wagmi';
-import type { WalletConnectConfig } from '../types';
+import type { WalletConnectConfig } from './types';
 
 interface ModalConfig {
   wagmiConfig: Config;
@@ -31,7 +31,7 @@ export function createModalConfig(config: WalletConnectConfig): ModalConfig {
     web3Modal: createWeb3Modal({
       wagmiConfig: {
         ...wagmiConfig,
-        // @ts-ignore
+        // @ts-expect-error enableWalletConnect is not in the Config type
         enableWalletConnect: !!config.projectId,
       },
       enableAnalytics: false,

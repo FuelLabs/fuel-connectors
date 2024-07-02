@@ -26,12 +26,15 @@ import {
   transactionRequestify,
 } from 'fuels';
 
+import {
+  EthereumWalletAdapter,
+  PredicateFactory,
+  getSignatureIndex,
+} from '@fuel-connectors/common';
 import { VERSIONS } from '../versions/versions-dictionary';
 import { ETHEREUM_ICON, TESTNET_URL } from './constants';
 import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
-import { PredicateAccount } from './utils/Predicate';
-import { createModalConfig } from './utils/wagmiConfig';
-import { getSignatureIndex } from './utils/witness';
+import { createModalConfig } from './wagmiConfig';
 
 export class WalletConnectConnector extends FuelConnector {
   name = 'Ethereum Wallets';
@@ -58,7 +61,7 @@ export class WalletConnectConnector extends FuelConnector {
   fuelProvider: FuelProvider | null = null;
   web3Modal: Web3Modal;
 
-  predicateAccount: PredicateAccount | null = null;
+  predicateAccount: PredicateFactory | null = null;
 
   private config: WalletConnectConfig = {};
   private _unsubs: Array<() => void> = [];
@@ -82,9 +85,12 @@ export class WalletConnectConnector extends FuelConnector {
     });
   }
 
-  async setupPredicate(): Promise<PredicateAccount> {
+  async setupPredicate(): Promise<PredicateFactory> {
     if (this.customPredicate?.abi && this.customPredicate?.bytecode) {
-      this.predicateAccount = new PredicateAccount(this.customPredicate);
+      this.predicateAccount = new PredicateFactory(
+        new EthereumWalletAdapter(),
+        this.customPredicate,
+      );
       this.predicateAddress = 'custom';
 
       return this.predicateAccount;
@@ -98,10 +104,13 @@ export class WalletConnectConnector extends FuelConnector {
     let predicateWithBalance: Predicate | null = null;
 
     for (const predicateVersion of predicateVersions) {
-      const predicateInstance = new PredicateAccount({
-        abi: predicateVersion.pred.predicate.abi,
-        bytecode: predicateVersion.pred.predicate.bytecode,
-      });
+      const predicateInstance = new PredicateFactory(
+        new EthereumWalletAdapter(),
+        {
+          abi: predicateVersion.pred.predicate.abi,
+          bytecode: predicateVersion.pred.predicate.bytecode,
+        },
+      );
 
       const account = getAccount(this.wagmiConfig);
       const address = account.address;
@@ -111,11 +120,7 @@ export class WalletConnectConnector extends FuelConnector {
       }
 
       const { fuelProvider } = await this.getProvider();
-      const predicate = predicateInstance.createPredicate(
-        address,
-        fuelProvider,
-        [1],
-      );
+      const predicate = predicateInstance.build(address, fuelProvider, [1]);
 
       const balance = await predicate.getBalance();
 
@@ -127,10 +132,13 @@ export class WalletConnectConnector extends FuelConnector {
     }
 
     if (predicateWithBalance) {
-      this.predicateAccount = new PredicateAccount({
-        abi: predicateWithBalance.predicate.abi,
-        bytecode: predicateWithBalance.predicate.bytecode,
-      });
+      this.predicateAccount = new PredicateFactory(
+        new EthereumWalletAdapter(),
+        {
+          abi: predicateWithBalance.predicate.abi,
+          bytecode: predicateWithBalance.predicate.bytecode,
+        },
+      );
 
       return this.predicateAccount;
     }
@@ -140,10 +148,13 @@ export class WalletConnectConnector extends FuelConnector {
     )[0];
 
     if (newestPredicate) {
-      this.predicateAccount = new PredicateAccount({
-        abi: newestPredicate.pred.predicate.abi,
-        bytecode: newestPredicate.pred.predicate.bytecode,
-      });
+      this.predicateAccount = new PredicateFactory(
+        new EthereumWalletAdapter(),
+        {
+          abi: newestPredicate.pred.predicate.abi,
+          bytecode: newestPredicate.pred.predicate.bytecode,
+        },
+      );
       this.predicateAddress = newestPredicate.key;
 
       return this.predicateAccount;
@@ -166,7 +177,7 @@ export class WalletConnectConnector extends FuelConnector {
     this._unsubs.push(
       watchAccount(this.wagmiConfig, {
         onChange: async (account) => {
-          const predicateAccount = await this.predicateAccount;
+          const predicateAccount = this.predicateAccount;
 
           switch (account.status) {
             case 'connected': {
@@ -179,7 +190,7 @@ export class WalletConnectConnector extends FuelConnector {
               );
               this.emit(
                 this.events.accounts,
-                predicateAccount?.getPredicateAccounts(this.evmAccounts()),
+                predicateAccount?.getPredicateAddresses(this.evmAccounts()),
               );
               break;
             }
@@ -276,7 +287,7 @@ export class WalletConnectConnector extends FuelConnector {
 
     await this.requireConnection();
 
-    return this.predicateAccount.getPredicateAccounts(this.evmAccounts());
+    return this.predicateAccount.getPredicateAddresses(this.evmAccounts());
   }
 
   async signMessage(_address: string, _message: string): Promise<string> {
@@ -297,7 +308,7 @@ export class WalletConnectConnector extends FuelConnector {
 
     const { fuelProvider } = await this.getProvider();
     const chainId = fuelProvider.getChainId();
-    const evmAccount = this.predicateAccount.getEVMAddress(
+    const evmAccount = this.predicateAccount.getAccountAddress(
       address,
       this.evmAccounts(),
     );
@@ -312,11 +323,9 @@ export class WalletConnectConnector extends FuelConnector {
     );
 
     // Create a predicate and set the witness index to call in predicate`
-    const predicate = this.predicateAccount.createPredicate(
-      evmAccount,
-      fuelProvider,
-      [predicateSignatureIndex],
-    );
+    const predicate = this.predicateAccount.build(evmAccount, fuelProvider, [
+      predicateSignatureIndex,
+    ]);
     predicate.connect(fuelProvider);
 
     // To each input of the request, attach the predicate and its data
@@ -340,7 +349,7 @@ export class WalletConnectConnector extends FuelConnector {
       ZeroBytes32,
     ]);
 
-    const { gasPriceFactor } = await predicate.provider.getGasConfig();
+    const { gasPriceFactor } = predicate.provider.getGasConfig();
     const { maxFee, gasPrice } = await predicate.provider.estimateTxGasAndFee({
       transactionRequest: requestWithPredicateAttached,
     });

@@ -1,0 +1,42 @@
+{
+  "name": "@fuel-connectors/common",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup --dts",
+    "ts:check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "peerDependencies": {
+    "fuels": ">=0.88.1"
+  },
+  "dependencies": {
+    "@ethereumjs/util": "9.0.3",
+    "@ethersproject/bytes": "5.7.0",
+    "@solana/web3.js": "1.93.2",
+    "@wagmi/core": "2.9.1",
+    "@web3modal/wagmi": "4.1.11",
+    "bs58": "6.0.0",
+    "memoizee": "0.4.15",
+    "socket.io-client": "4.7.2",
+    "tweetnacl": "1.0.3",
+    "viem": "2.10.2"
+  },
+  "devDependencies": {
+    "@types/memoizee": "0.4.11",
+    "fuels": "0.88.1",
+    "terser": "5.31.0",
+    "tsup": "8.0.2",
+    "typescript": "5.4.5"
+  }
+}

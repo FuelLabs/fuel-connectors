@@ -1,8 +1,11 @@
 import { type Provider, bn } from 'fuels';
 
+import {
+  EthereumWalletAdapter,
+  PredicateFactory,
+} from '@fuel-connectors/common';
 import { getAccount } from '@wagmi/core';
 import { type Predicate, WalletConnectConnector } from '../index';
-import { PredicateAccount } from '../utils/Predicate';
 import { VERSIONS } from './mocked-versions/versions-dictionary';
 
 export class testWalletConnectConnector extends WalletConnectConnector {
@@ -18,9 +21,12 @@ export class testWalletConnectConnector extends WalletConnectConnector {
     throw 'Providers must exists';
   }
 
-  async setupPredicate(): Promise<PredicateAccount> {
+  async setupPredicate(): Promise<PredicateFactory> {
     if (this.customPredicate?.abi && this.customPredicate?.bytecode) {
-      this.predicateAccount = new PredicateAccount(this.customPredicate);
+      this.predicateAccount = new PredicateFactory(
+        new EthereumWalletAdapter(),
+        this.customPredicate,
+      );
       this.predicateAddress = 'custom';
 
       return this.predicateAccount;
@@ -34,10 +40,13 @@ export class testWalletConnectConnector extends WalletConnectConnector {
     let predicateWithBalance: Predicate | null = null;
 
     for (const predicateVersion of predicateVersions) {
-      const predicateInstance = new PredicateAccount({
-        abi: predicateVersion.pred.predicate.abi,
-        bytecode: predicateVersion.pred.predicate.bytecode,
-      });
+      const predicateInstance = new PredicateFactory(
+        new EthereumWalletAdapter(),
+        {
+          abi: predicateVersion.pred.predicate.abi,
+          bytecode: predicateVersion.pred.predicate.bytecode,
+        },
+      );
 
       const account = getAccount(this.wagmiConfig);
       const address = account.address;
@@ -47,11 +56,7 @@ export class testWalletConnectConnector extends WalletConnectConnector {
       }
 
       const { fuelProvider } = await this.getProviders();
-      const predicate = predicateInstance.createPredicate(
-        address,
-        fuelProvider,
-        [1],
-      );
+      const predicate = predicateInstance.build(address, fuelProvider, [1]);
 
       const balance = await predicate.getBalance();
 
@@ -64,10 +69,13 @@ export class testWalletConnectConnector extends WalletConnectConnector {
     }
 
     if (predicateWithBalance) {
-      this.predicateAccount = new PredicateAccount({
-        abi: predicateWithBalance.predicate.abi,
-        bytecode: predicateWithBalance.predicate.bytecode,
-      });
+      this.predicateAccount = new PredicateFactory(
+        new EthereumWalletAdapter(),
+        {
+          abi: predicateWithBalance.predicate.abi,
+          bytecode: predicateWithBalance.predicate.bytecode,
+        },
+      );
 
       return this.predicateAccount;
     }
@@ -77,10 +85,13 @@ export class testWalletConnectConnector extends WalletConnectConnector {
     )[0];
 
     if (newestPredicate) {
-      this.predicateAccount = new PredicateAccount({
-        abi: newestPredicate.pred.predicate.abi,
-        bytecode: newestPredicate.pred.predicate.bytecode,
-      });
+      this.predicateAccount = new PredicateFactory(
+        new EthereumWalletAdapter(),
+        {
+          abi: newestPredicate.pred.predicate.abi,
+          bytecode: newestPredicate.pred.predicate.bytecode,
+        },
+      );
       this.predicateAddress = newestPredicate.key;
 
       return this.predicateAccount;

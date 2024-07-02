@@ -17,6 +17,7 @@ export default defineConfig((options) => ({
     '@fuel-connectors/evm-connector',
     '@fuel-connectors/walletconnect-connector',
     '@fuel-connectors/bako-safe',
+    '@fuel-connectors/common',
   ],
   minify: 'terser',
   dts: {
@@ -28,6 +29,7 @@ export default defineConfig((options) => ({
       '@fuel-connectors/evm-connector',
       '@fuel-connectors/walletconnect-connector',
       '@fuel-connectors/bako-safe',
+      '@fuel-connectors/common',
     ],
   },
   splitting: true,

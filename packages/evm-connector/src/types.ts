@@ -1,5 +1,5 @@
+import type EventEmitter from 'node:events';
 import type { JsonAbi, Provider } from 'fuels';
-import type { EIP1193Provider } from './utils/eip-1193';
 
 export type EVMWalletConnectorConfig = {
   fuelProvider?: Provider | Promise<Provider>;
@@ -65,4 +65,11 @@ export enum EVMWalletConnectorEvents {
   //connections
   CONNECT = 'connect',
   DISCONNECT = 'disconnect',
+}
+
+export interface EIP1193Provider extends EventEmitter {
+  request(args: {
+    method: string;
+    params?: unknown[];
+  }): Promise<unknown | unknown[]>;
 }

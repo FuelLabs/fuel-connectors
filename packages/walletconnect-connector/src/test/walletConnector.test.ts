@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { PredicateFactory } from '@fuel-connectors/common';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
 import { type Asset, type Network, Provider } from 'fuels';
 import {
@@ -11,7 +12,6 @@ import {
 } from 'vitest';
 import { WalletConnectConnector } from '../WalletConnectConnector';
 import { TESTNET_URL } from '../constants';
-import { PredicateAccount } from '../utils/Predicate';
 import { VERSIONS } from './mocked-versions/versions-dictionary';
 
 describe('WalletConnect Connector', () => {
@@ -142,7 +142,7 @@ describe('WalletConnect Connector', () => {
 
       const predicateAccount = await walletConectconnector.setupPredicate();
 
-      expect(predicateAccount).to.be.instanceOf(PredicateAccount);
+      expect(predicateAccount).to.be.instanceOf(PredicateFactory);
     });
 
     test('Should setup predicate without given config', async () => {
@@ -150,7 +150,7 @@ describe('WalletConnect Connector', () => {
 
       const predicateAccount = await walletConectconnector.setupPredicate();
 
-      expect(predicateAccount).to.be.instanceOf(PredicateAccount);
+      expect(predicateAccount).to.be.instanceOf(PredicateFactory);
     });
   });
 

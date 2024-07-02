@@ -19,6 +19,11 @@
       "require": "./dist/evm-connector/index.js",
       "import": "./dist/evm-connector/index.mjs",
       "types": "./dist/evm-connector/src/index.d.ts"
+    },
+    "./common": {
+      "require": "./dist/common/index.js",
+      "import": "./dist/common/index.mjs",
+      "types": "./dist/common/src/index.d.ts"
     }
   },
   "files": ["dist"],
@@ -46,6 +51,7 @@
     "@fuel-connectors/fuelet-wallet": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
     "@fuel-connectors/bako-safe": "workspace:*",
+    "@fuel-connectors/common": "workspace:*",
     "fuels": "0.88.1",
     "terser": "5.31.0",
     "tsup": "8.0.2",
