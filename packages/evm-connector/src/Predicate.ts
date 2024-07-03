@@ -30,8 +30,8 @@ export class PredicateAccount {
       configurable,
     );
     const address = Address.fromB256(getPredicateRoot(predicateBytes));
-
-    return address.toString();
+    console.log('evm');
+    return address.toB256();
   });
 
   createPredicate = memoize(

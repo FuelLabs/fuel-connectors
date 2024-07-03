@@ -27,7 +27,7 @@ export const getPredicateAddress = memoize(
     );
     const address = Address.fromB256(getPredicateRoot(predicateBytes));
 
-    return address.toString();
+    return address.toB256();
   },
 );
 
