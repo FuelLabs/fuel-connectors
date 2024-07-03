@@ -30,7 +30,7 @@ export class PredicateAccount {
       configurable,
     );
     const address = Address.fromB256(getPredicateRoot(predicateBytes));
-    console.log('evm');
+
     return address.toB256();
   });
 
