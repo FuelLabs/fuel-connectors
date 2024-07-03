@@ -7,7 +7,7 @@ import Button from './button';
 import Feature from './feature';
 import Notification, { type Props as NotificationProps } from './notification';
 
-const DEFAULT_ADDRESS = Address.fromRandom().toString();
+const DEFAULT_ADDRESS = Address.fromRandom().toB256();
 
 interface Props {
   isSigning: boolean;
