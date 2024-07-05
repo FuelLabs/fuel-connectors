@@ -16,6 +16,7 @@ import {
 import {
   BURNER_WALLET_ICON,
   BURNER_WALLET_PRIVATE_KEY,
+  BURNER_WALLET_PROVIDER_URL_KEY,
   TESTNET_URL,
   WINDOW,
 } from './constants';
@@ -55,7 +56,15 @@ export class BurnerWalletConnector extends FuelConnector {
     if (this.burnerWalletProvider) return;
     this.burnerWalletProvider =
       config.fuelProvider ||
-      Provider.create(BurnerWalletConnector.defaultProviderUrl);
+      Provider.create(
+        (await this.storage.getItem(BURNER_WALLET_PROVIDER_URL_KEY)) ||
+          BurnerWalletConnector.defaultProviderUrl,
+      );
+
+    await this.storage.setItem(
+      BURNER_WALLET_PROVIDER_URL_KEY,
+      BurnerWalletConnector.defaultProviderUrl,
+    );
   }
 
   private async getProvider() {
@@ -145,6 +154,7 @@ export class BurnerWalletConnector extends FuelConnector {
     this.burnerWalletProvider = null;
     this.burnerWallet = null;
     this.storage.removeItem(BURNER_WALLET_PRIVATE_KEY);
+    this.storage.removeItem(BURNER_WALLET_PROVIDER_URL_KEY);
     this.emit(this.events.connection, false);
     this.emit(this.events.currentAccount, null);
     this.emit(this.events.accounts, []);
