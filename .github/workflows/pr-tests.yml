@@ -36,30 +36,9 @@ jobs:
         run: |
           pnpm test:ci
 
-      - name: Publish Fuel Wallet Coverage
-        uses: davelosert/vitest-coverage-report-action@v2
+      - name: Publish Coverage Report
+        uses: davelosert/vitest-coverage-report-action@v2.3.1
         if: ${{ always() && steps.findPr.outputs.number }}
         with:
-          name: 'Fuel Wallet'
-          working-directory: ./packages/fuel-wallet
           json-summary-path: ./coverage/coverage-summary.json
           json-final-path: ./coverage/coverage-final.json
-
-      - name: Publish Fuel Development Wallet Coverage
-        uses: davelosert/vitest-coverage-report-action@v2
-        if: ${{ always() && steps.findPr.outputs.number }}
-        with:
-          name: 'Fuel Development Wallet'
-          working-directory: ./packages/fuel-development-wallet
-          json-summary-path: ./coverage/coverage-summary.json
-          json-final-path: ./coverage/coverage-final.json
-
-      - name: Publish Fuelet Wallet Coverage
-        uses: davelosert/vitest-coverage-report-action@v2
-        if: ${{ always() && steps.findPr.outputs.number }}
-        with:
-          name: 'Fuelet Wallet'
-          working-directory: ./packages/fuelet-wallet
-          json-summary-path: ./coverage/coverage-summary.json
-          json-final-path: ./coverage/coverage-final.json
-
