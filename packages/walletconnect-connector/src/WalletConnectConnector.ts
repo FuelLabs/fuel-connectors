@@ -37,7 +37,7 @@ export class WalletConnectConnector extends FuelConnector {
   name = 'Ethereum Wallets';
 
   connected = false;
-  installed = false;
+  installed = true;
 
   predicateAddress: string | null = null;
   customPredicate: PredicateConfig | null;
@@ -72,11 +72,11 @@ export class WalletConnectConnector extends FuelConnector {
 
     this.customPredicate = config.predicateConfig || null;
 
-    this.configProviders(config);
+    this.configProvider(config);
     this.setupWatchers();
   }
 
-  async configProviders(config: WalletConnectConfig = {}) {
+  configProvider(config: WalletConnectConfig) {
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
     });
@@ -110,7 +110,7 @@ export class WalletConnectConnector extends FuelConnector {
         continue;
       }
 
-      const { fuelProvider } = await this.getProviders();
+      const { fuelProvider } = await this.getProvider();
       const predicate = predicateInstance.createPredicate(
         address,
         fuelProvider,
@@ -199,13 +199,13 @@ export class WalletConnectConnector extends FuelConnector {
     this._unsubs.forEach((unsub) => unsub());
   }
 
-  async getProviders() {
-    if (!this.fuelProvider) {
-      this.fuelProvider = (await this.config.fuelProvider) ?? null;
+  async getProvider() {
+    if (!this.config.fuelProvider) {
+      throw new Error('Fuel provider not found');
+    }
 
-      if (!this.fuelProvider) {
-        throw new Error('Fuel provider not found');
-      }
+    if (!this.fuelProvider) {
+      this.fuelProvider = await this.config.fuelProvider;
     }
 
     return {
@@ -219,7 +219,6 @@ export class WalletConnectConnector extends FuelConnector {
    * ============================================================
    */
   async ping(): Promise<boolean> {
-    await this.getProviders();
     return true;
   }
 
@@ -262,11 +261,12 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async disconnect(): Promise<boolean> {
-    const { connector } = getAccount(this.wagmiConfig);
+    const { connector, isConnected } = getAccount(this.wagmiConfig);
     await disconnect(this.wagmiConfig, {
       connector,
     });
-    return this.isConnected();
+
+    return isConnected || false;
   }
 
   async accounts(): Promise<Array<string>> {
@@ -295,7 +295,7 @@ export class WalletConnectConnector extends FuelConnector {
       throw Error('No predicate account found');
     }
 
-    const { fuelProvider } = await this.getProviders();
+    const { fuelProvider } = await this.getProvider();
     const chainId = fuelProvider.getChainId();
     const evmAccount = this.predicateAccount.getEVMAddress(
       address,
@@ -428,7 +428,7 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async currentNetwork(): Promise<Network> {
-    const { fuelProvider } = await this.getProviders();
+    const { fuelProvider } = await this.getProvider();
     const chainId = fuelProvider.getChainId();
 
     return { url: fuelProvider.url, chainId: chainId };

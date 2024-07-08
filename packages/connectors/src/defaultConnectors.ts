@@ -1,3 +1,4 @@
+import { BakoSafeConnector } from '@fuel-connectors/bako-safe';
 import { BurnerWalletConnector } from '@fuel-connectors/burner-wallet-connector';
 import { FuelWalletDevelopmentConnector } from '@fuel-connectors/fuel-development-wallet';
 import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
@@ -14,6 +15,7 @@ export function defaultConnectors({
 }: DefaultConnectors = {}): Array<FuelConnector> {
   const connectors = [
     new FuelWalletConnector(),
+    new BakoSafeConnector(),
     new FueletWalletConnector(),
     new WalletConnectConnector(),
     new BurnerWalletConnector(),

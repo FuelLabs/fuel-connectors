@@ -27,13 +27,15 @@ export class DAppWindow {
       top: WINDOW.innerHeight / 2 - height / 2,
       left: WINDOW.innerWidth / 2 - width / 2,
       width,
-      height: WINDOW.innerHeight >= height ? height : WINDOW.innerHeight,
+      height:
+        !this.isMobile && WINDOW.innerHeight >= height
+          ? height
+          : WINDOW.innerHeight,
     };
   }
 
   open(method: string, reject: (e: Error) => void) {
     if (this.isOpen) reject(new Error('Window is already open'));
-    const _isConnection = !method.includes('/dapp/');
 
     if (!this.isSafariBrowser) {
       // if is not safari, we can use popup for both cases
@@ -80,7 +82,7 @@ export class DAppWindow {
     frame.src = `${this.config.appUrl}${method}${this.queryString}${
       isSafari ? '&byConnector=true' : ''
     }`;
-    frame.style.position = 'absolute';
+    frame.style.position = 'fixed';
     frame.style.zIndex = '99999999';
     frame.style.top = `${w.top}`;
     frame.style.left = `${w.left}`;

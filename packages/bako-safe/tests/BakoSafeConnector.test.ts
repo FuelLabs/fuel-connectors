@@ -99,7 +99,13 @@ describe('isConnected()', () => {
 
 describe('disconnect()', () => {
   test('returns a false', async () => {
-    const connector = new BakoSafeConnector();
+    const storage: StorageAbstract = new BakoStorage();
+    await storage.setItem('sessionId', 'fake_session_id');
+
+    const connector = new BakoSafeConnector({
+      api: new MockedRequestAPI(),
+      storage,
+    });
     const disconnect = await connector.disconnect();
 
     expect(disconnect).toEqual(false);

@@ -7,6 +7,7 @@ import {
   type Asset,
   type ConnectorMetadata,
   FuelConnector,
+  FuelConnectorEventType,
   FuelConnectorEventTypes,
   type JsonAbi,
   type Network,
@@ -161,7 +162,7 @@ export class EVMWalletConnector extends FuelConnector {
         if (WINDOW?.ethereum) {
           clearInterval(this._ethereumEvents);
           WINDOW.dispatchEvent(
-            new CustomEvent('FuelConnector', { detail: this }),
+            new CustomEvent(FuelConnectorEventType, { detail: this }),
           );
         }
       }, 500),
