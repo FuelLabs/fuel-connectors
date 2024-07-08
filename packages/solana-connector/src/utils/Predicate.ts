@@ -17,13 +17,13 @@ import {
 } from 'fuels';
 import memoize from 'memoizee';
 import nacl from 'tweetnacl';
-import type { PredicateConfig } from '../types';
+import type { SolanaPredicateConfig } from '../types';
 
 export class PredicateAccount {
   private abi: JsonAbi;
   private bytecode: Uint8Array;
 
-  constructor({ abi, bytecode }: PredicateConfig) {
+  constructor({ abi, bytecode }: SolanaPredicateConfig) {
     this.abi = abi;
     this.bytecode = bytecode;
   }
@@ -104,7 +104,7 @@ export class PredicateAccount {
       this.getSmallTxId(txId),
       keypair.secretKey,
     );
-    request.witnesses = [signature, keypair.publicKey.toBytes()];
+    request.witnesses = [signature];
     await fakePredicate.provider.estimatePredicates(request);
     const predicateInput = request.inputs[0];
     if (predicateInput && 'predicate' in predicateInput) {

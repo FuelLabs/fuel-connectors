@@ -85,8 +85,6 @@ export class SolanaConnector extends FuelConnector {
 
   setupWatchers() {
     this.web3Modal.subscribeEvents((event) => {
-      console.log(event.data.event);
-
       switch (event.data.event) {
         case 'CONNECT_SUCCESS': {
           this.emit(this.events.connection, true);

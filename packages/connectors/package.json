@@ -9,21 +9,6 @@
       "require": "./dist/index.js",
       "import": "./dist/index.mjs",
       "types": "./dist/index.d.ts"
-    },
-    "./walletconnect": {
-      "require": "./dist/walletconnect-connector/index.js",
-      "import": "./dist/walletconnect-connector/index.mjs",
-      "types": "./dist/walletconnect-connector/src/index.d.ts"
-    },
-    "./evm": {
-      "require": "./dist/evm-connector/index.js",
-      "import": "./dist/evm-connector/index.mjs",
-      "types": "./dist/evm-connector/src/index.d.ts"
-    },
-    "./solana": {
-      "require": "./dist/solana-connector/index.js",
-      "import": "./dist/solana-connector/index.mjs",
-      "types": "./dist/solana-connector/src/index.d.ts"
     }
   },
   "files": ["dist"],
@@ -39,11 +24,11 @@
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
     "@wagmi/core": "2.9.1",
-    "@web3modal/wagmi": "4.1.11",
+    "@web3modal/wagmi": "4.2.3",
     "viem": "2.10.2",
     "socket.io-client": "4.7.2",
-    "@web3modal/common": "4.2.3",
     "@web3modal/solana": "4.2.3",
+    "@web3modal/scaffold": "4.2.3",
     "@solana/web3.js": "1.93.1",
     "rpc-websockets": "7.11.0"
   },
