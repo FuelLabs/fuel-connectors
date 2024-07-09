@@ -8,8 +8,8 @@ import {
   FuelWalletConnector,
   FuelWalletDevelopmentConnector,
   FueletWalletConnector,
+  WalletConnectConnector,
 } from '@fuels/connectors';
-import { WalletConnectConnector } from '@fuels/connectors/walletconnect';
 import { FuelProvider } from '@fuels/react';
 
 const queryClient = new QueryClient();

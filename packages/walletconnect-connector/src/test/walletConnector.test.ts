@@ -140,6 +140,7 @@ describe('WalletConnect Connector', () => {
         predicateConfig: VERSIONS[version].predicate,
       });
 
+      // @ts-expect-error setupPredicate is protected
       const predicateAccount = await walletConectconnector.setupPredicate();
 
       expect(predicateAccount).to.be.instanceOf(PredicateFactory);
@@ -148,6 +149,7 @@ describe('WalletConnect Connector', () => {
     test('Should setup predicate without given config', async () => {
       const walletConectconnector = new WalletConnectConnector();
 
+      // @ts-expect-error setupPredicate is protected
       const predicateAccount = await walletConectconnector.setupPredicate();
 
       expect(predicateAccount).to.be.instanceOf(PredicateFactory);

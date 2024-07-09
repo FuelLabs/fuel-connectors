@@ -523,6 +523,7 @@ describe('EVM Wallet Connector', () => {
 
       await evmConnector.connect();
 
+      // @ts-expect-error predicateAddress is protected
       expect(evmConnector.predicateAddress).to.be.equal('custom');
     });
 
@@ -536,6 +537,7 @@ describe('EVM Wallet Connector', () => {
 
       await evmConnector.connect();
 
+      // @ts-expect-error predicateAddress is protected
       expect(evmConnector.predicateAddress).to.be.equal(latestVersion);
     });
 
@@ -597,6 +599,7 @@ describe('EVM Wallet Connector', () => {
 
       await connector.connect();
 
+      // @ts-expect-error predicateAddress is protected
       expect(connector.predicateAddress).to.be.equal(version);
     });
   });
