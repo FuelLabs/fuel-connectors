@@ -5,4 +5,4 @@
 "@fuel-connectors/fuel-wallet": minor
 ---
 
-Converting address from bech32 to b256 on all connectors
+Breaking Change: now methods that return address, like "getAccount", will return a b256 address instead of a bech32.
