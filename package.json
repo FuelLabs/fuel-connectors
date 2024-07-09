@@ -15,6 +15,7 @@
     "lint:ci": "biome lint --max-diagnostics=1000 --diagnostic-level=error .",
     "format": "biome format --write .",
     "changeset": "changeset",
+    "changeset:next": "tsx ./scripts/changeset-next",
     "packages:version": "node ./scripts/version.js",
     "prepare": "husky"
   },
@@ -28,10 +29,10 @@
     "compare-versions": "6.1.0",
     "husky": "9.0.11",
     "lint-staged": "15.2.2",
+    "tsx": "^4.16.2",
     "turbo": "1.13.3",
     "vitest": "1.6.0"
   },
-  "packageManager": "pnpm@8.9.0",
   "engines": {
     "node": ">=18",
     "pnpm": ">=8"
