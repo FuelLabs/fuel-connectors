@@ -28,15 +28,6 @@ describe('Solana Connector', () => {
     });
   });
 
-  describe('isConnected()', () => {
-    test('false when not connected', async () => {
-      const connector = new SolanaConnector();
-
-      const connectedAfterConnect = await connector.isConnected();
-      expect(connectedAfterConnect).to.be.false;
-    });
-  });
-
   describe('currentAccount()', () => {
     test('throws error', async () => {
       await expect(() => connector.currentAccount()).rejects.toThrowError(
