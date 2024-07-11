@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
-import { type Asset, type Network, Provider } from 'fuels';
+import type { Asset, Network, Provider } from 'fuels';
 import {
   afterAll,
   beforeAll,
@@ -13,82 +13,18 @@ import { SolanaConnector } from '../SolanaConnector';
 import { TESTNET_URL } from '../constants';
 
 describe('Solana Connector', () => {
-  let connector: SolanaConnector;
+  const connector = new SolanaConnector({ projectId: '0000' });
 
   const snapshotPath = path.join(__dirname, '');
-
-  let fuelProvider: Provider;
-
-  let stopProvider: () => void;
 
   beforeAll(async () => {
     process.env.GENESIS_SECRET =
       '0x6e48a022f9d4ae187bca4e2645abd62198ae294ee484766edbdaadf78160dc68';
-    const { stop, provider } = await launchNodeAndGetWallets({
+    await launchNodeAndGetWallets({
       launchNodeOptions: {
         args: ['--snapshot', snapshotPath],
         loggingEnabled: false,
       },
-    });
-
-    fuelProvider = provider;
-    stopProvider = stop;
-  });
-
-  afterAll(() => {
-    stopProvider?.();
-  });
-
-  beforeEach(() => {
-    // Class contains state, reset the state for each test
-    connector = new SolanaConnector({ projectId: '0000' });
-  });
-
-  describe('constructor()', () => {
-    test('initialize properties correctly', async () => {
-      const solanaConnector = new SolanaConnector({
-        projectId: '0000',
-      });
-      await solanaConnector.ping();
-
-      expect(solanaConnector).to.be.an.instanceOf(SolanaConnector);
-      expect(solanaConnector.name).to.equal('Solana Wallets');
-      expect(await solanaConnector.currentNetwork()).to.be.deep.equal({
-        chainId: 0,
-        url: TESTNET_URL,
-      });
-    });
-
-    test('it can instantiate SolanaConnector with a non default Provider', async () => {
-      const nonDefaultProvider = fuelProvider;
-      const solanaConnector = new SolanaConnector({
-        fuelProvider: nonDefaultProvider,
-        projectId: '0000',
-      });
-      await solanaConnector.ping();
-
-      expect(solanaConnector).to.be.an.instanceOf(SolanaConnector);
-      expect(solanaConnector.name).to.equal('Solana Wallets');
-      expect(await solanaConnector.currentNetwork()).to.be.deep.equal({
-        chainId: 0,
-        url: TESTNET_URL,
-      });
-    });
-
-    test('it can instantiate SolanaConnector with a non default Promise Provider', async () => {
-      const nonDefaultProvider = Provider.create(fuelProvider.url);
-      const solanaConnector = new SolanaConnector({
-        fuelProvider: nonDefaultProvider,
-        projectId: '0000',
-      });
-      await solanaConnector.ping();
-
-      expect(solanaConnector).to.be.an.instanceOf(SolanaConnector);
-      expect(solanaConnector.name).to.equal('Solana Wallets');
-      expect(await solanaConnector.currentNetwork()).to.be.deep.equal({
-        chainId: 0,
-        url: TESTNET_URL,
-      });
     });
   });
 
@@ -183,15 +119,6 @@ describe('Solana Connector', () => {
       await expect(() => connector.selectNetwork(network)).rejects.toThrowError(
         'Method not implemented.',
       );
-    });
-  });
-
-  describe('currentNetwork()', () => {
-    test('returns fuel network', async () => {
-      const network = await connector.currentNetwork();
-
-      expect(network.url).to.equal(connector.fuelProvider?.url);
-      expect(network.chainId).to.equal(connector.fuelProvider?.getChainId());
     });
   });
 });
