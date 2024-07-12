@@ -30,11 +30,11 @@
     "memoizee": "0.4.15"
   },
   "devDependencies": {
-    "@fuel-ts/account": "0.88.1",
-    "@fuel-ts/forc": "0.88.1",
-    "@fuel-ts/fuel-core": "0.88.1",
+    "@fuel-ts/account": "pr-2479",
+    "@fuel-ts/forc": "pr-2479",
+    "@fuel-ts/fuel-core": "pr-2479",
     "@types/memoizee": "0.4.11",
-    "fuels": "0.88.1",
+    "fuels": "pr-2479",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",

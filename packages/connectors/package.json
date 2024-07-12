@@ -46,7 +46,7 @@
     "@fuel-connectors/fuelet-wallet": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
     "@fuel-connectors/bako-safe": "workspace:*",
-    "fuels": "0.88.1",
+    "fuels": "pr-2479",
     "terser": "5.31.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5"
