@@ -1,15 +1,15 @@
 {
-  "name": "@fuel-connectors/walletconnect-connector",
+  "name": "@fuel-connectors/solana-connector",
+  "version": "0.0.0",
   "private": true,
-  "version": "0.8.1",
   "type": "module",
   "files": ["dist"],
-  "main": "./dist/wallet-connector-walletconnect.umd.cjs",
-  "module": "./dist/wallet-connector-walletconnect.js",
+  "main": "./dist/wallet-connector-solana.umd.cjs",
+  "module": "./dist/wallet-connector-solana.js",
   "exports": {
     ".": {
-      "import": "./dist/wallet-connector-walletconnect.js",
-      "require": "./dist/wallet-connector-walletconnect.umd.cjs"
+      "import": "./dist/wallet-connector-solana.js",
+      "require": "./dist/wallet-connector-solana.umd.cjs"
     }
   },
   "types": "./dist/index.d.ts",
@@ -17,22 +17,23 @@
     "build:forc": "pnpm fuels-forc build --release --path ./predicate",
     "build:resources": "pnpm run build:forc && tsx ./scripts/generatePredicateResources.ts",
     "build": "tsup --dts-only",
-    "build:watch": "pnpm run build:resources && tsup --watch --dts-only",
+    "build:watch": "pnpm build --watch",
     "ts:check": "tsc --noEmit",
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.88.1",
     "@web3modal/scaffold": ">=5.0.0",
-    "@web3modal/core": ">=5.0.0"
+    "@web3modal/core": ">=5.0.0",
+    "fuels": ">=0.88.1"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
-    "@wagmi/core": "2.9.1",
-    "@web3modal/wagmi": "5.0.0",
+    "@solana/web3.js": "1.93.1",
+    "@web3modal/solana": "5.0.0",
+    "bs58": "6.0.0",
     "memoizee": "0.4.15",
-    "viem": "2.10.2"
+    "tweetnacl": "1.0.3"
   },
   "devDependencies": {
     "@fuel-ts/account": "0.88.1",
@@ -49,7 +50,6 @@
     "vite": "5.2.11",
     "vite-plugin-dts": "3.9.1",
     "vitest": "1.6.0",
-    "@fuel-connectors/common": "workspace:*",
     "@web3modal/core": "5.0.0"
   }
 }

@@ -25,10 +25,12 @@ import {
   type ProviderDictionary,
   getSignatureIndex,
 } from '@fuel-connectors/common';
+import { ApiController } from '@web3modal/core';
 import { VERSIONS } from '../versions/versions-dictionary';
 import { ETHEREUM_ICON, TESTNET_URL } from './constants';
-import type { Predicate, WalletConnectConfig } from './types';
-import { createModalConfig } from './wagmiConfig';
+import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
+import type { PredicateAccount } from './utils/Predicate';
+import { createModalConfig, createWagmiConfig } from './utils/wagmiConfig';
 
 export class WalletConnectConnector extends PredicateConnector {
   name = 'Ethereum Wallets';
@@ -45,21 +47,28 @@ export class WalletConnectConnector extends PredicateConnector {
   wagmiConfig: Config;
   ethProvider: unknown | null = null;
   fuelProvider: FuelProvider | null = null;
-  web3Modal: Web3Modal;
   _unsubs: Array<() => void> = [];
+  web3Modal!: Web3Modal;
+
+  predicateAccount: PredicateAccount | null = null;
 
   private config: WalletConnectConfig = {};
 
   constructor(config: WalletConnectConfig = {}) {
     super();
 
-    const { wagmiConfig, web3Modal } = createModalConfig(config);
-    this.wagmiConfig = wagmiConfig;
-    this.web3Modal = web3Modal;
-
+    this.wagmiConfig = createWagmiConfig(config);
     this.customPredicate = config.predicateConfig || null;
 
     this.configProviders(config);
+  }
+
+  // createModal re-instanciates the modal to update singletons from web3modal
+  createModal() {
+    this.destroy();
+    const { web3Modal } = createModalConfig(this.config);
+    this.web3Modal = web3Modal;
+    ApiController.prefetch();
     this.setupWatchers();
   }
 
@@ -139,13 +148,24 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   async requireConnection() {
+    if (!this.web3Modal) this.createModal();
+    if (!this.wagmiConfig) return;
+
     const { state } = this.wagmiConfig;
     if (state.status === 'disconnected' && state.connections.size > 0) {
       await reconnect(this.wagmiConfig);
     }
   }
 
+  async isConnected(): Promise<boolean> {
+    await this.requireConnection();
+    const account = getAccount(this.wagmiConfig || {});
+    return account.isConnected || false;
+  }
+
   async connect(): Promise<boolean> {
+    this.createModal();
+
     return new Promise((resolve) => {
       this.web3Modal.open();
       const unsub = this.web3Modal.subscribeEvents(async (event) => {

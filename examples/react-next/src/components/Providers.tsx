@@ -8,6 +8,7 @@ import {
   FuelWalletConnector,
   FuelWalletDevelopmentConnector,
   FueletWalletConnector,
+  SolanaConnector,
   WalletConnectConnector,
 } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
@@ -26,6 +27,7 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
             new BakoSafeConnector(),
             new FueletWalletConnector(),
             new WalletConnectConnector(),
+            new SolanaConnector(),
           ],
         }}
       >
