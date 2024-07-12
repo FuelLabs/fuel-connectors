@@ -8,17 +8,19 @@ interface ModalConfig {
   web3Modal: Web3Modal;
 }
 
+export const createWagmiConfig = (config: WalletConnectConfig): Config =>
+  config.wagmiConfig ??
+  createConfig({
+    chains: [sepolia, mainnet],
+    transports: {
+      [mainnet.id]: http(),
+      [sepolia.id]: http(),
+    },
+    connectors: [injected({ shimDisconnect: false })],
+  });
+
 export function createModalConfig(config: WalletConnectConfig): ModalConfig {
-  const wagmiConfig =
-    config.wagmiConfig ??
-    createConfig({
-      chains: [sepolia, mainnet],
-      transports: {
-        [mainnet.id]: http(),
-        [sepolia.id]: http(),
-      },
-      connectors: [injected({ shimDisconnect: false })],
-    });
+  const wagmiConfig = createWagmiConfig(config);
 
   if (!config.projectId) {
     console.warn(

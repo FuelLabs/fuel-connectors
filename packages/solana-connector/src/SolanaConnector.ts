@@ -40,7 +40,7 @@ export class SolanaConnector extends FuelConnector {
     },
   };
 
-  web3Modal: Web3Modal;
+  web3Modal!: Web3Modal;
   fuelProvider: FuelProvider | null = null;
   predicateAddress: string | null = null;
 
@@ -55,10 +55,13 @@ export class SolanaConnector extends FuelConnector {
       config.predicateConfig ?? predicates['verification-predicate'],
     );
 
-    const { walletConnectModal } = createSolanaProvider(config);
-    this.web3Modal = walletConnectModal;
-
     this.configProviders(config);
+  }
+
+  // createModal re-instanciates the modal to update singletons from web3modal
+  createModal() {
+    const { walletConnectModal } = createSolanaProvider(this.config);
+    this.web3Modal = walletConnectModal;
     this.setupWatchers();
   }
 
@@ -112,6 +115,9 @@ export class SolanaConnector extends FuelConnector {
 
     // Poll for account changes due a problem with the event listener not firing on account changes
     setInterval(() => {
+      if (!this.web3Modal) {
+        return;
+      }
       const address = this.web3Modal.getAddress();
       if (address && address !== this.svmAddress) {
         this.emit(this.events.currentAccount, address);
@@ -172,6 +178,8 @@ export class SolanaConnector extends FuelConnector {
   }
 
   async connect(): Promise<boolean> {
+    this.createModal();
+
     //@ts-ignore
     if (this.web3Modal.getIsConnectedState()) {
       this.emit(this.events.connection, true);
