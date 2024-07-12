@@ -29,6 +29,7 @@
     "socket.io-client": "4.7.2",
     "@web3modal/solana": "5.0.0",
     "@web3modal/scaffold": "5.0.0",
+    "@web3modal/core": "5.0.0",
     "@solana/web3.js": "1.93.1",
     "rpc-websockets": "7.11.0"
   },

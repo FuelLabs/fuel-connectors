@@ -37,6 +37,7 @@ export function createModalConfig(config: WalletConnectConfig): ModalConfig {
         enableWalletConnect: !!config.projectId,
       },
       enableAnalytics: false,
+      allowUnsupportedChain: true,
       projectId: config.projectId ?? '00000000000000000000000000000000',
     }),
   };

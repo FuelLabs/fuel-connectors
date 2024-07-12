@@ -1,3 +1,4 @@
+import { ApiController } from '@web3modal/core';
 import type { Web3Modal } from '@web3modal/solana';
 import type { Provider } from '@web3modal/solana/dist/types/src/utils/scaffold';
 import {
@@ -47,6 +48,7 @@ export class SolanaConnector extends FuelConnector {
   private predicateAccount: PredicateAccount;
   private config: SolanaConfig = {};
   private svmAddress: string | null = null;
+  private subscriptions: Array<() => void> = [];
 
   constructor(config: SolanaConfig = {}) {
     super();
@@ -60,8 +62,10 @@ export class SolanaConnector extends FuelConnector {
 
   // createModal re-instanciates the modal to update singletons from web3modal
   createModal() {
+    this.destroy();
     const { walletConnectModal } = createSolanaProvider(this.config);
     this.web3Modal = walletConnectModal;
+    ApiController.prefetch();
     this.setupWatchers();
   }
 
@@ -69,6 +73,11 @@ export class SolanaConnector extends FuelConnector {
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
     });
+  }
+
+  destroy() {
+    this.subscriptions.forEach((unsub) => unsub());
+    this.subscriptions = [];
   }
 
   /**
@@ -87,39 +96,42 @@ export class SolanaConnector extends FuelConnector {
   }
 
   setupWatchers() {
-    this.web3Modal.subscribeEvents((event) => {
-      switch (event.data.event) {
-        case 'CONNECT_SUCCESS': {
-          this.emit(this.events.connection, true);
-          this.emit(
-            this.events.currentAccount,
-            this.predicateAccount.getPredicateAddress(
-              this.web3Modal.getAddress() ?? '',
-            ),
-          );
-          this.emit(
-            this.events.accounts,
-            this.predicateAccount.getPredicateAccounts(this.svmAccounts()),
-          );
-          this.svmAddress = this.web3Modal.getAddress() ?? '';
-          break;
+    this.subscriptions.push(
+      this.web3Modal.subscribeEvents((event) => {
+        switch (event.data.event) {
+          case 'CONNECT_SUCCESS': {
+            this.emit(this.events.connection, true);
+            this.emit(
+              this.events.currentAccount,
+              this.predicateAccount.getPredicateAddress(
+                this.web3Modal.getAddress() ?? '',
+              ),
+            );
+            this.emit(
+              this.events.accounts,
+              this.predicateAccount.getPredicateAccounts(this.svmAccounts()),
+            );
+            this.svmAddress = this.web3Modal.getAddress() ?? '';
+            break;
+          }
+          case 'DISCONNECT_SUCCESS': {
+            this.emit(this.events.connection, false);
+            this.emit(this.events.currentAccount, null);
+            this.emit(this.events.accounts, []);
+            break;
+          }
         }
-        case 'DISCONNECT_SUCCESS': {
-          this.emit(this.events.connection, false);
-          this.emit(this.events.currentAccount, null);
-          this.emit(this.events.accounts, []);
-          break;
-        }
-      }
-    });
+      }),
+    );
 
     // Poll for account changes due a problem with the event listener not firing on account changes
-    setInterval(() => {
+    const interval = setInterval(() => {
       if (!this.web3Modal) {
         return;
       }
       const address = this.web3Modal.getAddress();
       if (address && address !== this.svmAddress) {
+        this.emit(this.events.connection, true);
         this.emit(this.events.currentAccount, address);
         this.emit(
           this.events.accounts,
@@ -137,6 +149,8 @@ export class SolanaConnector extends FuelConnector {
         this.svmAddress = null;
       }
     }, 300);
+
+    this.subscriptions.push(() => clearInterval(interval));
   }
 
   async getProviders() {
@@ -153,8 +167,9 @@ export class SolanaConnector extends FuelConnector {
     };
   }
 
-  //TODO - Implement
-  async requireConnection() {}
+  async requireConnection() {
+    if (!this.web3Modal) this.createModal();
+  }
 
   /**
    * ============================================================
@@ -179,23 +194,6 @@ export class SolanaConnector extends FuelConnector {
 
   async connect(): Promise<boolean> {
     this.createModal();
-
-    //@ts-ignore
-    if (this.web3Modal.getIsConnectedState()) {
-      this.emit(this.events.connection, true);
-      this.emit(
-        this.events.currentAccount,
-        this.predicateAccount.getPredicateAddress(
-          this.web3Modal.getAddress() ?? '',
-        ),
-      );
-      this.emit(
-        this.events.accounts,
-        this.predicateAccount.getPredicateAccounts(this.svmAccounts()),
-      );
-
-      return true;
-    }
 
     return new Promise((resolve) => {
       this.web3Modal.open();

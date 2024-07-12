@@ -26,6 +26,7 @@ import {
   transactionRequestify,
 } from 'fuels';
 
+import { ApiController } from '@web3modal/core';
 import { VERSIONS } from '../versions/versions-dictionary';
 import { ETHEREUM_ICON, TESTNET_URL } from './constants';
 import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
@@ -77,6 +78,7 @@ export class WalletConnectConnector extends FuelConnector {
     this.destroy();
     const { web3Modal } = createModalConfig(this.config);
     this.web3Modal = web3Modal;
+    ApiController.prefetch();
     this.setupWatchers();
   }
 
@@ -231,6 +233,7 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async requireConnection() {
+    if (!this.web3Modal) this.createModal();
     if (!this.wagmiConfig) return;
 
     const { state } = this.wagmiConfig;
