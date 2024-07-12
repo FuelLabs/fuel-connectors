@@ -26,11 +26,12 @@ import {
   transactionRequestify,
 } from 'fuels';
 
+import { ApiController } from '@web3modal/core';
 import { VERSIONS } from '../versions/versions-dictionary';
 import { ETHEREUM_ICON, TESTNET_URL } from './constants';
 import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
-import { createModalConfig } from './utils/wagmiConfig';
+import { createModalConfig, createWagmiConfig } from './utils/wagmiConfig';
 import { getSignatureIndex } from './utils/witness';
 
 export class WalletConnectConnector extends FuelConnector {
@@ -56,7 +57,7 @@ export class WalletConnectConnector extends FuelConnector {
   wagmiConfig: Config;
   ethProvider: unknown | null = null;
   fuelProvider: FuelProvider | null = null;
-  web3Modal: Web3Modal;
+  web3Modal!: Web3Modal;
 
   predicateAccount: PredicateAccount | null = null;
 
@@ -66,13 +67,18 @@ export class WalletConnectConnector extends FuelConnector {
   constructor(config: WalletConnectConfig = {}) {
     super();
 
-    const { wagmiConfig, web3Modal } = createModalConfig(config);
-    this.wagmiConfig = wagmiConfig;
-    this.web3Modal = web3Modal;
-
+    this.wagmiConfig = createWagmiConfig(config);
     this.customPredicate = config.predicateConfig || null;
 
     this.configProvider(config);
+  }
+
+  // createModal re-instanciates the modal to update singletons from web3modal
+  createModal() {
+    this.destroy();
+    const { web3Modal } = createModalConfig(this.config);
+    this.web3Modal = web3Modal;
+    ApiController.prefetch();
     this.setupWatchers();
   }
 
@@ -227,6 +233,9 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async requireConnection() {
+    if (!this.web3Modal) this.createModal();
+    if (!this.wagmiConfig) return;
+
     const { state } = this.wagmiConfig;
     if (state.status === 'disconnected' && state.connections.size > 0) {
       await reconnect(this.wagmiConfig);
@@ -235,11 +244,13 @@ export class WalletConnectConnector extends FuelConnector {
 
   async isConnected(): Promise<boolean> {
     await this.requireConnection();
-    const account = getAccount(this.wagmiConfig);
+    const account = getAccount(this.wagmiConfig || {});
     return account.isConnected || false;
   }
 
   async connect(): Promise<boolean> {
+    this.createModal();
+
     return new Promise((resolve) => {
       this.web3Modal.open();
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
