@@ -5,17 +5,20 @@ import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
 import { FueletWalletConnector } from '@fuel-connectors/fuelet-wallet';
 import { WalletConnectConnector } from '@fuel-connectors/walletconnect-connector';
 import type { FuelConnector } from 'fuels';
+import type { BurnerWalletConfig } from '../../burner-wallet-connector/src/types';
 
 const DEFAULT_WC_PROJECT_ID = '00000000000000000000000000000000';
 
 type DefaultConnectors = {
   devMode?: boolean;
   wcProjectId?: string;
+  burnerWalletConfig?: BurnerWalletConfig;
 };
 
 export function defaultConnectors({
   devMode,
   wcProjectId = DEFAULT_WC_PROJECT_ID,
+  burnerWalletConfig,
 }: DefaultConnectors = {}): Array<FuelConnector> {
   const connectors = [
     new FuelWalletConnector(),
@@ -24,7 +27,7 @@ export function defaultConnectors({
     new WalletConnectConnector({
       projectId: wcProjectId,
     }),
-    new BurnerWalletConnector(),
+    new BurnerWalletConnector(burnerWalletConfig),
   ];
 
   if (devMode) {
