@@ -155,7 +155,7 @@ export class SolanaConnector extends PredicateConnector {
     };
   }
 
-  async connect(): Promise<boolean> {
+  public async connect(): Promise<boolean> {
     this.createModal();
 
     return new Promise((resolve) => {
@@ -178,19 +178,19 @@ export class SolanaConnector extends PredicateConnector {
     });
   }
 
-  async disconnect(): Promise<boolean> {
+  public async disconnect(): Promise<boolean> {
     this.web3Modal.disconnect();
     this._emit(false);
     return this.isConnected();
   }
 
-  getSmallTxId(txId: string): Uint8Array {
+  public truncateTxId(txId: string): Uint8Array {
     const txIdNo0x = txId.slice(2);
     const idBytes = `${txIdNo0x.slice(0, 16)}${txIdNo0x.slice(-16)}`;
     return new TextEncoder().encode(idBytes);
   }
 
-  async sendTransaction(
+  public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
   ): Promise<string> {
@@ -200,7 +200,7 @@ export class SolanaConnector extends PredicateConnector {
     const predicateSignatureIndex = getSignatureIndex(
       transactionRequest.witnesses,
     );
-    const txId = this.getSmallTxId(transactionId);
+    const txId = this.truncateTxId(transactionId);
     const provider: Maybe<Provider> =
       this.web3Modal.getWalletProvider() as Provider;
     if (!provider) {

@@ -257,6 +257,7 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   public async isConnected(): Promise<boolean> {
+    await this.requireConnection();
     const accounts = await this.accounts();
     return accounts.length > 0;
   }
