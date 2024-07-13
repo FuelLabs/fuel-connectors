@@ -2,8 +2,16 @@
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
   "pipeline": {
-    "ts:check": {
+    "ts:check:common": {
       "dependsOn": [],
+      "outputs": []
+    },
+    "build:common": {
+      "dependsOn": ["ts:check:common"],
+      "outputs": ["dist/**"]
+    },
+    "ts:check": {
+      "dependsOn": ["build:common"],
       "outputs": []
     },
     "build": {
@@ -15,7 +23,7 @@
       "outputs": ["dist/**"]
     },
     "test": {
-      "dependsOn": []
+      "dependsOn": ["build", "build:common"]
     }
   }
 }
