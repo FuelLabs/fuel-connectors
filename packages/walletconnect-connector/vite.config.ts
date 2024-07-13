@@ -18,8 +18,5 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    deps: {
-      moduleDirectories: ['node_modules', path.resolve('../../packages')],
-    },
   },
 });
