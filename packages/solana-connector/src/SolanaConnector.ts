@@ -155,13 +155,6 @@ export class SolanaConnector extends PredicateConnector {
     };
   }
 
-  public async isConnected(): Promise<boolean> {
-    await this.requireConnection();
-    const accounts = await this.walletAccounts();
-
-    return accounts.length > 0;
-  }
-
   async connect(): Promise<boolean> {
     this.createModal();
 

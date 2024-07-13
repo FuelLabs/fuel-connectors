@@ -223,7 +223,9 @@ describe('WalletConnect Connector', () => {
     test('returns fuel network', async () => {
       const network = await connector.currentNetwork();
 
+      // @ts-expect-error fuelProvider is private
       expect(network.url).to.equal(connector.fuelProvider?.url);
+      // @ts-expect-error fuelProvider is private
       expect(network.chainId).to.equal(connector.fuelProvider?.getChainId());
     });
   });

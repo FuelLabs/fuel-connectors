@@ -2,20 +2,24 @@ import { type Provider, bn } from 'fuels';
 
 import {
   EthereumWalletAdapter,
+  type Predicate,
   PredicateFactory,
 } from '@fuel-connectors/common';
 import { getAccount } from '@wagmi/core';
-import { type Predicate, WalletConnectConnector } from '../index';
+import { WalletConnectConnector } from '../index';
 import { VERSIONS } from './mocked-versions/versions-dictionary';
 
 export class testWalletConnectConnector extends WalletConnectConnector {
   constructor(fuelProvider: Provider) {
     super();
+    // @ts-ignore
     this.fuelProvider = fuelProvider;
   }
 
   async getProviders() {
+    // @ts-ignore
     if (this.fuelProvider) {
+      // @ts-ignore
       return { fuelProvider: this.fuelProvider };
     }
     throw 'Providers must exists';
@@ -48,6 +52,7 @@ export class testWalletConnectConnector extends WalletConnectConnector {
         },
       );
 
+      // @ts-ignore
       const account = getAccount(this.wagmiConfig);
       const address = account.address;
 
