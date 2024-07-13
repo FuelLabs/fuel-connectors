@@ -43,9 +43,9 @@ export class SolanaWalletAdapter implements PredicateWalletAdapter {
   };
 
   buildWitnessData = (
-    account: FakeAccount,
+    _account: FakeAccount,
     signature: Option<string, Uint8Array, Hash>,
   ): Array<Option<string, Uint8Array, Hash>> => {
-    return [signature, account.getRawAddress()];
+    return [signature];
   };
 }

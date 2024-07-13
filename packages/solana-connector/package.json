@@ -17,7 +17,7 @@
     "build:forc": "pnpm fuels-forc build --release --path ./predicate",
     "build:resources": "pnpm run build:forc && tsx ./scripts/generatePredicateResources.ts",
     "build": "tsup --dts-only",
-    "build:watch": "pnpm build --watch",
+    "build:watch": "pnpm run build:resources && tsup --watch --dts-only",
     "ts:check": "tsc --noEmit",
     "test": "vitest"
   },
@@ -50,6 +50,7 @@
     "vite": "5.2.11",
     "vite-plugin-dts": "3.9.1",
     "vitest": "1.6.0",
-    "@web3modal/core": "5.0.0"
+    "@web3modal/core": "5.0.0",
+    "@fuel-connectors/common": "workspace:*"
   }
 }

@@ -1,15 +1,11 @@
+import type { PredicateConfig } from '@fuel-connectors/common';
 import type { ProviderType } from '@web3modal/solana/dist/types/src/utils/scaffold';
-import type { Provider as FuelProvider, JsonAbi } from 'fuels';
-
-export interface SolanaPredicateConfig {
-  abi: JsonAbi;
-  bytecode: Uint8Array;
-}
+import type { Provider as FuelProvider } from 'fuels';
 
 export type SolanaConfig = {
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
   projectId?: string;
-  predicateConfig?: SolanaPredicateConfig;
+  predicateConfig?: PredicateConfig;
   solanaConfig?: ProviderType;
 };
 
@@ -41,5 +37,3 @@ export enum SolanaEvents {
   SESSION_UPDATE = 'session_update',
   SESSION_DELETE = 'session_delete',
 }
-
-export type Maybe<T> = T | null | undefined;

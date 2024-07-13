@@ -3,8 +3,8 @@ import {
   createWeb3Modal,
   defaultSolanaConfig,
 } from '@web3modal/solana';
-import { SolanaChains } from '../constants';
-import type { SolanaConfig } from '../types';
+import { SolanaChains } from './constants';
+import type { SolanaConfig } from './types';
 
 const DEFAULT_PROJECT_ID = '00000000000000000000000000000000';
 

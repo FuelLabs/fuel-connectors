@@ -59,21 +59,15 @@ export class EVMWalletConnector extends PredicateConnector {
     this.setUpEvents();
   }
 
-  getWalletAdapter(): PredicateWalletAdapter {
-    return new EthereumWalletAdapter();
-  }
+  private async getLazyEthereum() {
+    if (this.config.ethProvider) {
+      return this.config.ethProvider;
+    }
+    if (WINDOW?.ethereum) {
+      return WINDOW.ethereum;
+    }
 
-  protected getPredicateVersions(): Record<string, Predicate> {
-    return VERSIONS;
-  }
-
-  requireConnection(): MaybeAsync<void> {}
-
-  async configProviders(config: EVMWalletConnectorConfig = {}) {
-    this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || Provider.create(TESTNET_URL),
-      ethProvider: config.ethProvider || WINDOW?.ethereum,
-    });
+    return null;
   }
 
   private setUpEvents() {
@@ -87,67 +81,6 @@ export class EVMWalletConnector extends PredicateConnector {
         }
       }, 500),
     );
-  }
-
-  private async getLazyEthereum() {
-    if (this.config.ethProvider) {
-      return this.config.ethProvider;
-    }
-    if (WINDOW?.ethereum) {
-      return WINDOW.ethereum;
-    }
-
-    return null;
-  }
-
-  /**
-   * ============================================================
-   * Application communication methods
-   * ============================================================
-   */
-  async walletAccounts(): Promise<Array<string>> {
-    const { ethProvider } = await this.getProviders();
-
-    const accounts = await ethProvider?.request({
-      method: 'eth_accounts',
-    });
-
-    return accounts as Array<string>;
-  }
-
-  async getAccountAddress(): Promise<Maybe<string>> {
-    return (await this.walletAccounts())[0];
-  }
-
-  async getProviders(): Promise<ProviderDictionary> {
-    if (!this.fuelProvider || !this.ethProvider) {
-      this.ethProvider = await this.getLazyEthereum();
-
-      if (!this.ethProvider) {
-        throw new Error('Ethereum provider not found');
-      }
-
-      this.fuelProvider = (await this.config.fuelProvider) ?? null;
-
-      if (!this.fuelProvider) {
-        throw new Error('Fuel provider not found');
-      }
-    }
-
-    return {
-      fuelProvider: this.fuelProvider,
-      ethProvider: this.ethProvider,
-    };
-  }
-
-  async ping(): Promise<boolean> {
-    await Promise.all([
-      this.getProviders(),
-      this.setup(),
-      this.setupPredicate(),
-    ]);
-
-    return true;
   }
 
   private async setup() {
@@ -186,12 +119,69 @@ export class EVMWalletConnector extends PredicateConnector {
     this.emit('currentAccount', currentAccount);
   }
 
-  /**
-   * ============================================================
-   * Connector methods
-   * ============================================================
-   */
-  async connect(): Promise<boolean> {
+  protected getWalletAdapter(): PredicateWalletAdapter {
+    return new EthereumWalletAdapter();
+  }
+
+  protected getPredicateVersions(): Record<string, Predicate> {
+    return VERSIONS;
+  }
+
+  protected requireConnection(): MaybeAsync<void> {}
+
+  protected async configProviders(config: EVMWalletConnectorConfig = {}) {
+    this.config = Object.assign(config, {
+      fuelProvider: config.fuelProvider || Provider.create(TESTNET_URL),
+      ethProvider: config.ethProvider || WINDOW?.ethereum,
+    });
+  }
+
+  protected async walletAccounts(): Promise<Array<string>> {
+    const { ethProvider } = await this.getProviders();
+
+    const accounts = await ethProvider?.request({
+      method: 'eth_accounts',
+    });
+
+    return accounts as Array<string>;
+  }
+
+  protected async getAccountAddress(): Promise<Maybe<string>> {
+    return (await this.walletAccounts())[0];
+  }
+
+  public async getProviders(): Promise<ProviderDictionary> {
+    if (!this.fuelProvider || !this.ethProvider) {
+      this.ethProvider = await this.getLazyEthereum();
+
+      if (!this.ethProvider) {
+        throw new Error('Ethereum provider not found');
+      }
+
+      this.fuelProvider = (await this.config.fuelProvider) ?? null;
+
+      if (!this.fuelProvider) {
+        throw new Error('Fuel provider not found');
+      }
+    }
+
+    return {
+      fuelProvider: this.fuelProvider,
+      ethProvider: this.ethProvider,
+    };
+  }
+
+  public async ping(): Promise<boolean> {
+    await Promise.all([
+      this.getProviders(),
+      this.setup(),
+      this.setupPredicate(),
+    ]);
+
+    return true;
+  }
+
+  public async connect(): Promise<boolean> {
     if (!(await this.isConnected())) {
       const { ethProvider } = await this.getProviders();
 
@@ -213,7 +203,7 @@ export class EVMWalletConnector extends PredicateConnector {
     return this.connected;
   }
 
-  async disconnect(): Promise<boolean> {
+  public async disconnect(): Promise<boolean> {
     if (await this.isConnected()) {
       const { ethProvider } = await this.getProviders();
 
@@ -234,7 +224,7 @@ export class EVMWalletConnector extends PredicateConnector {
     return false;
   }
 
-  async sendTransaction(
+  public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
   ): Promise<string> {

@@ -5,7 +5,6 @@ import {
   disconnect,
   getAccount,
   reconnect,
-  sendTransaction,
   watchAccount,
 } from '@wagmi/core';
 import type { Web3Modal } from '@web3modal/wagmi';
@@ -20,6 +19,7 @@ import {
   type EIP1193Provider,
   EthereumWalletAdapter,
   type Maybe,
+  type Predicate,
   PredicateConnector,
   type PredicateWalletAdapter,
   type ProviderDictionary,
@@ -28,12 +28,12 @@ import {
 import { ApiController } from '@web3modal/core';
 import { VERSIONS } from '../versions/versions-dictionary';
 import { ETHEREUM_ICON, TESTNET_URL } from './constants';
-import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
-import type { PredicateAccount } from './utils/Predicate';
-import { createModalConfig, createWagmiConfig } from './utils/wagmiConfig';
+import { createModalConfig, createWagmiConfig } from './provider';
+import type { WalletConnectConfig } from './types';
 
 export class WalletConnectConnector extends PredicateConnector {
   name = 'Ethereum Wallets';
+  installed = true;
   events = FuelConnectorEventTypes;
   metadata: ConnectorMetadata = {
     image: ETHEREUM_ICON,
@@ -43,15 +43,9 @@ export class WalletConnectConnector extends PredicateConnector {
       link: 'https://ethereum.org/en/wallets/find-wallet/',
     },
   };
-
-  wagmiConfig: Config;
-  ethProvider: unknown | null = null;
-  fuelProvider: FuelProvider | null = null;
-  _unsubs: Array<() => void> = [];
-  web3Modal!: Web3Modal;
-
-  predicateAccount: PredicateAccount | null = null;
-
+  private wagmiConfig: Config;
+  private fuelProvider: FuelProvider | null = null;
+  private web3Modal!: Web3Modal;
   private config: WalletConnectConfig = {};
 
   constructor(config: WalletConnectConfig = {}) {
@@ -63,42 +57,8 @@ export class WalletConnectConnector extends PredicateConnector {
     this.configProviders(config);
   }
 
-  // createModal re-instanciates the modal to update singletons from web3modal
-  createModal() {
-    this.destroy();
-    const { web3Modal } = createModalConfig(this.config);
-    this.web3Modal = web3Modal;
-    ApiController.prefetch();
-    this.setupWatchers();
-  }
-
-  getWalletAdapter(): PredicateWalletAdapter {
-    return new EthereumWalletAdapter();
-  }
-
-  protected getPredicateVersions(): Record<string, Predicate> {
-    return VERSIONS;
-  }
-
-  async configProviders(config: WalletConnectConfig = {}) {
-    this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
-    });
-  }
-
-  walletAccounts(): Promise<Array<string>> {
-    return new Promise((resolve) => {
-      const accounts = getAccount(this.wagmiConfig).addresses;
-      resolve(accounts as Array<string>);
-    });
-  }
-
-  protected getAccountAddress(): Maybe<string> {
-    return getAccount(this.wagmiConfig).address;
-  }
-
-  setupWatchers() {
-    this._unsubs.push(
+  private setupWatchers() {
+    this.subscribe(
       watchAccount(this.wagmiConfig, {
         onChange: async (account) => {
           const predicateAccount = this.predicateAccount;
@@ -132,7 +92,51 @@ export class WalletConnectConnector extends PredicateConnector {
     );
   }
 
-  async getProviders(): Promise<ProviderDictionary> {
+  // createModal re-instanciates the modal to update singletons from web3modal
+  private createModal() {
+    this.clearSubscriptions();
+    const { web3Modal } = createModalConfig(this.config);
+    this.web3Modal = web3Modal;
+    ApiController.prefetch();
+    this.setupWatchers();
+  }
+
+  protected getWalletAdapter(): PredicateWalletAdapter {
+    return new EthereumWalletAdapter();
+  }
+
+  protected getPredicateVersions(): Record<string, Predicate> {
+    return VERSIONS;
+  }
+
+  protected async configProviders(config: WalletConnectConfig = {}) {
+    this.config = Object.assign(config, {
+      fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
+    });
+  }
+
+  protected walletAccounts(): Promise<Array<string>> {
+    return new Promise((resolve) => {
+      const accounts = getAccount(this.wagmiConfig).addresses;
+      resolve(accounts as Array<string>);
+    });
+  }
+
+  protected getAccountAddress(): Maybe<string> {
+    return getAccount(this.wagmiConfig).address;
+  }
+
+  protected async requireConnection() {
+    if (!this.web3Modal) this.createModal();
+    if (!this.wagmiConfig) return;
+
+    const { state } = this.wagmiConfig;
+    if (state.status === 'disconnected' && state.connections.size > 0) {
+      await reconnect(this.wagmiConfig);
+    }
+  }
+
+  protected async getProviders(): Promise<ProviderDictionary> {
     if (!this.fuelProvider) {
       this.fuelProvider = (await this.config.fuelProvider) ?? null;
     }
@@ -147,25 +151,8 @@ export class WalletConnectConnector extends PredicateConnector {
     };
   }
 
-  async requireConnection() {
-    if (!this.web3Modal) this.createModal();
-    if (!this.wagmiConfig) return;
-
-    const { state } = this.wagmiConfig;
-    if (state.status === 'disconnected' && state.connections.size > 0) {
-      await reconnect(this.wagmiConfig);
-    }
-  }
-
-  async isConnected(): Promise<boolean> {
-    await this.requireConnection();
-    const account = getAccount(this.wagmiConfig || {});
-    return account.isConnected || false;
-  }
-
-  async connect(): Promise<boolean> {
+  public async connect(): Promise<boolean> {
     this.createModal();
-
     return new Promise((resolve) => {
       this.web3Modal.open();
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
@@ -186,7 +173,7 @@ export class WalletConnectConnector extends PredicateConnector {
     });
   }
 
-  async disconnect(): Promise<boolean> {
+  public async disconnect(): Promise<boolean> {
     const { connector, isConnected } = getAccount(this.wagmiConfig);
     await disconnect(this.wagmiConfig, {
       connector,
@@ -195,7 +182,7 @@ export class WalletConnectConnector extends PredicateConnector {
     return isConnected || false;
   }
 
-  async sendTransaction(
+  public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
   ): Promise<string> {

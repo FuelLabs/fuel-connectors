@@ -4,6 +4,8 @@ import {
   type ConnectorMetadata,
   FuelConnector,
   FuelConnectorEventTypes,
+  type Predicate as FuelPredicate,
+  type InputValue,
   type JsonAbi,
   type Network,
   type Provider,
@@ -43,6 +45,7 @@ export type ProviderDictionary = {
 };
 
 export type PreparedTransaction = {
+  predicate: FuelPredicate<InputValue[]>;
   request: TransactionRequest;
   transactionId: string;
   account: string;
@@ -59,7 +62,7 @@ export abstract class PredicateConnector extends FuelConnector {
   protected predicateAddress: Maybe<string> = null;
   protected customPredicate: Maybe<PredicateInput>;
   protected predicateAccount: Maybe<PredicateFactory> = null;
-  protected _unsubs: Array<() => void> = [];
+  protected subscriptions: Array<() => void> = [];
 
   protected abstract configProviders(config: ConnectorConfig): MaybeAsync<void>;
   protected abstract getWalletAdapter(): PredicateWalletAdapter;
@@ -69,12 +72,12 @@ export abstract class PredicateConnector extends FuelConnector {
   protected abstract requireConnection(): MaybeAsync<void>;
   protected abstract walletAccounts(): Promise<Array<string>>;
 
-  abstract sendTransaction(
+  public abstract sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
   ): Promise<string>;
-  abstract connect(): Promise<boolean>;
-  abstract disconnect(): Promise<boolean>;
+  public abstract connect(): Promise<boolean>;
+  public abstract disconnect(): Promise<boolean>;
 
   protected async setupPredicate(): Promise<PredicateFactory> {
     if (this.customPredicate?.abi && this.customPredicate?.bytecode) {
@@ -145,31 +148,8 @@ export abstract class PredicateConnector extends FuelConnector {
     throw new Error('No predicate found');
   }
 
-  destroy() {
-    this._unsubs.forEach((unsub) => unsub());
-  }
-
-  async ping(): Promise<boolean> {
-    await this.getProviders();
-    return true;
-  }
-
-  async version(): Promise<Version> {
-    return { app: '0.0.0', network: '0.0.0' };
-  }
-
-  async isConnected(): Promise<boolean> {
-    const accounts = await this.accounts();
-    return accounts.length > 0;
-  }
-
-  async accounts(): Promise<Array<string>> {
-    if (!this.predicateAccount) {
-      return [];
-    }
-
-    const accs = await this.walletAccounts();
-    return this.predicateAccount.getPredicateAddresses(accs);
+  protected subscribe(listener: () => void) {
+    this.subscriptions.push(listener);
   }
 
   protected async prepareTransaction(
@@ -251,6 +231,7 @@ export abstract class PredicateConnector extends FuelConnector {
     );
 
     return {
+      predicate,
       request: requestWithPredicateAttached,
       transactionId: requestWithPredicateAttached.getTransactionId(chainId),
       account: walletAccount,
@@ -258,7 +239,38 @@ export abstract class PredicateConnector extends FuelConnector {
     };
   }
 
-  async currentAccount(): Promise<string | null> {
+  public clearSubscriptions() {
+    if (!this.subscriptions) {
+      return;
+    }
+    this.subscriptions.forEach((listener) => listener());
+    this.subscriptions = [];
+  }
+
+  public async ping(): Promise<boolean> {
+    await this.getProviders();
+    return true;
+  }
+
+  public async version(): Promise<Version> {
+    return { app: '0.0.0', network: '0.0.0' };
+  }
+
+  public async isConnected(): Promise<boolean> {
+    const accounts = await this.accounts();
+    return accounts.length > 0;
+  }
+
+  public async accounts(): Promise<Array<string>> {
+    if (!this.predicateAccount) {
+      return [];
+    }
+
+    const accs = await this.walletAccounts();
+    return this.predicateAccount.getPredicateAddresses(accs);
+  }
+
+  public async currentAccount(): Promise<string | null> {
     if (!(await this.isConnected())) {
       throw Error('No connected accounts');
     }
@@ -270,50 +282,53 @@ export abstract class PredicateConnector extends FuelConnector {
     return account ? this.predicateAccount.getPredicateAddress(account) : null;
   }
 
-  async networks(): Promise<Network[]> {
+  public async networks(): Promise<Network[]> {
     return [await this.currentNetwork()];
   }
 
-  async currentNetwork(): Promise<Network> {
+  public async currentNetwork(): Promise<Network> {
     const { fuelProvider } = await this.getProviders();
     const chainId = fuelProvider.getChainId();
 
     return { url: fuelProvider.url, chainId: chainId };
   }
 
-  async signMessage(_address: string, _message: string): Promise<string> {
+  public async signMessage(
+    _address: string,
+    _message: string,
+  ): Promise<string> {
     throw new Error('A predicate account cannot sign messages');
   }
 
-  async addAssets(_assets: Asset[]): Promise<boolean> {
+  public async addAssets(_assets: Asset[]): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
 
-  async addAsset(_asset: Asset): Promise<boolean> {
+  public async addAsset(_asset: Asset): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
 
-  async assets(): Promise<Array<Asset>> {
+  public async assets(): Promise<Array<Asset>> {
     return [];
   }
 
-  async addNetwork(_networkUrl: string): Promise<boolean> {
+  public async addNetwork(_networkUrl: string): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
 
-  async selectNetwork(_network: Network): Promise<boolean> {
+  public async selectNetwork(_network: Network): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
 
-  async addAbi(_abiMap: AbiMap): Promise<boolean> {
+  public async addAbi(_abiMap: AbiMap): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
 
-  async getAbi(_contractId: string): Promise<JsonAbi> {
+  public async getAbi(_contractId: string): Promise<JsonAbi> {
     throw Error('Cannot get contractId ABI for a predicate');
   }
 
-  async hasAbi(_contractId: string): Promise<boolean> {
+  public async hasAbi(_contractId: string): Promise<boolean> {
     throw Error('A predicate account cannot have an ABI');
   }
 }

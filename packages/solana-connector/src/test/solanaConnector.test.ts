@@ -10,7 +10,6 @@ import {
   test,
 } from 'vitest';
 import { SolanaConnector } from '../SolanaConnector';
-import { TESTNET_URL } from '../constants';
 
 describe('Solana Connector', () => {
   const connector = new SolanaConnector({ projectId: '0000' });
