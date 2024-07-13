@@ -1,9 +1,4 @@
 import path from 'node:path';
-import {
-  EthereumFakeAccount,
-  EthereumWalletAdapter,
-  PredicateFactory,
-} from '@fuel-connectors/common';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
 import {
   Address,
@@ -30,6 +25,11 @@ import {
 import { MockProvider } from './mockProvider';
 import { VERSIONS } from './mocked-versions/versions-dictionary';
 import { testEVMWalletConnector as EVMWalletConnector } from './testConnector';
+import {
+  build,
+  getPredicateAddress,
+  getPredicateAddresses,
+} from './utils/predicateFactory';
 import { Utils } from './utils/versions';
 
 const predicate =
@@ -194,11 +194,6 @@ describe('EVM Wallet Connector', () => {
     test('returns the predicate accounts associated with the wallet', async () => {
       const accounts = ethProvider.getAccounts();
 
-      const predicateAccount = new PredicateFactory(
-        new EthereumWalletAdapter(),
-        predicate,
-      );
-
       const connector = new EVMWalletConnector({
         ethProvider,
         fuelProvider,
@@ -208,8 +203,7 @@ describe('EVM Wallet Connector', () => {
 
       const connectorAccounts = await connector.accounts();
 
-      const predicateAccounts =
-        predicateAccount.getPredicateAddresses(accounts);
+      const predicateAccounts = getPredicateAddresses(accounts, predicate);
 
       expect(connectorAccounts[0]).to.be.equal(predicateAccounts[0]);
       expect(connectorAccounts[1]).to.be.equal(predicateAccounts[1]);
@@ -220,13 +214,9 @@ describe('EVM Wallet Connector', () => {
     test('returns the predicate account associated with the current signer account', async () => {
       const accounts = ethProvider.getAccounts();
 
-      const predicateAccount = new PredicateFactory(
-        new EthereumWalletAdapter(),
-        predicate,
-      );
-
-      const predicateAddress = predicateAccount.getPredicateAddress(
+      const predicateAddress = getPredicateAddress(
         accounts[0] as string,
+        predicate,
       );
 
       const evmConnector = new EVMWalletConnector({
@@ -276,20 +266,12 @@ describe('EVM Wallet Connector', () => {
         '0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac';
 
       const accounts = ethProvider.getAccounts();
-      const predicateAccount = new PredicateFactory(
-        new EthereumWalletAdapter(),
-        predicate,
-      );
       const ethAccount1 = accounts[0] as string;
 
-      const accountAddress = predicateAccount.getPredicateAddress(ethAccount1);
+      const accountAddress = getPredicateAddress(ethAccount1, predicate);
       const fundingWallet = new WalletUnlocked('0x01', fuelProvider);
 
-      const createdPredicate = predicateAccount.build(
-        ethAccount1,
-        fuelProvider,
-        [0],
-      );
+      const createdPredicate = build(ethAccount1, predicate, fuelProvider, [0]);
 
       // Transfer base asset coins to predicate
       await fundingWallet
@@ -360,20 +342,12 @@ describe('EVM Wallet Connector', () => {
         '0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac';
 
       const accounts = ethProvider.getAccounts();
-      const predicateAccount = new PredicateFactory(
-        new EthereumWalletAdapter(),
-        predicate,
-      );
       const ethAccount1 = accounts[1] as string;
 
-      const accountAddress = predicateAccount.getPredicateAddress(ethAccount1);
+      const accountAddress = getPredicateAddress(ethAccount1, predicate);
       const fundingWallet = new WalletUnlocked('0x01', fuelProvider);
 
-      const createdPredicate = predicateAccount.build(
-        ethAccount1,
-        fuelProvider,
-        [0],
-      );
+      const createdPredicate = build(ethAccount1, predicate, fuelProvider, [0]);
 
       // Transfer base asset coins to predicate
       await fundingWallet
@@ -446,22 +420,12 @@ describe('EVM Wallet Connector', () => {
       });
 
       const accounts = ethProvider.getAccounts();
-      const predicateAccount = new PredicateFactory(
-        new EthereumWalletAdapter(),
-        predicate,
-      );
-
       const ethAccount1 = accounts[0] as string;
       const ethAccount2 = accounts[1] as string;
 
-      const predicateAccount2 =
-        predicateAccount.getPredicateAddress(ethAccount2);
+      const predicateAccount2 = getPredicateAddress(ethAccount2, predicate);
 
-      const createdPredicate = predicateAccount.build(
-        ethAccount1,
-        fuelProvider,
-        [0],
-      );
+      const createdPredicate = build(ethAccount1, predicate, fuelProvider, [0]);
 
       const fundingWallet = new WalletUnlocked('0x01', fuelProvider);
 
@@ -548,11 +512,6 @@ describe('EVM Wallet Connector', () => {
         '0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac';
 
       const accounts = ethProvider.getAccounts();
-
-      const predicateAccount = new PredicateFactory(
-        new EthereumWalletAdapter(),
-        VERSIONS[version].predicate,
-      );
       const ethAccount1 = accounts[0] as string;
 
       let connector = new EVMWalletConnector({
@@ -561,8 +520,9 @@ describe('EVM Wallet Connector', () => {
         predicateConfig: VERSIONS[version].predicate,
       });
 
-      const createdPredicate = predicateAccount.build(
+      const createdPredicate = build(
         ethAccount1,
+        VERSIONS[version].predicate,
         fuelProvider,
       );
 

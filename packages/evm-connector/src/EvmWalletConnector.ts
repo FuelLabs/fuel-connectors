@@ -14,6 +14,7 @@ import {
   EthereumWalletAdapter,
   type Maybe,
   type MaybeAsync,
+  type Predicate,
   PredicateConnector,
   type PredicateWalletAdapter,
   type ProviderDictionary,
@@ -25,7 +26,6 @@ import {
   type EIP1193Provider,
   type EVMWalletConnectorConfig,
   EVMWalletConnectorEvents,
-  type Predicate,
 } from './types';
 
 export class EVMWalletConnector extends PredicateConnector {
