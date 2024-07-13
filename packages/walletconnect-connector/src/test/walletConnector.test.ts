@@ -1,5 +1,4 @@
 import path from 'node:path';
-import { PredicateFactory } from '@fuel-connectors/common';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
 import { type Asset, type Network, Provider } from 'fuels';
 import {
@@ -143,7 +142,12 @@ describe('WalletConnect Connector', () => {
       // @ts-expect-error setupPredicate is protected
       const predicateAccount = await walletConectconnector.setupPredicate();
 
-      expect(predicateAccount).to.be.instanceOf(PredicateFactory);
+      // @ts-expect-error setupPredicate is protected
+      expect(predicateAccount.abi).to.be.equal(VERSIONS[version].predicate.abi);
+      // @ts-expect-error setupPredicate is protected
+      expect(predicateAccount.bytecode).to.be.equal(
+        VERSIONS[version].predicate.bytecode,
+      );
     });
 
     test('Should setup predicate without given config', async () => {
@@ -152,7 +156,13 @@ describe('WalletConnect Connector', () => {
       // @ts-expect-error setupPredicate is protected
       const predicateAccount = await walletConectconnector.setupPredicate();
 
-      expect(predicateAccount).to.be.instanceOf(PredicateFactory);
+      // @ts-expect-error abi is protected
+      expect(predicateAccount.abi).to.be.equal(VERSIONS[version].predicate.abi);
+      // @ts-expect-error bytecode is protected
+      expect(predicateAccount.bytecode).to.be.equal(
+        // @ts-expect-error bytecode is protected
+        VERSIONS[version].predicate.bytecode,
+      );
     });
   });
 
