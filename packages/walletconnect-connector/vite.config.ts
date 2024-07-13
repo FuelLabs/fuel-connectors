@@ -17,6 +17,6 @@ export default defineConfig({
     __filename: JSON.stringify(fileURLToPath(import.meta.url)),
   },
   test: {
-    environment: 'jsdom',
+    environment: 'node',
   },
 });
