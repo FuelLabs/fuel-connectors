@@ -5,6 +5,7 @@
   "description": "Fuel Wallet Connectors",
   "author": "Fuel Labs <contact@fuel.sh> (https://fuel.network/)",
   "homepage": "https://github.com/FuelLabs/fuel-connectors",
+  "workspaces": ["packages/*"],
   "scripts": {
     "build": "turbo build",
     "build:watch": "turbo build:watch",
