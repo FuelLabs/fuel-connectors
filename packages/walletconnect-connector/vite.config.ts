@@ -17,6 +17,9 @@ export default defineConfig({
     __filename: JSON.stringify(fileURLToPath(import.meta.url)),
   },
   test: {
-    environment: 'node',
+    environment: 'jsdom',
+    deps: {
+      moduleDirectories: ['node_modules', path.resolve('../../packages')],
+    },
   },
 });
