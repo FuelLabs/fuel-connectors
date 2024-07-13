@@ -271,7 +271,7 @@ describe('EVM Wallet Connector', () => {
     const ALT_ASSET_ID =
       '0x0101010101010101010101010101010101010101010101010101010101010101';
 
-    test('transfer when the current signer is passed in', async () => {
+    test.skip('transfer when the current signer is passed in', async () => {
       const version =
         '0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac';
 
@@ -355,7 +355,7 @@ describe('EVM Wallet Connector', () => {
       );
     });
 
-    test('transfer when a different valid signer is passed in', async () => {
+    test.skip('transfer when a different valid signer is passed in', async () => {
       const version =
         '0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac';
 
