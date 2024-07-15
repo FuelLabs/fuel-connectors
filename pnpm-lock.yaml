@@ -423,12 +423,6 @@ importers:
       '@fuel-ts/account':
         specifier: 0.92.0
         version: 0.92.0
-      '@fuel-ts/forc':
-        specifier: 0.88.1
-        version: 0.88.1
-      '@fuel-ts/fuel-core':
-        specifier: 0.88.1
-        version: 0.88.1
       '@types/memoizee':
         specifier: 0.4.11
         version: 0.4.11
@@ -3682,26 +3676,6 @@ packages:
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
     dependencies:
       '@fuel-ts/versions': 0.92.0
-
-  /@fuel-ts/forc@0.88.1:
-    resolution: {integrity: sha512-SBd4v/Shbmv/1e3HXetY03nO26UKArP2nxnScnTBmepjHyj7K+Fcc0IqhlfKswR7FVGOdafmu8FqG2rvgKJBkQ==}
-    hasBin: true
-    requiresBuild: true
-    dependencies:
-      node-fetch: 2.7.0
-    transitivePeerDependencies:
-      - encoding
-    dev: true
-
-  /@fuel-ts/fuel-core@0.88.1:
-    resolution: {integrity: sha512-U5klGBrnkQz5HSLWYQiLd2nIZkY7rlXY2oyr1uuJBgdsfqi0jUzGUGlilCLYQVn29KezjjEYwVwidQHsiE17Wg==}
-    hasBin: true
-    requiresBuild: true
-    dependencies:
-      node-fetch: 2.7.0
-    transitivePeerDependencies:
-      - encoding
-    dev: true
 
   /@fuel-ts/hasher@0.89.0:
     resolution: {integrity: sha512-tiH5qwpyb8ya8eUY0UjAw7ruU09V41E1VAE7aTfyKlvsMlhfHI0BpSvVAlgtu4P3UJtALsV1SSrX6xKouKajQQ==}
