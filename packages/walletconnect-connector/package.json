@@ -14,10 +14,10 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "forc:build": "pnpm fuels build",
-    "forc:typegen": "fuels typegen --output=./src/generated/predicates --inputs=./predicate/out/release/verification-predicate-abi.json",
+    "fuels:build": "pnpm fuels build",
+    "fuels:typegen": "fuels typegen --output=./src/generated/predicates --inputs=./predicate/out/release/verification-predicate-abi.json",
     "build": "tsup --dts-only",
-    "build:watch": "pnpm run forc:build && tsup --watch --dts-only",
+    "build:watch": "pnpm run fuels:build && tsup --watch --dts-only",
     "ts:check": "tsc --noEmit",
     "test": "vitest"
   },
