@@ -4,14 +4,14 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.88.1
-  Forc version: 0.59.0
+  Fuels version: 0.89.0
+  Forc version: 0.60.0
   Fuel-Core version: 0.26.0
 */
 
 import type {
-  BigNumberish,
   BN,
+  BigNumberish,
   BytesLike,
   Contract,
   DecodedValue,
@@ -27,10 +27,19 @@ interface CounterAbiInterface extends Interface {
   };
 
   encodeFunctionData(functionFragment: 'get_count', values: []): Uint8Array;
-  encodeFunctionData(functionFragment: 'increment_counter', values: []): Uint8Array;
+  encodeFunctionData(
+    functionFragment: 'increment_counter',
+    values: [],
+  ): Uint8Array;
 
-  decodeFunctionData(functionFragment: 'get_count', data: BytesLike): DecodedValue;
-  decodeFunctionData(functionFragment: 'increment_counter', data: BytesLike): DecodedValue;
+  decodeFunctionData(
+    functionFragment: 'get_count',
+    data: BytesLike,
+  ): DecodedValue;
+  decodeFunctionData(
+    functionFragment: 'increment_counter',
+    data: BytesLike,
+  ): DecodedValue;
 }
 
 export class CounterAbi extends Contract {
