@@ -18,6 +18,7 @@ describe('WalletConnect Connector', () => {
   let connector: WalletConnectConnector;
 
   const snapshotPath = path.join(__dirname, '');
+
   let fuelProvider: Provider;
 
   let stopProvider: () => void;
