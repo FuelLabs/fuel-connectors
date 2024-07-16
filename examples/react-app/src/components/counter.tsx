@@ -76,26 +76,32 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
 
         getCount();
 
-        waitForResult?.then(async (tx) => {
-          await getCount();
-          setToast({
-            open: true,
-            type: 'success',
-            children: (
-              <p>
-                Counter incremented! View it on the{' '}
-                <a
-                  href={`https://app.fuel.network/tx/${tx.transactionId}`}
-                  className="underline"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  block explorer
-                </a>
-              </p>
-            ),
-          });
-        });
+        if (waitForResult) {
+          async function checkResult() {
+            const tx = await waitForResult();
+
+            await getCount();
+            setToast({
+              open: true,
+              type: 'success',
+              children: (
+                <p>
+                  Counter incremented! View it on the{' '}
+                  <a
+                    href={`https://app.fuel.network/tx/${tx.transactionId}`}
+                    className="underline"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    block explorer
+                  </a>
+                </p>
+              ),
+            });
+          }
+
+          checkResult();
+        }
       } catch (err) {
         const error = err as CustomError;
 
