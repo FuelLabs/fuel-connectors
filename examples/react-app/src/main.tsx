@@ -8,15 +8,7 @@ import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
 import { http, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
 
-import {
-  BakoSafeConnector,
-  BurnerWalletConnector,
-  FuelWalletConnector,
-  FuelWalletDevelopmentConnector,
-  FueletWalletConnector,
-  SolanaConnector,
-  WalletConnectConnector,
-} from '@fuels/connectors';
+import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
 
 import * as Toast from '@radix-ui/react-toast';
@@ -66,20 +58,11 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <FuelProvider
         theme="dark"
         fuelConfig={{
-          connectors: [
-            new FuelWalletConnector(),
-            new BakoSafeConnector(),
-            new FueletWalletConnector(),
-            new WalletConnectConnector({
-              wagmiConfig,
-              projectId: WC_PROJECT_ID,
-            }),
-            new FuelWalletDevelopmentConnector(),
-            new BurnerWalletConnector(),
-            new SolanaConnector({
-              projectId: WC_PROJECT_ID,
-            }),
-          ],
+          connectors: defaultConnectors({
+            devMode: true,
+            wcProjectId: WC_PROJECT_ID,
+            ethWagmiConfig: wagmiConfig,
+          }),
         }}
       >
         <Toast.Provider>
