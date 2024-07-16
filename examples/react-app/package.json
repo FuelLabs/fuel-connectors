@@ -4,6 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "fuels:build": "fuels build",
+    "fuels:typegen": "fuels typegen --output=./src/types/contracts --inputs=./contracts/out/debug/counter-abi.json",
     "dev": "vite",
     "build": "vite build"
   },

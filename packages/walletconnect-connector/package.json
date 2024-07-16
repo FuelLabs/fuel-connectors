@@ -14,10 +14,10 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build:forc": "pnpm fuels-forc build --release --path ./predicate",
-    "build:resources": "pnpm run build:forc && tsx ./scripts/generatePredicateResources.ts",
+    "fuels:build": "pnpm fuels build",
+    "fuels:typegen": "fuels typegen --output=./src/generated/predicates --inputs=./predicate/out/release/verification-predicate-abi.json",
     "build": "tsup --dts-only",
-    "build:watch": "pnpm run build:resources && tsup --watch --dts-only",
+    "build:watch": "pnpm run fuels:build && tsup --watch --dts-only",
     "ts:check": "tsc --noEmit",
     "test": "vitest"
   },
@@ -36,8 +36,6 @@
   },
   "devDependencies": {
     "@fuel-ts/account": "0.92.0",
-    "@fuel-ts/forc": "0.88.1",
-    "@fuel-ts/fuel-core": "0.88.1",
     "@types/memoizee": "0.4.11",
     "fuels": "0.92.0",
     "jsdom": "24.0.0",
