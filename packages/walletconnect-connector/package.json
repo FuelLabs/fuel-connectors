@@ -3,7 +3,9 @@
   "private": true,
   "version": "0.8.1",
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/wallet-connector-walletconnect.umd.cjs",
   "module": "./dist/wallet-connector-walletconnect.js",
   "exports": {
@@ -22,9 +24,9 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.88.1",
+    "@web3modal/core": ">=5.0.0",
     "@web3modal/scaffold": ">=5.0.0",
-    "@web3modal/core": ">=5.0.0"
+    "fuels": ">=0.88.1"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -39,7 +41,8 @@
     "@fuel-ts/forc": "0.88.1",
     "@fuel-ts/fuel-core": "0.88.1",
     "@types/memoizee": "0.4.11",
-    "fuels": "0.88.1",
+    "@web3modal/core": "5.0.0",
+    "fuels": "0.92.0",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
@@ -48,7 +51,6 @@
     "typescript": "5.4.5",
     "vite": "5.2.11",
     "vite-plugin-dts": "3.9.1",
-    "vitest": "1.6.0",
-    "@web3modal/core": "5.0.0"
+    "vitest": "1.6.0"
   }
 }

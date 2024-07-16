@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/wallet-connector-solana.umd.cjs",
   "module": "./dist/wallet-connector-solana.js",
   "exports": {
@@ -22,8 +24,8 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "@web3modal/scaffold": ">=5.0.0",
     "@web3modal/core": ">=5.0.0",
+    "@web3modal/scaffold": ">=5.0.0",
     "fuels": ">=0.88.1"
   },
   "dependencies": {
@@ -40,7 +42,8 @@
     "@fuel-ts/forc": "0.88.1",
     "@fuel-ts/fuel-core": "0.88.1",
     "@types/memoizee": "0.4.11",
-    "fuels": "0.88.1",
+    "@web3modal/core": "5.0.0",
+    "fuels": "0.92.0",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
@@ -49,7 +52,6 @@
     "typescript": "5.4.5",
     "vite": "5.2.11",
     "vite-plugin-dts": "3.9.1",
-    "vitest": "1.6.0",
-    "@web3modal/core": "5.0.0"
+    "vitest": "1.6.0"
   }
 }

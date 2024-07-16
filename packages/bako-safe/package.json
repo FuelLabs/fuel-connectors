@@ -20,8 +20,8 @@
     "socket.io-client": "4.7.2"
   },
   "devDependencies": {
+    "fuels": "0.92.0",
     "tsup": "8.0.2",
-    "fuels": "0.88.1",
     "typescript": "5.4.2",
     "undici": "6.9.0"
   }
