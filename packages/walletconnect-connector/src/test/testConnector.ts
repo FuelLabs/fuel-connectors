@@ -32,7 +32,6 @@ export class testWalletConnectConnector extends WalletConnectConnector {
     }));
 
     let predicateWithBalance: Predicate | null = null;
-
     for (const predicateVersion of predicateVersions) {
       const predicateInstance = new PredicateAccount({
         abi: predicateVersion.pred.predicate.abi,
