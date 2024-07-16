@@ -31,14 +31,13 @@ const getBurnerWallet = async (config: BurnerWalletConfig = {}) => {
 describe('Burner Wallet Connector', () => {
   let fuelProvider: Provider;
 
-  let stopProvider: () => void;
-
   const snapshotPath = path.join(__dirname, '');
 
   beforeAll(async () => {
     process.env.GENESIS_SECRET =
       '0x6e48a022f9d4ae187bca4e2645abd62198ae294ee484766edbdaadf78160dc68';
-    const { stop, provider } = await launchNodeAndGetWallets({
+    // @TODO: Add "stop" function call when it gets fixed in the sdk
+    const { provider } = await launchNodeAndGetWallets({
       launchNodeOptions: {
         args: ['--snapshot', snapshotPath],
         loggingEnabled: false,
@@ -47,11 +46,6 @@ describe('Burner Wallet Connector', () => {
     BurnerWalletConnector.defaultProviderUrl = provider.url;
 
     fuelProvider = provider;
-    stopProvider = stop;
-  });
-
-  afterAll(() => {
-    stopProvider?.();
   });
 
   beforeEach(async () => {
