@@ -127,4 +127,3 @@ export const versions = (meta: string) => {
 };
 
 generatePredicateResources(import.meta.url);
-versions(import.meta.url);

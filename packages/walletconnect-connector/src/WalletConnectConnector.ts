@@ -23,6 +23,7 @@ import {
   PredicateConnector,
   type PredicateWalletAdapter,
   type ProviderDictionary,
+  getOrThrow,
   getSignatureIndex,
 } from '@fuel-connectors/common';
 import { ApiController } from '@web3modal/core';
@@ -44,7 +45,7 @@ export class WalletConnectConnector extends PredicateConnector {
     },
   };
   private wagmiConfig: Config;
-  private fuelProvider: FuelProvider | null = null;
+  private fuelProvider!: FuelProvider;
   private web3Modal!: Web3Modal;
   private config: WalletConnectConfig = {};
 
@@ -138,7 +139,10 @@ export class WalletConnectConnector extends PredicateConnector {
 
   protected async getProviders(): Promise<ProviderDictionary> {
     if (!this.fuelProvider) {
-      this.fuelProvider = (await this.config.fuelProvider) ?? null;
+      this.fuelProvider = getOrThrow(
+        await this.config.fuelProvider,
+        'Fuel provider is not available',
+      );
     }
 
     const ethProvider = (await getAccount(
@@ -146,7 +150,7 @@ export class WalletConnectConnector extends PredicateConnector {
     ).connector?.getProvider()) as EIP1193Provider;
 
     return {
-      fuelProvider: this.fuelProvider as ProviderDictionary['fuelProvider'],
+      fuelProvider: this.fuelProvider,
       ethProvider,
     };
   }

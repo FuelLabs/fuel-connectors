@@ -14,10 +14,10 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "fuels:build": "pnpm fuels-forc build --release --path ./predicate",
-    "build:resources": "pnpm run fuels:build && tsx ./scripts/generatePredicateResources.ts",
+    "fuels:build": "pnpm fuels build",
+    "fuels:typegen": "fuels typegen --output=./src/generated/predicates --inputs=./predicate/out/release/verification-predicate-abi.json",
     "build": "tsup --dts-only",
-    "build:watch": "pnpm run build:resources && tsup --watch --dts-only",
+    "build:watch": "pnpm run fuels:build && tsup --watch --dts-only",
     "ts:check": "tsc --noEmit",
     "test": "vitest"
   },

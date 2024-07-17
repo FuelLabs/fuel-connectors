@@ -5,10 +5,10 @@ import {
   FuelConnector,
   FuelConnectorEventTypes,
   type Predicate as FuelPredicate,
+  type Provider as FuelProvider,
   type InputValue,
   type JsonAbi,
   type Network,
-  type Provider,
   type TransactionRequest,
   type TransactionRequestLike,
   type Version,
@@ -39,9 +39,9 @@ export type ConnectorConfig = {
 };
 
 export type ProviderDictionary = {
-  fuelProvider: Provider;
+  fuelProvider: FuelProvider;
   ethProvider?: EIP1193Provider;
-  [key: string]: Maybe<Option<Provider, EIP1193Provider>>;
+  [key: string]: Maybe<Option<FuelProvider, EIP1193Provider>>;
 };
 
 export type PreparedTransaction = {

@@ -18,6 +18,7 @@ import {
   PredicateConnector,
   type PredicateWalletAdapter,
   type ProviderDictionary,
+  getOrThrow,
   getSignatureIndex,
 } from '@fuel-connectors/common';
 import { VERSIONS } from '../versions/versions-dictionary';
@@ -150,19 +151,17 @@ export class EVMWalletConnector extends PredicateConnector {
     return (await this.walletAccounts())[0];
   }
 
-  public async getProviders(): Promise<ProviderDictionary> {
+  protected async getProviders(): Promise<ProviderDictionary> {
     if (!this.fuelProvider || !this.ethProvider) {
-      this.ethProvider = await this.getLazyEthereum();
+      this.ethProvider = getOrThrow(
+        await this.getLazyEthereum(),
+        'Ethereum provider not found',
+      );
 
-      if (!this.ethProvider) {
-        throw new Error('Ethereum provider not found');
-      }
-
-      this.fuelProvider = (await this.config.fuelProvider) ?? null;
-
-      if (!this.fuelProvider) {
-        throw new Error('Fuel provider not found');
-      }
+      this.fuelProvider = getOrThrow(
+        await this.config.fuelProvider,
+        'Fuel provider not found',
+      );
     }
 
     return {

@@ -3,7 +3,9 @@ import {
   type Predicate,
   PredicateConnector,
   type PredicateWalletAdapter,
+  type ProviderDictionary,
   SolanaWalletAdapter,
+  getOrThrow,
   getSignatureIndex,
 } from '@fuel-connectors/common';
 import { ApiController } from '@web3modal/core';
@@ -32,7 +34,7 @@ export class SolanaConnector extends PredicateConnector {
     },
   };
 
-  protected fuelProvider: FuelProvider | null = null;
+  protected fuelProvider!: FuelProvider;
   protected predicateAddress: string | null = null;
 
   private web3Modal!: Web3Modal;
@@ -141,13 +143,12 @@ export class SolanaConnector extends PredicateConnector {
     return this.web3Modal.getAddress();
   }
 
-  public async getProviders() {
+  protected async getProviders(): Promise<ProviderDictionary> {
     if (!this.fuelProvider) {
-      this.fuelProvider = (await this.config.fuelProvider) ?? null;
-
-      if (!this.fuelProvider) {
-        throw new Error('Fuel provider not found');
-      }
+      this.fuelProvider = getOrThrow(
+        await this.config.fuelProvider,
+        'Fuel provider not found',
+      );
     }
 
     return {

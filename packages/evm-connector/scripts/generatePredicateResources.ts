@@ -125,3 +125,5 @@ export const versions = (meta: string) => {
 
   fs.writeFileSync(`${__dirname}/versions-dictionary.ts`, dictionary);
 };
+
+generatePredicateResources(import.meta.url);
