@@ -142,7 +142,6 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async disconnect(): Promise<boolean> {
-    this.burnerWalletProvider = null;
     this.burnerWallet = null;
     this.storage.removeItem(BURNER_WALLET_PRIVATE_KEY);
     this.emit(this.events.connection, false);
