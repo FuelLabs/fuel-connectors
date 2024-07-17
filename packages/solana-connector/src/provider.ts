@@ -22,6 +22,7 @@ export function createSolanaProvider(config: SolanaConfig): ModalConfig {
   const solanaConfig =
     config.solanaConfig ??
     defaultSolanaConfig({
+      enableInjected: true,
       chains,
       projectId: config.projectId ?? DEFAULT_PROJECT_ID,
       metadata: {

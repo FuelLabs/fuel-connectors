@@ -1,6 +1,6 @@
 {
   "name": "@fuels/connectors",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -18,7 +18,7 @@
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "fuels": ">=0.88.1"
+    "fuels": ">=0.92.0"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -43,7 +43,7 @@
     "@fuel-connectors/bako-safe": "workspace:*",
     "@fuel-connectors/common": "workspace:*",
     "@fuel-connectors/solana-connector": "workspace:*",
-    "fuels": "0.88.1",
+    "fuels": "0.92.0",
     "terser": "5.31.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5"
