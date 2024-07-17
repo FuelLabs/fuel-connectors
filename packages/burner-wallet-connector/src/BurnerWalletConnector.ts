@@ -13,6 +13,7 @@ import {
   Wallet,
   type WalletUnlocked,
 } from 'fuels';
+import { InMemoryStorage } from './InMemoryStorage';
 import {
   BURNER_WALLET_ICON,
   BURNER_WALLET_PRIVATE_KEY,
@@ -88,13 +89,13 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   private getStorage(storage?: StorageAbstract) {
-    const _storage =
-      storage ?? (WINDOW.localStorage as unknown as StorageAbstract);
-    if (!_storage) {
-      throw new Error('No storage provided');
+    if (storage) {
+      return storage;
     }
 
-    return _storage;
+    return typeof window !== 'undefined' && window.localStorage
+      ? (window.localStorage as unknown as StorageAbstract)
+      : new InMemoryStorage();
   }
 
   /**

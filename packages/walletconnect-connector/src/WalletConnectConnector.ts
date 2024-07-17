@@ -26,18 +26,19 @@ import {
   transactionRequestify,
 } from 'fuels';
 
+import { ApiController } from '@web3modal/core';
 import { VERSIONS } from '../versions/versions-dictionary';
 import { ETHEREUM_ICON, TESTNET_URL } from './constants';
 import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
-import { createModalConfig } from './utils/wagmiConfig';
+import { createModalConfig, createWagmiConfig } from './utils/wagmiConfig';
 import { getSignatureIndex } from './utils/witness';
 
 export class WalletConnectConnector extends FuelConnector {
   name = 'Ethereum Wallets';
 
   connected = false;
-  installed = false;
+  installed = true;
 
   predicateAddress: string | null = null;
   customPredicate: PredicateConfig | null;
@@ -56,7 +57,7 @@ export class WalletConnectConnector extends FuelConnector {
   wagmiConfig: Config;
   ethProvider: unknown | null = null;
   fuelProvider: FuelProvider | null = null;
-  web3Modal: Web3Modal;
+  web3Modal!: Web3Modal;
 
   predicateAccount: PredicateAccount | null = null;
 
@@ -66,17 +67,22 @@ export class WalletConnectConnector extends FuelConnector {
   constructor(config: WalletConnectConfig = {}) {
     super();
 
-    const { wagmiConfig, web3Modal } = createModalConfig(config);
-    this.wagmiConfig = wagmiConfig;
-    this.web3Modal = web3Modal;
-
+    this.wagmiConfig = createWagmiConfig(config);
     this.customPredicate = config.predicateConfig || null;
 
-    this.configProviders(config);
+    this.configProvider(config);
+  }
+
+  // createModal re-instanciates the modal to update singletons from web3modal
+  createModal() {
+    this.destroy();
+    const { web3Modal } = createModalConfig(this.config);
+    this.web3Modal = web3Modal;
+    ApiController.prefetch();
     this.setupWatchers();
   }
 
-  async configProviders(config: WalletConnectConfig = {}) {
+  configProvider(config: WalletConnectConfig) {
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
     });
@@ -110,7 +116,7 @@ export class WalletConnectConnector extends FuelConnector {
         continue;
       }
 
-      const { fuelProvider } = await this.getProviders();
+      const { fuelProvider } = await this.getProvider();
       const predicate = predicateInstance.createPredicate(
         address,
         fuelProvider,
@@ -199,13 +205,13 @@ export class WalletConnectConnector extends FuelConnector {
     this._unsubs.forEach((unsub) => unsub());
   }
 
-  async getProviders() {
-    if (!this.fuelProvider) {
-      this.fuelProvider = (await this.config.fuelProvider) ?? null;
+  async getProvider() {
+    if (!this.config.fuelProvider) {
+      throw new Error('Fuel provider not found');
+    }
 
-      if (!this.fuelProvider) {
-        throw new Error('Fuel provider not found');
-      }
+    if (!this.fuelProvider) {
+      this.fuelProvider = await this.config.fuelProvider;
     }
 
     return {
@@ -219,7 +225,6 @@ export class WalletConnectConnector extends FuelConnector {
    * ============================================================
    */
   async ping(): Promise<boolean> {
-    await this.getProviders();
     return true;
   }
 
@@ -228,6 +233,9 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async requireConnection() {
+    if (!this.web3Modal) this.createModal();
+    if (!this.wagmiConfig) return;
+
     const { state } = this.wagmiConfig;
     if (state.status === 'disconnected' && state.connections.size > 0) {
       await reconnect(this.wagmiConfig);
@@ -236,11 +244,13 @@ export class WalletConnectConnector extends FuelConnector {
 
   async isConnected(): Promise<boolean> {
     await this.requireConnection();
-    const account = getAccount(this.wagmiConfig);
+    const account = getAccount(this.wagmiConfig || {});
     return account.isConnected || false;
   }
 
   async connect(): Promise<boolean> {
+    this.createModal();
+
     return new Promise((resolve) => {
       this.web3Modal.open();
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
@@ -262,11 +272,12 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async disconnect(): Promise<boolean> {
-    const { connector } = getAccount(this.wagmiConfig);
+    const { connector, isConnected } = getAccount(this.wagmiConfig);
     await disconnect(this.wagmiConfig, {
       connector,
     });
-    return this.isConnected();
+
+    return isConnected || false;
   }
 
   async accounts(): Promise<Array<string>> {
@@ -295,7 +306,7 @@ export class WalletConnectConnector extends FuelConnector {
       throw Error('No predicate account found');
     }
 
-    const { fuelProvider } = await this.getProviders();
+    const { fuelProvider } = await this.getProvider();
     const chainId = fuelProvider.getChainId();
     const evmAccount = this.predicateAccount.getEVMAddress(
       address,
@@ -428,7 +439,7 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async currentNetwork(): Promise<Network> {
-    const { fuelProvider } = await this.getProviders();
+    const { fuelProvider } = await this.getProvider();
     const chainId = fuelProvider.getChainId();
 
     return { url: fuelProvider.url, chainId: chainId };

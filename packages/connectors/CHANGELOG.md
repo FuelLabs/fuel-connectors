@@ -1,5 +1,30 @@
 # @fuels/connectors
 
+## 0.9.0
+
+### Minor Changes
+
+- [#158](https://github.com/FuelLabs/fuel-connectors/pull/158) [`23afa71`](https://github.com/FuelLabs/fuel-connectors/commit/23afa71b01b799aa320ad56abbb8c2c896a5a156) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: update to fuels 0.92.0
+
+### Patch Changes
+
+- [#159](https://github.com/FuelLabs/fuel-connectors/pull/159) [`c9a306d`](https://github.com/FuelLabs/fuel-connectors/commit/c9a306d75408f6ba4aa24a9268f595f5349cc64c) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - Accept `ethWagmiConfig` for eth wallet wagmi configs
+
+- [#156](https://github.com/FuelLabs/fuel-connectors/pull/156) [`481b5fe`](https://github.com/FuelLabs/fuel-connectors/commit/481b5fea5363f38daf0c054712395cfc7e2227e0) Thanks [@arthurgeron](https://github.com/arthurgeron)! - - [Add support for burner wallet config on default connectors](https://github.com/FuelLabs/fuel-connectors/commit/fb845c0cfdfccfda60637af8d405964e9efbdecb)
+
+  - [Burner wallet storage not working on nodejs](https://github.com/FuelLabs/fuel-connectors/commit/bbf19a2f8b6faeafc5c99055fe2ce2beb2988400)
+  - [Create in memory storage on burner wallet](https://github.com/FuelLabs/fuel-connectors/commit/242b24f84f4ac35dba9c1332cb46c80bac5f4766)
+
+  Observation: Burner Wallet's Storage will not persist information between executions on Vercel or Node.js env.
+
+## 0.8.1
+
+## 0.8.0
+
+### Minor Changes
+
+- [#126](https://github.com/FuelLabs/fuel-connectors/pull/126) [`f3e7c4b`](https://github.com/FuelLabs/fuel-connectors/commit/f3e7c4ba68e6fd5f2e9cba8599e234ac145ce4ca) Thanks [@guimroque](https://github.com/guimroque)! - add bako safe connector to the default connectors
+
 ## 0.7.0
 
 ## 0.6.0

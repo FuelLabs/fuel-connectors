@@ -1,5 +1,19 @@
 # @fuel-connectors/fuel-wallet
 
+## 0.9.0
+
+### Minor Changes
+
+- [#158](https://github.com/FuelLabs/fuel-connectors/pull/158) [`23afa71`](https://github.com/FuelLabs/fuel-connectors/commit/23afa71b01b799aa320ad56abbb8c2c896a5a156) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: update to fuels 0.92.0
+
+## 0.8.1
+
+## 0.8.0
+
+### Minor Changes
+
+- [#139](https://github.com/FuelLabs/fuel-connectors/pull/139) [`a6af7f3`](https://github.com/FuelLabs/fuel-connectors/commit/a6af7f3417dddb571f54d80feb231e4ee088d3ec) Thanks [@helciofranco](https://github.com/helciofranco)! - Import `FuelConnectorEventType` constant from `fuels` instead of relying on the hard-coded value.
+
 ## 0.7.0
 
 ## 0.6.0

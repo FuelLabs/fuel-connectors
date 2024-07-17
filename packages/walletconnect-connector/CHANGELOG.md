@@ -1,5 +1,26 @@
 # @fuel-connectors/walletconnect-connector
 
+## 0.9.0
+
+### Minor Changes
+
+- [#158](https://github.com/FuelLabs/fuel-connectors/pull/158) [`23afa71`](https://github.com/FuelLabs/fuel-connectors/commit/23afa71b01b799aa320ad56abbb8c2c896a5a156) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: update to fuels 0.92.0
+
+- [#137](https://github.com/FuelLabs/fuel-connectors/pull/137) [`266b450`](https://github.com/FuelLabs/fuel-connectors/commit/266b4509dfe59919396b766277ee49a594c169d9) Thanks [@LeoCourbassier](https://github.com/LeoCourbassier)! - Added Solana Connector using Wallet's Connect web3modal provider.
+
+## 0.8.1
+
+### Patch Changes
+
+- [#138](https://github.com/FuelLabs/fuel-connectors/pull/138) [`fd7eaf2`](https://github.com/FuelLabs/fuel-connectors/commit/fd7eaf204e23d566a1e9287923131431908570e1) Thanks [@mvares](https://github.com/mvares)! - fix: maintain disconnected after refresh
+
+## 0.8.0
+
+### Minor Changes
+
+- [#139](https://github.com/FuelLabs/fuel-connectors/pull/139) [`a6af7f3`](https://github.com/FuelLabs/fuel-connectors/commit/a6af7f3417dddb571f54d80feb231e4ee088d3ec) Thanks [@helciofranco](https://github.com/helciofranco)! - `ping` method should never take more than 1 second.
+  Specially when it's the `WalletConnect`, since it doesn't relate to the Fuel network directly.
+
 ## 0.7.0
 
 ### Minor Changes

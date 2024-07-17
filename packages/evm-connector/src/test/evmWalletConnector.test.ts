@@ -327,6 +327,8 @@ describe('EVM Wallet Connector', () => {
 
       await connector.sendTransaction(accountAddress, transactionRequest);
 
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       // Check balances are correct
       const predicateAltBalanceFinal =
         await createdPredicate.getBalance(ALT_ASSET_ID);
@@ -407,6 +409,8 @@ describe('EVM Wallet Connector', () => {
       await connector.accounts();
 
       await connector.sendTransaction(accountAddress, transactionRequest);
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Check balances are correct
       const predicateAltBalanceFinal =
