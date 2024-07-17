@@ -151,16 +151,19 @@ describe('WalletConnect Connector', () => {
     });
 
     test('Should setup predicate without given config', async () => {
+      const version =
+        '0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33';
       const walletConectconnector = new WalletConnectConnector();
 
       // @ts-expect-error setupPredicate is protected
       const predicateAccount = await walletConectconnector.setupPredicate();
 
       // @ts-expect-error abi is protected
-      expect(predicateAccount.abi).to.be.equal(VERSIONS[version].predicate.abi);
+      expect(predicateAccount.abi).to.deep.equal(
+        VERSIONS[version].predicate.abi,
+      );
       // @ts-expect-error bytecode is protected
-      expect(predicateAccount.bytecode).to.be.equal(
-        // @ts-expect-error bytecode is protected
+      expect(predicateAccount.bytecode).to.deep.equal(
         VERSIONS[version].predicate.bytecode,
       );
     });
