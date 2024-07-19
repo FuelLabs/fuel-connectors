@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/solana-connector",
-  "version": "0.0.0",
+  "version": "0.9.0",
   "private": true,
   "type": "module",
   "files": ["dist"],
@@ -14,8 +14,8 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build:forc": "pnpm fuels-forc build --release --path ./predicate",
-    "build:resources": "pnpm run build:forc && tsx ./scripts/generatePredicateResources.ts",
+    "fuels:build": "pnpm fuels-forc build --release --path ./predicate",
+    "build:resources": "pnpm run fuels:build && tsx ./scripts/generatePredicateResources.ts",
     "build": "tsup --dts-only",
     "build:watch": "pnpm build --watch",
     "ts:check": "tsc --noEmit",
@@ -24,7 +24,7 @@
   "peerDependencies": {
     "@web3modal/scaffold": ">=5.0.0",
     "@web3modal/core": ">=5.0.0",
-    "fuels": ">=0.88.1"
+    "fuels": ">=0.92.0"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -36,11 +36,9 @@
     "tweetnacl": "1.0.3"
   },
   "devDependencies": {
-    "@fuel-ts/account": "0.88.1",
-    "@fuel-ts/forc": "0.88.1",
-    "@fuel-ts/fuel-core": "0.88.1",
+    "@fuel-ts/account": "0.92.0",
     "@types/memoizee": "0.4.11",
-    "fuels": "0.88.1",
+    "fuels": "0.92.0",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",

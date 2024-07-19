@@ -43,8 +43,9 @@
       "**/.turbo",
       "**/build",
       "**/contracts",
-      "**/examples/react-app/src/types/**",
-      "pnpm-lock.yaml"
+      "pnpm-lock.yaml",
+      "**/examples/react-app/src/types",
+      "**/factories/**/*.ts"
     ]
   }
 }
