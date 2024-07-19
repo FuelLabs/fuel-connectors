@@ -2,4 +2,3 @@
 "@fuels/connectors": patch
 ---
 
-incremental
