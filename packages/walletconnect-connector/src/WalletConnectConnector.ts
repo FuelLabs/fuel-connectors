@@ -88,10 +88,7 @@ export class WalletConnectConnector extends FuelConnector {
     });
   }
 
-  async currentEvmAccount(): Promise<string | null> {
-    if (!(await this.isConnected())) {
-      throw Error('No connected accounts');
-    }
+  currentEvmAccount(): string | null {
     const ethAccount = getAccount(this.wagmiConfig).address || null;
 
     return ethAccount;
