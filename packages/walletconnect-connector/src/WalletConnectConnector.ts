@@ -63,6 +63,7 @@ export class WalletConnectConnector extends FuelConnector {
 
   private config: WalletConnectConfig = {};
   private _unsubs: Array<() => void> = [];
+  private static web3ModalConfig: Web3Modal;
 
   constructor(config: WalletConnectConfig = {}) {
     super();
@@ -71,13 +72,16 @@ export class WalletConnectConnector extends FuelConnector {
     this.customPredicate = config.predicateConfig || null;
 
     this.configProvider(config);
+    if (!WalletConnectConnector.web3ModalConfig) {
+      WalletConnectConnector.web3ModalConfig = createModalConfig(
+        this.config,
+      ).web3Modal;
+    }
   }
 
   // createModal re-instanciates the modal to update singletons from web3modal
   createModal() {
     this.destroy();
-    const { web3Modal } = createModalConfig(this.config);
-    this.web3Modal = web3Modal;
     ApiController.prefetch();
     this.setupWatchers();
   }
@@ -239,7 +243,6 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async requireConnection() {
-    if (!this.web3Modal) this.createModal();
     if (!this.wagmiConfig) return;
 
     const { state } = this.wagmiConfig;
@@ -258,22 +261,24 @@ export class WalletConnectConnector extends FuelConnector {
     this.createModal();
 
     return new Promise((resolve) => {
-      this.web3Modal.open();
-      const unsub = this.web3Modal.subscribeEvents(async (event) => {
-        switch (event.data.event) {
-          case 'CONNECT_SUCCESS': {
-            resolve(true);
-            unsub();
-            break;
+      WalletConnectConnector.web3ModalConfig.open();
+      const unsub = WalletConnectConnector.web3ModalConfig.subscribeEvents(
+        async (event) => {
+          switch (event.data.event) {
+            case 'CONNECT_SUCCESS': {
+              resolve(true);
+              unsub();
+              break;
+            }
+            case 'MODAL_CLOSE':
+            case 'CONNECT_ERROR': {
+              resolve(false);
+              unsub();
+              break;
+            }
           }
-          case 'MODAL_CLOSE':
-          case 'CONNECT_ERROR': {
-            resolve(false);
-            unsub();
-            break;
-          }
-        }
-      });
+        },
+      );
     });
   }
 
