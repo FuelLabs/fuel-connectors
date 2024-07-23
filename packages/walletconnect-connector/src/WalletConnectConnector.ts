@@ -239,6 +239,7 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async requireConnection() {
+    if (!this.predicateAccount) this.createModal();
     if (!this.wagmiConfig) return;
 
     const { state } = this.wagmiConfig;
