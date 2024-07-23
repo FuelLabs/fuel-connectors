@@ -10,10 +10,17 @@ import {
   test,
 } from 'vitest';
 import { SolanaConnector } from '../SolanaConnector';
-import { TESTNET_URL } from '../constants';
+import { createSolanaConfig } from '../utils/solanaConfig';
+import { createSolanaWeb3ModalInstance } from '../utils/web3Modal';
 
 describe('Solana Connector', () => {
-  const connector = new SolanaConnector({ projectId: '0000' });
+  const projectId = '0000';
+  const solanaConfig = createSolanaConfig();
+  const web3Modal = createSolanaWeb3ModalInstance({
+    projectId,
+    solanaConfig,
+  });
+  const connector = new SolanaConnector({ projectId, web3Modal });
 
   const snapshotPath = path.join(__dirname, '');
 

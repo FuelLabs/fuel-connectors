@@ -31,7 +31,7 @@ import { VERSIONS } from '../versions/versions-dictionary';
 import { ETHEREUM_ICON, TESTNET_URL } from './constants';
 import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
-import { createModalConfig, createWagmiConfig } from './utils/wagmiConfig';
+import { createWagmiConfig } from './utils/wagmiConfig';
 import { getSignatureIndex } from './utils/witness';
 
 export class WalletConnectConnector extends FuelConnector {
@@ -61,22 +61,17 @@ export class WalletConnectConnector extends FuelConnector {
 
   predicateAccount: PredicateAccount | null = null;
 
-  private config: WalletConnectConfig = {};
+  private config: WalletConnectConfig = {} as WalletConnectConfig;
   private _unsubs: Array<() => void> = [];
-  private static web3ModalConfig: Web3Modal;
+  private web3ModalConfig: Web3Modal;
 
-  constructor(config: WalletConnectConfig = {}) {
+  constructor(config: WalletConnectConfig) {
     super();
 
-    this.wagmiConfig = createWagmiConfig(config);
+    this.wagmiConfig = config?.wagmiConfig || createWagmiConfig();
     this.customPredicate = config.predicateConfig || null;
-
+    this.web3ModalConfig = config.web3Modal;
     this.configProvider(config);
-    if (!WalletConnectConnector.web3ModalConfig) {
-      WalletConnectConnector.web3ModalConfig = createModalConfig(
-        this.config,
-      ).web3Modal;
-    }
   }
 
   // createModal re-instanciates the modal to update singletons from web3modal
@@ -86,9 +81,10 @@ export class WalletConnectConnector extends FuelConnector {
     this.setupWatchers();
   }
 
-  configProvider(config: WalletConnectConfig) {
+  async configProvider(config: WalletConnectConfig) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
+      fuelProvider: await (config.fuelProvider ||
+        FuelProvider.create(TESTNET_URL)),
     });
   }
 
@@ -261,24 +257,22 @@ export class WalletConnectConnector extends FuelConnector {
     this.createModal();
 
     return new Promise((resolve) => {
-      WalletConnectConnector.web3ModalConfig.open();
-      const unsub = WalletConnectConnector.web3ModalConfig.subscribeEvents(
-        async (event) => {
-          switch (event.data.event) {
-            case 'CONNECT_SUCCESS': {
-              resolve(true);
-              unsub();
-              break;
-            }
-            case 'MODAL_CLOSE':
-            case 'CONNECT_ERROR': {
-              resolve(false);
-              unsub();
-              break;
-            }
+      this.web3ModalConfig.open();
+      const unsub = this.web3ModalConfig.subscribeEvents(async (event) => {
+        switch (event.data.event) {
+          case 'CONNECT_SUCCESS': {
+            resolve(true);
+            unsub();
+            break;
           }
-        },
-      );
+          case 'MODAL_CLOSE':
+          case 'CONNECT_ERROR': {
+            resolve(false);
+            unsub();
+            break;
+          }
+        }
+      });
     });
   }
 

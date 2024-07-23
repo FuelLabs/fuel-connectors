@@ -1,13 +1,27 @@
 import { type Provider, bn } from 'fuels';
 
 import { getAccount } from '@wagmi/core';
+import { createWeb3Modal } from '@web3modal/wagmi';
+import { DEFAULT_PROJECT_ID } from '../constants';
 import { type Predicate, WalletConnectConnector } from '../index';
 import { PredicateAccount } from '../utils/Predicate';
+import { createWagmiConfig } from '../utils/wagmiConfig';
 import { VERSIONS } from './mocked-versions/versions-dictionary';
 
 export class testWalletConnectConnector extends WalletConnectConnector {
   constructor(fuelProvider: Provider) {
-    super();
+    const wagmiConfig = createWagmiConfig();
+    const web3Modal = createWeb3Modal({
+      wagmiConfig: {
+        ...wagmiConfig,
+        // @ts-ignore
+        enableWalletConnect: !!projectId,
+      },
+      enableAnalytics: false,
+      allowUnsupportedChain: true,
+      projectId: DEFAULT_PROJECT_ID,
+    });
+    super({ wagmiConfig, web3Modal });
     this.fuelProvider = fuelProvider;
   }
 

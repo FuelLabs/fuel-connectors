@@ -1,4 +1,5 @@
 import type { Config as WagmiConfig } from '@wagmi/core';
+import type { Web3Modal } from '@web3modal/wagmi';
 import type { Provider as FuelProvider, JsonAbi } from 'fuels';
 
 export interface PredicateConfig {
@@ -11,6 +12,7 @@ export type WalletConnectConfig = {
   projectId?: string;
   wagmiConfig?: WagmiConfig;
   predicateConfig?: PredicateConfig;
+  web3Modal: Web3Modal;
 };
 
 interface PredicateTypeComponents {

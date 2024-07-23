@@ -22,7 +22,6 @@ import { SOLANA_ICON, TESTNET_URL } from './constants';
 import { predicates } from './generated/predicate';
 import type { Maybe, SolanaConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
-import { createSolanaProvider } from './utils/solanaProvider';
 import { getSignatureIndex } from './utils/witness';
 
 export class SolanaConnector extends FuelConnector {
@@ -46,32 +45,30 @@ export class SolanaConnector extends FuelConnector {
   predicateAddress: string | null = null;
 
   private predicateAccount: PredicateAccount;
-  private config: SolanaConfig = {};
+  private config: SolanaConfig = {} as SolanaConfig;
   private svmAddress: string | null = null;
   private subscriptions: Array<() => void> = [];
 
-  constructor(config: SolanaConfig = {}) {
+  constructor(config: SolanaConfig) {
     super();
-
+    this.configProviders(config);
+    this.web3Modal = config.web3Modal;
     this.predicateAccount = new PredicateAccount(
       config.predicateConfig ?? predicates['verification-predicate'],
     );
-
-    this.configProviders(config);
   }
 
   // createModal re-instanciates the modal to update singletons from web3modal
   createModal() {
     this.destroy();
-    const { walletConnectModal } = createSolanaProvider(this.config);
-    this.web3Modal = walletConnectModal;
     ApiController.prefetch();
     this.setupWatchers();
   }
 
-  async configProviders(config: SolanaConfig = {}) {
+  async configProviders(config: SolanaConfig) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
+      fuelProvider: await (config.fuelProvider ||
+        FuelProvider.create(TESTNET_URL)),
     });
   }
 
@@ -177,7 +174,6 @@ export class SolanaConnector extends FuelConnector {
    * ============================================================
    */
   async ping(): Promise<boolean> {
-    await this.configProviders();
     return true;
   }
 
