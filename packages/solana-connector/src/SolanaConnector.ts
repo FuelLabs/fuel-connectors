@@ -65,10 +65,12 @@ export class SolanaConnector extends FuelConnector {
     this.setupWatchers();
   }
 
-  async configProviders(config: SolanaConfig) {
+  providerFactory(config?: SolanaConfig) {
+    return config?.fuelProvider || FuelProvider.create(TESTNET_URL);
+  }
+  configProviders(config: SolanaConfig) {
     this.config = Object.assign(config, {
-      fuelProvider: await (config.fuelProvider ||
-        FuelProvider.create(TESTNET_URL)),
+      fuelProvider: this.providerFactory(config),
     });
   }
 
@@ -174,6 +176,11 @@ export class SolanaConnector extends FuelConnector {
    * ============================================================
    */
   async ping(): Promise<boolean> {
+    if (!this.config?.fuelProvider) {
+      this.config = Object.assign(this.config, {
+        fuelProvider: this.providerFactory(this.config),
+      });
+    }
     return true;
   }
 

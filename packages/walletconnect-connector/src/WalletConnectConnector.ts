@@ -81,10 +81,9 @@ export class WalletConnectConnector extends FuelConnector {
     this.setupWatchers();
   }
 
-  async configProvider(config: WalletConnectConfig) {
+  configProvider(config: WalletConnectConfig) {
     this.config = Object.assign(config, {
-      fuelProvider: await (config.fuelProvider ||
-        FuelProvider.create(TESTNET_URL)),
+      fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
     });
   }
 
