@@ -1,6 +1,13 @@
 import { hexToBytes } from '@ethereumjs/util';
 import { hexlify, splitSignature } from '@ethersproject/bytes';
-import { disconnect, getAccount, reconnect, watchAccount } from '@wagmi/core';
+import {
+  type Config,
+  type GetAccountReturnType,
+  disconnect,
+  getAccount,
+  reconnect,
+  watchAccount,
+} from '@wagmi/core';
 import type { Web3Modal } from '@web3modal/wagmi';
 import {
   type AbiMap,
@@ -64,7 +71,14 @@ export class WalletConnectConnector extends FuelConnector {
     const wagmiConfig = config?.wagmiConfig ?? createWagmiConfig();
     this.customPredicate = config.predicateConfig || null;
     this.configProvider({ ...config, wagmiConfig });
-    this.requireConnection();
+    this.loadPersistedConnection();
+  }
+
+  async loadPersistedConnection() {
+    if (!this.config?.wagmiConfig) return;
+    await this.config?.fuelProvider;
+    await this.requireConnection();
+    await this.handleConnect(getAccount(this.config?.wagmiConfig));
   }
 
   getWagmiConfig() {
@@ -184,6 +198,22 @@ export class WalletConnectConnector extends FuelConnector {
     return accounts as Array<string>;
   }
 
+  async handleConnect(account: NonNullable<GetAccountReturnType<Config>>) {
+    if (!account?.address) {
+      return;
+    }
+    await this.setupPredicate();
+    this.emit(this.events.connection, true);
+    this.emit(
+      this.events.currentAccount,
+      this.predicateAccount?.getPredicateAddress(account.address),
+    );
+    this.emit(
+      this.events.accounts,
+      this.predicateAccount?.getPredicateAccounts(this.evmAccounts()),
+    );
+  }
+
   setupWatchers() {
     if (!this.config?.wagmiConfig) {
       throw new Error('Wagmi config not found');
@@ -191,21 +221,9 @@ export class WalletConnectConnector extends FuelConnector {
     this._unsubs.push(
       watchAccount(this.config.wagmiConfig, {
         onChange: async (account) => {
-          const predicateAccount = await this.predicateAccount;
-
           switch (account.status) {
             case 'connected': {
-              await this.setupPredicate();
-
-              this.emit(this.events.connection, true);
-              this.emit(
-                this.events.currentAccount,
-                predicateAccount?.getPredicateAddress(account.address),
-              );
-              this.emit(
-                this.events.accounts,
-                predicateAccount?.getPredicateAccounts(this.evmAccounts()),
-              );
+              await this.handleConnect(account);
               break;
             }
             case 'disconnected': {
