@@ -280,6 +280,10 @@ export class WalletConnectConnector extends FuelConnector {
       this.web3Modal.open();
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
         switch (event.data.event) {
+          case 'MODAL_OPEN':
+            // Ensures that the WC Web3Modal config is applied over pre-existing states (e.g. Solan Connect Web3Modal)
+            this.createModal();
+            break;
           case 'CONNECT_SUCCESS': {
             resolve(true);
             unsub();

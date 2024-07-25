@@ -112,6 +112,10 @@ export class SolanaConnector extends FuelConnector {
     this.subscriptions.push(
       this.web3Modal.subscribeEvents((event) => {
         switch (event.data.event) {
+          case 'MODAL_OPEN':
+            // Ensures that the Solana Web3Modal config is applied over pre-existing states (e.g. WC Connect Web3Modal)
+            this.createModal();
+            break;
           case 'CONNECT_SUCCESS': {
             const address = this.web3Modal.getAddress() || '';
 
