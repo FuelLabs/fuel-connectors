@@ -11,8 +11,6 @@ export type SolanaConfig = {
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
   projectId?: string;
   predicateConfig?: SolanaPredicateConfig;
-  solanaConfig?: ProviderType;
-  web3Modal: Web3Modal;
 };
 
 export interface GetAccounts {

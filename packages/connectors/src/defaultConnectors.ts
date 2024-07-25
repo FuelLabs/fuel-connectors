@@ -3,11 +3,7 @@ import { BurnerWalletConnector } from '@fuel-connectors/burner-wallet-connector'
 import { FuelWalletDevelopmentConnector } from '@fuel-connectors/fuel-development-wallet';
 import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
 import { FueletWalletConnector } from '@fuel-connectors/fuelet-wallet';
-import {
-  SolanaConnector,
-  createSolanaConfig,
-  createSolanaWeb3ModalInstance,
-} from '@fuel-connectors/solana-connector';
+import { SolanaConnector } from '@fuel-connectors/solana-connector';
 import {
   WalletConnectConnector,
   createWagmiConfig,
@@ -34,12 +30,6 @@ export function defaultConnectors({
   ethWagmiConfig,
   solanaConfig: _solanaConfig,
 }: DefaultConnectors = {}): Array<FuelConnector> {
-  const solanaConfig = _solanaConfig || createSolanaConfig(wcProjectId);
-
-  const solanaWeb3Modal = createSolanaWeb3ModalInstance({
-    projectId: wcProjectId,
-    solanaConfig,
-  });
   const wagmiConfig = ethWagmiConfig || createWagmiConfig();
   const web3Modal = createWeb3ModalInstance({
     wagmiConfig,
@@ -57,7 +47,6 @@ export function defaultConnectors({
     }),
     new SolanaConnector({
       projectId: wcProjectId,
-      web3Modal: solanaWeb3Modal,
     }),
     new BurnerWalletConnector(burnerWalletConfig),
   ];

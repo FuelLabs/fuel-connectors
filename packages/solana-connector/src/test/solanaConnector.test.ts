@@ -1,26 +1,13 @@
 import path from 'node:path';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
-import type { Asset, Network, Provider } from 'fuels';
-import {
-  afterAll,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  test,
-} from 'vitest';
+import type { Asset, Network } from 'fuels';
+import { beforeAll, describe, expect, test } from 'vitest';
 import { SolanaConnector } from '../SolanaConnector';
-import { createSolanaConfig } from '../utils/solanaConfig';
-import { createSolanaWeb3ModalInstance } from '../utils/web3Modal';
 
 describe('Solana Connector', () => {
   const projectId = '0000';
-  const solanaConfig = createSolanaConfig();
-  const web3Modal = createSolanaWeb3ModalInstance({
-    projectId,
-    solanaConfig,
-  });
-  const connector = new SolanaConnector({ projectId, web3Modal });
+
+  const connector = new SolanaConnector({ projectId });
 
   const snapshotPath = path.join(__dirname, '');
 

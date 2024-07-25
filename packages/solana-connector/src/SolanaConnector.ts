@@ -22,6 +22,8 @@ import { SOLANA_ICON, TESTNET_URL } from './constants';
 import { predicates } from './generated/predicate';
 import type { Maybe, SolanaConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
+import { createSolanaConfig } from './utils/solanaConfig';
+import { createSolanaWeb3ModalInstance } from './utils/web3Modal';
 import { getSignatureIndex } from './utils/witness';
 
 export class SolanaConnector extends FuelConnector {
@@ -52,15 +54,25 @@ export class SolanaConnector extends FuelConnector {
   constructor(config: SolanaConfig) {
     super();
     this.configProviders(config);
-    this.web3Modal = config.web3Modal;
     this.predicateAccount = new PredicateAccount(
       config.predicateConfig ?? predicates['verification-predicate'],
     );
   }
 
+  modalFactory(config?: SolanaConfig) {
+    const solanaConfig = createSolanaConfig(config?.projectId);
+
+    return createSolanaWeb3ModalInstance({
+      projectId: config?.projectId,
+      solanaConfig,
+    });
+  }
+
   // createModal re-instanciates the modal to update singletons from web3modal
   createModal() {
     this.destroy();
+    const web3Modal = this.modalFactory(this.config);
+    this.web3Modal = web3Modal;
     ApiController.prefetch();
     this.setupWatchers();
   }
