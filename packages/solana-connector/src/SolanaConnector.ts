@@ -106,23 +106,28 @@ export class SolanaConnector extends FuelConnector {
     return account ? [account] : [];
   }
 
+  // Solana Web3Modal is Canary and not yet stable
+  // It shares the same events as WalletConnect, hence validations must be made in order to avoid running connections with EVM Addresses instead of Solana Addresses
   setupWatchers() {
     this.subscriptions.push(
       this.web3Modal.subscribeEvents((event) => {
         switch (event.data.event) {
           case 'CONNECT_SUCCESS': {
+            const address = this.web3Modal.getAddress() || '';
+
+            if (!address || address.startsWith('0x')) {
+              return;
+            }
             this.emit(this.events.connection, true);
             this.emit(
               this.events.currentAccount,
-              this.predicateAccount.getPredicateAddress(
-                this.web3Modal.getAddress() ?? '',
-              ),
+              this.predicateAccount.getPredicateAddress(address),
             );
             this.emit(
               this.events.accounts,
               this.predicateAccount.getPredicateAccounts(this.svmAccounts()),
             );
-            this.svmAddress = this.web3Modal.getAddress() ?? '';
+            this.svmAddress = address;
             break;
           }
           case 'DISCONNECT_SUCCESS': {
