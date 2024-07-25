@@ -1,7 +1,6 @@
 import type { Config } from '@wagmi/core';
-import type { ProviderType } from '@web3modal/solana/dist/types/src/utils/scaffold';
 import { type Web3Modal, createWeb3Modal } from '@web3modal/wagmi';
-import { DEFAULT_WC_PROJECT_ID } from './constants';
+import { DEFAULT_PROJECT_ID } from '../constants';
 
 interface CreateWeb3ModalProps {
   wagmiConfig: Config | undefined;
@@ -10,7 +9,7 @@ interface CreateWeb3ModalProps {
 
 export function createWeb3ModalInstance({
   wagmiConfig,
-  projectId,
+  projectId = DEFAULT_PROJECT_ID,
 }: CreateWeb3ModalProps): Web3Modal {
   if (!projectId) {
     console.warn(
@@ -26,6 +25,6 @@ export function createWeb3ModalInstance({
     },
     enableAnalytics: false,
     allowUnsupportedChain: true,
-    projectId: projectId ?? DEFAULT_WC_PROJECT_ID,
+    projectId: projectId,
   });
 }

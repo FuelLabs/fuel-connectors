@@ -1,6 +1,5 @@
 import path from 'node:path';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
-import { createWeb3Modal } from '@web3modal/wagmi';
 import { type Asset, type Network, Provider } from 'fuels';
 import {
   afterAll,
@@ -13,10 +12,8 @@ import {
 import { WalletConnectConnector } from '../WalletConnectConnector';
 import { TESTNET_URL } from '../constants';
 import { PredicateAccount } from '../utils/Predicate';
-import { createWagmiConfig } from '../utils/wagmiConfig';
 import { VERSIONS } from './mocked-versions/versions-dictionary';
 
-const PROJECT_ID = '0000';
 describe('WalletConnect Connector', () => {
   let connector: WalletConnectConnector;
 
@@ -29,19 +26,7 @@ describe('WalletConnect Connector', () => {
   function connectorFactory(
     props?: Partial<ConstructorParameters<typeof WalletConnectConnector>[0]>,
   ) {
-    const projectId = props?.projectId || PROJECT_ID;
-    const wagmiConfig = createWagmiConfig();
-    const web3Modal = createWeb3Modal({
-      wagmiConfig: {
-        ...wagmiConfig,
-        // @ts-ignore
-        enableWalletConnect: !!props?.projectId,
-      },
-      enableAnalytics: false,
-      allowUnsupportedChain: true,
-      projectId,
-    });
-    return new WalletConnectConnector({ wagmiConfig, web3Modal, ...props });
+    return new WalletConnectConnector({ ...props });
   }
 
   beforeAll(async () => {

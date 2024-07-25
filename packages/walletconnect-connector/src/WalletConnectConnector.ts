@@ -32,6 +32,7 @@ import { ETHEREUM_ICON, TESTNET_URL } from './constants';
 import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
 import { createWagmiConfig } from './utils/wagmiConfig';
+import { createWeb3ModalInstance } from './utils/web3Modal';
 import { getSignatureIndex } from './utils/witness';
 
 export class WalletConnectConnector extends FuelConnector {
@@ -57,28 +58,34 @@ export class WalletConnectConnector extends FuelConnector {
   wagmiConfig: Config;
   ethProvider: unknown | null = null;
   fuelProvider: FuelProvider | null = null;
-  web3Modal!: Web3Modal;
 
   predicateAccount: PredicateAccount | null = null;
 
   private config: WalletConnectConfig = {} as WalletConnectConfig;
   private _unsubs: Array<() => void> = [];
-  private web3ModalConfig: Web3Modal;
+  private web3Modal: Web3Modal = {} as Web3Modal;
 
   constructor(config: WalletConnectConfig) {
     super();
 
     this.wagmiConfig = config?.wagmiConfig || createWagmiConfig();
     this.customPredicate = config.predicateConfig || null;
-    this.web3ModalConfig = config.web3Modal;
     this.configProvider(config);
   }
 
   // createModal re-instanciates the modal to update singletons from web3modal
   createModal() {
     this.destroy();
+    this.web3Modal = this.modalFactory(this.config);
     ApiController.prefetch();
     this.setupWatchers();
+  }
+
+  modalFactory(config: WalletConnectConfig) {
+    return createWeb3ModalInstance({
+      projectId: config.projectId,
+      wagmiConfig: config.wagmiConfig,
+    });
   }
 
   configProvider(config: WalletConnectConfig) {
@@ -238,7 +245,7 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async requireConnection() {
-    if (!this.predicateAccount) this.createModal();
+    if (!this.web3Modal) this.createModal();
     if (!this.wagmiConfig) return;
 
     const { state } = this.wagmiConfig;
@@ -257,8 +264,8 @@ export class WalletConnectConnector extends FuelConnector {
     this.createModal();
 
     return new Promise((resolve) => {
-      this.web3ModalConfig.open();
-      const unsub = this.web3ModalConfig.subscribeEvents(async (event) => {
+      this.web3Modal.open();
+      const unsub = this.web3Modal.subscribeEvents(async (event) => {
         switch (event.data.event) {
           case 'CONNECT_SUCCESS': {
             resolve(true);
