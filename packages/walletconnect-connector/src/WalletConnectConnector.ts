@@ -1,12 +1,6 @@
 import { hexToBytes } from '@ethereumjs/util';
 import { hexlify, splitSignature } from '@ethersproject/bytes';
-import {
-  type Config,
-  disconnect,
-  getAccount,
-  reconnect,
-  watchAccount,
-} from '@wagmi/core';
+import { disconnect, getAccount, reconnect, watchAccount } from '@wagmi/core';
 import type { Web3Modal } from '@web3modal/wagmi';
 import {
   type AbiMap,
@@ -70,6 +64,7 @@ export class WalletConnectConnector extends FuelConnector {
     const wagmiConfig = config?.wagmiConfig ?? createWagmiConfig();
     this.customPredicate = config.predicateConfig || null;
     this.configProvider({ ...config, wagmiConfig });
+    this.requireConnection();
   }
 
   getWagmiConfig() {
@@ -281,6 +276,15 @@ export class WalletConnectConnector extends FuelConnector {
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
         switch (event.data.event) {
           case 'MODAL_OPEN':
+            if (this.config?.wagmiConfig) {
+              const account = getAccount(this.config.wagmiConfig);
+              if (account?.isConnected) {
+                this.web3Modal.close();
+                resolve(true);
+                unsub();
+                break;
+              }
+            }
             // Ensures that the WC Web3Modal config is applied over pre-existing states (e.g. Solan Connect Web3Modal)
             this.createModal();
             break;
