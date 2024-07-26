@@ -1,4 +1,0 @@
----
-"@fuels/connectors": patch
----
-

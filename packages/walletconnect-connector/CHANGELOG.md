@@ -1,5 +1,16 @@
 # @fuel-connectors/walletconnect-connector
 
+## 0.9.1
+
+### Patch Changes
+
+- [#164](https://github.com/FuelLabs/fuel-connectors/pull/164) [`4bdfc4c`](https://github.com/FuelLabs/fuel-connectors/commit/4bdfc4cb3e32c52ca1376e800a7287a8ebac0812) Thanks [@arthurgeron](https://github.com/arthurgeron)! - - Add `currentEvmAccount` method to `WalletConnectConnector`, which will return the current ethereum account connected.
+  - Fixed Wallet Connect Web3Modal instances conflicting and replacing Solana's
+  - Fixed issue where Wallet Connect's Web3Modal would reference a different Wagmi config instance.
+  - WalletConnect connector now recovers the last active connection during initialization
+  - Updated wagmi and @wagmi/core to 2.11.3
+  - Updated @wagmi/connectors to 5.0.26
+
 ## 0.9.0
 
 ### Minor Changes

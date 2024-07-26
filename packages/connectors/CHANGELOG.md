@@ -1,5 +1,11 @@
 # @fuels/connectors
 
+## 0.9.1
+
+### Patch Changes
+
+- [#164](https://github.com/FuelLabs/fuel-connectors/pull/164) [`4bdfc4c`](https://github.com/FuelLabs/fuel-connectors/commit/4bdfc4cb3e32c52ca1376e800a7287a8ebac0812) Thanks [@arthurgeron](https://github.com/arthurgeron)! -
+
 ## 0.9.0
 
 ### Minor Changes
