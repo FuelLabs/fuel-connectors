@@ -4,7 +4,9 @@ import { SolanaConnector } from '../index';
 
 export class testWalletConnectConnector extends SolanaConnector {
   constructor(fuelProvider: Provider) {
-    super();
+    super({
+      fuelProvider: fuelProvider,
+    });
     this.fuelProvider = fuelProvider;
   }
 

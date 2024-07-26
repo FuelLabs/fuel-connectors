@@ -29,8 +29,15 @@ export const solanaDevnet = {
   chain: 'solana',
 };
 
-export const SolanaChains = {
+export const solanaChains = {
   MAINNET: solana,
   TESTNET: solanaTestnet,
   DEVNET: solanaDevnet,
 };
+export const DEFAULT_PROJECT_ID = '00000000000000000000000000000000';
+
+export const DEFAULT_CHAINS = [
+  solanaChains.MAINNET,
+  solanaChains.TESTNET,
+  solanaChains.DEVNET,
+];
