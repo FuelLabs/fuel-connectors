@@ -1,19 +1,13 @@
 import path from 'node:path';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
-import type { Asset, Network, Provider } from 'fuels';
-import {
-  afterAll,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  test,
-} from 'vitest';
+import type { Asset, Network } from 'fuels';
+import { beforeAll, describe, expect, test } from 'vitest';
 import { SolanaConnector } from '../SolanaConnector';
-import { TESTNET_URL } from '../constants';
 
 describe('Solana Connector', () => {
-  const connector = new SolanaConnector({ projectId: '0000' });
+  const projectId = '0000';
+
+  const connector = new SolanaConnector({ projectId });
 
   const snapshotPath = path.join(__dirname, '');
 
@@ -24,6 +18,8 @@ describe('Solana Connector', () => {
       launchNodeOptions: {
         args: ['--snapshot', snapshotPath],
         loggingEnabled: false,
+        // use fixed port to don't conflict with other packages,
+        port: '4002',
       },
     });
   });
