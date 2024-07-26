@@ -36,6 +36,8 @@ describe('WalletConnect Connector', () => {
       launchNodeOptions: {
         args: ['--snapshot', snapshotPath],
         loggingEnabled: false,
+        // use fixed port to don't conflict with other packages,
+        port: '4003',
       },
     });
 
