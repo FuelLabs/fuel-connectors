@@ -1,4 +1,3 @@
-import { bn } from 'fuels';
 import { useEffect, useState } from 'react';
 import { useLogEvents } from '../hooks/use-log-events';
 import { useWallet } from '../hooks/useWallet';
@@ -65,15 +64,44 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
       setIsSigning(true);
       const contract = CounterAbi__factory.connect(COUNTER_CONTRACT_ID, wallet);
       try {
-        await contract.functions.increment_counter().call();
-
-        getCount();
+        const { waitForResult } = await contract.functions
+          .increment_counter()
+          .call();
 
         setToast({
           open: true,
           type: 'success',
-          children: 'Counter incremented!',
+          children: 'Transaction submitted!',
         });
+
+        getCount();
+
+        if (waitForResult) {
+          async function checkResult() {
+            const tx = await waitForResult();
+
+            await getCount();
+            setToast({
+              open: true,
+              type: 'success',
+              children: (
+                <p>
+                  Counter incremented! View it on the{' '}
+                  <a
+                    href={`https://app.fuel.network/tx/${tx.transactionId}`}
+                    className="underline"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    block explorer
+                  </a>
+                </p>
+              ),
+            });
+          }
+
+          checkResult();
+        }
       } catch (err) {
         const error = err as CustomError;
 

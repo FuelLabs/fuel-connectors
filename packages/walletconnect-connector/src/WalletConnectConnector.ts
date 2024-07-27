@@ -2,6 +2,7 @@ import { hexToBytes } from '@ethereumjs/util';
 import { hexlify, splitSignature } from '@ethersproject/bytes';
 import {
   type Config,
+  type GetAccountReturnType,
   disconnect,
   getAccount,
   reconnect,
@@ -26,11 +27,13 @@ import {
   transactionRequestify,
 } from 'fuels';
 
+import { ApiController } from '@web3modal/core';
 import { VERSIONS } from '../versions/versions-dictionary';
 import { ETHEREUM_ICON, TESTNET_URL } from './constants';
 import type { Predicate, PredicateConfig, WalletConnectConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
-import { createModalConfig } from './utils/wagmiConfig';
+import { createWagmiConfig } from './utils/wagmiConfig';
+import { createWeb3ModalInstance } from './utils/web3Modal';
 import { getSignatureIndex } from './utils/witness';
 
 export class WalletConnectConnector extends FuelConnector {
@@ -53,33 +56,61 @@ export class WalletConnectConnector extends FuelConnector {
     },
   };
 
-  wagmiConfig: Config;
   ethProvider: unknown | null = null;
   fuelProvider: FuelProvider | null = null;
-  web3Modal: Web3Modal;
+  web3Modal!: Web3Modal;
 
   predicateAccount: PredicateAccount | null = null;
 
-  private config: WalletConnectConfig = {};
+  private config: WalletConnectConfig = {} as WalletConnectConfig;
   private _unsubs: Array<() => void> = [];
 
-  constructor(config: WalletConnectConfig = {}) {
+  constructor(config: WalletConnectConfig) {
     super();
 
-    const { wagmiConfig, web3Modal } = createModalConfig(config);
-    this.wagmiConfig = wagmiConfig;
-    this.web3Modal = web3Modal;
-
+    const wagmiConfig = config?.wagmiConfig ?? createWagmiConfig();
     this.customPredicate = config.predicateConfig || null;
+    this.configProvider({ ...config, wagmiConfig });
+    this.loadPersistedConnection();
+  }
 
-    this.configProvider(config);
+  async loadPersistedConnection() {
+    if (!this.config?.wagmiConfig) return;
+    await this.config?.fuelProvider;
+    await this.requireConnection();
+    await this.handleConnect(getAccount(this.config?.wagmiConfig));
+  }
+
+  getWagmiConfig() {
+    return this.config?.wagmiConfig;
+  }
+
+  // createModal re-instanciates the modal to update singletons from web3modal
+  createModal() {
+    this.destroy();
+    this.web3Modal = this.modalFactory(this.config);
+    ApiController.prefetch();
     this.setupWatchers();
+  }
+
+  modalFactory(config: WalletConnectConfig) {
+    return createWeb3ModalInstance({
+      projectId: config.projectId,
+      wagmiConfig: config.wagmiConfig,
+    });
   }
 
   configProvider(config: WalletConnectConfig) {
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
     });
+  }
+
+  currentEvmAccount(): string | null {
+    if (!this.config?.wagmiConfig) return null;
+    const ethAccount = getAccount(this.config.wagmiConfig).address || null;
+
+    return ethAccount;
   }
 
   async setupPredicate(): Promise<PredicateAccount> {
@@ -97,13 +128,17 @@ export class WalletConnectConnector extends FuelConnector {
 
     let predicateWithBalance: Predicate | null = null;
 
+    if (!this.config?.wagmiConfig) {
+      throw new Error('Wagmi config not found');
+    }
+
     for (const predicateVersion of predicateVersions) {
       const predicateInstance = new PredicateAccount({
         abi: predicateVersion.pred.predicate.abi,
         bytecode: predicateVersion.pred.predicate.bytecode,
       });
 
-      const account = getAccount(this.wagmiConfig);
+      const account = getAccount(this.config.wagmiConfig);
       const address = account.address;
 
       if (!address) {
@@ -158,29 +193,37 @@ export class WalletConnectConnector extends FuelConnector {
    * ============================================================
    */
   evmAccounts(): Array<string> {
-    const accounts = getAccount(this.wagmiConfig).addresses;
+    if (!this.config?.wagmiConfig) return [];
+    const accounts = getAccount(this.config.wagmiConfig).addresses;
     return accounts as Array<string>;
   }
 
-  setupWatchers() {
-    this._unsubs.push(
-      watchAccount(this.wagmiConfig, {
-        onChange: async (account) => {
-          const predicateAccount = await this.predicateAccount;
+  async handleConnect(account: NonNullable<GetAccountReturnType<Config>>) {
+    if (!account?.address) {
+      return;
+    }
+    await this.setupPredicate();
+    this.emit(this.events.connection, true);
+    this.emit(
+      this.events.currentAccount,
+      this.predicateAccount?.getPredicateAddress(account.address),
+    );
+    this.emit(
+      this.events.accounts,
+      this.predicateAccount?.getPredicateAccounts(this.evmAccounts()),
+    );
+  }
 
+  setupWatchers() {
+    if (!this.config?.wagmiConfig) {
+      throw new Error('Wagmi config not found');
+    }
+    this._unsubs.push(
+      watchAccount(this.config.wagmiConfig, {
+        onChange: async (account) => {
           switch (account.status) {
             case 'connected': {
-              await this.setupPredicate();
-
-              this.emit(this.events.connection, true);
-              this.emit(
-                this.events.currentAccount,
-                predicateAccount?.getPredicateAddress(account.address),
-              );
-              this.emit(
-                this.events.accounts,
-                predicateAccount?.getPredicateAccounts(this.evmAccounts()),
-              );
+              await this.handleConnect(account);
               break;
             }
             case 'disconnected': {
@@ -227,23 +270,42 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async requireConnection() {
-    const { state } = this.wagmiConfig;
+    if (!this.web3Modal) this.createModal();
+    if (!this.config?.wagmiConfig) return;
+
+    const { state } = this.config.wagmiConfig;
     if (state.status === 'disconnected' && state.connections.size > 0) {
-      await reconnect(this.wagmiConfig);
+      await reconnect(this.config.wagmiConfig);
     }
   }
 
   async isConnected(): Promise<boolean> {
     await this.requireConnection();
-    const account = getAccount(this.wagmiConfig);
+    if (!this.config?.wagmiConfig) return false;
+    const account = getAccount(this.config.wagmiConfig || {});
     return account.isConnected || false;
   }
 
   async connect(): Promise<boolean> {
+    this.createModal();
+
     return new Promise((resolve) => {
       this.web3Modal.open();
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
         switch (event.data.event) {
+          case 'MODAL_OPEN':
+            if (this.config?.wagmiConfig) {
+              const account = getAccount(this.config.wagmiConfig);
+              if (account?.isConnected) {
+                this.web3Modal.close();
+                resolve(true);
+                unsub();
+                break;
+              }
+            }
+            // Ensures that the WC Web3Modal config is applied over pre-existing states (e.g. Solan Connect Web3Modal)
+            this.createModal();
+            break;
           case 'CONNECT_SUCCESS': {
             resolve(true);
             unsub();
@@ -261,8 +323,11 @@ export class WalletConnectConnector extends FuelConnector {
   }
 
   async disconnect(): Promise<boolean> {
-    const { connector, isConnected } = getAccount(this.wagmiConfig);
-    await disconnect(this.wagmiConfig, {
+    if (!this.config?.wagmiConfig) {
+      throw new Error('Wagmi config not found');
+    }
+    const { connector, isConnected } = getAccount(this.config.wagmiConfig);
+    await disconnect(this.config.wagmiConfig, {
       connector,
     });
 
@@ -293,6 +358,10 @@ export class WalletConnectConnector extends FuelConnector {
 
     if (!this.predicateAccount) {
       throw Error('No predicate account found');
+    }
+
+    if (!this.config?.wagmiConfig) {
+      throw new Error('Wagmi config not found');
     }
 
     const { fuelProvider } = await this.getProvider();
@@ -368,7 +437,7 @@ export class WalletConnectConnector extends FuelConnector {
     const txID = requestWithPredicateAttached.getTransactionId(chainId);
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     const provider: any = await getAccount(
-      this.wagmiConfig,
+      this.config.wagmiConfig,
     ).connector?.getProvider();
     const signature = await provider.request({
       method: 'personal_sign',
@@ -396,7 +465,10 @@ export class WalletConnectConnector extends FuelConnector {
     if (!(await this.isConnected())) {
       throw Error('No connected accounts');
     }
-    const ethAccount = getAccount(this.wagmiConfig).address || null;
+    if (!this.config?.wagmiConfig) {
+      throw new Error('Wagmi config not found');
+    }
+    const ethAccount = getAccount(this.config.wagmiConfig).address || null;
 
     return (
       this.predicateAccount?.getPredicateAddress(ethAccount as string) ?? null
