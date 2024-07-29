@@ -23,14 +23,14 @@
   },
   "peerDependencies": {
     "fuels": ">=0.92.0",
-    "@web3modal/scaffold": ">=5.0.8",
-    "@web3modal/core": ">=5.0.8"
+    "@web3modal/scaffold": ">=5.0.7",
+    "@web3modal/core": ">=5.0.7"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
     "@wagmi/core": "2.12.2",
-    "@web3modal/wagmi": "5.0.8",
+    "@web3modal/wagmi": "5.0.7",
     "memoizee": "0.4.15",
     "viem": "2.10.2"
   },
@@ -47,6 +47,6 @@
     "vite": "5.2.11",
     "vite-plugin-dts": "3.9.1",
     "vitest": "1.6.0",
-    "@web3modal/core": "5.0.8"
+    "@web3modal/core": "5.0.7"
   }
 }
