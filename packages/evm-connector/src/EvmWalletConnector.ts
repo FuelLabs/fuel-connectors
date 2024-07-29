@@ -174,7 +174,7 @@ export class EVMWalletConnector extends FuelConnector {
       return this.config.ethProvider;
     }
     if (WINDOW?.ethereum) {
-      return WINDOW.ethereum;
+      return WINDOW.ethereum as EIP1193Provider;
     }
 
     return null;

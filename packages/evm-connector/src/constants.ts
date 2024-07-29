@@ -1,8 +1,7 @@
-import type { EIP1193Provider } from './utils/eip-1193';
-
 declare global {
   interface Window {
-    ethereum: EIP1193Provider | null;
+    // biome-ignore lint/suspicious/noExplicitAny: typedef set by a dependency, must be any to match previous declaration
+    ethereum?: any;
   }
 }
 const HAS_WINDOW = typeof window !== 'undefined';
