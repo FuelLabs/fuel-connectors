@@ -10,4 +10,9 @@ export default defineConfig({
       plugins: [tailwindcss()],
     },
   },
+  build: {
+    rollupOptions: {
+      external: ['@fuels/connectors'],
+    },
+  },
 });

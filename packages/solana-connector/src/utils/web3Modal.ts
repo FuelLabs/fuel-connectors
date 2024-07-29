@@ -25,5 +25,6 @@ export function createSolanaWeb3ModalInstance({
     chains: DEFAULT_CHAINS,
     enableAnalytics: false,
     projectId: projectId ?? DEFAULT_PROJECT_ID,
+    wallets: [],
   });
 }
