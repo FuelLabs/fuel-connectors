@@ -19,8 +19,8 @@ import {
 } from 'fuels';
 import { VERSIONS } from '../versions/versions-dictionary';
 import { SOLANA_ICON, TESTNET_URL } from './constants';
-import { createSolanaProvider } from './provider';
 import type { SolanaConfig } from './types';
+import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
 
 export class SolanaConnector extends PredicateConnector {
   name = 'Solana Wallets';
@@ -41,9 +41,8 @@ export class SolanaConnector extends PredicateConnector {
   private config: SolanaConfig = {};
   private svmAddress: string | null = null;
 
-  constructor(config: SolanaConfig = {}) {
+  constructor(config: SolanaConfig) {
     super();
-
     this.customPredicate = config.predicateConfig || null;
     this.configProviders(config);
   }
@@ -67,11 +66,34 @@ export class SolanaConnector extends PredicateConnector {
     this.svmAddress = address ?? null;
   }
 
+  private modalFactory(config?: SolanaConfig) {
+    const solanaConfig = createSolanaConfig(config?.projectId);
+
+    return createSolanaWeb3ModalInstance({
+      projectId: config?.projectId,
+      solanaConfig,
+    });
+  }
+
+  private providerFactory(config?: SolanaConfig) {
+    return config?.fuelProvider || FuelProvider.create(TESTNET_URL);
+  }
+
+  // Solana Web3Modal is Canary and not yet stable
+  // It shares the same events as WalletConnect, hence validations must be made in order to avoid running connections with EVM Addresses instead of Solana Addresses
   private setupWatchers() {
     this.subscribe(
-      this.web3Modal.subscribeEvents(async (event) => {
+      this.web3Modal.subscribeEvents((event) => {
         switch (event.data.event) {
+          case 'MODAL_OPEN':
+            // Ensures that the Solana Web3Modal config is applied over pre-existing states (e.g. WC Connect Web3Modal)
+            this.createModal();
+            break;
           case 'CONNECT_SUCCESS': {
+            const address = this.web3Modal.getAddress() || '';
+            if (!address || address.startsWith('0x')) {
+              return;
+            }
             this._emit(true);
             break;
           }
@@ -104,8 +126,8 @@ export class SolanaConnector extends PredicateConnector {
   // createModal re-instanciates the modal to update singletons from web3modal
   private createModal() {
     this.clearSubscriptions();
-    const { walletConnectModal } = createSolanaProvider(this.config);
-    this.web3Modal = walletConnectModal;
+    const web3Modal = this.modalFactory(this.config);
+    this.web3Modal = web3Modal;
     ApiController.prefetch();
     this.setupWatchers();
   }
@@ -144,6 +166,11 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   protected async getProviders(): Promise<ProviderDictionary> {
+    if (!this.config?.fuelProvider) {
+      this.config = Object.assign(this.config, {
+        fuelProvider: this.providerFactory(this.config),
+      });
+    }
     if (!this.fuelProvider) {
       this.fuelProvider = getOrThrow(
         await this.config.fuelProvider,

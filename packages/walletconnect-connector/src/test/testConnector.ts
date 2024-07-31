@@ -11,9 +11,7 @@ import { VERSIONS } from './mocked-versions/versions-dictionary';
 
 export class testWalletConnectConnector extends WalletConnectConnector {
   constructor(fuelProvider: Provider) {
-    super();
-    // @ts-ignore
-    this.fuelProvider = fuelProvider;
+    super({ fuelProvider });
   }
 
   async getProviders() {
@@ -26,6 +24,11 @@ export class testWalletConnectConnector extends WalletConnectConnector {
   }
 
   async setupPredicate(): Promise<PredicateFactory> {
+    const wagmiConfig = this.getWagmiConfig();
+    if (!wagmiConfig) {
+      throw new Error('Wagmi config not found');
+    }
+
     if (this.customPredicate?.abi && this.customPredicate?.bytecode) {
       this.predicateAccount = new PredicateFactory(
         new EthereumWalletAdapter(),
@@ -52,8 +55,7 @@ export class testWalletConnectConnector extends WalletConnectConnector {
         },
       );
 
-      // @ts-ignore
-      const account = getAccount(this.wagmiConfig);
+      const account = getAccount(wagmiConfig);
       const address = account.address;
 
       if (!address) {

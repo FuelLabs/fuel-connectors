@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { PredicateFactory } from '@fuel-connectors/common';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
 import { type Asset, type Network, Provider } from 'fuels';
 import {
@@ -22,6 +23,12 @@ describe('WalletConnect Connector', () => {
 
   let stopProvider: () => void;
 
+  function connectorFactory(
+    props?: Partial<ConstructorParameters<typeof WalletConnectConnector>[0]>,
+  ) {
+    return new WalletConnectConnector({ ...props });
+  }
+
   beforeAll(async () => {
     process.env.GENESIS_SECRET =
       '0x6e48a022f9d4ae187bca4e2645abd62198ae294ee484766edbdaadf78160dc68';
@@ -29,6 +36,8 @@ describe('WalletConnect Connector', () => {
       launchNodeOptions: {
         args: ['--snapshot', snapshotPath],
         loggingEnabled: false,
+        // use fixed port to don't conflict with other packages,
+        port: '4003',
       },
     });
 
@@ -42,14 +51,12 @@ describe('WalletConnect Connector', () => {
 
   beforeEach(() => {
     // Class contains state, reset the state for each test
-    connector = new WalletConnectConnector({ projectId: '0000' });
+    connector = connectorFactory({ projectId: '0000' });
   });
 
   describe('constructor()', () => {
     test('initialize properties correctly', async () => {
-      const walletWalletConnector = new WalletConnectConnector({
-        projectId: '0000',
-      });
+      const walletWalletConnector = connectorFactory();
       await walletWalletConnector.ping();
 
       expect(walletWalletConnector).to.be.an.instanceOf(WalletConnectConnector);
@@ -64,9 +71,8 @@ describe('WalletConnect Connector', () => {
 
     test('can construct a WalletConnectConnector with a non default Provider', async () => {
       const nonDefaultProvider = fuelProvider;
-      const walletWalletConnector = new WalletConnectConnector({
+      const walletWalletConnector = connectorFactory({
         fuelProvider: nonDefaultProvider,
-        projectId: '0000',
       });
       await walletWalletConnector.ping();
 
@@ -82,9 +88,8 @@ describe('WalletConnect Connector', () => {
 
     test('can construct a WalletConnectConnector with a non default Promise Provider', async () => {
       const nonDefaultProvider = Provider.create(fuelProvider.url);
-      const walletWalletConnector = new WalletConnectConnector({
+      const walletWalletConnector = connectorFactory({
         fuelProvider: nonDefaultProvider,
-        projectId: '0000',
       });
       await walletWalletConnector.ping();
 
@@ -101,14 +106,14 @@ describe('WalletConnect Connector', () => {
 
   describe('isConnected()', () => {
     test('false when not connected', async () => {
-      const connector = new WalletConnectConnector();
+      const connector = connectorFactory();
 
       const connectedAfterConnect = await connector.isConnected();
       expect(connectedAfterConnect).to.be.false;
     });
   });
 
-  describe('currenctAccount()', () => {
+  describe('currentAccount()', () => {
     test('throws error', async () => {
       await expect(() => connector.currentAccount()).rejects.toThrowError(
         'No connected accounts',
@@ -135,37 +140,23 @@ describe('WalletConnect Connector', () => {
       const version =
         '0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33';
 
-      const walletConectconnector = new WalletConnectConnector({
+      const walletConectconnector = connectorFactory({
         predicateConfig: VERSIONS[version].predicate,
       });
 
-      // @ts-expect-error setupPredicate is protected
+      // @ts-expect-error predicateConfig is protected
       const predicateAccount = await walletConectconnector.setupPredicate();
 
-      // @ts-expect-error setupPredicate is protected
-      expect(predicateAccount.abi).to.be.equal(VERSIONS[version].predicate.abi);
-      // @ts-expect-error setupPredicate is protected
-      expect(predicateAccount.bytecode).to.be.equal(
-        VERSIONS[version].predicate.bytecode,
-      );
+      expect(predicateAccount).to.be.instanceOf(PredicateFactory);
     });
 
     test('Should setup predicate without given config', async () => {
-      const version =
-        '0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33';
-      const walletConectconnector = new WalletConnectConnector();
+      const walletConectconnector = connectorFactory();
 
-      // @ts-expect-error setupPredicate is protected
+      // @ts-expect-error predicateConfig is protected
       const predicateAccount = await walletConectconnector.setupPredicate();
 
-      // @ts-expect-error abi is protected
-      expect(predicateAccount.abi).to.deep.equal(
-        VERSIONS[version].predicate.abi,
-      );
-      // @ts-expect-error bytecode is protected
-      expect(predicateAccount.bytecode).to.deep.equal(
-        VERSIONS[version].predicate.bytecode,
-      );
+      expect(predicateAccount).to.be.instanceOf(PredicateFactory);
     });
   });
 

@@ -2,6 +2,7 @@ import { hexToBytes } from '@ethereumjs/util';
 import { hexlify, splitSignature } from '@ethersproject/bytes';
 import {
   type Config,
+  type GetAccountReturnType,
   disconnect,
   getAccount,
   reconnect,
@@ -29,8 +30,8 @@ import {
 import { ApiController } from '@web3modal/core';
 import { VERSIONS } from '../versions/versions-dictionary';
 import { ETHEREUM_ICON, TESTNET_URL } from './constants';
-import { createModalConfig, createWagmiConfig } from './provider';
 import type { WalletConnectConfig } from './types';
+import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
 export class WalletConnectConnector extends PredicateConnector {
   name = 'Ethereum Wallets';
@@ -44,41 +45,71 @@ export class WalletConnectConnector extends PredicateConnector {
       link: 'https://ethereum.org/en/wallets/find-wallet/',
     },
   };
-  private wagmiConfig: Config;
+
+  private wagmiConfig!: Config;
   private fuelProvider!: FuelProvider;
   private web3Modal!: Web3Modal;
-  private config: WalletConnectConfig = {};
+  private config: WalletConnectConfig = {} as WalletConnectConfig;
 
-  constructor(config: WalletConnectConfig = {}) {
+  constructor(config: WalletConnectConfig) {
     super();
 
-    this.wagmiConfig = createWagmiConfig(config);
+    const wagmiConfig = config?.wagmiConfig ?? createWagmiConfig();
     this.customPredicate = config.predicateConfig || null;
+    this.configProviders({ ...config, wagmiConfig });
+    this.loadPersistedConnection();
+  }
 
-    this.configProviders(config);
+  private async loadPersistedConnection() {
+    if (!this.config?.wagmiConfig) return;
+    await this.config?.fuelProvider;
+    await this.requireConnection();
+    await this.handleConnect(getAccount(this.config?.wagmiConfig));
+  }
+
+  // createModal re-instanciates the modal to update singletons from web3modal
+  private createModal() {
+    this.clearSubscriptions();
+    this.web3Modal = this.modalFactory(this.config);
+    ApiController.prefetch();
+    this.setupWatchers();
+  }
+
+  private modalFactory(config: WalletConnectConfig) {
+    return createWeb3ModalInstance({
+      projectId: config.projectId,
+      wagmiConfig: config.wagmiConfig,
+    });
+  }
+
+  private async handleConnect(
+    account: NonNullable<GetAccountReturnType<Config>>,
+  ) {
+    if (!account?.address) {
+      return;
+    }
+    await this.setupPredicate();
+    this.emit(this.events.connection, true);
+    this.emit(
+      this.events.currentAccount,
+      this.predicateAccount?.getPredicateAddress(account.address),
+    );
+    this.emit(
+      this.events.accounts,
+      this.predicateAccount?.getPredicateAddresses(await this.walletAccounts()),
+    );
   }
 
   private setupWatchers() {
+    if (!this.config?.wagmiConfig) {
+      throw new Error('Wagmi config not found');
+    }
     this.subscribe(
-      watchAccount(this.wagmiConfig, {
+      watchAccount(this.config.wagmiConfig, {
         onChange: async (account) => {
-          const predicateAccount = this.predicateAccount;
-
           switch (account.status) {
             case 'connected': {
-              await this.setupPredicate();
-
-              this.emit(this.events.connection, true);
-              this.emit(
-                this.events.currentAccount,
-                predicateAccount?.getPredicateAddress(account.address),
-              );
-              this.emit(
-                this.events.accounts,
-                predicateAccount?.getPredicateAddresses(
-                  await this.walletAccounts(),
-                ),
-              );
+              await this.handleConnect(account);
               break;
             }
             case 'disconnected': {
@@ -93,13 +124,8 @@ export class WalletConnectConnector extends PredicateConnector {
     );
   }
 
-  // createModal re-instanciates the modal to update singletons from web3modal
-  private createModal() {
-    this.clearSubscriptions();
-    const { web3Modal } = createModalConfig(this.config);
-    this.web3Modal = web3Modal;
-    ApiController.prefetch();
-    this.setupWatchers();
+  protected getWagmiConfig(): Maybe<Config> {
+    return this.config?.wagmiConfig;
   }
 
   protected getWalletAdapter(): PredicateWalletAdapter {
@@ -129,11 +155,11 @@ export class WalletConnectConnector extends PredicateConnector {
 
   protected async requireConnection() {
     if (!this.web3Modal) this.createModal();
-    if (!this.wagmiConfig) return;
+    if (!this.config?.wagmiConfig) return;
 
-    const { state } = this.wagmiConfig;
+    const { state } = this.config.wagmiConfig;
     if (state.status === 'disconnected' && state.connections.size > 0) {
-      await reconnect(this.wagmiConfig);
+      await reconnect(this.config.wagmiConfig);
     }
   }
 
@@ -161,6 +187,19 @@ export class WalletConnectConnector extends PredicateConnector {
       this.web3Modal.open();
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
         switch (event.data.event) {
+          case 'MODAL_OPEN':
+            if (this.config?.wagmiConfig) {
+              const account = getAccount(this.config.wagmiConfig);
+              if (account?.isConnected) {
+                this.web3Modal.close();
+                resolve(true);
+                unsub();
+                break;
+              }
+            }
+            // Ensures that the WC Web3Modal config is applied over pre-existing states (e.g. Solan Connect Web3Modal)
+            this.createModal();
+            break;
           case 'CONNECT_SUCCESS': {
             resolve(true);
             unsub();
@@ -178,6 +217,9 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   public async disconnect(): Promise<boolean> {
+    if (!this.config?.wagmiConfig) {
+      throw new Error('Wagmi config not found');
+    }
     const { connector, isConnected } = getAccount(this.wagmiConfig);
     await disconnect(this.wagmiConfig, {
       connector,

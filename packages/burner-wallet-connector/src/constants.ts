@@ -5,3 +5,4 @@ export const HAS_WINDOW = typeof window !== 'undefined';
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export const WINDOW: any = HAS_WINDOW ? window : {};
 export const BURNER_WALLET_PRIVATE_KEY = 'burner-wallet-private-key';
+export const BURNER_WALLET_PROVIDER_URL_KEY = 'burner-wallet-provider-url-key';

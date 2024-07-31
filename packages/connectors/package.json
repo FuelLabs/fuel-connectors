@@ -1,6 +1,6 @@
 {
   "name": "@fuels/connectors",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -23,7 +23,7 @@
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
-    "@wagmi/core": "2.9.1",
+    "@wagmi/core": "2.12.2",
     "@web3modal/wagmi": "5.0.0",
     "viem": "2.10.2",
     "socket.io-client": "4.7.2",
