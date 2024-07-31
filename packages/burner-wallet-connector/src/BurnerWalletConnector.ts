@@ -187,10 +187,8 @@ export class BurnerWalletConnector extends FuelConnector {
       throw Error('Address not found for the connector');
     }
 
-    const transactionRequest = await this.burnerWallet.sendTransaction(
-      transaction,
-      { awaitExecution: true },
-    );
+    const transactionRequest =
+      await this.burnerWallet.sendTransaction(transaction);
 
     return transactionRequest.id;
   }
