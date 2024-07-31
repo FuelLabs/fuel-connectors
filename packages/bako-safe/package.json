@@ -16,12 +16,12 @@
     "socket.io-client": "4.7.2"
   },
   "peerDependencies": {
-    "fuels": ">=0.92.0",
+    "fuels": ">=0.93.0",
     "socket.io-client": "4.7.2"
   },
   "devDependencies": {
     "tsup": "8.0.2",
-    "fuels": "0.92.0",
+    "fuels": "0.93.0",
     "typescript": "5.4.2",
     "undici": "6.9.0"
   }
