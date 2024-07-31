@@ -22,7 +22,8 @@ import { SOLANA_ICON, TESTNET_URL } from './constants';
 import { predicates } from './generated/predicate';
 import type { Maybe, SolanaConfig } from './types';
 import { PredicateAccount } from './utils/Predicate';
-import { createSolanaProvider } from './utils/solanaProvider';
+import { createSolanaConfig } from './utils/solanaConfig';
+import { createSolanaWeb3ModalInstance } from './utils/web3Modal';
 import { getSignatureIndex } from './utils/witness';
 
 export class SolanaConnector extends FuelConnector {
@@ -46,32 +47,42 @@ export class SolanaConnector extends FuelConnector {
   predicateAddress: string | null = null;
 
   private predicateAccount: PredicateAccount;
-  private config: SolanaConfig = {};
+  private config: SolanaConfig = {} as SolanaConfig;
   private svmAddress: string | null = null;
   private subscriptions: Array<() => void> = [];
 
-  constructor(config: SolanaConfig = {}) {
+  constructor(config: SolanaConfig) {
     super();
-
+    this.configProviders(config);
     this.predicateAccount = new PredicateAccount(
       config.predicateConfig ?? predicates['verification-predicate'],
     );
+  }
 
-    this.configProviders(config);
+  modalFactory(config?: SolanaConfig) {
+    const solanaConfig = createSolanaConfig(config?.projectId);
+
+    return createSolanaWeb3ModalInstance({
+      projectId: config?.projectId,
+      solanaConfig,
+    });
   }
 
   // createModal re-instanciates the modal to update singletons from web3modal
   createModal() {
     this.destroy();
-    const { walletConnectModal } = createSolanaProvider(this.config);
-    this.web3Modal = walletConnectModal;
+    const web3Modal = this.modalFactory(this.config);
+    this.web3Modal = web3Modal;
     ApiController.prefetch();
     this.setupWatchers();
   }
 
-  async configProviders(config: SolanaConfig = {}) {
+  providerFactory(config?: SolanaConfig) {
+    return config?.fuelProvider || FuelProvider.create(TESTNET_URL);
+  }
+  configProviders(config: SolanaConfig) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
+      fuelProvider: this.providerFactory(config),
     });
   }
 
@@ -95,23 +106,32 @@ export class SolanaConnector extends FuelConnector {
     return account ? [account] : [];
   }
 
+  // Solana Web3Modal is Canary and not yet stable
+  // It shares the same events as WalletConnect, hence validations must be made in order to avoid running connections with EVM Addresses instead of Solana Addresses
   setupWatchers() {
     this.subscriptions.push(
       this.web3Modal.subscribeEvents((event) => {
         switch (event.data.event) {
+          case 'MODAL_OPEN':
+            // Ensures that the Solana Web3Modal config is applied over pre-existing states (e.g. WC Connect Web3Modal)
+            this.createModal();
+            break;
           case 'CONNECT_SUCCESS': {
+            const address = this.web3Modal.getAddress() || '';
+
+            if (!address || address.startsWith('0x')) {
+              return;
+            }
             this.emit(this.events.connection, true);
             this.emit(
               this.events.currentAccount,
-              this.predicateAccount.getPredicateAddress(
-                this.web3Modal.getAddress() ?? '',
-              ),
+              this.predicateAccount.getPredicateAddress(address),
             );
             this.emit(
               this.events.accounts,
               this.predicateAccount.getPredicateAccounts(this.svmAccounts()),
             );
-            this.svmAddress = this.web3Modal.getAddress() ?? '';
+            this.svmAddress = address;
             break;
           }
           case 'DISCONNECT_SUCCESS': {
@@ -177,7 +197,11 @@ export class SolanaConnector extends FuelConnector {
    * ============================================================
    */
   async ping(): Promise<boolean> {
-    await this.configProviders();
+    if (!this.config?.fuelProvider) {
+      this.config = Object.assign(this.config, {
+        fuelProvider: this.providerFactory(this.config),
+      });
+    }
     return true;
   }
 

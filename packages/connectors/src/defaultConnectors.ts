@@ -6,25 +6,26 @@ import { FueletWalletConnector } from '@fuel-connectors/fuelet-wallet';
 import { SolanaConnector } from '@fuel-connectors/solana-connector';
 import { WalletConnectConnector } from '@fuel-connectors/walletconnect-connector';
 import type { Config } from '@wagmi/core';
+import type { ProviderType } from '@web3modal/solana/dist/types/src/utils/scaffold';
 import type { FuelConnector } from 'fuels';
 import type { BurnerWalletConfig } from '../../burner-wallet-connector/src/types';
-
-const DEFAULT_WC_PROJECT_ID = '00000000000000000000000000000000';
 
 type DefaultConnectors = {
   devMode?: boolean;
   wcProjectId?: string;
   burnerWalletConfig?: BurnerWalletConfig;
   ethWagmiConfig?: Config;
+  solanaConfig?: ProviderType;
 };
 
 export function defaultConnectors({
   devMode,
-  wcProjectId = DEFAULT_WC_PROJECT_ID,
+  wcProjectId,
   burnerWalletConfig,
   ethWagmiConfig,
+  solanaConfig: _solanaConfig,
 }: DefaultConnectors = {}): Array<FuelConnector> {
-  const connectors = [
+  const connectors: Array<FuelConnector> = [
     new FuelWalletConnector(),
     new BakoSafeConnector(),
     new FueletWalletConnector(),
