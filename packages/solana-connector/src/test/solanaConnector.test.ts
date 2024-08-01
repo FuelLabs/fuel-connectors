@@ -67,7 +67,7 @@ describe('Solana Connector', () => {
       expect(solanaConnector).to.be.an.instanceOf(SolanaConnector);
       expect(solanaConnector.name).to.equal('Solana Wallets');
       expect(solanaConnector.connected).to.be.false;
-      expect(solanaConnector.installed).to.be.true;
+      expect(solanaConnector.installed).to.be.false;
       expect(await solanaConnector.currentNetwork()).to.be.deep.equal({
         chainId: 0,
         url: TESTNET_URL,
@@ -84,7 +84,7 @@ describe('Solana Connector', () => {
       expect(solanaConnector).to.be.an.instanceOf(SolanaConnector);
       expect(solanaConnector.name).to.equal('Solana Wallets');
       expect(solanaConnector.connected).to.be.false;
-      expect(solanaConnector.installed).to.be.true;
+      expect(solanaConnector.installed).to.be.false;
       expect(await solanaConnector.currentNetwork()).to.be.deep.equal({
         chainId: 0,
         url: fuelProvider.url,
@@ -101,7 +101,7 @@ describe('Solana Connector', () => {
       expect(solanaConnector).to.be.an.instanceOf(SolanaConnector);
       expect(solanaConnector.name).to.equal('Solana Wallets');
       expect(solanaConnector.connected).to.be.false;
-      expect(solanaConnector.installed).to.be.true;
+      expect(solanaConnector.installed).to.be.false;
       expect(await solanaConnector.currentNetwork()).to.be.deep.equal({
         chainId: 0,
         url: fuelProvider.url,
