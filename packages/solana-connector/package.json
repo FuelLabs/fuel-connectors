@@ -24,7 +24,7 @@
   "peerDependencies": {
     "@web3modal/scaffold": ">=5.0.0",
     "@web3modal/core": ">=5.0.0",
-    "fuels": ">=0.92.0"
+    "fuels": ">=0.93.0"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -36,9 +36,9 @@
     "tweetnacl": "1.0.3"
   },
   "devDependencies": {
-    "@fuel-ts/account": "0.92.0",
+    "@fuel-ts/account": "0.93.0",
     "@types/memoizee": "0.4.11",
-    "fuels": "0.92.0",
+    "fuels": "0.93.0",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
