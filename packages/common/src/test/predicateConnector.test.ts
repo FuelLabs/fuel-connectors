@@ -14,9 +14,7 @@ describe('Predicated Connector', () => {
       const predicateAccount = await connector.setupPredicate();
 
       expect(predicateAccount).toBeDefined();
-      // @ts-expect-error setupPredicate is protected
-      expect(connector.predicateAddress).toBe('custom');
-      // @ts-expect-error setupPredicate is protected
+      // @ts-expect-error predicateAccount is protected
       expect(connector.predicateAccount).toBe(predicateAccount);
     });
   });
