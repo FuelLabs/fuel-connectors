@@ -66,7 +66,7 @@ export abstract class PredicateConnector extends FuelConnector {
 
   protected abstract configProviders(config: ConnectorConfig): MaybeAsync<void>;
   protected abstract getWalletAdapter(): PredicateWalletAdapter;
-  protected abstract getPredicateVersions(): Record<string, Predicate>;
+  protected abstract getPredicate(): Predicate;
   protected abstract getAccountAddress(): MaybeAsync<Maybe<string>>;
   protected abstract getProviders(): MaybeAsync<ProviderDictionary>;
   protected abstract requireConnection(): MaybeAsync<void>;
@@ -80,72 +80,15 @@ export abstract class PredicateConnector extends FuelConnector {
   public abstract disconnect(): Promise<boolean>;
 
   protected async setupPredicate(): Promise<PredicateFactory> {
-    if (this.customPredicate?.abi && this.customPredicate?.bytecode) {
-      this.predicateAccount = new PredicateFactory(
-        this.getWalletAdapter(),
-        this.customPredicate,
-      );
-      this.predicateAddress = 'custom';
+    if (!this.getPredicate()) throw new Error('No predicate found');
 
-      return this.predicateAccount;
-    }
+    const predicate = this.getPredicate();
+    this.predicateAccount = new PredicateFactory(this.getWalletAdapter(), {
+      abi: predicate.abi,
+      bytecode: predicate.bytecode,
+    });
 
-    const predicateVersions = Object.entries(this.getPredicateVersions()).map(
-      ([key, pred]) => ({
-        pred,
-        key,
-      }),
-    );
-
-    let predicateWithBalance: Predicate | null = null;
-
-    for (const predicateVersion of predicateVersions) {
-      const predicateInstance = new PredicateFactory(this.getWalletAdapter(), {
-        abi: predicateVersion.pred.predicate.abi,
-        bytecode: predicateVersion.pred.predicate.bytecode,
-      });
-
-      const address = await this.getAccountAddress();
-      if (!address) {
-        continue;
-      }
-
-      const { fuelProvider } = await this.getProviders();
-      const predicate = predicateInstance.build(address, fuelProvider, [1]);
-
-      const balance = await predicate.getBalance();
-
-      if (balance.toString() !== bn(0).toString()) {
-        predicateWithBalance = predicateVersion.pred;
-        this.predicateAddress = predicateVersion.key;
-        break;
-      }
-    }
-
-    if (predicateWithBalance) {
-      this.predicateAccount = new PredicateFactory(this.getWalletAdapter(), {
-        abi: predicateWithBalance.predicate.abi,
-        bytecode: predicateWithBalance.predicate.bytecode,
-      });
-
-      return this.predicateAccount;
-    }
-
-    const newestPredicate = predicateVersions.sort(
-      (a, b) => Number(b.pred.generatedAt) - Number(a.pred.generatedAt),
-    )[0];
-
-    if (newestPredicate) {
-      this.predicateAccount = new PredicateFactory(this.getWalletAdapter(), {
-        abi: newestPredicate.pred.predicate.abi,
-        bytecode: newestPredicate.pred.predicate.bytecode,
-      });
-      this.predicateAddress = newestPredicate.key;
-
-      return this.predicateAccount;
-    }
-
-    throw new Error('No predicate found');
+    return this.predicateAccount;
   }
 
   protected subscribe(listener: () => void) {

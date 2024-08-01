@@ -4,8 +4,8 @@
 /* eslint-disable */
 
 /*
-  Fuels version: 0.93.0
-  Forc version: 0.62.0
+  Fuels version: 0.92.0
+  Forc version: 0.61.2
   Fuel-Core version: 0.31.0
 */
 
@@ -20,11 +20,11 @@ import type {
   InvokeFunction,
 } from 'fuels';
 
-export type VerificationPredicateAbiConfigurables = Partial<{
+export type VerificationPredicateAbiConfigurables = {
   SIGNER: string;
-}>;
+};
 
-export interface VerificationPredicateAbiInterface extends Interface {
+interface VerificationPredicateAbiInterface extends Interface {
   functions: {
     main: FunctionFragment;
   };

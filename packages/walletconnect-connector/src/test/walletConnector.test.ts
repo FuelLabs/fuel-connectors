@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { hexToBytes } from '@ethereumjs/util';
 import { PredicateFactory } from '@fuel-connectors/common';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
 import { type Asset, type Network, Provider } from 'fuels';
@@ -12,15 +13,18 @@ import {
 } from 'vitest';
 import { WalletConnectConnector } from '../WalletConnectConnector';
 import { TESTNET_URL } from '../constants';
-import { VERSIONS } from './mocked-versions/versions-dictionary';
+import { VerificationPredicateAbi__factory } from './mocked-predicate';
+import hex from './mocked-predicate/VerificationPredicateAbi.hex';
 
 describe('WalletConnect Connector', () => {
-  let connector: WalletConnectConnector;
-
+  const predicate = {
+    abi: VerificationPredicateAbi__factory.abi,
+    bytecode: hexToBytes(hex),
+  };
   const snapshotPath = path.join(__dirname, '');
 
+  let connector: WalletConnectConnector;
   let fuelProvider: Provider;
-
   let stopProvider: () => void;
 
   function connectorFactory(
@@ -137,11 +141,8 @@ describe('WalletConnect Connector', () => {
 
   describe('setupPredicate()', () => {
     test('should setup predicate with given config', async () => {
-      const version =
-        '0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33';
-
       const walletConectconnector = connectorFactory({
-        predicateConfig: VERSIONS[version].predicate,
+        predicateConfig: predicate,
       });
 
       // @ts-expect-error predicateConfig is protected

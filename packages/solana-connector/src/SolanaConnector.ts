@@ -1,3 +1,4 @@
+import { hexToBytes } from '@ethereumjs/util';
 import {
   type Maybe,
   type Predicate,
@@ -17,8 +18,9 @@ import {
   Provider as FuelProvider,
   type TransactionRequestLike,
 } from 'fuels';
-import { VERSIONS } from '../versions/versions-dictionary';
 import { SOLANA_ICON, TESTNET_URL } from './constants';
+import hex from './generated/predicates/VerificationPredicateAbi.hex';
+import { VerificationPredicateAbi__factory } from './generated/predicates/factories/VerificationPredicateAbi__factory';
 import type { SolanaConfig } from './types';
 import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
 
@@ -140,8 +142,11 @@ export class SolanaConnector extends PredicateConnector {
     return new SolanaWalletAdapter();
   }
 
-  protected getPredicateVersions(): Record<string, Predicate> {
-    return VERSIONS;
+  protected getPredicate(): Predicate {
+    return {
+      abi: VerificationPredicateAbi__factory.abi,
+      bytecode: hexToBytes(hex),
+    };
   }
 
   protected async configProviders(config: SolanaConfig = {}) {

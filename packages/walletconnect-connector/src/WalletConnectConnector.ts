@@ -28,8 +28,9 @@ import {
   getSignatureIndex,
 } from '@fuel-connectors/common';
 import { ApiController } from '@web3modal/core';
-import { VERSIONS } from '../versions/versions-dictionary';
 import { ETHEREUM_ICON, TESTNET_URL } from './constants';
+import hex from './generated/predicates/VerificationPredicateAbi.hex';
+import { VerificationPredicateAbi__factory } from './generated/predicates/factories/VerificationPredicateAbi__factory';
 import type { WalletConnectConfig } from './types';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
@@ -133,8 +134,11 @@ export class WalletConnectConnector extends PredicateConnector {
     return new EthereumWalletAdapter();
   }
 
-  protected getPredicateVersions(): Record<string, Predicate> {
-    return VERSIONS;
+  protected getPredicate(): Predicate {
+    return {
+      abi: VerificationPredicateAbi__factory.abi,
+      bytecode: hexToBytes(hex),
+    };
   }
 
   protected async configProviders(config: WalletConnectConfig = {}) {

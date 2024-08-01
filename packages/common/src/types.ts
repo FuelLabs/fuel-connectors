@@ -17,43 +17,40 @@ export interface PredicateTypeComponents {
 }
 
 export interface Predicate {
-  predicate: {
-    abi: {
-      types: {
-        typeId: number;
-        type: string;
-        components: PredicateTypeComponents[] | null;
-        typeParameters: null;
-      }[];
-      functions: {
-        inputs: {
-          name: string;
-          type: number;
-          typeArguments: null;
-        }[];
+  abi: {
+    types: {
+      typeId: number;
+      type: string;
+      components: PredicateTypeComponents[] | null;
+      typeParameters: null;
+    }[];
+    functions: {
+      inputs: {
         name: string;
-        output: {
-          name: string;
-          type: number;
-          typeArguments: null;
-        };
-        attributes: null;
+        type: number;
+        typeArguments: null;
       }[];
-      loggedTypes: never[];
-      messagesTypes: never[];
-      configurables: {
+      name: string;
+      output: {
         name: string;
-        configurableType: {
-          name: string;
-          type: number;
-          typeArguments: never[] | null;
-        };
-        offset: number;
-      }[];
-    };
-    bytecode: Uint8Array;
+        type: number;
+        typeArguments: null;
+      };
+      attributes: null;
+    }[];
+    loggedTypes: never[];
+    messagesTypes: never[];
+    configurables: {
+      name: string;
+      configurableType: {
+        name: string;
+        type: number;
+        typeArguments: never[] | null;
+      };
+      offset: number;
+    }[];
   };
-  generatedAt: number;
+  bytecode: Uint8Array;
 }
 
 export interface EIP1193Provider extends EventEmitter {

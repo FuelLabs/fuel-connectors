@@ -9,6 +9,6 @@
   Fuel-Core version: 0.31.0
 */
 
-export type { VerificationPredicateAbi } from './VerificationPredicateAbi';
+export type { VerificationPredicateAbiInputs } from './factories/VerificationPredicateAbi__factory';
 
 export { VerificationPredicateAbi__factory } from './factories/VerificationPredicateAbi__factory';

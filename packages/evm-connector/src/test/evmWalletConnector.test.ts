@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { hexToBytes } from '@ethereumjs/util';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
 import {
   Address,
@@ -22,19 +23,15 @@ import {
   expect,
   test,
 } from 'vitest';
+import { EVMWalletConnector } from '../EvmWalletConnector';
 import { MockProvider } from './mockProvider';
-import { VERSIONS } from './mocked-versions/versions-dictionary';
-import { testEVMWalletConnector as EVMWalletConnector } from './testConnector';
+import { VerificationPredicateAbi__factory } from './mocked-predicate';
+import hex from './mocked-predicate/VerificationPredicateAbi.hex';
 import {
   build,
   getPredicateAddress,
   getPredicateAddresses,
 } from './utils/predicateFactory';
-import { Utils } from './utils/versions';
-
-const predicate =
-  VERSIONS['0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac']
-    .predicate;
 
 const MAX_FEE = bn(10_000);
 
@@ -97,12 +94,14 @@ async function createTransaction(
 }
 
 describe('EVM Wallet Connector', () => {
+  const predicate = {
+    abi: VerificationPredicateAbi__factory.abi,
+    bytecode: hexToBytes(hex),
+  };
   // Providers used to interact with wallets
   let ethProvider: MockProvider;
   let fuelProvider: Provider;
-
   let baseAssetId: string;
-
   let stopProvider: () => void;
 
   const snapshotPath = path.join(__dirname, 'chain_config');
@@ -264,9 +263,6 @@ describe('EVM Wallet Connector', () => {
       '0x0101010101010101010101010101010101010101010101010101010101010101';
 
     test.skip('transfer when the current signer is passed in', async () => {
-      const version =
-        '0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac';
-
       const accounts = ethProvider.getAccounts();
       const ethAccount1 = accounts[0] as string;
 
@@ -304,7 +300,7 @@ describe('EVM Wallet Connector', () => {
       const connector = new EVMWalletConnector({
         ethProvider,
         fuelProvider,
-        predicateConfig: VERSIONS[version].predicate,
+        predicateConfig: predicate,
       });
 
       // Check predicate balances
@@ -342,9 +338,6 @@ describe('EVM Wallet Connector', () => {
     });
 
     test.skip('transfer when a different valid signer is passed in', async () => {
-      const version =
-        '0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac';
-
       const accounts = ethProvider.getAccounts();
       const ethAccount1 = accounts[1] as string;
 
@@ -382,7 +375,7 @@ describe('EVM Wallet Connector', () => {
       const connector = new EVMWalletConnector({
         ethProvider,
         fuelProvider,
-        predicateConfig: VERSIONS[version].predicate,
+        predicateConfig: predicate,
       });
 
       // Check predicate balances
@@ -482,13 +475,10 @@ describe('EVM Wallet Connector', () => {
 
   describe('setupPredicate()', () => {
     test('Should instantiate a predicate with given config', async () => {
-      const version =
-        '0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac';
-
       const evmConnector = new EVMWalletConnector({
         ethProvider,
         fuelProvider,
-        predicateConfig: VERSIONS[version].predicate,
+        predicateConfig: predicate,
       });
 
       await evmConnector.connect();
@@ -497,40 +487,19 @@ describe('EVM Wallet Connector', () => {
       expect(evmConnector.predicateAddress).to.be.equal('custom');
     });
 
-    test('Should instantiate a newest predicate', async () => {
-      const latestVersion = Utils.getLatestVersion();
-
-      const evmConnector = new EVMWalletConnector({
-        ethProvider,
-        fuelProvider,
-      });
-
-      await evmConnector.connect();
-
-      // @ts-expect-error predicateAddress is protected
-      expect(evmConnector.predicateAddress).to.be.equal(latestVersion);
-    });
-
     test('Should instantiate a predicate with balance', async () => {
       const ALT_ASSET_ID =
         '0x0101010101010101010101010101010101010101010101010101010101010101';
-      const version =
-        '0x25acef54b039107f213125f567991d98e0c83dc3be8cf5a984394b1960c055ac';
-
       const accounts = ethProvider.getAccounts();
       const ethAccount1 = accounts[0] as string;
 
       let connector = new EVMWalletConnector({
         ethProvider,
         fuelProvider,
-        predicateConfig: VERSIONS[version].predicate,
+        predicateConfig: predicate,
       });
 
-      const createdPredicate = build(
-        ethAccount1,
-        VERSIONS[version].predicate,
-        fuelProvider,
-      );
+      const createdPredicate = build(ethAccount1, predicate, fuelProvider);
 
       const fundingWallet = new WalletUnlocked('0x01', fuelProvider);
 
