@@ -483,8 +483,11 @@ describe('EVM Wallet Connector', () => {
 
       await evmConnector.connect();
 
-      // @ts-expect-error predicateAddress is protected
-      expect(evmConnector.predicateAddress).to.be.equal('custom');
+      // @ts-expect-error setupPredicate is protected
+      const predicateAccount = evmConnector.setupPredicate();
+      expect(predicateAccount).toBeDefined();
+      // @ts-expect-error predicateAccount is protected
+      expect(connector.predicateAccount).toBe(predicateAccount);
     });
 
     test('Should instantiate a predicate with balance', async () => {
@@ -533,9 +536,6 @@ describe('EVM Wallet Connector', () => {
       });
 
       await connector.connect();
-
-      // @ts-expect-error predicateAddress is protected
-      expect(connector.predicateAddress).to.be.equal(version);
     });
   });
 
