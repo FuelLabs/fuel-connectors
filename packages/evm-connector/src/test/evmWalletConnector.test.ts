@@ -484,7 +484,7 @@ describe('EVM Wallet Connector', () => {
       await evmConnector.connect();
 
       // @ts-expect-error setupPredicate is protected
-      const predicateAccount = evmConnector.setupPredicate();
+      const predicateAccount = await evmConnector.setupPredicate();
       expect(predicateAccount).toBeDefined();
       // @ts-expect-error predicateAccount is protected
       expect(evmConnector.predicateAccount).toBe(predicateAccount);
