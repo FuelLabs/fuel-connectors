@@ -10,7 +10,6 @@ overrides:
   ws@>=7.0.0 <7.5.10: '>=7.5.10'
   ws@>=6.0.0 <6.2.3: '>=6.2.3'
   fast-xml-parser@<4.4.1: '>=4.4.1'
-  '@fuel-ts/account@<0.93.0': '>=0.93.0'
 
 importers:
 
@@ -192,7 +191,7 @@ importers:
         version: 24.0.0
       tsup:
         specifier: 8.0.2
-        version: 8.0.2(typescript@5.4.5)
+        version: 8.0.2(ts-node@10.9.2)(typescript@5.4.5)
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -238,7 +237,7 @@ importers:
         version: 5.31.0
       tsup:
         specifier: 8.0.2
-        version: 8.0.2(typescript@5.4.5)
+        version: 8.0.2(ts-node@10.9.2)(typescript@5.4.5)
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -317,7 +316,7 @@ importers:
         version: 5.31.0
       tsup:
         specifier: 8.0.2
-        version: 8.0.2(typescript@5.4.5)
+        version: 8.0.2(ts-node@10.9.2)(typescript@5.4.5)
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -390,7 +389,7 @@ importers:
         version: 0.93.0
       tsup:
         specifier: 8.0.2
-        version: 8.0.2(typescript@5.4.5)
+        version: 8.0.2(ts-node@10.9.2)(typescript@5.4.5)
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -415,7 +414,7 @@ importers:
         version: 0.93.0
       tsup:
         specifier: 8.0.2
-        version: 8.0.2(typescript@5.4.5)
+        version: 8.0.2(ts-node@10.9.2)(typescript@5.4.5)
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -436,7 +435,7 @@ importers:
         version: 0.93.0
       tsup:
         specifier: 8.0.2
-        version: 8.0.2(typescript@5.4.5)
+        version: 8.0.2(ts-node@10.9.2)(typescript@5.4.5)
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -3629,6 +3628,35 @@ packages:
       ramda: 0.30.1
       rimraf: 5.0.9
 
+  /@fuel-ts/account@0.92.1:
+    resolution: {integrity: sha512-MGpf0nzq90y8nV8KdpVS0ghoH20/XR2FROFVFvSc7ldHxXATQLrMEfm2SR6Scxp014XEXuoKlWZZVj+76v4jCg==}
+    engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
+    dependencies:
+      '@fuel-ts/abi-coder': 0.92.1
+      '@fuel-ts/address': 0.92.1
+      '@fuel-ts/crypto': 0.92.1
+      '@fuel-ts/errors': 0.92.1
+      '@fuel-ts/hasher': 0.92.1
+      '@fuel-ts/interfaces': 0.92.1
+      '@fuel-ts/math': 0.92.1
+      '@fuel-ts/merkle': 0.92.1
+      '@fuel-ts/transactions': 0.92.1
+      '@fuel-ts/utils': 0.92.1
+      '@fuel-ts/versions': 0.92.1
+      '@fuels/vm-asm': 0.55.0
+      '@noble/curves': 1.4.2
+      events: 3.3.0
+      graphql: 16.9.0
+      graphql-request: 5.0.0(graphql@16.9.0)
+      graphql-tag: 2.12.6(graphql@16.9.0)
+      portfinder: 1.0.32
+      ramda: 0.29.1
+      uuid: 10.0.0
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+    dev: true
+
   /@fuel-ts/account@0.93.0:
     resolution: {integrity: sha512-1Kiy/vWM7+QHgA/Bkw2l7+Q8dd6WVOYWQKS1r+b2DzS9MhCfJVxbWb9AoBKLgy7FiG53pKWVYbhkzx/beycnzw==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
@@ -3685,7 +3713,7 @@ packages:
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
     dependencies:
       '@fuel-ts/abi-coder': 0.92.1
-      '@fuel-ts/account': 0.93.0
+      '@fuel-ts/account': 0.92.1
       '@fuel-ts/crypto': 0.92.1
       '@fuel-ts/errors': 0.92.1
       '@fuel-ts/hasher': 0.92.1
@@ -3820,7 +3848,7 @@ packages:
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
     dependencies:
       '@fuel-ts/abi-coder': 0.92.1
-      '@fuel-ts/account': 0.93.0
+      '@fuel-ts/account': 0.92.1
       '@fuel-ts/address': 0.92.1
       '@fuel-ts/errors': 0.92.1
       '@fuel-ts/interfaces': 0.92.1
@@ -3857,7 +3885,7 @@ packages:
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
     dependencies:
       '@fuel-ts/abi-coder': 0.92.1
-      '@fuel-ts/account': 0.93.0
+      '@fuel-ts/account': 0.92.1
       '@fuel-ts/address': 0.92.1
       '@fuel-ts/errors': 0.92.1
       '@fuel-ts/interfaces': 0.92.1
@@ -9943,7 +9971,7 @@ packages:
     dependencies:
       '@fuel-ts/abi-coder': 0.92.1
       '@fuel-ts/abi-typegen': 0.92.1
-      '@fuel-ts/account': 0.93.0
+      '@fuel-ts/account': 0.92.1
       '@fuel-ts/address': 0.92.1
       '@fuel-ts/contract': 0.92.1
       '@fuel-ts/crypto': 0.92.1
@@ -14333,7 +14361,7 @@ packages:
       bundle-require: 4.0.2(esbuild@0.19.12)
       cac: 6.7.14
       chokidar: 3.6.0
-      debug: 4.3.4
+      debug: 4.3.5
       esbuild: 0.19.12
       execa: 5.1.1
       globby: 11.1.0
@@ -14372,45 +14400,6 @@ packages:
       bundle-require: 4.0.2(esbuild@0.19.12)
       cac: 6.7.14
       chokidar: 3.6.0
-      debug: 4.3.4
-      esbuild: 0.19.12
-      execa: 5.1.1
-      globby: 11.1.0
-      joycon: 3.1.1
-      postcss-load-config: 4.0.2(ts-node@10.9.2)
-      resolve-from: 5.0.0
-      rollup: 4.13.0
-      source-map: 0.8.0-beta.0
-      sucrase: 3.35.0
-      tree-kill: 1.2.2
-      typescript: 5.4.2
-    transitivePeerDependencies:
-      - supports-color
-      - ts-node
-    dev: true
-
-  /tsup@8.0.2(typescript@5.4.5):
-    resolution: {integrity: sha512-NY8xtQXdH7hDUAZwcQdY/Vzlw9johQsaqf7iwZ6g1DOUlFYQ5/AtVAjTvihhEyeRlGo4dLRVHtrRaL35M1daqQ==}
-    engines: {node: '>=18'}
-    hasBin: true
-    peerDependencies:
-      '@microsoft/api-extractor': ^7.36.0
-      '@swc/core': ^1
-      postcss: ^8.4.12
-      typescript: '>=4.5.0'
-    peerDependenciesMeta:
-      '@microsoft/api-extractor':
-        optional: true
-      '@swc/core':
-        optional: true
-      postcss:
-        optional: true
-      typescript:
-        optional: true
-    dependencies:
-      bundle-require: 4.0.2(esbuild@0.19.12)
-      cac: 6.7.14
-      chokidar: 3.6.0
       debug: 4.3.5
       esbuild: 0.19.12
       execa: 5.1.1
@@ -14422,7 +14411,7 @@ packages:
       source-map: 0.8.0-beta.0
       sucrase: 3.35.0
       tree-kill: 1.2.2
-      typescript: 5.4.5
+      typescript: 5.4.2
     transitivePeerDependencies:
       - supports-color
       - ts-node
