@@ -1,5 +1,5 @@
-import type { Asset, Network, Provider } from 'fuels';
-import { beforeAll, describe, expect, test } from 'vitest';
+import type { Asset, Network } from 'fuels';
+import { describe, expect, test } from 'vitest';
 import { predicate } from './mockPredicate';
 import { TestPredicatedConnector } from './testConnector';
 

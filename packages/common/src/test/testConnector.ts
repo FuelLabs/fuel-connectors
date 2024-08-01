@@ -30,7 +30,7 @@ export class TestPredicatedConnector extends PredicateConnector {
     return new SolanaWalletAdapter();
   }
 
-  protected getPredicateVersions(): Record<string, Predicate> {
+  protected getPredicate(): Predicate {
     throw new Error('Method not implemented.');
   }
 
