@@ -13,14 +13,10 @@ import {
 } from 'vitest';
 import { WalletConnectConnector } from '../WalletConnectConnector';
 import { TESTNET_URL } from '../constants';
-import { VerificationPredicateAbi__factory } from './mocked-predicate';
-import hex from './mocked-predicate/VerificationPredicateAbi.hex';
+import versions from './mockedPredicate';
 
 describe('WalletConnect Connector', () => {
-  const predicate = {
-    abi: VerificationPredicateAbi__factory.abi,
-    bytecode: hexToBytes(hex),
-  };
+  const predicate = Object.values(versions)[0]?.predicate;
   const snapshotPath = path.join(__dirname, '');
 
   let connector: WalletConnectConnector;

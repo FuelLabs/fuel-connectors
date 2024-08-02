@@ -1,6 +1,7 @@
 import {
   Address,
   type B256Address,
+  type BytesLike,
   Predicate as FuelPredicate,
   type InputValue,
   type JsonAbi,
@@ -9,51 +10,9 @@ import {
   getPredicateRoot,
 } from 'fuels';
 
-export interface PredicateConfig {
-  abi: JsonAbi;
-  bytecode: Uint8Array;
-}
-interface PredicateTypeComponents {
-  name: string;
-  type: number;
-  typeArguments: null;
-}
-
 export interface Predicate {
-  abi: {
-    types: {
-      typeId: number;
-      type: string;
-      components: PredicateTypeComponents[] | null;
-      typeParameters: null;
-    }[];
-    functions: {
-      inputs: {
-        name: string;
-        type: number;
-        typeArguments: null;
-      }[];
-      name: string;
-      output: {
-        name: string;
-        type: number;
-        typeArguments: null;
-      };
-      attributes: null;
-    }[];
-    loggedTypes: never[];
-    messagesTypes: never[];
-    configurables: {
-      name: string;
-      configurableType: {
-        name: string;
-        type: number;
-        typeArguments: never[] | null;
-      };
-      offset: number;
-    }[];
-  };
-  bytecode: Uint8Array;
+  abi: JsonAbi;
+  bin: BytesLike;
 }
 
 const convertAddress = (address: string): string => {
@@ -73,7 +32,7 @@ export const getPredicateAddress = (
 ): string => {
   // @ts-expect-error processPredicateData is only available in the Predicate class
   const { predicateBytes } = FuelPredicate.processPredicateData(
-    predicate.bytecode,
+    predicate.bin,
     predicate.abi,
     {
       SIGNER: convertAddress(address),
@@ -89,7 +48,7 @@ export const build = <T extends InputValue[]>(
   inputData?: T,
 ) =>
   new FuelPredicate({
-    bytecode: arrayify(predicate.bytecode),
+    bytecode: arrayify(predicate.bin),
     abi: predicate.abi,
     provider,
     configurableConstants: {

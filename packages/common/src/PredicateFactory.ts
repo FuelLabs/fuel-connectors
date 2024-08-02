@@ -15,25 +15,23 @@ import {
 } from 'fuels';
 import memoize from 'memoizee';
 import type { PredicateWalletAdapter } from './PredicateWalletAdapter';
-import type { Maybe } from './types';
-
-export interface PredicateInput {
-  abi: JsonAbi;
-  bytecode: Uint8Array;
-}
+import type { Maybe, PredicateConfig } from './types';
 
 export class PredicateFactory {
   private abi: JsonAbi;
-  private bytecode: Uint8Array;
+  private bytecode: BytesLike;
   private adapter: PredicateWalletAdapter;
+  private root: BytesLike = ZeroBytes32;
 
   constructor(
     adapter: PredicateWalletAdapter,
-    { abi, bytecode }: PredicateInput,
+    { abi, bin }: PredicateConfig,
+    root: BytesLike,
   ) {
     this.adapter = adapter;
     this.abi = abi;
-    this.bytecode = bytecode;
+    this.bytecode = bin;
+    this.root = root;
   }
 
   getPredicateAddress = memoize((address: string | B256Address): string => {
@@ -103,6 +101,9 @@ export class PredicateFactory {
 
     return bn();
   });
+
+  equals = (predicate: Maybe<PredicateFactory>): boolean =>
+    !!predicate && predicate.root === this.root;
 }
 
 /**

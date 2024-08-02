@@ -1,15 +1,13 @@
 import {
   type AbiMap,
+  Address,
   type Asset,
+  type BytesLike,
   type ConnectorMetadata,
   FuelConnector,
   FuelConnectorEventTypes,
-  type Predicate as FuelPredicate,
-  type Provider as FuelProvider,
-  type InputValue,
   type JsonAbi,
   type Network,
-  type TransactionRequest,
   type TransactionRequestLike,
   type Version,
   ZeroBytes32,
@@ -19,58 +17,30 @@ import {
   transactionRequestify,
 } from 'fuels';
 
-import {
-  PredicateFactory,
-  type PredicateInput,
-  getSignatureIndex,
-} from './PredicateFactory';
+import { PredicateFactory, getSignatureIndex } from './PredicateFactory';
 import type { PredicateWalletAdapter } from './PredicateWalletAdapter';
 import type {
-  EIP1193Provider,
+  ConnectorConfig,
   Maybe,
   MaybeAsync,
-  Option,
   Predicate,
+  PredicateConfig,
+  PredicateWithAddress,
+  PreparedTransaction,
+  ProviderDictionary,
 } from './types';
 
-export type ConnectorConfig = {
-  [key: string]: unknown;
-  predicateConfig?: PredicateInput;
-};
-
-export type ProviderDictionary = {
-  fuelProvider: FuelProvider;
-  ethProvider?: EIP1193Provider;
-  [key: string]: Maybe<Option<FuelProvider, EIP1193Provider>>;
-};
-
-export type PreparedTransaction = {
-  predicate: FuelPredicate<InputValue[]>;
-  request: TransactionRequest;
-  transactionId: string;
-  account: string;
-  transactionRequest: TransactionRequest;
-};
-
 export abstract class PredicateConnector extends FuelConnector {
-  public abstract name: string;
-  public abstract metadata: ConnectorMetadata;
   public connected = false;
   public installed = false;
   public events = FuelConnectorEventTypes;
-
-  protected predicateAddress: Maybe<string> = null;
-  protected customPredicate: Maybe<PredicateInput>;
+  protected predicateAddress!: string;
+  protected customPredicate: Maybe<PredicateConfig>;
   protected predicateAccount: Maybe<PredicateFactory> = null;
   protected subscriptions: Array<() => void> = [];
 
-  protected abstract configProviders(config: ConnectorConfig): MaybeAsync<void>;
-  protected abstract getWalletAdapter(): PredicateWalletAdapter;
-  protected abstract getPredicate(): Predicate;
-  protected abstract getAccountAddress(): MaybeAsync<Maybe<string>>;
-  protected abstract getProviders(): MaybeAsync<ProviderDictionary>;
-  protected abstract requireConnection(): MaybeAsync<void>;
-  protected abstract walletAccounts(): Promise<Array<string>>;
+  public abstract name: string;
+  public abstract metadata: ConnectorMetadata;
 
   public abstract sendTransaction(
     address: string,
@@ -79,14 +49,82 @@ export abstract class PredicateConnector extends FuelConnector {
   public abstract connect(): Promise<boolean>;
   public abstract disconnect(): Promise<boolean>;
 
-  protected async setupPredicate(): Promise<PredicateFactory> {
-    if (!this.getPredicate()) throw new Error('No predicate found');
+  protected abstract configProviders(config: ConnectorConfig): MaybeAsync<void>;
+  protected abstract getWalletAdapter(): PredicateWalletAdapter;
+  protected abstract getPredicateVersions(): Record<string, Predicate>;
+  protected abstract getAccountAddress(): MaybeAsync<Maybe<string>>;
+  protected abstract getProviders(): MaybeAsync<ProviderDictionary>;
+  protected abstract requireConnection(): MaybeAsync<void>;
+  protected abstract walletAccounts(): Promise<Array<string>>;
 
-    const predicate = this.getPredicate();
-    this.predicateAccount = new PredicateFactory(this.getWalletAdapter(), {
-      abi: predicate.abi,
-      bytecode: predicate.bytecode,
-    });
+  protected async getBalancedPredicate(): Promise<Maybe<PredicateWithAddress>> {
+    const predicateVersions = Object.entries(this.getPredicateVersions()).map(
+      ([key, pred]) => ({
+        pred,
+        key,
+      }),
+    );
+
+    for (const predicateVersion of predicateVersions) {
+      const predicateInstance = new PredicateFactory(
+        this.getWalletAdapter(),
+        predicateVersion.pred.predicate,
+        predicateVersion.key,
+      );
+
+      const address = await this.getAccountAddress();
+      if (!address) {
+        continue;
+      }
+
+      const { fuelProvider } = await this.getProviders();
+      const predicate = predicateInstance.build(address, fuelProvider, [1]);
+
+      const balance = await predicate.getBalance();
+
+      if (balance.toString() !== bn(0).toString()) {
+        return predicateVersion;
+      }
+    }
+
+    return null;
+  }
+
+  protected getNewestPredicate(): Maybe<PredicateWithAddress> {
+    const predicateVersions = Object.entries(this.getPredicateVersions()).map(
+      ([key, pred]) => ({
+        pred,
+        key,
+      }),
+    );
+
+    return predicateVersions.sort(
+      (a, b) => Number(b.pred.generatedAt) - Number(a.pred.generatedAt),
+    )[0];
+  }
+
+  protected async setupPredicate(): Promise<PredicateFactory> {
+    if (this.customPredicate?.abi && this.customPredicate?.bin) {
+      this.predicateAccount = new PredicateFactory(
+        this.getWalletAdapter(),
+        this.customPredicate,
+        'custom',
+      );
+      this.predicateAddress = 'custom';
+
+      return this.predicateAccount;
+    }
+
+    const predicate =
+      (await this.getBalancedPredicate()) ?? this.getNewestPredicate();
+    if (!predicate) throw new Error('No predicate found');
+
+    this.predicateAddress = predicate.key;
+    this.predicateAccount = new PredicateFactory(
+      this.getWalletAdapter(),
+      predicate.pred.predicate,
+      predicate.key,
+    );
 
     return this.predicateAccount;
   }

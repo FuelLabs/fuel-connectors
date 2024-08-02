@@ -22,8 +22,7 @@ import {
   getSignatureIndex,
 } from '@fuel-connectors/common';
 import { METAMASK_ICON, TESTNET_URL, WINDOW } from './constants';
-import hex from './generated/predicates/VerificationPredicateAbi.hex';
-import { VerificationPredicateAbi__factory } from './generated/predicates/factories/VerificationPredicateAbi__factory';
+import versions from './generated/predicates';
 import {
   type EIP1193Provider,
   type EVMWalletConnectorConfig,
@@ -125,11 +124,8 @@ export class EVMWalletConnector extends PredicateConnector {
     return new EthereumWalletAdapter();
   }
 
-  protected getPredicate(): Predicate {
-    return {
-      abi: VerificationPredicateAbi__factory.abi,
-      bytecode: hexToBytes(hex),
-    };
+  protected getPredicateVersions(): Record<string, Predicate> {
+    return versions;
   }
 
   protected requireConnection(): MaybeAsync<void> {}

@@ -4,5 +4,5 @@ import { defineConfig } from 'tsup';
 export default defineConfig((options) => ({
   ...baseConfig(options, { withReact: false }),
   external: ['fuels'],
-  entry: ['src/index.ts'],
+  entry: ['src/index.ts', 'scripts/index.ts'],
 }));

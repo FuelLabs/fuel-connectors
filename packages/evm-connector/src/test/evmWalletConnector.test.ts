@@ -1,11 +1,10 @@
 import path from 'node:path';
-import { hexToBytes } from '@ethereumjs/util';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
 import {
   Address,
   type Asset,
+  type Predicate as FuelPredicate,
   InputType,
-  type Predicate,
   type Provider,
   ScriptTransactionRequest,
   Wallet,
@@ -25,9 +24,9 @@ import {
 } from 'vitest';
 import { EVMWalletConnector } from '../EvmWalletConnector';
 import { MockProvider } from './mockProvider';
-import { VerificationPredicateAbi__factory } from './mocked-predicate';
-import hex from './mocked-predicate/VerificationPredicateAbi.hex';
+import versions from './mockedPredicate';
 import {
+  type Predicate,
   build,
   getPredicateAddress,
   getPredicateAddresses,
@@ -36,7 +35,7 @@ import {
 const MAX_FEE = bn(10_000);
 
 async function createTransaction(
-  predicate: Predicate<number[]>,
+  predicate: FuelPredicate<number[]>,
   address: string,
 ) {
   const ALT_ASSET_ID =
@@ -94,10 +93,7 @@ async function createTransaction(
 }
 
 describe('EVM Wallet Connector', () => {
-  const predicate = {
-    abi: VerificationPredicateAbi__factory.abi,
-    bytecode: hexToBytes(hex),
-  };
+  const predicate = Object.values(versions)[0]?.predicate as Predicate;
   // Providers used to interact with wallets
   let ethProvider: MockProvider;
   let fuelProvider: Provider;

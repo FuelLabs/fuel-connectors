@@ -19,8 +19,7 @@ import {
   type TransactionRequestLike,
 } from 'fuels';
 import { SOLANA_ICON, TESTNET_URL } from './constants';
-import hex from './generated/predicates/VerificationPredicateAbi.hex';
-import { VerificationPredicateAbi__factory } from './generated/predicates/factories/VerificationPredicateAbi__factory';
+import versions from './generated/predicates';
 import type { SolanaConfig } from './types';
 import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
 
@@ -37,7 +36,6 @@ export class SolanaConnector extends PredicateConnector {
   };
 
   protected fuelProvider!: FuelProvider;
-  protected predicateAddress: string | null = null;
 
   private web3Modal!: Web3Modal;
   private config: SolanaConfig = {};
@@ -142,11 +140,8 @@ export class SolanaConnector extends PredicateConnector {
     return new SolanaWalletAdapter();
   }
 
-  protected getPredicate(): Predicate {
-    return {
-      abi: VerificationPredicateAbi__factory.abi,
-      bytecode: hexToBytes(hex),
-    };
+  protected getPredicateVersions(): Record<string, Predicate> {
+    return versions;
   }
 
   protected async configProviders(config: SolanaConfig = {}) {
@@ -167,6 +162,8 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   protected getAccountAddress(): Maybe<string> {
+    if (!this.web3Modal) return null;
+
     return this.web3Modal.getAddress();
   }
 

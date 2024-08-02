@@ -9,6 +9,11 @@
       "require": "./dist/index.js",
       "import": "./dist/index.mjs",
       "types": "./dist/index.d.ts"
+    },
+    "./scripts": {
+      "require": "./dist/scripts/index.js",
+      "import": "./dist/scripts/index.mjs",
+      "types": "./dist/scripts/index.d.ts"
     }
   },
   "files": ["dist"],
@@ -18,7 +23,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.88.1"
+    "fuels": ">=0.93.0"
   },
   "dependencies": {
     "@ethersproject/bytes": "5.7.0",
@@ -30,7 +35,7 @@
   },
   "devDependencies": {
     "@types/memoizee": "0.4.11",
-    "fuels": "0.92",
+    "fuels": "0.93.0",
     "terser": "5.31.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5",

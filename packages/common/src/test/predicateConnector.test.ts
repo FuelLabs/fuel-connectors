@@ -1,6 +1,6 @@
 import type { Asset, Network } from 'fuels';
 import { describe, expect, test } from 'vitest';
-import { predicate } from './mockPredicate';
+import versions from './mockedPredicate';
 import { TestPredicatedConnector } from './testConnector';
 
 describe('Predicated Connector', () => {
@@ -9,7 +9,7 @@ describe('Predicated Connector', () => {
   describe('setupPredicate()', () => {
     test('custom predicate', async () => {
       // @ts-expect-error customPredicate is protected
-      connector.customPredicate = predicate;
+      connector.customPredicate = Object.values(versions)[0];
       // @ts-expect-error setupPredicate is protected
       const predicateAccount = await connector.setupPredicate();
 

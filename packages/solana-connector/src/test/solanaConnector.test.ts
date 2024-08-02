@@ -13,14 +13,10 @@ import {
 } from 'vitest';
 import { SolanaConnector } from '../SolanaConnector';
 import { TESTNET_URL } from '../constants';
-import { VerificationPredicateAbi__factory } from './mocked-predicate';
-import hex from './mocked-predicate/VerificationPredicateAbi.hex';
+import versions from './mockedPredicate';
 
 describe('Solana Connector', () => {
-  const predicate = {
-    abi: VerificationPredicateAbi__factory.abi,
-    bytecode: hexToBytes(hex),
-  };
+  const predicate = Object.values(versions)[0]?.predicate;
   const projectId = '0000';
   const snapshotPath = path.join(__dirname, '');
 
