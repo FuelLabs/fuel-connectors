@@ -154,7 +154,17 @@ export abstract class PredicateConnector extends FuelConnector {
     if (!walletAccount) {
       throw Error(`No account found for ${address}`);
     }
+
     const transactionRequest = transactionRequestify(transaction);
+    const newestPredicate = this.getNewestPredicate();
+    if (!!newestPredicate && this.predicateAddress !== newestPredicate.key) {
+      const coinInput = transactionRequest.getCoinInputs();
+      transactionRequest.addChangeOutput(
+        Address.fromAddressOrString(newestPredicate.key),
+        coinInput[0]?.assetId as BytesLike,
+      );
+    }
+
     const transactionFee = transactionRequest.maxFee.toNumber();
     const predicateSignatureIndex = getSignatureIndex(
       transactionRequest.witnesses,
