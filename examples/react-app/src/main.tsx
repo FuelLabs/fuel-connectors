@@ -4,6 +4,9 @@ import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
+import Capsule, { Environment } from '@usecapsule/react-sdk';
+import { capsuleConnector } from '@usecapsule/wagmi-v2-integration';
+
 import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
 import { http, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
@@ -18,6 +21,12 @@ import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import './index.css';
 
 const queryClient = new QueryClient();
+
+const capsule = new Capsule(
+  Environment.BETA,
+  '9e1ce73625425f6bd64fc79ab7ea7028',
+  {},
+);
 
 // ============================================================
 // WalletConnect Connector configurations
@@ -48,6 +57,12 @@ const wagmiConfig = createConfig({
       appLogoUrl: METADATA.icons[0],
       darkMode: true,
       reloadOnDisconnect: true,
+    }),
+    capsuleConnector({
+      chains: [mainnet, sepolia],
+      appName: METADATA.name,
+      capsule,
+      options: {},
     }),
   ],
 });
