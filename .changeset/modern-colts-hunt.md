@@ -11,6 +11,5 @@
 "@fuels/react": minor
 ---
 
-- Moved @fuels/react from npm-packs to connectors
 - Bumped packages version from `0.9.0` to `0.23.0` following react package's version
 - Updated react-next example to use `defaultConnectors` from @fuels/connectors package
