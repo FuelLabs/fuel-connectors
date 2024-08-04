@@ -40,6 +40,7 @@
     "fuels": "0.93.0",
     "react": "^18.2.0",
     "styled-components": "^6.1.1",
-    "tsup": "^7.2.0"
+    "tsup": "^7.2.0",
+    "typescript": "5.4.5"
   }
 }
