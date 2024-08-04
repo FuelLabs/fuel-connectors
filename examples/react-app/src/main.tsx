@@ -61,7 +61,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           connectors: defaultConnectors({
             devMode: true,
             wcProjectId: WC_PROJECT_ID,
-            wagmiConfig,
+            ethWagmiConfig: wagmiConfig,
           }),
         }}
       >
