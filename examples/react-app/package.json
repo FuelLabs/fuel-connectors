@@ -21,8 +21,7 @@
     "clsx": "2.1.1",
     "fuels": "0.93.0",
     "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "vite-plugin-node-polyfills": "0.22.0"
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "5.35.1",
