@@ -31,7 +31,8 @@
     "lint-staged": "15.2.2",
     "tsx": "^4.16.2",
     "turbo": "1.13.3",
-    "vitest": "1.6.0"
+    "vitest": "1.6.0",
+    "vite-plugin-node-polyfills": "0.22.0"
   },
   "engines": {
     "node": ">=18",
