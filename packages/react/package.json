@@ -22,7 +22,7 @@
   },
   "scripts": {
     "build": "pnpm ts:check && tsup",
-    "ts:check": "pnpm tsc --noEmit"
+    "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
     "@tanstack/react-query": ">=5.0.0",
