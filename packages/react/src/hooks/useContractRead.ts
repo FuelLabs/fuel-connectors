@@ -1,5 +1,5 @@
 import { type Address, Contract, type JsonAbi, type Provider } from 'fuels';
-import type { FunctionNames, InputsForFunctionName } from 'src/types';
+import type { FunctionNames, InputsForFunctionName } from '../types';
 
 import { useNamedQuery } from '../core/useNamedQuery';
 import { QUERY_KEYS } from '../utils';
@@ -34,6 +34,7 @@ export const useContractRead = <
 
   return useNamedQuery('contractRead', {
     queryKey: QUERY_KEYS.contract(
+      // @ts-expect-error id does exist in _contract
       isContractData ? address?.toString() : _contract?.id?.toString(),
       chainId,
       args?.toString(),
