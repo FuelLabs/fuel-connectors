@@ -6,6 +6,6 @@ export default defineConfig((options) => ({
   external: ['fuels'],
   entry: {
     index: 'src/index.ts',
-    'scripts/index.ts': 'scripts/index.ts',
+    'scripts/index': 'scripts/index.ts',
   },
 }));

@@ -1,10 +1,10 @@
 [[package]]
 name = "core"
-source = "path+from-root-CC22FE9C5CBB0084"
+source = "path+from-root-2AB5BCE55EAAEFF4"
 
 [[package]]
 name = "std"
-source = "git+https://github.com/fuellabs/sway?tag=v0.61.2#e1b1c2bee73e0ba825e07736cefa6c0abd079595"
+source = "git+https://github.com/fuellabs/sway?tag=v0.62.0#efda0397c7bee77de73bd726ec0b732d57614973"
 dependencies = ["core"]
 
 [[package]]

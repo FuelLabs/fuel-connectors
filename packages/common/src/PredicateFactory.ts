@@ -21,18 +21,20 @@ export class PredicateFactory {
   private abi: JsonAbi;
   private bytecode: BytesLike;
   private adapter: PredicateWalletAdapter;
-  private root: BytesLike = ZeroBytes32;
+  private root: string;
 
   constructor(
     adapter: PredicateWalletAdapter,
     { abi, bin }: PredicateConfig,
-    root: BytesLike,
+    root: string,
   ) {
     this.adapter = adapter;
     this.abi = abi;
     this.bytecode = bin;
     this.root = root;
   }
+
+  getRoot = (): string => this.root;
 
   getPredicateAddress = memoize((address: string | B256Address): string => {
     // @ts-expect-error processPredicateData is only available in the Predicate class

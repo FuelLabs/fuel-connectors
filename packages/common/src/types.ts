@@ -23,11 +23,6 @@ export interface Predicate {
   generatedAt: number;
 }
 
-export interface PredicateWithAddress {
-  key: string;
-  pred: Predicate;
-}
-
 export interface EIP1193Provider extends EventEmitter {
   request(args: {
     method: string;
