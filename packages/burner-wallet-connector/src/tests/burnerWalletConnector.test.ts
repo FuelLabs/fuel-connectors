@@ -59,7 +59,9 @@ describe('Burner Wallet Connector', () => {
 
   describe('constructor()', () => {
     test('Creates a new BurnerWalletConnector instance using default config', async () => {
-      const connector = await getBurnerWallet();
+      const connector = await getBurnerWallet({
+        fuelProvider,
+      });
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
       expect(connector.name).to.be.equal('Burner Wallet');
       expect(connector.connected).to.be.false;
@@ -277,7 +279,9 @@ describe('Burner Wallet Connector', () => {
 
   describe('network()', () => {
     test('returns fuel network info', async () => {
-      const connector = await getBurnerWallet();
+      const connector = await getBurnerWallet({
+        fuelProvider,
+      });
       await connector.connect();
 
       const network = await connector.currentNetwork();
