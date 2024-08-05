@@ -3,3 +3,6 @@ export const BURNER_WALLET_ICON =
 export const TESTNET_URL = 'https://testnet.fuel.network/v1/graphql';
 export const HAS_WINDOW = typeof window !== 'undefined';
 export const BURNER_WALLET_PRIVATE_KEY = 'burner-wallet-private-key';
+export const BURNER_WALLET_STATUS = 'burner-wallet-status';
+export const BURNER_SESSION_DETECTED_MESSAGE =
+  'We detected a previous Burner Wallet session. Do you want to continue using the same wallet?';

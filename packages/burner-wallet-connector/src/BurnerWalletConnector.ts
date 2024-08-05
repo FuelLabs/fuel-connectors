@@ -15,8 +15,10 @@ import {
 } from 'fuels';
 import { InMemoryStorage } from './InMemoryStorage';
 import {
+  BURNER_SESSION_DETECTED_MESSAGE,
   BURNER_WALLET_ICON,
   BURNER_WALLET_PRIVATE_KEY,
+  BURNER_WALLET_STATUS,
   TESTNET_URL,
 } from './constants';
 import type { BurnerWalletConfig } from './types';
@@ -76,12 +78,28 @@ export class BurnerWalletConnector extends FuelConnector {
     return privateKey;
   }
 
+  private async getPrivateKey(): Promise<string | null> {
+    const privateKey =
+      (await this.storage.getItem(BURNER_WALLET_PRIVATE_KEY)) || null;
+    return privateKey;
+  }
+
+  private async getStatus(): Promise<string | null> {
+    const status = (await this.storage.getItem(BURNER_WALLET_STATUS)) || null;
+    return status;
+  }
+
   private async setupBurnerWallet(createWallet = false) {
     if (this.burnerWallet) return;
-    let privateKey = await this.storage.getItem(BURNER_WALLET_PRIVATE_KEY);
-    if (createWallet && !privateKey) {
+
+    let privateKey = await this.getPrivateKey();
+    if (
+      createWallet &&
+      (!privateKey || !window.confirm(BURNER_SESSION_DETECTED_MESSAGE))
+    ) {
       privateKey = await this.generatePrivateKey();
     }
+
     if (!privateKey) return;
 
     const { fuelProvider } = await this.getProvider();
@@ -119,7 +137,10 @@ export class BurnerWalletConnector extends FuelConnector {
 
   async isConnected(): Promise<boolean> {
     try {
-      await this.setupBurnerWallet(false);
+      const status = await this.getStatus();
+      if (status !== 'connected') return false;
+
+      await this.setupBurnerWallet();
       return !!this.burnerWallet;
     } catch {
       return false;
@@ -128,7 +149,11 @@ export class BurnerWalletConnector extends FuelConnector {
 
   async connect(): Promise<boolean> {
     try {
-      await this.setupBurnerWallet(true);
+      await Promise.all([
+        this.setupBurnerWallet(true),
+        this.storage.setItem(BURNER_WALLET_STATUS, 'connected'),
+      ]);
+
       const accountAddress = this.burnerWallet?.address.toAddress();
 
       this.emit(this.events.connection, true);
@@ -156,12 +181,14 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   async disconnect(): Promise<boolean> {
+    await this.storage.setItem(BURNER_WALLET_STATUS, 'disconnected');
+
     this.burnerWallet = null;
-    await this.storage.removeItem(BURNER_WALLET_PRIVATE_KEY);
     this.emit(this.events.connection, false);
     this.emit(this.events.currentAccount, null);
     this.emit(this.events.accounts, []);
-    return this.connected;
+
+    return false;
   }
 
   async signMessage(address: string, message: string): Promise<string> {
