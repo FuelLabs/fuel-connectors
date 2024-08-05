@@ -293,7 +293,9 @@ describe('Burner Wallet Connector', () => {
 
   describe('networks()', () => {
     test('returns an array of fuel network info', async () => {
-      const connector = await getBurnerWallet();
+      const connector = await getBurnerWallet({
+        fuelProvider,
+      });
       await connector.connect();
 
       const networks = await connector.networks();
