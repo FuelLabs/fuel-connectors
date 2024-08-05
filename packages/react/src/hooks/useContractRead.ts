@@ -34,7 +34,6 @@ export const useContractRead = <
 
   return useNamedQuery('contractRead', {
     queryKey: QUERY_KEYS.contract(
-      // @ts-expect-error id does exist in _contract
       isContractData ? address?.toString() : _contract?.id?.toString(),
       chainId,
       args?.toString(),
