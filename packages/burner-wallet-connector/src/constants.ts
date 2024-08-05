@@ -3,4 +3,3 @@ export const BURNER_WALLET_ICON =
 export const TESTNET_URL = 'https://testnet.fuel.network/v1/graphql';
 export const HAS_WINDOW = typeof window !== 'undefined';
 export const BURNER_WALLET_PRIVATE_KEY = 'burner-wallet-private-key';
-export const BURNER_WALLET_PROVIDER_URL_KEY = 'burner-wallet-provider-url-key';
