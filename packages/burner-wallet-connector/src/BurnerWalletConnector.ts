@@ -19,7 +19,6 @@ import {
   BURNER_WALLET_PRIVATE_KEY,
   BURNER_WALLET_PROVIDER_URL_KEY,
   TESTNET_URL,
-  WINDOW,
 } from './constants';
 import type { BurnerWalletConfig } from './types';
 
