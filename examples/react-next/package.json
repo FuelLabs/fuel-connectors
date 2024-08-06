@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@fuels/connectors": "workspace:*",
-    "@fuels/react": "0.20.0",
+    "@fuels/react": "workspace:*",
     "@tanstack/react-query": "5.35.1",
     "@wagmi/connectors": "5.0.26",
     "fuels": "0.93.0",
