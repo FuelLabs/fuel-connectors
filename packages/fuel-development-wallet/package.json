@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/fuel-development-wallet",
-  "version": "0.9.1",
+  "version": "0.23.0",
   "private": true,
   "types": "./dist/index.d.ts",
   "exports": {

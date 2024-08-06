@@ -9,7 +9,7 @@
     { "repo": "FuelLabs/fuel-connectors" }
   ],
   "commit": false,
-  "fixed": [["@fuels/connectors", "@fuel-connectors/*"]],
+  "fixed": [["@fuels/connectors", "@fuel-connectors/*", "@fuels/react"]],
   "linked": [],
   "access": "public",
   "baseBranch": "main",
