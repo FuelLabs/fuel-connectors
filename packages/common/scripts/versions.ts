@@ -37,8 +37,8 @@ export const addPredicate = async (__dirname: string) => {
   const newPath = `${__dirname}/${version}`;
   if (fs.existsSync(newPath)) {
     console.warn(`Predicate already exists: ${version}`);
-    console.warn('Overwriting...');
-    fs.rmSync(newPath, { recursive: true, force: true });
+
+    return;
   }
 
   fs.mkdirSync(newPath);
