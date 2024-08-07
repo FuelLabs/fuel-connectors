@@ -45,6 +45,7 @@
       "**/contracts",
       "pnpm-lock.yaml",
       "**/examples/react-app/src/types",
+      "**/examples/react-next/.next",
       "**/factories/**/*.ts"
     ]
   }
