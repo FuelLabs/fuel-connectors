@@ -49,52 +49,86 @@ describe('FuelWalletConnector', () => {
     });
 
     test('should request accounts', async () => {
-      const request = requestMock.mockReturnValue(Promise.resolve(['0x123']));
+      const request = requestMock.mockReturnValue(
+        Promise.resolve([
+          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+        ]),
+      );
 
       const connector = new FuelWalletConnector();
       const result = await connector.accounts();
-      expect(result).toEqual(['0x123']);
+      expect(result).toEqual([
+        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+      ]);
       expect(request).toHaveBeenCalledWith('accounts', {});
     });
 
     test('should request current account', async () => {
-      const request = requestMock.mockReturnValue(Promise.resolve('0x123'));
+      const request = requestMock.mockReturnValue(
+        Promise.resolve(
+          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+        ),
+      );
 
       const connector = new FuelWalletConnector();
       const result = await connector.currentAccount();
-      expect(result).toBe('0x123');
+      expect(result).toBe(
+        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+      );
       expect(request).toHaveBeenCalledWith('currentAccount', {});
     });
   });
 
   describe('transactions', () => {
     test('should request sign message', async () => {
-      const request = requestMock.mockReturnValue(Promise.resolve('0x123'));
+      const request = requestMock.mockReturnValue(
+        Promise.resolve(
+          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+        ),
+      );
 
       const connector = new FuelWalletConnector();
-      const result = await connector.signMessage('0x123', 'hello');
-      expect(result).toBe('0x123');
+      const result = await connector.signMessage(
+        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+        'hello',
+      );
+      expect(result).toBe(
+        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+      );
       expect(request).toHaveBeenCalledWith('signMessage', {
-        address: '0x123',
+        address:
+          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
         message: 'hello',
       });
     });
 
     test('should require a message', async () => {
       const connector = new FuelWalletConnector();
-      await expect(connector.signMessage('0x123', ' ')).rejects.toThrowError(
-        'Message is required',
-      );
+      await expect(
+        connector.signMessage(
+          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+          ' ',
+        ),
+      ).rejects.toThrowError('Message is required');
     });
 
     test('should request send transaction', async () => {
-      const request = requestMock.mockReturnValue(Promise.resolve('0x123'));
+      const request = requestMock.mockReturnValue(
+        Promise.resolve(
+          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+        ),
+      );
 
       const connector = new FuelWalletConnector();
-      const result = await connector.sendTransaction('0x123', {
-        type: TransactionType.Create,
-      });
-      expect(result).toBe('0x123');
+      const result = await connector.sendTransaction(
+        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+        {
+          type: TransactionType.Create,
+        },
+      );
+      expect(result).toBe(
+        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+      );
       expect(request).toHaveBeenCalled();
     });
 
@@ -102,7 +136,7 @@ describe('FuelWalletConnector', () => {
       const connector = new FuelWalletConnector();
       await expect(
         connector.sendTransaction(
-          '0x123',
+          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
           null as unknown as TransactionRequestLike,
         ),
       ).rejects.toThrowError('Transaction is required');
@@ -111,24 +145,39 @@ describe('FuelWalletConnector', () => {
 
   describe('assets', () => {
     test('should list assets', async () => {
-      const request = requestMock.mockReturnValue(Promise.resolve(['0x123']));
+      const request = requestMock.mockReturnValue(
+        Promise.resolve([
+          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+        ]),
+      );
 
       const connector = new FuelWalletConnector();
       const result = await connector.assets();
-      expect(result).toEqual(['0x123']);
+      expect(result).toEqual([
+        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+      ]);
       expect(request).toHaveBeenCalledWith('assets', {});
     });
   });
 
   describe('ABI', () => {
     test('should get ABI', async () => {
-      const request = requestMock.mockReturnValue(Promise.resolve('0x123'));
+      const request = requestMock.mockReturnValue(
+        Promise.resolve(
+          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+        ),
+      );
 
       const connector = new FuelWalletConnector();
-      const result = await connector.getABI('0x123');
-      expect(result).toBe('0x123');
+      const result = await connector.getABI(
+        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+      );
+      expect(result).toBe(
+        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+      );
       expect(request).toHaveBeenCalledWith('getAbi', {
-        contractId: '0x123',
+        contractId:
+          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
       });
     });
 
@@ -136,11 +185,15 @@ describe('FuelWalletConnector', () => {
       const request = requestMock.mockReturnValue(Promise.resolve(true));
 
       const connector = new FuelWalletConnector();
-      const result = await connector.addABI('0x123', {} as FuelABI);
+      const result = await connector.addABI(
+        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+        {} as FuelABI,
+      );
       expect(result).toBe(true);
       expect(request).toHaveBeenCalledWith('addAbi', {
         abiMap: {
-          '0x123': {},
+          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb':
+            {},
         },
       });
     });
@@ -149,30 +202,45 @@ describe('FuelWalletConnector', () => {
       const request = requestMock.mockReturnValue(Promise.resolve(true));
 
       const connector = new FuelWalletConnector();
-      const result = await connector.hasABI('0x123');
+      const result = await connector.hasABI(
+        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+      );
       expect(result).toBe(true);
       expect(request).toHaveBeenCalledWith('getAbi', {
-        contractId: '0x123',
+        contractId:
+          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
       });
     });
   });
 
   describe('networks', () => {
     test('should list networks', async () => {
-      const request = requestMock.mockReturnValue(Promise.resolve(['0x123']));
+      const request = requestMock.mockReturnValue(
+        Promise.resolve([
+          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+        ]),
+      );
 
       const connector = new FuelWalletConnector();
       const result = await connector.networks();
-      expect(result).toEqual(['0x123']);
+      expect(result).toEqual([
+        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+      ]);
       expect(request).toHaveBeenCalledWith('networks', {});
     });
 
     test('should return version', async () => {
-      const request = requestMock.mockReturnValue(Promise.resolve('0x123'));
+      const request = requestMock.mockReturnValue(
+        Promise.resolve(
+          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+        ),
+      );
 
       const connector = new FuelWalletConnector();
       const result = await connector.version();
-      expect(result).toBe('0x123');
+      expect(result).toBe(
+        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+      );
       expect(request).toHaveBeenCalledWith('version', {
         app: '0.0.0',
         network: '0.0.0',
