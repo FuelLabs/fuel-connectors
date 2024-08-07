@@ -20,16 +20,16 @@ import {
   type EIP1193Provider,
   EthereumWalletAdapter,
   type Maybe,
-  type Predicate,
   PredicateConnector,
+  type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
+  getMockedSignatureIndex,
   getOrThrow,
-  getSignatureIndex,
 } from '@fuel-connectors/common';
 import { ApiController } from '@web3modal/core';
 import { ETHEREUM_ICON, TESTNET_URL } from './constants';
-import versions from './generated/predicates';
+import { PREDICATE_VERSIONS } from './generated/predicates';
 import type { WalletConnectConfig } from './types';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
@@ -133,8 +133,8 @@ export class WalletConnectConnector extends PredicateConnector {
     return new EthereumWalletAdapter();
   }
 
-  protected getPredicateVersions(): Record<string, Predicate> {
-    return versions;
+  protected getPredicateVersions(): Record<string, PredicateVersion> {
+    return PREDICATE_VERSIONS;
   }
 
   protected async configProviders(config: WalletConnectConfig = {}) {
@@ -256,7 +256,7 @@ export class WalletConnectConnector extends PredicateConnector {
       params: [transactionId, account],
     })) as string;
 
-    const predicateSignatureIndex = getSignatureIndex(
+    const predicateSignatureIndex = getMockedSignatureIndex(
       transactionRequest.witnesses,
     );
 

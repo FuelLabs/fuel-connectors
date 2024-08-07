@@ -41,7 +41,6 @@
     "@fuel-connectors/fuelet-wallet": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
     "@fuel-connectors/bako-safe": "workspace:*",
-    "@fuel-connectors/common": "workspace:*",
     "@fuel-connectors/solana-connector": "workspace:*",
     "fuels": "0.93.0",
     "terser": "5.31.0",

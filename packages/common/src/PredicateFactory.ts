@@ -117,7 +117,7 @@ export class PredicateFactory {
  * However, we need to validate if this placeholder witness was added here in order to instantiate the
  * predicate with the correct witness index argument.
  */
-export const getSignatureIndex = (witnesses: BytesLike[]) => {
+export const getMockedSignatureIndex = (witnesses: BytesLike[]) => {
   const hasPlaceholderWitness = witnesses.some(
     (item) =>
       item instanceof Uint8Array &&

@@ -18,14 +18,14 @@ import {
   transactionRequestify,
 } from 'fuels';
 
-import { PredicateFactory, getSignatureIndex } from './PredicateFactory';
+import { PredicateFactory, getMockedSignatureIndex } from './PredicateFactory';
 import type { PredicateWalletAdapter } from './PredicateWalletAdapter';
 import type {
   ConnectorConfig,
   Maybe,
   MaybeAsync,
-  Predicate,
   PredicateConfig,
+  PredicateVersion,
   PreparedTransaction,
   ProviderDictionary,
 } from './types';
@@ -51,13 +51,19 @@ export abstract class PredicateConnector extends FuelConnector {
 
   protected abstract configProviders(config: ConnectorConfig): MaybeAsync<void>;
   protected abstract getWalletAdapter(): PredicateWalletAdapter;
-  protected abstract getPredicateVersions(): Record<string, Predicate>;
+  protected abstract getPredicateVersions(): Record<string, PredicateVersion>;
   protected abstract getAccountAddress(): MaybeAsync<Maybe<string>>;
   protected abstract getProviders(): MaybeAsync<ProviderDictionary>;
   protected abstract requireConnection(): MaybeAsync<void>;
   protected abstract walletAccounts(): Promise<Array<string>>;
 
-  protected async getBalancedPredicate(): Promise<Maybe<PredicateFactory>> {
+  protected isAddressPredicate(b: BytesLike): boolean {
+    return Object.entries(this.getPredicateVersions()).some(
+      ([key, _]) => Address.fromString(key).toB256() === b,
+    );
+  }
+
+  protected async getCurrentUserPredicate(): Promise<Maybe<PredicateFactory>> {
     const predicateVersions = Object.entries(this.getPredicateVersions()).map(
       ([key, pred]) => ({
         pred,
@@ -123,7 +129,7 @@ export abstract class PredicateConnector extends FuelConnector {
     }
 
     const predicate =
-      (await this.getBalancedPredicate()) ?? this.getNewestPredicate();
+      (await this.getCurrentUserPredicate()) ?? this.getNewestPredicate();
     if (!predicate) throw new Error('No predicate found');
 
     this.predicateAddress = predicate.getRoot();
@@ -161,28 +167,23 @@ export abstract class PredicateConnector extends FuelConnector {
     const transactionRequest = transactionRequestify(transaction);
     const newestPredicate = this.getNewestPredicate();
     if (!!newestPredicate && !this.predicateAccount.equals(newestPredicate)) {
-      const coinOutput = transactionRequest.getCoinOutputs();
       const predicateAddress =
         newestPredicate.getPredicateAddress(walletAccount);
 
-      // If there are no outputs, add a change output to the newest predicate
-      if (transactionRequest.getChangeOutputs().length === 0) {
-        transactionRequest.addChangeOutput(
-          Address.fromString(predicateAddress),
-          coinOutput[0]?.assetId as BytesLike,
-        );
-      }
-      // If there are outputs, change output addresses to the newest predicate
-      else {
+      if (transactionRequest.getChangeOutputs().length > 0) {
         transactionRequest.outputs.forEach((output) => {
-          if (output.type !== OutputType.Change) return;
+          if (
+            output.type !== OutputType.Change ||
+            !this.isAddressPredicate(output.to)
+          )
+            return;
           output.to = Address.fromAddressOrString(predicateAddress).toB256();
         });
       }
     }
 
     const transactionFee = transactionRequest.maxFee.toNumber();
-    const predicateSignatureIndex = getSignatureIndex(
+    const predicateSignatureIndex = getMockedSignatureIndex(
       transactionRequest.witnesses,
     );
 

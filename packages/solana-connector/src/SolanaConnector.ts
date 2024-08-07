@@ -1,13 +1,13 @@
 import { hexToBytes } from '@ethereumjs/util';
 import {
   type Maybe,
-  type Predicate,
   PredicateConnector,
+  type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
   SolanaWalletAdapter,
+  getMockedSignatureIndex,
   getOrThrow,
-  getSignatureIndex,
 } from '@fuel-connectors/common';
 import { ApiController } from '@web3modal/core';
 import type { Web3Modal } from '@web3modal/solana';
@@ -19,7 +19,7 @@ import {
   type TransactionRequestLike,
 } from 'fuels';
 import { SOLANA_ICON, TESTNET_URL } from './constants';
-import versions from './generated/predicates';
+import { PREDICATE_VERSIONS } from './generated/predicates';
 import type { SolanaConfig } from './types';
 import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
 
@@ -47,7 +47,7 @@ export class SolanaConnector extends PredicateConnector {
     this.configProviders(config);
   }
 
-  private async _emit(connected: boolean) {
+  private async _emitConnected(connected: boolean) {
     if (connected) await this.setupPredicate();
     this.emit(this.events.connection, connected);
 
@@ -94,11 +94,11 @@ export class SolanaConnector extends PredicateConnector {
             if (!address || address.startsWith('0x')) {
               return;
             }
-            this._emit(true);
+            this._emitConnected(true);
             break;
           }
           case 'DISCONNECT_SUCCESS': {
-            this._emit(false);
+            this._emitConnected(false);
             break;
           }
         }
@@ -112,11 +112,11 @@ export class SolanaConnector extends PredicateConnector {
       }
       const address = this.web3Modal.getAddress();
       if (address && address !== this.svmAddress) {
-        this._emit(true);
+        this._emitConnected(true);
       }
 
       if (!address && this.svmAddress) {
-        this._emit(false);
+        this._emitConnected(false);
       }
     }, 300);
 
@@ -140,8 +140,8 @@ export class SolanaConnector extends PredicateConnector {
     return new SolanaWalletAdapter();
   }
 
-  protected getPredicateVersions(): Record<string, Predicate> {
-    return versions;
+  protected getPredicateVersions(): Record<string, PredicateVersion> {
+    return PREDICATE_VERSIONS;
   }
 
   protected async configProviders(config: SolanaConfig = {}) {
@@ -210,7 +210,7 @@ export class SolanaConnector extends PredicateConnector {
 
   public async disconnect(): Promise<boolean> {
     this.web3Modal.disconnect();
-    this._emit(false);
+    this._emitConnected(false);
     return this.isConnected();
   }
 
@@ -227,7 +227,7 @@ export class SolanaConnector extends PredicateConnector {
     const { predicate, transactionId, transactionRequest } =
       await this.prepareTransaction(address, transaction);
 
-    const predicateSignatureIndex = getSignatureIndex(
+    const predicateSignatureIndex = getMockedSignatureIndex(
       transactionRequest.witnesses,
     );
     const txId = this.truncateTxId(transactionId);

@@ -18,7 +18,7 @@ export interface PredicateConfig {
   bin: BytesLike;
 }
 
-export interface Predicate {
+export interface PredicateVersion {
   predicate: PredicateConfig;
   generatedAt: number;
 }

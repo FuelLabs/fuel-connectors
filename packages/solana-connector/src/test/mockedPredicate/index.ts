@@ -2,7 +2,7 @@
 
 import { Predicate as Predicate1722564535077 } from './0xce634e314f83a76fcdd0ca23f6f2ceecd05e771893b356aa035a6c1d5612e11d';
 
-export default {
+export const PREDICATE_VERSIONS = {
   '0xce634e314f83a76fcdd0ca23f6f2ceecd05e771893b356aa035a6c1d5612e11d': {
     predicate: Predicate1722564535077,
     generatedAt: 1722564535077,

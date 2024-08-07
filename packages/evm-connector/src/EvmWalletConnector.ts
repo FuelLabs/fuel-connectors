@@ -14,15 +14,15 @@ import {
   EthereumWalletAdapter,
   type Maybe,
   type MaybeAsync,
-  type Predicate,
   PredicateConnector,
+  type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
+  getMockedSignatureIndex,
   getOrThrow,
-  getSignatureIndex,
 } from '@fuel-connectors/common';
 import { METAMASK_ICON, TESTNET_URL, WINDOW } from './constants';
-import versions from './generated/predicates';
+import { PREDICATE_VERSIONS } from './generated/predicates';
 import {
   type EIP1193Provider,
   type EVMWalletConnectorConfig,
@@ -124,8 +124,8 @@ export class EVMWalletConnector extends PredicateConnector {
     return new EthereumWalletAdapter();
   }
 
-  protected getPredicateVersions(): Record<string, Predicate> {
-    return versions;
+  protected getPredicateVersions(): Record<string, PredicateVersion> {
+    return PREDICATE_VERSIONS;
   }
 
   protected requireConnection(): MaybeAsync<void> {}
@@ -236,7 +236,7 @@ export class EVMWalletConnector extends PredicateConnector {
       params: [transactionId, account],
     })) as string;
 
-    const predicateSignatureIndex = getSignatureIndex(
+    const predicateSignatureIndex = getMockedSignatureIndex(
       transactionRequest.witnesses,
     );
 

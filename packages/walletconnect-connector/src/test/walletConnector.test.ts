@@ -13,10 +13,10 @@ import {
 } from 'vitest';
 import { WalletConnectConnector } from '../WalletConnectConnector';
 import { TESTNET_URL } from '../constants';
-import versions from './mockedPredicate';
+import { PREDICATE_VERSIONS } from './mockedPredicate';
 
 describe('WalletConnect Connector', () => {
-  const predicate = Object.values(versions)[0]?.predicate;
+  const predicate = Object.values(PREDICATE_VERSIONS)[0]?.predicate;
   const snapshotPath = path.join(__dirname, '');
 
   let connector: WalletConnectConnector;

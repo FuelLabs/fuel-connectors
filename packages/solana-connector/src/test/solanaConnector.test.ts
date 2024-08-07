@@ -13,10 +13,10 @@ import {
 } from 'vitest';
 import { SolanaConnector } from '../SolanaConnector';
 import { TESTNET_URL } from '../constants';
-import versions from './mockedPredicate';
+import { PREDICATE_VERSIONS } from './mockedPredicate';
 
 describe('Solana Connector', () => {
-  const predicate = Object.values(versions)[0]?.predicate;
+  const predicate = Object.values(PREDICATE_VERSIONS)[0]?.predicate;
   const projectId = '0000';
   const snapshotPath = path.join(__dirname, '');
 

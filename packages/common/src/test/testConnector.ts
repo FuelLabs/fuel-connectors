@@ -4,8 +4,8 @@ import {
   type ConnectorConfig,
   type Maybe,
   type MaybeAsync,
-  type Predicate,
   PredicateConnector,
+  type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
   SolanaWalletAdapter,
@@ -31,7 +31,7 @@ export class TestPredicatedConnector extends PredicateConnector {
     return new SolanaWalletAdapter();
   }
 
-  protected getPredicateVersions(): Record<string, Predicate> {
+  protected getPredicateVersions(): Record<string, PredicateVersion> {
     return versions;
   }
 
