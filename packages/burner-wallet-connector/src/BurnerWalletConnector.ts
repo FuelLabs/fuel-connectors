@@ -228,7 +228,7 @@ export class BurnerWalletConnector extends FuelConnector {
       throw Error('Wallet not connected');
     }
 
-    return this.burnerWallet.address.toString() || null;
+    return this.burnerWallet.address.toB256() || null;
   }
 
   async addAssets(_assets: Asset[]): Promise<boolean> {
