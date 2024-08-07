@@ -3,7 +3,7 @@
   "globalDependencies": ["**/.env.*local"],
   "tasks": {
     "ts:check": {
-      "dependsOn": [],
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "build": {
