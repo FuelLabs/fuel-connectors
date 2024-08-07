@@ -13,7 +13,6 @@ interface CreateSolanaWeb3ModalProps {
 const FEATURED_WALLET_IDS = [
   'a797aa35c0fadbfc1a53e7f675162ed5226968b44a19ee3d24385c64d1d3c393', // Phantom
   '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0', // Trust Wallet
-  '971e689d0a5be527bac79629b4ee9b925e82208e5168b733496a09c0faed0709', // OKX Wallet
 ];
 
 export function createSolanaWeb3ModalInstance({
