@@ -173,11 +173,11 @@ export abstract class PredicateConnector extends FuelConnector {
       if (transactionRequest.getChangeOutputs().length > 0) {
         transactionRequest.outputs.forEach((output) => {
           if (
-            output.type !== OutputType.Change ||
-            !this.isAddressPredicate(output.to)
-          )
-            return;
-          output.to = Address.fromAddressOrString(predicateAddress).toB256();
+            output.type === OutputType.Change &&
+            this.isAddressPredicate(output.to)
+          ) {
+            output.to = Address.fromAddressOrString(predicateAddress).toB256();
+          }
         });
       }
     }
