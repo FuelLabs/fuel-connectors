@@ -1,5 +1,8 @@
 import { BakoSafeConnector } from '@fuel-connectors/bako-safe';
-import { BurnerWalletConnector } from '@fuel-connectors/burner-wallet-connector';
+import {
+  type BurnerWalletConfig,
+  BurnerWalletConnector,
+} from '@fuel-connectors/burner-wallet-connector';
 import { FuelWalletDevelopmentConnector } from '@fuel-connectors/fuel-development-wallet';
 import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
 import { FueletWalletConnector } from '@fuel-connectors/fuelet-wallet';
@@ -8,7 +11,6 @@ import { WalletConnectConnector } from '@fuel-connectors/walletconnect-connector
 import type { Config } from '@wagmi/core';
 import type { ProviderType } from '@web3modal/solana/dist/types/src/utils/scaffold';
 import type { FuelConnector } from 'fuels';
-import type { BurnerWalletConfig } from '../../burner-wallet-connector/src/types';
 
 type DefaultConnectors = {
   devMode?: boolean;

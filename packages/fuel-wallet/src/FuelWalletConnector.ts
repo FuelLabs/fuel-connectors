@@ -1,4 +1,5 @@
 import {
+  Address,
   type Asset,
   type AssetFuel,
   type ConnectorMetadata,
@@ -166,11 +167,14 @@ export class FuelWalletConnector extends FuelConnector {
   }
 
   async accounts(): Promise<Array<string>> {
-    return this.client.request('accounts', {});
+    const accounts = await this.client.request('accounts', {});
+    return accounts;
   }
 
   async currentAccount(): Promise<string | null> {
-    return this.client.request('currentAccount', {});
+    const account = await this.client.request('currentAccount', {});
+    if (!account) return null;
+    return Address.fromDynamicInput(account).toB256();
   }
 
   async signMessage(address: string, message: string): Promise<string> {

@@ -1,25 +1,22 @@
 import path from 'node:path';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
+import { type Asset, type Network, Provider, Wallet } from 'fuels';
 import {
-  type Asset,
-  type Network,
-  Provider,
-  type StorageAbstract,
-  Wallet,
-} from 'fuels';
-import {
-  afterAll,
   afterEach,
   beforeAll,
   beforeEach,
   describe,
   expect,
   test,
+  vi,
 } from 'vitest';
 import { BurnerWalletConnector } from '../BurnerWalletConnector';
 import { BURNER_WALLET_PRIVATE_KEY, TESTNET_URL } from '../constants';
 import type { BurnerWalletConfig } from '../types';
 import { createMockedStorage } from './mockedStorage';
+
+const mockConfirm = vi.fn();
+window.confirm = mockConfirm;
 
 // Construct a burner wallet and ping to simulate real world
 const getBurnerWallet = async (config: BurnerWalletConfig = {}) => {
@@ -45,7 +42,6 @@ describe('Burner Wallet Connector', () => {
         port: '4000',
       },
     });
-    BurnerWalletConnector.defaultProviderUrl = provider.url;
 
     fuelProvider = provider;
   });
@@ -54,6 +50,7 @@ describe('Burner Wallet Connector', () => {
     Object.defineProperty(global, 'localStorage', {
       value: createMockedStorage(),
     });
+    mockConfirm.mockClear();
   });
 
   afterEach(async () => {
@@ -62,11 +59,13 @@ describe('Burner Wallet Connector', () => {
 
   describe('constructor()', () => {
     test('Creates a new BurnerWalletConnector instance using default config', async () => {
-      const connector = await getBurnerWallet();
+      const connector = await getBurnerWallet({
+        fuelProvider,
+      });
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
       expect(connector.name).to.be.equal('Burner Wallet');
       expect(connector.connected).to.be.false;
-      expect(connector.installed).to.be.false;
+      expect(connector.installed).to.be.true;
       expect(await connector.currentNetwork()).to.be.deep.equal({
         chainId: 0,
         url: fuelProvider.url,
@@ -76,20 +75,23 @@ describe('Burner Wallet Connector', () => {
     test('Creates a new BurnerWalletConnector instance with custom storage', async () => {
       const storage = createMockedStorage();
       const wallet = Wallet.generate();
-      storage.setItem(BURNER_WALLET_PRIVATE_KEY, wallet.privateKey);
+      await storage.setItem(BURNER_WALLET_PRIVATE_KEY, wallet.privateKey);
       const config: BurnerWalletConfig = {
         storage,
       };
       const connector = await getBurnerWallet(config);
+
+      mockConfirm.mockImplementationOnce(() => true);
       await connector.connect();
+      expect(mockConfirm).toHaveBeenCalled();
 
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
       expect(await connector.currentAccount()).to.be.equal(
-        wallet.address.toString(),
+        wallet.address.toB256(),
       );
     });
 
-    test('creates a new BurnerWalletConnector instance with config using sessionStorage', async () => {
+    test('Creates a new BurnerWalletConnector instance with config using sessionStorage', async () => {
       const storage = createMockedStorage();
       const wallet = Wallet.generate({
         provider: fuelProvider,
@@ -102,15 +104,18 @@ describe('Burner Wallet Connector', () => {
         storage,
       };
       const connector = await getBurnerWallet(config);
+
+      mockConfirm.mockImplementationOnce(() => true);
       await connector.connect();
+      expect(mockConfirm).toHaveBeenCalled();
 
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
       expect(await connector.currentAccount()).to.be.equal(
-        wallet.address.toString(),
+        wallet.address.toB256(),
       );
     });
 
-    test('creates a new BurnerWalletConnector instance with sessionStorage when local storage has already been set', async () => {
+    test('Creates a new BurnerWalletConnector instance with sessionStorage when local storage has already been set', async () => {
       const storage = createMockedStorage();
       const wallet1 = Wallet.generate();
       const wallet2 = Wallet.generate();
@@ -126,15 +131,18 @@ describe('Burner Wallet Connector', () => {
         storage,
       };
       const connector = await getBurnerWallet(config);
+
+      mockConfirm.mockImplementationOnce(() => true);
       await connector.connect();
+      expect(mockConfirm).toHaveBeenCalled();
 
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
       expect(await connector.currentAccount()).to.be.equal(
-        wallet2.address.toString(),
+        wallet2.address.toB256(),
       );
     });
 
-    test('creates a new BurnerWalletConnector instance with non default Provider url', async () => {
+    test('Creates a new BurnerWalletConnector instance with non default Provider url', async () => {
       const nonDefaultProvider = await Provider.create(TESTNET_URL);
 
       const config: BurnerWalletConfig = {
@@ -149,7 +157,7 @@ describe('Burner Wallet Connector', () => {
       });
     });
 
-    test('creates a new BurnerWalletConnector instance with non default Promise Provider url', async () => {
+    test('Creates a new BurnerWalletConnector instance with non default Promise Provider url', async () => {
       const nonDefaultProvider = Provider.create(TESTNET_URL);
 
       const config: BurnerWalletConfig = {
@@ -173,6 +181,29 @@ describe('Burner Wallet Connector', () => {
       const connectedAfterConnect = await connector.isConnected();
       expect(connectedAfterConnect).to.be.true;
     });
+
+    test('Connect but generate a new private key', async () => {
+      const storage = createMockedStorage();
+      const wallet = Wallet.generate({
+        provider: fuelProvider,
+      });
+
+      storage.setItem(BURNER_WALLET_PRIVATE_KEY, wallet.privateKey);
+
+      const connector = await getBurnerWallet({
+        storage,
+      });
+
+      mockConfirm.mockImplementationOnce(() => false);
+      await connector.connect();
+      expect(mockConfirm).toHaveBeenCalled();
+
+      const connectedAfterConnect = await connector.isConnected();
+      expect(connectedAfterConnect).to.be.true;
+      expect(await connector.currentAccount()).to.not.be.equal(
+        wallet.address.toString(),
+      );
+    });
   });
 
   describe('isConnected()', () => {
@@ -182,6 +213,7 @@ describe('Burner Wallet Connector', () => {
 
       expect(connected).to.be.false;
     });
+
     test('true when connected', async () => {
       const wallet = Wallet.generate();
       global.localStorage.setItem(BURNER_WALLET_PRIVATE_KEY, wallet.privateKey);
@@ -241,13 +273,15 @@ describe('Burner Wallet Connector', () => {
 
       const account = await connector.currentAccount();
 
-      expect(account?.length).to.be.equal(63);
+      expect(account?.length).to.be.equal(66);
     });
   });
 
   describe('network()', () => {
     test('returns fuel network info', async () => {
-      const connector = await getBurnerWallet();
+      const connector = await getBurnerWallet({
+        fuelProvider,
+      });
       await connector.connect();
 
       const network = await connector.currentNetwork();
@@ -259,7 +293,9 @@ describe('Burner Wallet Connector', () => {
 
   describe('networks()', () => {
     test('returns an array of fuel network info', async () => {
-      const connector = await getBurnerWallet();
+      const connector = await getBurnerWallet({
+        fuelProvider,
+      });
       await connector.connect();
 
       const networks = await connector.networks();
