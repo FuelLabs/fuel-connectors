@@ -1,5 +1,13 @@
 # @fuel-connectors/evm-connector
 
+## 0.9.1
+
+## 0.9.0
+
+### Minor Changes
+
+- [#158](https://github.com/FuelLabs/fuel-connectors/pull/158) [`23afa71`](https://github.com/FuelLabs/fuel-connectors/commit/23afa71b01b799aa320ad56abbb8c2c896a5a156) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: update to fuels 0.92.0
+
 ## 0.8.1
 
 ## 0.8.0
