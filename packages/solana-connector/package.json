@@ -16,8 +16,6 @@
   "scripts": {
     "fuels:build": "pnpm fuels build",
     "postfuels:build": "tsx ./scripts/versions.ts",
-    "fuels:typegen": "fuels typegen -p --output=./src/generated/predicates/new --inputs=./predicate/out/release/verification-predicate-abi.json",
-    "postfuels:typegen": "tsx ./scripts/versions.ts",
     "build": "tsup --dts-only",
     "build:watch": "pnpm run fuels:build && tsup --watch --dts-only",
     "ts:check": "tsc --noEmit",

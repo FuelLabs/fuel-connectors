@@ -7,9 +7,9 @@ import {
   generationDate as generationDate1722561429916,
 } from './0x279df00c04dcb33686e6212b4da2a08dbd5a2fa5cb5b2d0998aeb98906f1d7d7';
 import {
-  abi as abi1722897450301,
-  bin as bin1722897450301,
-  generationDate as generationDate1722897450301,
+  abi as abi1723073762756,
+  bin as bin1723073762756,
+  generationDate as generationDate1723073762756,
 } from './0xca07380d3c0d9890519ee727bf522eaf19e2acefab240c9a22b0aa90f41c87d6';
 
 export const PREDICATE_VERSIONS = {
@@ -18,7 +18,7 @@ export const PREDICATE_VERSIONS = {
     generatedAt: generationDate1722561429916,
   },
   '0xca07380d3c0d9890519ee727bf522eaf19e2acefab240c9a22b0aa90f41c87d6': {
-    predicate: { abi: abi1722897450301, bin: bin1722897450301 },
-    generatedAt: generationDate1722897450301,
+    predicate: { abi: abi1723073762756, bin: bin1723073762756 },
+    generatedAt: generationDate1723073762756,
   },
 } as Record<string, PredicateVersion>;
