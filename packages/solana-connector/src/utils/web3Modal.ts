@@ -10,9 +10,23 @@ interface CreateSolanaWeb3ModalProps {
   solanaConfig: ProviderType;
 }
 
-const FEATURED_WALLET_IDS = [
-  'a797aa35c0fadbfc1a53e7f675162ed5226968b44a19ee3d24385c64d1d3c393', // Phantom
-  '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0', // Trust Wallet
+/**
+ * Get the wallet ids from the explorer:
+ * https://explorer.walletconnect.com/?type=wallet
+ */
+const wallets = [
+  {
+    id: 'a797aa35c0fadbfc1a53e7f675162ed5226968b44a19ee3d24385c64d1d3c393',
+    isInstalled: (): boolean => {
+      return typeof window !== 'undefined' && !!window.phantom?.solana;
+    },
+  },
+  {
+    id: '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0',
+    isInstalled: (): boolean => {
+      return typeof window !== 'undefined' && !!window.trustWallet?.solana;
+    },
+  },
 ];
 
 export function createSolanaWeb3ModalInstance({
@@ -25,8 +39,9 @@ export function createSolanaWeb3ModalInstance({
     );
   }
 
-  const hasPhantom = typeof window !== 'undefined' && window.phantom;
-  const featuredWalletIds = hasPhantom ? undefined : FEATURED_WALLET_IDS;
+  const featuredWalletIds = wallets
+    .filter((wallet) => !wallet.isInstalled())
+    .map((wallet) => wallet.id);
 
   return createSolanaWeb3Modal({
     solanaConfig,
