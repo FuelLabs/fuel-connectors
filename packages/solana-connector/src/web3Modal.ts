@@ -24,6 +24,24 @@ export function createSolanaConfig(projectId = DEFAULT_PROJECT_ID) {
     },
   });
 }
+/**
+ * Get the wallet ids from the explorer:
+ * https://explorer.walletconnect.com/?type=wallet
+ */
+const wallets = [
+  {
+    id: 'a797aa35c0fadbfc1a53e7f675162ed5226968b44a19ee3d24385c64d1d3c393',
+    isInstalled: (): boolean => {
+      return typeof window !== 'undefined' && !!window.phantom?.solana;
+    },
+  },
+  {
+    id: '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0',
+    isInstalled: (): boolean => {
+      return typeof window !== 'undefined' && !!window.trustWallet?.solana;
+    },
+  },
+];
 
 export function createSolanaWeb3ModalInstance({
   projectId,
@@ -35,10 +53,15 @@ export function createSolanaWeb3ModalInstance({
     );
   }
 
+  const featuredWalletIds = wallets
+    .filter((wallet) => !wallet.isInstalled())
+    .map((wallet) => wallet.id);
+
   return createSolanaWeb3Modal({
     solanaConfig,
     chains: DEFAULT_CHAINS,
     enableAnalytics: false,
     projectId: projectId ?? DEFAULT_PROJECT_ID,
+    featuredWalletIds,
   });
 }
