@@ -154,14 +154,15 @@ export abstract class PredicateConnector extends FuelConnector {
       throw Error('No predicate account found');
     }
 
+    const b256Address = Address.fromDynamicInput(address).toB256();
     const { fuelProvider } = await this.getProviders();
     const chainId = fuelProvider.getChainId();
     const walletAccount = this.predicateAccount.getAccountAddress(
-      address,
+      b256Address,
       await this.walletAccounts(),
     );
     if (!walletAccount) {
-      throw Error(`No account found for ${address}`);
+      throw Error(`No account found for ${b256Address}`);
     }
 
     const transactionRequest = transactionRequestify(transaction);
