@@ -45,7 +45,7 @@ export class PredicateFactory {
         SIGNER: this.adapter.convertAddress(address),
       },
     );
-    return Address.fromB256(getPredicateRoot(predicateBytes)).toString();
+    return Address.fromB256(getPredicateRoot(predicateBytes)).toB256();
   });
 
   build = memoize(
