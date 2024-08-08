@@ -1,5 +1,29 @@
 # @fuel-connectors/burner-wallet-connector
 
+## 0.24.0
+
+### Minor Changes
+
+- [#167](https://github.com/FuelLabs/fuel-connectors/pull/167) [`ed5fb44`](https://github.com/FuelLabs/fuel-connectors/commit/ed5fb440b1b0739fbeb616156864d9ba6da3ac07) Thanks [@LeoCourbassier](https://github.com/LeoCourbassier)! - - Bumped packages version from `0.9.0` to `0.23.0` following react package's version
+
+  - Updated react-next example to use `defaultConnectors` from @fuels/connectors package
+
+- [#178](https://github.com/FuelLabs/fuel-connectors/pull/178) [`98df6e3`](https://github.com/FuelLabs/fuel-connectors/commit/98df6e304f67a8aa6f43eec9194d179ebfd42725) Thanks [@helciofranco](https://github.com/helciofranco)! - Add `Burner Wallet` recovery feature.
+
+  > A dialog will now prompt the user to recover their previous Burner Wallet session.
+
+- [#178](https://github.com/FuelLabs/fuel-connectors/pull/178) [`98df6e3`](https://github.com/FuelLabs/fuel-connectors/commit/98df6e304f67a8aa6f43eec9194d179ebfd42725) Thanks [@helciofranco](https://github.com/helciofranco)! - Fix `Burner Wallet` connection status issue getting stuck after some connect/disconnect (it was losing the connection status).
+
+- [#145](https://github.com/FuelLabs/fuel-connectors/pull/145) [`533abbf`](https://github.com/FuelLabs/fuel-connectors/commit/533abbfd163ad377faf2239d768a15821f6f5611) Thanks [@rodrigobranas](https://github.com/rodrigobranas)! - Breaking Change: now methods that return address, like "getAccount", will return a b256 address instead of a bech32.
+
+- [#173](https://github.com/FuelLabs/fuel-connectors/pull/173) [`f0739c4`](https://github.com/FuelLabs/fuel-connectors/commit/f0739c44b11c1a2e1662120c5ed2480e671c5571) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - Breaking change: BurnerWallet sendTransaction method no longer will wait for tx execution
+
+### Patch Changes
+
+- [#173](https://github.com/FuelLabs/fuel-connectors/pull/173) [`f0739c4`](https://github.com/FuelLabs/fuel-connectors/commit/f0739c44b11c1a2e1662120c5ed2480e671c5571) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - update fuels to 0.93.0
+
+- [#147](https://github.com/FuelLabs/fuel-connectors/pull/147) [`7ce5702`](https://github.com/FuelLabs/fuel-connectors/commit/7ce5702e74a1bbbd7f50ec8b7c281c7b4e2b3480) Thanks [@mvares](https://github.com/mvares)! - feat: persist BurnerWallet provider in localStorage
+
 ## 0.9.1
 
 ## 0.9.0
