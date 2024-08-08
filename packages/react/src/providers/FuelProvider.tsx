@@ -13,6 +13,15 @@ type FuelProviderProps = {
   fuelConfig?: FuelConfig;
 } & FuelUIProviderProps;
 
+function FuelUI({ theme, children, fuelConfig }: FuelProviderProps) {
+  return (
+    <FuelUIProvider theme={theme} fuelConfig={fuelConfig}>
+      <Connect />
+      {children}
+    </FuelUIProvider>
+  );
+}
+
 export function FuelProvider({
   theme,
   children,
@@ -22,10 +31,9 @@ export function FuelProvider({
   if (ui) {
     return (
       <FuelHooksProvider fuelConfig={fuelConfig}>
-        <FuelUIProvider theme={theme} fuelConfig={fuelConfig}>
-          <Connect />
+        <FuelUI fuelConfig={fuelConfig} theme={theme}>
           {children}
-        </FuelUIProvider>
+        </FuelUI>
       </FuelHooksProvider>
     );
   }

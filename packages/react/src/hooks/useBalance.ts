@@ -1,22 +1,23 @@
-import type { BytesLike } from 'fuels';
+import type { BN, BytesLike } from 'fuels';
 import { Address } from 'fuels';
-import { useEffect } from 'react';
 
-import { useNamedQuery } from '../core';
+import { type ServiceOptions, useNamedQuery } from '../core';
 import { QUERY_KEYS } from '../utils';
 
 import { useProvider } from './useProvider';
 
-export const useBalance = ({
-  address,
-  assetId,
-}: {
+type UseBalanceParams = {
   address?: string;
   assetId?: BytesLike;
-}) => {
-  const { provider } = useProvider();
+};
 
-  const query = useNamedQuery('balance', {
+export const useBalance = (
+  { address, assetId }: UseBalanceParams,
+  options?: ServiceOptions<unknown, Error, BN | null>,
+) => {
+  const { provider } = useProvider();
+  return useNamedQuery('balance', {
+    ...options,
     queryKey: QUERY_KEYS.balance(address, assetId),
     queryFn: async () => {
       try {
@@ -32,21 +33,8 @@ export const useBalance = ({
         return null;
       }
     },
+    refetchOnWindowFocus: true,
     initialData: null,
     enabled: !!provider,
   });
-
-  useEffect(() => {
-    const listenerAccountFetcher = () => {
-      query.refetch();
-    };
-
-    window.addEventListener('focus', listenerAccountFetcher);
-
-    return () => {
-      window.removeEventListener('focus', listenerAccountFetcher);
-    };
-  }, [query]);
-
-  return query;
 };
