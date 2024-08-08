@@ -224,7 +224,7 @@ export class SolanaConnector extends PredicateConnector {
     address: string,
     transaction: TransactionRequestLike,
   ): Promise<string> {
-    const { predicate, transactionId, transactionRequest } =
+    const { predicate, transactionId, transactionRequest, afterTransaction } =
       await this.prepareTransaction(address, transaction);
 
     const predicateSignatureIndex = getMockedSignatureIndex(
@@ -246,6 +246,8 @@ export class SolanaConnector extends PredicateConnector {
     await predicate.provider.estimatePredicates(transactionRequest);
 
     const response = await predicate.sendTransaction(transactionRequest);
+
+    afterTransaction?.(response.id);
 
     return response.id;
   }

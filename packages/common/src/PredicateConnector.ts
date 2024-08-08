@@ -10,6 +10,7 @@ import {
   type Network,
   OutputType,
   type TransactionRequestLike,
+  TransactionResponse,
   type Version,
   ZeroBytes32,
   bn,
@@ -58,6 +59,22 @@ export abstract class PredicateConnector extends FuelConnector {
   protected abstract getProviders(): MaybeAsync<ProviderDictionary>;
   protected abstract requireConnection(): MaybeAsync<void>;
   protected abstract walletAccounts(): Promise<Array<string>>;
+
+  protected async emitAccountChange(
+    address: string,
+    connected = true,
+  ): Promise<void> {
+    await this.setupPredicate();
+    this.emit(this.events.connection, connected);
+    this.emit(
+      this.events.currentAccount,
+      this.predicateAccount?.getPredicateAddress(address),
+    );
+    this.emit(
+      this.events.accounts,
+      this.predicateAccount?.getPredicateAddresses(await this.walletAccounts()),
+    );
+  }
 
   protected get predicateVersions(): Array<PredicateFactory> {
     if (!this._predicateVersions) {
@@ -158,6 +175,7 @@ export abstract class PredicateConnector extends FuelConnector {
 
     const transactionRequest = transactionRequestify(transaction);
     const newestPredicate = this.getNewestPredicate();
+    let changedPredicate = false;
     if (!!newestPredicate && !this.predicateAccount.equals(newestPredicate)) {
       const predicateAddress =
         newestPredicate.getPredicateAddress(walletAccount);
@@ -169,6 +187,7 @@ export abstract class PredicateConnector extends FuelConnector {
             this.isAddressPredicate(output.to, walletAccount)
           ) {
             output.to = Address.fromAddressOrString(predicateAddress).toB256();
+            changedPredicate = true;
           }
         });
       }
@@ -230,12 +249,24 @@ export abstract class PredicateConnector extends FuelConnector {
       requestWithPredicateAttached,
     );
 
+    const afterTransaction = changedPredicate
+      ? (id: string) =>
+          setTimeout(async () => {
+            const response = new TransactionResponse(id, fuelProvider);
+            const result = await response.waitForResult();
+            if (result.isStatusSuccess) {
+              await this.emitAccountChange(walletAccount);
+            }
+          })
+      : undefined;
+
     return {
       predicate,
       request: requestWithPredicateAttached,
       transactionId: requestWithPredicateAttached.getTransactionId(chainId),
       account: walletAccount,
       transactionRequest,
+      afterTransaction,
     };
   }
 
