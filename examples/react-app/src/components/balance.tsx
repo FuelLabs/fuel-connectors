@@ -26,7 +26,7 @@ export default function Balance({ isSigning }: Props) {
     <Feature title="Balance">
       <code>{balance ? `${balance?.format()} ETH` : <BalanceSkeleton />}</code>
       <a
-        href={`https://faucet-testnet.fuel.network/?address=${address}`}
+        href={`https://faucet-testnet.fuel.network/?address=${address}&autoClose`}
         target="_blank"
         className={`btn ${
           isSigning
