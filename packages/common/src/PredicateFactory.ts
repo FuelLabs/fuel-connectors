@@ -22,16 +22,19 @@ export class PredicateFactory {
   private bytecode: BytesLike;
   private adapter: PredicateWalletAdapter;
   private root: string;
+  private generatedAt: number = Date.now();
 
   constructor(
     adapter: PredicateWalletAdapter,
     { abi, bin }: PredicateConfig,
     root: string,
+    generatedAt: number = Date.now(),
   ) {
     this.adapter = adapter;
     this.abi = abi;
     this.bytecode = bin;
     this.root = root;
+    this.generatedAt = generatedAt;
   }
 
   getRoot = (): string => this.root;
@@ -106,6 +109,9 @@ export class PredicateFactory {
 
   equals = (predicate: Maybe<PredicateFactory>): boolean =>
     !!predicate && predicate.root === this.root;
+
+  sort = (predicate: PredicateFactory): number =>
+    predicate.generatedAt - this.generatedAt;
 }
 
 /**

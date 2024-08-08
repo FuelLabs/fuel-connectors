@@ -39,6 +39,8 @@ export abstract class PredicateConnector extends FuelConnector {
   protected predicateAccount: Maybe<PredicateFactory> = null;
   protected subscriptions: Array<() => void> = [];
 
+  private _predicateVersions!: Array<PredicateFactory>;
+
   public abstract name: string;
   public abstract metadata: ConnectorMetadata;
 
@@ -57,27 +59,32 @@ export abstract class PredicateConnector extends FuelConnector {
   protected abstract requireConnection(): MaybeAsync<void>;
   protected abstract walletAccounts(): Promise<Array<string>>;
 
-  protected isAddressPredicate(b: BytesLike): boolean {
-    return Object.entries(this.getPredicateVersions()).some(
-      ([key, _]) => Address.fromString(key).toB256() === b,
+  protected get predicateVersions(): Array<PredicateFactory> {
+    if (!this._predicateVersions) {
+      this._predicateVersions = Object.entries(this.getPredicateVersions())
+        .map(
+          ([key, pred]) =>
+            new PredicateFactory(
+              this.getWalletAdapter(),
+              pred.predicate,
+              key,
+              pred.generatedAt,
+            ),
+        )
+        .sort((a, b) => a.sort(b));
+    }
+
+    return this._predicateVersions;
+  }
+
+  protected isAddressPredicate(b: BytesLike, walletAccount: string): boolean {
+    return this.predicateVersions.some(
+      (predicate) => predicate.getPredicateAddress(walletAccount) === b,
     );
   }
 
   protected async getCurrentUserPredicate(): Promise<Maybe<PredicateFactory>> {
-    const predicateVersions = Object.entries(this.getPredicateVersions()).map(
-      ([key, pred]) => ({
-        pred,
-        key,
-      }),
-    );
-
-    for (const predicateVersion of predicateVersions) {
-      const predicateInstance = new PredicateFactory(
-        this.getWalletAdapter(),
-        predicateVersion.pred.predicate,
-        predicateVersion.key,
-      );
-
+    for (const predicateInstance of this.predicateVersions) {
       const address = await this.getAccountAddress();
       if (!address) {
         continue;
@@ -97,23 +104,7 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   protected getNewestPredicate(): Maybe<PredicateFactory> {
-    const predicateVersions = Object.entries(this.getPredicateVersions()).map(
-      ([key, pred]) => ({
-        pred,
-        key,
-      }),
-    );
-
-    const newest = predicateVersions.sort(
-      (a, b) => Number(b.pred.generatedAt) - Number(a.pred.generatedAt),
-    )[0];
-    if (!newest) return null;
-
-    return new PredicateFactory(
-      this.getWalletAdapter(),
-      newest.pred.predicate,
-      newest.key,
-    );
+    return this.predicateVersions[0];
   }
 
   protected async setupPredicate(): Promise<PredicateFactory> {
@@ -175,7 +166,7 @@ export abstract class PredicateConnector extends FuelConnector {
         transactionRequest.outputs.forEach((output) => {
           if (
             output.type === OutputType.Change &&
-            this.isAddressPredicate(output.to)
+            this.isAddressPredicate(output.to, walletAccount)
           ) {
             output.to = Address.fromAddressOrString(predicateAddress).toB256();
           }
