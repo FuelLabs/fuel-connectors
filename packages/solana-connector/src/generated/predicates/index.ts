@@ -5,7 +5,7 @@ import {
   abi as abi1722890207063,
   bin as bin1722890207063,
   generationDate as generationDate1722890207063,
-} from './0xce634e314f83a76fcdd0ca23f6f2ceecd05e771893b356aa035a6c1d5612e11d';
+} from './0x8f562b4f23ce90b0547d11e4e02462d3cd660f4f3fe5f719ae725eab4d7a5d42';
 import {
   abi as abi1722897424142,
   bin as bin1722897424142,
@@ -13,7 +13,7 @@ import {
 } from './0xde460159d843b97ff69209d996687424b9b6ee95ef7a92a6950f4e99540f23f7';
 
 export const PREDICATE_VERSIONS = {
-  '0xce634e314f83a76fcdd0ca23f6f2ceecd05e771893b356aa035a6c1d5612e11d': {
+  '0x8f562b4f23ce90b0547d11e4e02462d3cd660f4f3fe5f719ae725eab4d7a5d42': {
     predicate: { abi: abi1722890207063, bin: bin1722890207063 },
     generatedAt: generationDate1722890207063,
   },
