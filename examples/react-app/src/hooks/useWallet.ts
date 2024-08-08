@@ -25,7 +25,7 @@ export const useWallet = () => {
     isConnecting,
     isLoading: isLoadingConnectors,
   } = useConnectUI();
-  const { isConnected, refetch: refetchConnected } = useIsConnected();
+  const { isConnected } = useIsConnected();
   const {
     account,
     isLoading: isLoadingAccount,
@@ -40,14 +40,15 @@ export const useWallet = () => {
     balance,
     isLoading: isLoadingBalance,
     isFetching: isFetchingBalance,
-  } = useBalance({ address });
-
+  } = useBalance(
+    { address },
+    {
+      refetchOnWindowFocus: true,
+      refetchInterval: 10000,
+    },
+  );
   const [currentConnector, setCurrentConnector] =
     useState<ICurrentConnector>(DEFAULT_CONNECTOR);
-
-  useEffect(() => {
-    refetchConnected();
-  }, [refetchConnected]);
 
   useEffect(() => {
     if (!isConnected) {
@@ -83,7 +84,6 @@ export const useWallet = () => {
     isLoadingConnectors,
     wallet,
     connect,
-    refetchConnected,
     refetchWallet,
   };
 };

@@ -125,3 +125,8 @@ export function useNamedQuery<
 
   return proxy;
 }
+
+export type ServiceOptions<TQueryData, TError, TData> = Omit<
+  UseQueryOptions<TQueryData, TError, TData>,
+  'queryFn' | 'queryKey' | 'initialData' | 'data'
+>;
