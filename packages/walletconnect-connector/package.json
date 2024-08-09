@@ -15,7 +15,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "fuels:build": "pnpm fuels build",
-    "fuels:typegen": "fuels typegen --output=./src/generated/predicates --inputs=./predicate/out/release/verification-predicate-abi.json",
+    "postfuels:build": "tsx ./scripts/versions.ts",
     "build": "tsup --dts-only",
     "build:watch": "pnpm run fuels:build && tsup --watch --dts-only",
     "ts:check": "tsc --noEmit",
@@ -46,7 +46,8 @@
     "typescript": "5.4.5",
     "vite": "5.2.11",
     "vite-plugin-dts": "3.9.1",
-    "vitest": "1.6.0",
+    "vitest": "2.0.2",
+    "@fuel-connectors/common": "workspace:*",
     "@web3modal/core": "5.0.0"
   }
 }

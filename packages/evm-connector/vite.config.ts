@@ -16,15 +16,6 @@ export default defineConfig({
     __dirname: JSON.stringify(path.dirname(__filename)),
     __filename: JSON.stringify(fileURLToPath(import.meta.url)),
   },
-  build: {
-    lib: {
-      // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, 'src/index.ts'),
-      name: '@fuels/wallet-connector-evm',
-      // the proper extensions will be added
-      fileName: 'wallet-connector-evm',
-    },
-  },
   test: {
     environment: 'jsdom',
   },

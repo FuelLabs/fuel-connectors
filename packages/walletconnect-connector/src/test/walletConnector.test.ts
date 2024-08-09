@@ -1,4 +1,6 @@
 import path from 'node:path';
+import { hexToBytes } from '@ethereumjs/util';
+import { PredicateFactory } from '@fuel-connectors/common';
 import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
 import { type Asset, type Network, Provider } from 'fuels';
 import {
@@ -11,16 +13,14 @@ import {
 } from 'vitest';
 import { WalletConnectConnector } from '../WalletConnectConnector';
 import { TESTNET_URL } from '../constants';
-import { PredicateAccount } from '../utils/Predicate';
-import { VERSIONS } from './mocked-versions/versions-dictionary';
+import { PREDICATE_VERSIONS } from './mockedPredicate';
 
 describe('WalletConnect Connector', () => {
-  let connector: WalletConnectConnector;
-
+  const predicate = Object.values(PREDICATE_VERSIONS)[0]?.predicate;
   const snapshotPath = path.join(__dirname, '');
 
+  let connector: WalletConnectConnector;
   let fuelProvider: Provider;
-
   let stopProvider: () => void;
 
   function connectorFactory(
@@ -113,7 +113,7 @@ describe('WalletConnect Connector', () => {
     });
   });
 
-  describe('currenctAccount()', () => {
+  describe('currentAccount()', () => {
     test('throws error', async () => {
       await expect(() => connector.currentAccount()).rejects.toThrowError(
         'No connected accounts',
@@ -137,24 +137,23 @@ describe('WalletConnect Connector', () => {
 
   describe('setupPredicate()', () => {
     test('should setup predicate with given config', async () => {
-      const version =
-        '0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33';
-
       const walletConectconnector = connectorFactory({
-        predicateConfig: VERSIONS[version].predicate,
+        predicateConfig: predicate,
       });
 
+      // @ts-expect-error predicateConfig is protected
       const predicateAccount = await walletConectconnector.setupPredicate();
 
-      expect(predicateAccount).to.be.instanceOf(PredicateAccount);
+      expect(predicateAccount).to.be.instanceOf(PredicateFactory);
     });
 
     test('Should setup predicate without given config', async () => {
       const walletConectconnector = connectorFactory();
 
+      // @ts-expect-error predicateConfig is protected
       const predicateAccount = await walletConectconnector.setupPredicate();
 
-      expect(predicateAccount).to.be.instanceOf(PredicateAccount);
+      expect(predicateAccount).to.be.instanceOf(PredicateFactory);
     });
   });
 
@@ -225,7 +224,9 @@ describe('WalletConnect Connector', () => {
     test('returns fuel network', async () => {
       const network = await connector.currentNetwork();
 
+      // @ts-expect-error fuelProvider is private
       expect(network.url).to.equal(connector.fuelProvider?.url);
+      // @ts-expect-error fuelProvider is private
       expect(network.chainId).to.equal(connector.fuelProvider?.getChainId());
     });
   });

@@ -14,10 +14,10 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "fuels:build": "pnpm fuels-forc build --release --path ./predicate",
-    "build:resources": "pnpm run fuels:build && tsx ./scripts/generatePredicateResources.ts",
+    "fuels:build": "pnpm fuels build",
+    "postfuels:build": "tsx ./scripts/versions.ts",
     "build": "tsup --dts-only",
-    "build:watch": "pnpm build --watch",
+    "build:watch": "pnpm run fuels:build && tsup --watch --dts-only",
     "ts:check": "tsc --noEmit",
     "test": "vitest"
   },
@@ -47,7 +47,8 @@
     "typescript": "5.4.5",
     "vite": "5.2.11",
     "vite-plugin-dts": "3.9.1",
-    "vitest": "1.6.0",
-    "@web3modal/core": "5.0.0"
+    "vitest": "2.0.2",
+    "@web3modal/core": "5.0.0",
+    "@fuel-connectors/common": "workspace:*"
   }
 }

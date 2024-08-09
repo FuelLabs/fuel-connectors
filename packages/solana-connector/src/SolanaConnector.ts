@@ -1,38 +1,31 @@
+import { hexToBytes } from '@ethereumjs/util';
+import {
+  type Maybe,
+  PredicateConnector,
+  type PredicateVersion,
+  type PredicateWalletAdapter,
+  type ProviderDictionary,
+  SolanaWalletAdapter,
+  getMockedSignatureIndex,
+  getOrThrow,
+} from '@fuel-connectors/common';
 import { ApiController } from '@web3modal/core';
 import type { Web3Modal } from '@web3modal/solana';
 import type { Provider } from '@web3modal/solana/dist/types/src/utils/scaffold';
 import {
-  type AbiMap,
-  type Asset,
   type ConnectorMetadata,
-  FuelConnector,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
-  type JsonAbi,
-  type Network,
   type TransactionRequestLike,
-  type Version,
-  ZeroBytes32,
-  bn,
-  calculateGasFee,
-  concat,
-  transactionRequestify,
 } from 'fuels';
 import { SOLANA_ICON, TESTNET_URL } from './constants';
-import { predicates } from './generated/predicate';
-import type { Maybe, SolanaConfig } from './types';
-import { PredicateAccount } from './utils/Predicate';
-import { createSolanaConfig } from './utils/solanaConfig';
-import { createSolanaWeb3ModalInstance } from './utils/web3Modal';
-import { getSignatureIndex } from './utils/witness';
+import { PREDICATE_VERSIONS } from './generated/predicates';
+import type { SolanaConfig } from './types';
+import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
 
-export class SolanaConnector extends FuelConnector {
+export class SolanaConnector extends PredicateConnector {
   name = 'Solana Wallets';
-  connected = false;
-  installed = false;
-
   events = FuelConnectorEventTypes;
-
   metadata: ConnectorMetadata = {
     image: SOLANA_ICON,
     install: {
@@ -42,24 +35,38 @@ export class SolanaConnector extends FuelConnector {
     },
   };
 
-  web3Modal!: Web3Modal;
-  fuelProvider: FuelProvider | null = null;
-  predicateAddress: string | null = null;
+  protected fuelProvider!: FuelProvider;
 
-  private predicateAccount: PredicateAccount;
-  private config: SolanaConfig = {} as SolanaConfig;
+  private web3Modal!: Web3Modal;
+  private config: SolanaConfig = {};
   private svmAddress: string | null = null;
-  private subscriptions: Array<() => void> = [];
 
   constructor(config: SolanaConfig) {
     super();
+    this.customPredicate = config.predicateConfig || null;
     this.configProviders(config);
-    this.predicateAccount = new PredicateAccount(
-      config.predicateConfig ?? predicates['verification-predicate'],
-    );
   }
 
-  modalFactory(config?: SolanaConfig) {
+  private async _emitConnected(connected: boolean) {
+    if (connected) await this.setupPredicate();
+    this.emit(this.events.connection, connected);
+
+    const address = this.web3Modal.getAddress();
+    this.emit(
+      this.events.currentAccount,
+      address ? this.predicateAccount?.getPredicateAddress(address) : null,
+    );
+    const accounts = await this.walletAccounts();
+    this.emit(
+      this.events.accounts,
+      accounts.length > 0
+        ? this.predicateAccount?.getPredicateAddresses(accounts)
+        : [],
+    );
+    this.svmAddress = address ?? null;
+  }
+
+  private modalFactory(config?: SolanaConfig) {
     const solanaConfig = createSolanaConfig(config?.projectId);
 
     return createSolanaWeb3ModalInstance({
@@ -68,48 +75,14 @@ export class SolanaConnector extends FuelConnector {
     });
   }
 
-  // createModal re-instanciates the modal to update singletons from web3modal
-  createModal() {
-    this.destroy();
-    const web3Modal = this.modalFactory(this.config);
-    this.web3Modal = web3Modal;
-    ApiController.prefetch();
-    this.setupWatchers();
-  }
-
-  providerFactory(config?: SolanaConfig) {
+  private providerFactory(config?: SolanaConfig) {
     return config?.fuelProvider || FuelProvider.create(TESTNET_URL);
-  }
-  configProviders(config: SolanaConfig) {
-    this.config = Object.assign(config, {
-      fuelProvider: this.providerFactory(config),
-    });
-  }
-
-  destroy() {
-    this.subscriptions.forEach((unsub) => unsub());
-    this.subscriptions = [];
-  }
-
-  /**
-   * ============================================================
-   * Application communication methods
-   * ============================================================
-   */
-  svmAccounts(): Array<string> {
-    if (!this.web3Modal) {
-      return [];
-    }
-
-    const account = this.web3Modal.getAddress();
-
-    return account ? [account] : [];
   }
 
   // Solana Web3Modal is Canary and not yet stable
   // It shares the same events as WalletConnect, hence validations must be made in order to avoid running connections with EVM Addresses instead of Solana Addresses
-  setupWatchers() {
-    this.subscriptions.push(
+  private setupWatchers() {
+    this.subscribe(
       this.web3Modal.subscribeEvents((event) => {
         switch (event.data.event) {
           case 'MODAL_OPEN':
@@ -118,26 +91,14 @@ export class SolanaConnector extends FuelConnector {
             break;
           case 'CONNECT_SUCCESS': {
             const address = this.web3Modal.getAddress() || '';
-
             if (!address || address.startsWith('0x')) {
               return;
             }
-            this.emit(this.events.connection, true);
-            this.emit(
-              this.events.currentAccount,
-              this.predicateAccount.getPredicateAddress(address),
-            );
-            this.emit(
-              this.events.accounts,
-              this.predicateAccount.getPredicateAccounts(this.svmAccounts()),
-            );
-            this.svmAddress = address;
+            this._emitConnected(true);
             break;
           }
           case 'DISCONNECT_SUCCESS': {
-            this.emit(this.events.connection, false);
-            this.emit(this.events.currentAccount, null);
-            this.emit(this.events.accounts, []);
+            this._emitConnected(false);
             break;
           }
         }
@@ -151,35 +112,72 @@ export class SolanaConnector extends FuelConnector {
       }
       const address = this.web3Modal.getAddress();
       if (address && address !== this.svmAddress) {
-        this.emit(this.events.connection, true);
-        this.emit(this.events.currentAccount, address);
-        this.emit(
-          this.events.accounts,
-          this.predicateAccount.getPredicateAccounts(this.svmAccounts()),
-        );
-
-        this.svmAddress = address;
+        this._emitConnected(true);
       }
 
       if (!address && this.svmAddress) {
-        this.emit(this.events.connection, false);
-        this.emit(this.events.currentAccount, null);
-        this.emit(this.events.accounts, []);
-
-        this.svmAddress = null;
+        this._emitConnected(false);
       }
     }, 300);
 
-    this.subscriptions.push(() => clearInterval(interval));
+    this.subscribe(() => clearInterval(interval));
   }
 
-  async getProviders() {
-    if (!this.fuelProvider) {
-      this.fuelProvider = (await this.config.fuelProvider) ?? null;
+  // createModal re-instanciates the modal to update singletons from web3modal
+  private createModal() {
+    this.clearSubscriptions();
+    const web3Modal = this.modalFactory(this.config);
+    this.web3Modal = web3Modal;
+    ApiController.prefetch();
+    this.setupWatchers();
+  }
 
-      if (!this.fuelProvider) {
-        throw new Error('Fuel provider not found');
-      }
+  protected async requireConnection() {
+    if (!this.web3Modal) this.createModal();
+  }
+
+  protected getWalletAdapter(): PredicateWalletAdapter {
+    return new SolanaWalletAdapter();
+  }
+
+  protected getPredicateVersions(): Record<string, PredicateVersion> {
+    return PREDICATE_VERSIONS;
+  }
+
+  protected async configProviders(config: SolanaConfig = {}) {
+    this.config = Object.assign(config, {
+      fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
+    });
+  }
+
+  protected walletAccounts(): Promise<Array<string>> {
+    if (!this.web3Modal) {
+      return Promise.resolve([]);
+    }
+
+    return new Promise((resolve) => {
+      const acc = this.web3Modal.getAddress();
+      resolve(acc ? [acc] : []);
+    });
+  }
+
+  protected getAccountAddress(): Maybe<string> {
+    if (!this.web3Modal) return null;
+
+    return this.web3Modal.getAddress();
+  }
+
+  protected async getProviders(): Promise<ProviderDictionary> {
+    if (!this.config?.fuelProvider) {
+      this.config = Object.assign(this.config, {
+        fuelProvider: this.providerFactory(this.config),
+      });
+    }
+    if (!this.fuelProvider) {
+      this.fuelProvider = getOrThrow(
+        await this.config.fuelProvider,
+        'Fuel provider not found',
+      );
     }
 
     return {
@@ -187,36 +185,7 @@ export class SolanaConnector extends FuelConnector {
     };
   }
 
-  async requireConnection() {
-    if (!this.web3Modal) this.createModal();
-  }
-
-  /**
-   * ============================================================
-   * Connector methods
-   * ============================================================
-   */
-  async ping(): Promise<boolean> {
-    if (!this.config?.fuelProvider) {
-      this.config = Object.assign(this.config, {
-        fuelProvider: this.providerFactory(this.config),
-      });
-    }
-    return true;
-  }
-
-  async version(): Promise<Version> {
-    return { app: '0.0.0', network: '0.0.0' };
-  }
-
-  async isConnected(): Promise<boolean> {
-    await this.requireConnection();
-    const accounts = this.svmAccounts();
-
-    return accounts.length > 0;
-  }
-
-  async connect(): Promise<boolean> {
+  public async connect(): Promise<boolean> {
     this.createModal();
 
     return new Promise((resolve) => {
@@ -239,111 +208,29 @@ export class SolanaConnector extends FuelConnector {
     });
   }
 
-  async disconnect(): Promise<boolean> {
+  public async disconnect(): Promise<boolean> {
     this.web3Modal.disconnect();
-
-    this.emit(this.events.connection, false);
-    this.emit(this.events.accounts, []);
-    this.emit(this.events.currentAccount, null);
-
+    this._emitConnected(false);
     return this.isConnected();
   }
 
-  async accounts(): Promise<string[]> {
-    await this.requireConnection();
-
-    const accounts = this.predicateAccount.getPredicateAccounts(
-      this.svmAccounts(),
-    );
-
-    return accounts;
+  public truncateTxId(txId: string): Uint8Array {
+    const txIdNo0x = txId.slice(2);
+    const idBytes = `${txIdNo0x.slice(0, 16)}${txIdNo0x.slice(-16)}`;
+    return new TextEncoder().encode(idBytes);
   }
 
-  async signMessage(_address: string, _message: string): Promise<string> {
-    throw new Error('A predicate account cannot sign messages.');
-  }
-
-  async sendTransaction(
+  public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
   ): Promise<string> {
-    if (!(await this.isConnected())) {
-      throw Error('No connected accounts');
-    }
+    const { predicate, transactionId, transactionRequest, afterTransaction } =
+      await this.prepareTransaction(address, transaction);
 
-    const { fuelProvider } = await this.getProviders();
-    const chainId = fuelProvider.getChainId();
-    const svmAccount = this.predicateAccount.getSVMAddress(
-      address,
-      this.svmAccounts(),
-    );
-
-    if (!svmAccount) {
-      throw new Error(`No account found for ${address}`);
-    }
-    const transactionRequest = transactionRequestify(transaction);
-    const transactionFee = transactionRequest.maxFee;
-    const predicateSignatureIndex = getSignatureIndex(
+    const predicateSignatureIndex = getMockedSignatureIndex(
       transactionRequest.witnesses,
     );
-
-    // Create a predicate and set the witness index to call in the predicate
-    const predicate = this.predicateAccount.createPredicate(
-      svmAccount,
-      fuelProvider,
-      [predicateSignatureIndex],
-    );
-
-    // Attach missing inputs (including estimated predicate gas usage) / outputs to the request
-    await predicate.provider.estimateTxDependencies(transactionRequest);
-    predicate.connect(fuelProvider);
-
-    // To each input of the request, attach the predicate and its data
-    const requestWithPredicateAttached =
-      predicate.populateTransactionPredicateData(transactionRequest);
-
-    const maxGasUsed =
-      await this.predicateAccount.getMaxPredicateGasUsed(fuelProvider);
-    let predictedGasUsedPredicate = bn(0);
-    // @ts-ignore
-    requestWithPredicateAttached.inputs.forEach((input) => {
-      if ('predicate' in input && input.predicate) {
-        input.witnessIndex = 0;
-        predictedGasUsedPredicate = predictedGasUsedPredicate.add(maxGasUsed);
-      }
-    });
-    requestWithPredicateAttached.witnesses[predicateSignatureIndex] = concat([
-      ZeroBytes32,
-      ZeroBytes32,
-    ]);
-    const { gasPriceFactor } = await predicate.provider.getGasConfig();
-    const { maxFee, gasPrice } = await predicate.provider.estimateTxGasAndFee({
-      transactionRequest: requestWithPredicateAttached,
-    });
-
-    const predicateSuccessFeeDiff = calculateGasFee({
-      gas: predictedGasUsedPredicate,
-      priceFactor: gasPriceFactor,
-      gasPrice,
-    });
-
-    const feeWithFat = maxFee.add(predicateSuccessFeeDiff);
-    const isNeededFatFee = feeWithFat.gt(transactionFee);
-
-    if (isNeededFatFee) {
-      // add more 10 just in case sdk fee estimation is not accurate
-      requestWithPredicateAttached.maxFee = feeWithFat.add(10);
-    }
-
-    // Attach missing inputs (including estimated predicate gas usage) / outputs to the request
-    await predicate.provider.estimateTxDependencies(
-      requestWithPredicateAttached,
-    );
-
-    // Get transaction id to sign
-    const txId = this.predicateAccount.getSmallTxId(
-      requestWithPredicateAttached.getTransactionId(chainId),
-    );
+    const txId = this.truncateTxId(transactionId);
     const provider: Maybe<Provider> =
       this.web3Modal.getWalletProvider() as Provider;
     if (!provider) {
@@ -353,76 +240,15 @@ export class SolanaConnector extends FuelConnector {
     const signedMessage: Uint8Array = (await provider.signMessage(
       txId,
     )) as Uint8Array;
-    requestWithPredicateAttached.witnesses[predicateSignatureIndex] =
-      signedMessage;
+    transactionRequest.witnesses[predicateSignatureIndex] = signedMessage;
 
     // Send transaction
-    await predicate.provider.estimatePredicates(requestWithPredicateAttached);
+    await predicate.provider.estimatePredicates(transactionRequest);
 
-    const response = await predicate.sendTransaction(
-      requestWithPredicateAttached,
-    );
+    const response = await predicate.sendTransaction(transactionRequest);
+
+    afterTransaction?.(response.id);
 
     return response.id;
-  }
-
-  async currentAccount(): Promise<string | null> {
-    if (!(await this.isConnected())) {
-      throw Error('No connected accounts');
-    }
-
-    const svmAccount = this.web3Modal.getAddress();
-
-    if (!svmAccount) {
-      throw Error('No Solana account selected');
-    }
-
-    const currentAccount =
-      this.predicateAccount.getPredicateAddress(svmAccount);
-
-    return currentAccount;
-  }
-
-  async addAssets(_assets: Asset[]): Promise<boolean> {
-    throw new Error('Method not implemented.');
-  }
-
-  async addAsset(_asset: Asset): Promise<boolean> {
-    throw new Error('Method not implemented.');
-  }
-
-  async assets(): Promise<Array<Asset>> {
-    return [];
-  }
-
-  async addNetwork(_networkUrl: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
-  }
-
-  async selectNetwork(_network: Network): Promise<boolean> {
-    throw new Error('Method not implemented.');
-  }
-
-  async networks(): Promise<Network[]> {
-    return [await this.currentNetwork()];
-  }
-
-  async currentNetwork(): Promise<Network> {
-    const { fuelProvider } = await this.getProviders();
-    const chainId = fuelProvider.getChainId();
-
-    return { url: fuelProvider.url, chainId: chainId };
-  }
-
-  async addAbi(_abiMap: AbiMap): Promise<boolean> {
-    throw new Error('Method not implemented.');
-  }
-
-  async getAbi(_contractId: string): Promise<JsonAbi> {
-    throw Error('Cannot get contractId ABI for a predicate');
-  }
-
-  async hasAbi(_contractId: string): Promise<boolean> {
-    throw Error('A predicate account cannot have an ABI');
   }
 }

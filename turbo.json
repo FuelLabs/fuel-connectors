@@ -1,13 +1,13 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
-  "pipeline": {
+  "tasks": {
     "ts:check": {
-      "dependsOn": [],
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "build": {
-      "dependsOn": ["ts:check", "^build"],
+      "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
     "build:watch": {
@@ -15,7 +15,7 @@
       "outputs": ["dist/**"]
     },
     "test": {
-      "dependsOn": []
+      "dependsOn": ["^build"]
     }
   }
 }

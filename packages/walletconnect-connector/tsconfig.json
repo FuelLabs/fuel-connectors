@@ -10,7 +10,10 @@
     "declaration": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "paths": {
+      "@fuel-connectors/*": ["../*/src"]
+    }
   },
   "exclude": ["./dist/**/*"]
 }
