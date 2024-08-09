@@ -4,6 +4,7 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "private": true,
   "exports": {
     ".": {
       "require": "./dist/index.js",
