@@ -8,7 +8,6 @@ export function Faucet({ address, isSigning }: FaucetProps) {
   return (
     <a
       href={url}
-      target="_blank"
       className={`btn ${
         isSigning
           ? 'cursor-not-allowed border border-zinc-400/25 bg-zinc-950 text-zinc-400'
