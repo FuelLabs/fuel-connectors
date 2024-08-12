@@ -3,7 +3,7 @@ export interface FaucetProps {
   isSigning: boolean;
 }
 export function Faucet({ address, isSigning }: FaucetProps) {
-  const url = `https://faucet-testnet.fuel.network/?address=${address}&redirectUrl=${window.location.href}`;
+  const url = `https://faucet-testnet.fuel.network/?address=${address}&autoClose&redirectUrl=${window.location.href}`;
 
   return (
     <a
