@@ -1,0 +1,18 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "includeVersion": true,
+  "entryPointStrategy": "packages",
+  "entryPoints": ["../connectors", "../react", "../common"],
+  "out": "src/api",
+  "githubPages": false,
+  "readme": ".typedoc/api-readme.md",
+  "categorizeByGroup": true,
+  "cacheBust": true,
+  "hideGenerator": true,
+  "plugin": ["typedoc-plugin-markdown", "typedoc-plugin-merge-modules"],
+  "filenameSeparator": "-",
+  "hideBreadcrumbs": true,
+  "hideInPageTOC": true,
+  "entryDocument": "index.md",
+  "mergeModulesMergeMode": "module"
+}

@@ -6,6 +6,7 @@ node_modules
 
 # Build Outputs
 dist
+.next
 
 # Coverage
 coverage
