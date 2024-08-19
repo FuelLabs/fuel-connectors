@@ -2,6 +2,22 @@ import { useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
 
+/**
+ * `useAccount` is a React hook that returns the current account of the user.
+ * The account is fetched using the connected connector's `currentAccount` method.
+ *
+ * @returns {object} An object containing:
+ * - `account`: The current account of the user.
+ * - Additional properties from `useNamedQuery`.
+ *
+ * @see {@link https://github.com/FuelLabs/fuels-ts/blob/master/packages/account/src/connectors/fuel-connector.ts | fuel-connector.ts on `FuelLabs/fuel-ts`}
+ *
+ * @example
+ * ```ts
+ * const { account } = useAccount();
+ * console.log(account);
+ * ```
+ */
 export const useAccount = () => {
   const { fuel } = useFuel();
 

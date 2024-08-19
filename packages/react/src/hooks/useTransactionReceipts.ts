@@ -9,6 +9,22 @@ import { QUERY_KEYS } from '../utils';
 
 /**
  * @deprecated `useTransactionReceipts` is deprecated. Use `useTransactionResult` instead with `select` function in the `query` parameter.
+ *
+ * `useTransactionReceipts` is a React hook that returns the transaction receipts for the given transaction ID.
+ *
+ * @param {object} options The options object.
+ * @param {string} options.txId The transaction ID.
+ * @returns {object} An object containing
+ * - `transactionReceipts`: The transaction receipts or `null`.
+ * - Additional properties from `useNamedQuery`.
+ *
+ * @example To get transaction receipts by its ID
+ * ```ts
+ * const { transactionReceipts } = useTransactionReceipts({
+ *   txId: '0x...',
+ * });
+ * console.log(transactionReceipts);
+ * ```
  */
 export const useTransactionReceipts = ({ txId }: { txId?: string }) => {
   const { fuel } = useFuel();

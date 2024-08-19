@@ -13,7 +13,13 @@ type UseTransactionResultParams<
   TName extends string,
   TData,
 > = {
+  /**
+   * The ID of the transaction to retrieve the result for.
+   */
   txId?: string;
+  /**
+   * Additional query parameters to customize the behavior of `useNamedQuery`.
+   */
   query?: UseNamedQueryParams<
     TName,
     TransactionResult<TTransactionType> | null,
@@ -22,6 +28,29 @@ type UseTransactionResultParams<
   >;
 };
 
+/**
+ * `useTransactionResult` is a React hook to fetch the result of a specific transaction.
+ * This hook retrieves the result of a transaction by its ID using the Fuel SDK.
+ *
+ * @template TTransactionType - The type of the transaction.
+ * @template TName - The name of the query, defaults to 'transactionResult'.
+ * @template TData - The type of the data returned by the query, defaults to `TransactionResult<TTransactionType> | null`.
+ *
+ * @param {UseTransactionResultParams<TTransactionType, TName, TData>} params - Parameters to configure the hook.
+ * @param {string} params.txId - The ID of the transaction to retrieve the result for.
+ * @param {UseNamedQueryParams<TName, TransactionResult<TTransactionType> | null, Error, TData>} params.query - Additional query parameters to customize the behavior of `useNamedQuery`.
+ * @returns {object} An object containing
+ * - `transactionResult`: The result of the transaction or `null`.
+ * - Additional properties from `useNamedQuery`.
+ *
+ * @example To get a transaction result by its ID
+ * ```ts
+ * const { transactionResult } = useTransactionResult({
+ *   txId: '0x...',
+ * });
+ * console.log(transactionResult);
+ * ```
+ */
 export const useTransactionResult = <
   TTransactionType extends TransactionType,
   TName extends string = string,

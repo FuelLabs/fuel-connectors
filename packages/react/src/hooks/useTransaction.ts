@@ -6,6 +6,20 @@ import { useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
 
+/**
+ * `useTransaction` is a React Hook to fetch transaction details using a transaction ID.
+ *
+ * @param {string} txId The ID of the transaction to fetch
+ *
+ * @returns {object} An object containing:
+ * - `transaction`: The transaction details retrieved from the provider, or `null` if not found.
+ * - Additional properties from `useNamedQuery`.
+ *
+ * @example To fetch transaction details
+ * ```ts
+ * const { transaction, error, isLoading } = useTransaction('0x1234');
+ * ```
+ */
 export const useTransaction = (txId?: string) => {
   const { fuel } = useFuel();
 

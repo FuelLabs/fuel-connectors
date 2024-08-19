@@ -5,8 +5,17 @@ import { useNamedQuery } from '../core/useNamedQuery';
 import { QUERY_KEYS } from '../utils';
 
 type ContractData<TAbi extends JsonAbi> = {
+  /**
+   * The address of the contract.
+   */
   address: Address;
+  /**
+   * The ABI of the contract.
+   */
   abi: TAbi;
+  /**
+   * The provider used to interact with the contract.
+   */
   provider: Provider;
 };
 
@@ -14,11 +23,47 @@ type ContractReadProps<
   TAbi extends JsonAbi,
   TFunctionName extends FunctionNames<TAbi>,
 > = {
+  /**
+   * The contract instance or contract data (address, ABI, and provider).
+   */
   contract: Contract | ContractData<TAbi>;
+  /**
+   * The name of the function to call on the contract.
+   */
   functionName: TFunctionName;
+  /**
+   * The arguments to pass to the contract function.
+   */
   args: InputsForFunctionName<TAbi, TFunctionName>;
 };
 
+/**
+ * `useContractRead` is a React Hook to read data from a smart contract using the Fuel SDK.
+ *
+ * @template TAbi - The ABI of the contract.
+ * @template TFunctionName - The name of the function to call on the contract.
+ *
+ * @param {object} props
+ * @param {Contract | ContractData<TAbi>} props.contract - The contract instance or contract data (address, ABI, and provider).
+ * @param {TFunctionName} props.functionName - The name of the function to call on the contract.
+ * @param {InputsForFunctionName<TAbi, TFunctionName>} props.args - The arguments to pass to the contract function.
+ *
+ * @returns {object} An object containing:
+ * - The result of the contract function call.
+ * - Additional properties from `useNamedQuery`.
+ *
+ * @throws {Error} Throws an error if the contract or function is invalid or if the function attempts to write to storage.
+ *
+ * @example To read data from a contract
+ * ```ts
+ * const { data } = useContractRead({
+ *   contract: myContractInstance,
+ *   functionName: 'getBalance',
+ *   args: [userAddress],
+ * });
+ * console.log(data);
+ * ```
+ */
 export const useContractRead = <
   TAbi extends JsonAbi,
   TFunctionName extends FunctionNames<TAbi>,

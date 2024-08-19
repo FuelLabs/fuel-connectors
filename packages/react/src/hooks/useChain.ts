@@ -7,6 +7,19 @@ import { QUERY_KEYS } from '../utils';
 
 import { useProvider } from './useProvider';
 
+/**
+ * `useChain` is a React hook that returns the chain info for the current provider.
+ *
+ * @returns {Promise<ChainInfo | null>} ChainInfo for the current provider.
+ *
+ * @see {@link https://github.com/FuelLabs/fuel-connectors/blob/main/packages/react/src/hooks/useProvider.ts | useProvider.ts}
+ *
+ * @example
+ * ```ts
+ * const { chain } = useChain();
+ * console.log(chain);
+ * ```
+ */
 export const useChain = () => {
   const { provider } = useProvider();
 
