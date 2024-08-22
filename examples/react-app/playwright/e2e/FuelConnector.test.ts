@@ -2,8 +2,7 @@ import { downloadFuel } from '@fuels/playwright-utils';
 import type { FuelWalletTestHelper } from '@fuels/playwright-utils';
 import { test } from '@fuels/playwright-utils';
 import { expect } from '@playwright/test';
-import type { WalletUnlocked } from 'fuels';
-import { bn, toBech32 } from 'fuels';
+import { bn } from 'fuels';
 import { testSetup } from '../utils/index.js';
 import { connect } from './utils';
 
