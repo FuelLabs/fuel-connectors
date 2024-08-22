@@ -13,6 +13,7 @@ type NodeInfoParams = {
   version?: string;
 };
 
+// @TODO: Add a link to fuel connector's documentation.
 /**
  * A hook to fetch node information from the provider and check compatibility.
  *
@@ -21,8 +22,6 @@ type NodeInfoParams = {
  * - `nodeInfo`: The node information data or `null`.
  * - `isCompatible`: Whether the node is compatible with the specified version.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
- * @todo Add a link to fuel connector's documentation.
- * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example To fetch node information and check compatibility
  * ```ts

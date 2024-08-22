@@ -7,14 +7,13 @@ import { QUERY_KEYS } from '../utils';
 
 import { useProvider } from './useProvider';
 
+// @TODO: Add a link to fuel connector's documentation.
 /**
  * A hook that returns the chain info for the current provider.
  *
  * @returns {object} An object containing:
  * - `chain`: The current chain info.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
- * @todo Add a link to fuel connector's documentation.
- * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example
  * ```ts

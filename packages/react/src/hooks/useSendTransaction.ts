@@ -18,6 +18,7 @@ type UseSendTransactionParams = {
   transaction: TransactionRequestLike;
 };
 
+// @TODO: Add a link to fuel connector's documentation.
 /**
  * A hook to send transactions in the connected app.
  *
@@ -26,8 +27,6 @@ type UseSendTransactionParams = {
  * - `sendTransaction`: function to send a transaction synchronously.
  * - `sendTransactionAsync`: function to send a transaction asynchronously.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
- * @todo Add a link to fuel connector's documentation.
- * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example To send a transaction synchronously
  * ```ts

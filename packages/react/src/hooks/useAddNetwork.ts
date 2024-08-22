@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useFuel } from '../providers';
 import { MUTATION_KEYS } from '../utils';
 
+// @TODO: Add a link to fuel connector's documentation.
 /**
  * A hook to add a network in the connected app.
  *
@@ -10,8 +11,6 @@ import { MUTATION_KEYS } from '../utils';
  * - `addNetwork`: function to add a network synchronously
  * - `addNetworkAsync` function to add a network asynchronously.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
- * @todo Add a link to fuel connector's documentation.
- * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example To add a network synchronously:
  * ```ts

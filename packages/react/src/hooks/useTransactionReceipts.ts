@@ -16,23 +16,6 @@ type UseTransactionReceiptsParams = {
 
 /**
  * @deprecated `useTransactionReceipts` is deprecated. Use `useTransactionResult` instead with `select` function in the `query` parameter.
- *
- * A hook that returns the transaction receipts for the given transaction ID.
- *
- * @param {UseTransactionReceiptsParams} options The options object.
- * @returns {object} An object containing
- * - `transactionReceipts`: The transaction receipts or `null`.
- * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
- * @todo Add a link to fuel connector's documentation.
- * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
- *
- * @example To get transaction receipts by its ID
- * ```ts
- * const { transactionReceipts } = useTransactionReceipts({
- *   txId: '0x...',
- * });
- * console.log(transactionReceipts);
- * ```
  */
 export const useTransactionReceipts = ({
   txId,

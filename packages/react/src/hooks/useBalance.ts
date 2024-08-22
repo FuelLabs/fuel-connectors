@@ -18,15 +18,14 @@ type UseBalanceParams = {
   assetId?: BytesLike;
 };
 
+// @TODO: Add a link to fuel connector's documentation.
 /**
  * A hook that returns the balance of the user.
  *
- * @param {UseBalanceParams} options - An object containing:
+ * @param {UseBalanceParams} UseBalanceParams The options to fetch the balance for.
  * @returns {object} An object containing:
  * - `balance`: The balance of the user.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
- * @todo Add a link to fuel connector's documentation.
- * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example
  * ```ts

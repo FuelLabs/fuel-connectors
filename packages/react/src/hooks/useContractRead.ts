@@ -37,6 +37,7 @@ type ContractReadProps<
   args: InputsForFunctionName<TAbi, TFunctionName>;
 };
 
+// @TODO: Add a link to fuel connector's documentation.
 /**
  * A hook to read data from a smart contract in the connected app.
  *
@@ -46,8 +47,6 @@ type ContractReadProps<
  * @returns {object} An object containing:
  * - The result of the contract function call.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
- * @todo Add a link to fuel connector's documentation.
- * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @throws {Error} Throws an error if the contract or function is invalid or if the function attempts to write to storage.
  *

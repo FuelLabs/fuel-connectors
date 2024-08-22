@@ -2,14 +2,13 @@ import { useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
 
+// @TODO: Add a link to fuel connector's documentation.
 /**
  * A hook to check the connection status with the connector.
  *
  * @returns {object} An object containing:
  * - `isConnected`: A boolean value indicating the connector is connected.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
- * @todo Add a link to fuel connector's documentation.
- * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example To check if a connection is established:
  * ```ts
