@@ -60,4 +60,33 @@ test.describe('FuelWalletConnector', () => {
       await page.waitForSelector('text=Transferred successfully!'),
     ).toBeTruthy();
   });
+
+  test('should connect, disconnect, and reconnect', async ({ page }) => {
+    await connect(page, fuelWalletTestHelper);
+
+    await page.click('text=Disconnect');
+    await page.waitForSelector('text=Connect Wallet');
+
+    await connect(page, fuelWalletTestHelper);
+    expect(await page.waitForSelector('text=Your Fuel Address')).toBeTruthy();
+  });
+
+  test('should connect, refresh and stay connected', async ({ page }) => {
+    await connect(page, fuelWalletTestHelper);
+
+    await page.reload();
+    await page.waitForSelector('text=Your Fuel Address');
+  });
+
+  test('should connect, disconnect, refresh and stay disconnected', async ({
+    page,
+  }) => {
+    await connect(page, fuelWalletTestHelper);
+
+    await page.click('text=Disconnect');
+    await page.waitForSelector('text=Connect Wallet');
+
+    await page.reload();
+    await page.waitForSelector('text=Connect Wallet');
+  });
 });
