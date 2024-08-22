@@ -2,8 +2,8 @@ import { downloadFuel } from '@fuels/playwright-utils';
 import type { FuelWalletTestHelper } from '@fuels/playwright-utils';
 import { test } from '@fuels/playwright-utils';
 import { expect } from '@playwright/test';
-import { bn } from 'fuels';
-import { testSetup } from '../utils/index.js';
+import { type WalletUnlocked, bn } from 'fuels';
+import { testSetup, transferMaxBalance } from '../utils/index.js';
 import { connect } from './utils';
 
 const fuelPathToExtension = await downloadFuel('0.21.0');
@@ -11,6 +11,8 @@ test.use({ pathToExtension: fuelPathToExtension });
 
 test.describe('FuelWalletConnector', () => {
   let fuelWalletTestHelper: FuelWalletTestHelper;
+  let fuelWallet: WalletUnlocked;
+  let masterWallet: WalletUnlocked;
 
   const depositAmount = '0.0003'; // Should be enough to cover the increment and transfer
 
@@ -21,6 +23,13 @@ test.describe('FuelWalletConnector', () => {
       extensionId,
       amountToFund: bn.parseUnits(depositAmount),
     }));
+  });
+
+  test.afterEach(async () => {
+    await transferMaxBalance({
+      fromWallet: fuelWallet,
+      toWallet: masterWallet,
+    });
   });
 
   test('should connect and show fuel address', async ({ page }) => {
