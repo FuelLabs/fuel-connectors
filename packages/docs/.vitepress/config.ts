@@ -63,6 +63,17 @@ export default defineConfig({
               },
             ],
           },
+          {
+            text: 'React Hooks',
+            link: '/guide/react-hooks/',
+            collapsed: true,
+            items: [
+              {
+                text: 'Hooks Reference',
+                link: '/guide/react-hooks/hooks-reference',
+              },
+            ],
+          },
           apiLinks,
         ],
       },
