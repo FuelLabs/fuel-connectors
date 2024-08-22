@@ -1,7 +1,14 @@
 import { FuelWalletTestHelper, seedWallet } from '@fuels/playwright-utils';
 import type { BrowserContext, Page } from '@playwright/test';
 import dotenv from 'dotenv';
-import { type BNInput, Mnemonic, Provider, Wallet, bn } from 'fuels';
+import {
+  type BNInput,
+  Mnemonic,
+  Provider,
+  Wallet,
+  type WalletUnlocked,
+  bn,
+} from 'fuels';
 dotenv.config();
 
 const {
@@ -54,4 +61,45 @@ export const testSetup = async ({
   await page.bringToFront();
 
   return { _fuelWallet, fuelWalletTestHelper, _masterWallet };
+};
+
+export const transferMaxBalance = async ({
+  fromWallet,
+  toWallet,
+}: {
+  fromWallet: WalletUnlocked;
+  toWallet: WalletUnlocked;
+}) => {
+  if (!fromWallet || !toWallet) return;
+
+  const MAX_ATTEMPTS = 10;
+  const trySendMax = async (attempt = 1) => {
+    if (attempt > MAX_ATTEMPTS) return;
+
+    try {
+      const remainingBalance = await fromWallet.getBalance();
+      const nextSubTry = bn(attempt * 10_000);
+
+      if (nextSubTry.lt(remainingBalance)) {
+        const targetAmount = remainingBalance.sub(nextSubTry);
+        const amountToSend = targetAmount.gt(0) ? targetAmount : bn(1);
+
+        const txResponse = await fromWallet.transfer(
+          toWallet.address,
+          amountToSend,
+        );
+        await txResponse.waitForResult();
+        console.log(
+          `----- Success sending ${amountToSend?.format()} back to ${
+            toWallet.address
+          }`,
+        );
+      }
+    } catch (e) {
+      console.log('error sending remaining balance', e.message);
+      await trySendMax(attempt + 1);
+    }
+  };
+
+  await trySendMax();
 };
