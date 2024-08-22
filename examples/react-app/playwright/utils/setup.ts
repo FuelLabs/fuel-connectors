@@ -22,22 +22,22 @@ export const testSetup = async ({
   amountToFund: BNInput;
 }) => {
   const fuelProvider = await Provider.create(VITE_FUEL_PROVIDER_URL);
-  const masterWallet = Wallet.fromMnemonic(VITE_MASTER_WALLET_MNEMONIC);
-  masterWallet.connect(fuelProvider);
+  const _masterWallet = Wallet.fromMnemonic(VITE_MASTER_WALLET_MNEMONIC);
+  _masterWallet.connect(fuelProvider);
   if (VITE_WALLET_SECRET) {
     await seedWallet(
-      masterWallet.address.toString(),
+      _masterWallet.address.toString(),
       bn.parseUnits('100'),
       VITE_FUEL_PROVIDER_URL,
       VITE_WALLET_SECRET,
     );
   }
   const randomMnemonic = Mnemonic.generate();
-  const fuelWallet = Wallet.fromMnemonic(randomMnemonic);
-  fuelWallet.connect(fuelProvider);
+  const _fuelWallet = Wallet.fromMnemonic(randomMnemonic);
+  _fuelWallet.connect(fuelProvider);
   const chainName = (await fuelProvider.fetchChain()).name;
-  const txResponse = await masterWallet.transfer(
-    fuelWallet.address,
+  const txResponse = await _masterWallet.transfer(
+    _fuelWallet.address,
     bn(amountToFund),
   );
   await txResponse.waitForResult();
@@ -53,5 +53,5 @@ export const testSetup = async ({
   await page.goto('/');
   await page.bringToFront();
 
-  return { fuelWallet, fuelWalletTestHelper, masterWallet };
+  return { _fuelWallet, fuelWalletTestHelper, _masterWallet };
 };
