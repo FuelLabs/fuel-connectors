@@ -12,22 +12,44 @@ test.use({ pathToExtension: fuelPathToExtension });
 
 test.describe('FuelWalletConnector', () => {
   let fuelWalletTestHelper: FuelWalletTestHelper;
-  let _fuelWallet: WalletUnlocked;
-  let _masterWallet: WalletUnlocked;
 
-  const depositAmount = '0.00000001';
+  const depositAmount = '0.0003'; // Should be enough to cover the increment and transfer
 
   test.beforeEach(async ({ context, extensionId, page }) => {
-    ({ fuelWalletTestHelper, _fuelWallet, _masterWallet } = await testSetup({
+    ({ fuelWalletTestHelper } = await testSetup({
       context,
       page,
       extensionId,
-      amountToFund: bn.parseUnits(depositAmount).mul(2),
+      amountToFund: bn.parseUnits(depositAmount),
     }));
   });
 
-  test('should render connect button and handle new tab', async ({ page }) => {
+  test('should connect and show fuel address', async ({ page }) => {
     await connect(page, fuelWalletTestHelper);
     expect(await page.waitForSelector('text=Your Fuel Address')).toBeTruthy();
+  });
+
+  test('should connect and increment', async ({ page }) => {
+    await connect(page, fuelWalletTestHelper);
+
+    await page.click('text=Increment');
+    await fuelWalletTestHelper.walletApprove();
+
+    expect(await page.waitForSelector('text=Success')).toBeTruthy();
+    expect(
+      await page.waitForSelector('text=Counter Incremented!'),
+    ).toBeTruthy();
+  });
+
+  test('should connect and transfer', async ({ page }) => {
+    await connect(page, fuelWalletTestHelper);
+
+    await page.click('text=Transfer 0.0001 ETH');
+    await fuelWalletTestHelper.walletApprove();
+
+    expect(await page.waitForSelector('text=Success')).toBeTruthy();
+    expect(
+      await page.waitForSelector('text=Transferred successfully!'),
+    ).toBeTruthy();
   });
 });
