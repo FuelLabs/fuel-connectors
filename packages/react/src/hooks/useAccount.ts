@@ -4,7 +4,7 @@ import { QUERY_KEYS } from '../utils';
 
 /**
  * `useAccount` is a React hook that returns the current account of the user.
- * The account is fetched using the connected connector's `currentAccount` method.
+ * A hook to get the current account of the user in the connected app
  *
  * @returns {object} An object containing:
  * - `account`: The current account of the user.
