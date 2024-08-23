@@ -5,15 +5,14 @@ import { useFuel } from '../providers';
 import { MUTATION_KEYS } from '../utils';
 
 /**
- * `useAddAssets` is a React Hook to add one or more assets asynchronously or synchronously.
- * The accounts is fetched using the connected connector's `addAssets` method.
+ * A hook to add one or more assets in the connected app asynchronously or synchronously.
  *
  * @returns {object} An object containing:
  * - `addAssets`: function to add assets synchronously
  * - `addAssetsAsync`: function to add assets asynchronously.
- * - Additional properties from `useMutation`.
- *
- * @see {@link https://github.com/FuelLabs/fuels-ts/blob/master/packages/account/src/connectors/fuel-connector.ts | fuel-connector.ts on `FuelLabs/fuel-ts`}
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
+ * @todo Add a link to fuel connector's documentation.
+ * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example To add assets synchronously:
  * ```ts

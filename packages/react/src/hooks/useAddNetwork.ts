@@ -4,15 +4,14 @@ import { useFuel } from '../providers';
 import { MUTATION_KEYS } from '../utils';
 
 /**
- * `useAddNetwork` is a React Hook to add a network.
- * The accounts is fetched using the connected connector's `addNetwork` method.
+ * A hook to add a network in the connected app.
  *
  * @returns {object} An object containing:
  * - `addNetwork`: function to add a network synchronously
  * - `addNetworkAsync` function to add a network asynchronously.
- * - Additional properties from `useMutation`.
- *
- * @see {@link https://github.com/FuelLabs/fuels-ts/blob/master/packages/account/src/connectors/fuel-connector.ts | fuel-connector.ts on `FuelLabs/fuel-ts`}
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
+ * @todo Add a link to fuel connector's documentation.
+ * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example To add a network synchronously:
  * ```ts

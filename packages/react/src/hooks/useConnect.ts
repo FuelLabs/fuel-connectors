@@ -3,15 +3,14 @@ import { useMutation } from '@tanstack/react-query';
 import { useFuel } from '../providers';
 
 /**
- * `useConnect` is a React Hook to handle connection to the Fuel network.
- * Optionally you can select a connector before connecting.
- *
- * @see {@link https://github.com/FuelLabs/fuels-ts/blob/master/packages/account/src/connectors/fuel-connector.ts | fuel-connector.ts on `FuelLabs/fuel-ts`}
+ * A hook to handle connection to the Fuel network in the connected app.
  *
  * @returns {object} object An object containing:
  * - `connect`: A function to trigger the connection to the Fuel network.
  * - `connectAsync`: An async function to trigger the connection and return a promise.
- * - Additional properties from `useMutation`.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
+ * @todo Add a link to fuel connector's documentation.
+ * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example To connect to the Fuel network
  * ```ts

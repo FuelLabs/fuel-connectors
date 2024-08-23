@@ -5,12 +5,14 @@ import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
 
 /**
- * `useWallet` is a React Hook to fetch and manage a wallet by its address.
+ * A ook to fetch and manage a wallet by its address in the connected app.
  *
- * @param {string | null} address - The wallet address to fetch. If not provided, the current account's address will be used.
+ * @param {string | null | undefined} address - The wallet address to fetch. If not provided, the current account's address will be used.
  * @returns {object} An object containing:
  * - `wallet`: The wallet or `null` if the wallet could not be fetched or the address is invalid.
- * - Additional properties from `useNamedQuery`.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * @todo Add a link to fuel connector's documentation.
+ * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example To get a wallet by address
  * ```ts

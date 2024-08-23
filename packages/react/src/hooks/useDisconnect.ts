@@ -3,15 +3,14 @@ import { useMutation } from '@tanstack/react-query';
 import { useFuel } from '../providers';
 
 /**
- * `useDisconnect` is a React hook that disconnects a connected connector.
- * The action is done by using the connected connector's `disconnect` method.
- *
- * @see {@link https://github.com/FuelLabs/fuels-ts/blob/master/packages/account/src/connectors/fuel-connector.ts | fuel-connector.ts on `FuelLabs/fuel-ts`}
+ * A hook that disconnects a connected connector in the connected app.
  *
  * @returns {object} An object containing:
  * - `disconnect`: A function to trigger the disconnection process synchronously.
  * - `disconnectAsync`: A function to trigger the disconnection process asynchronously.
- * - Additional properties from `useMutation` for further control and status tracking.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
+ * @todo Add a link to fuel connector's documentation.
+ * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example To disconnect synchronously:
  * ```ts

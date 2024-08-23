@@ -3,14 +3,13 @@ import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
 
 /**
- * `useAccount` is a React hook that returns the current account of the user.
- * A hook to get the current account of the user in the connected app
+ * A hook to get the current account of the user in the connected app.
  *
  * @returns {object} An object containing:
  * - `account`: The current account of the user.
- * - Additional properties from `useNamedQuery`.
- *
- * @see {@link https://github.com/FuelLabs/fuels-ts/blob/master/packages/account/src/connectors/fuel-connector.ts | fuel-connector.ts on `FuelLabs/fuel-ts`}
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * @todo Add a link to fuel connector's documentation.
+ * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example
  * ```ts

@@ -8,14 +8,16 @@ import { QUERY_KEYS } from '../utils';
 import { useProvider } from './useProvider';
 
 /**
- * `useBalance` is a React hook that returns assets of the user.
+ * A hook that returns the balance of the user.
  *
  * @param {object} options - An object containing:
  * @param {string} options.address - The address of the user.
  * @param {string} options.assetId - The assetId of the user.
- * @returns {Promise<BN>} User's balance.
- *
- * @see {@link https://github.com/FuelLabs/fuel-connectors/blob/main/packages/react/src/hooks/useProvider.ts | useProvider.ts}
+ * @returns {object} An object containing:
+ * - `balance`: The balance of the user.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * @todo Add a link to fuel connector's documentation.
+ * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example
  * ```ts

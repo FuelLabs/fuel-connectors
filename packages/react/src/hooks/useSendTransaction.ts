@@ -19,17 +19,19 @@ type UseSendTransactionParams = {
 };
 
 /**
- * `useSendTransaction` is a React Hook to send transactions using the Fuel SDK.
- * The transaction is sent to the specified address using the connected connector's `sendTransaction` method.
- *
- * @see {@link https://github.com/FuelLabs/fuels-ts/blob/master/packages/account/src/connectors/fuel-connector.ts | fuel-connector.ts on `FuelLabs/fuel-ts`}
+ * A hook to send transactions in the connected app.
  *
  * @typedef {Object} UseSendTransactionResult
  * @property {(params: UseSendTransactionParams) => string} sendTransaction A function to send a transaction synchronously.
  * @property {(params: UseSendTransactionParams) => string} sendTransactionAsync A function to send a transaction asynchronously.
  * @property {Object} queryProps Additional properties from `useMutation`.
  *
- * @returns {UseSendTransactionResult} Methods to send transactions.
+ * @returns {object} Methods to send transactions.
+ * - `sendTransaction`: function to send a transaction synchronously.
+ * - `sendTransactionAsync`: function to send a transaction asynchronously.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
+ * @todo Add a link to fuel connector's documentation.
+ * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * ```ts To send a transaction synchronously
  * @example

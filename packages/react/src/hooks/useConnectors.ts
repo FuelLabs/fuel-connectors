@@ -4,15 +4,13 @@ import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
 
 /**
- * `useConnectors` is a React Hook to fetch a list of connectors using the Fuel SDK.
- *
- * @see {@link https://github.com/FuelLabs/fuels-ts/blob/master/packages/account/src/connectors/fuel-connector.ts | fuel-connector.ts on `FuelLabs/fuel-ts`}
- *
- * This hook retrieves the available connectors from the Fuel SDK.
+ * A hook to fetch a list of connectors in the connected app.
  *
  * @returns {object} An object containing:
  * - `connectors`: The list of available connectors.
- * - Additional properties from `useNamedQuery`.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * @todo Add a link to fuel connector's documentation.
+ * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example To fetch connectors:
  * ```ts

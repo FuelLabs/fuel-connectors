@@ -29,8 +29,7 @@ type UseTransactionResultParams<
 };
 
 /**
- * `useTransactionResult` is a React hook to fetch the result of a specific transaction.
- * This hook retrieves the result of a transaction by its ID using the Fuel SDK.
+ * A hook to fetch the result of a specific transaction in the connected app.
  *
  * @template TTransactionType - The type of the transaction.
  * @template TName - The name of the query, defaults to 'transactionResult'.
@@ -41,7 +40,9 @@ type UseTransactionResultParams<
  * @param {UseNamedQueryParams<TName, TransactionResult<TTransactionType> | null, Error, TData>} params.query - Additional query parameters to customize the behavior of `useNamedQuery`.
  * @returns {object} An object containing
  * - `transactionResult`: The result of the transaction or `null`.
- * - Additional properties from `useNamedQuery`.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * @todo Add a link to fuel connector's documentation.
+ * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example To get a transaction result by its ID
  * ```ts

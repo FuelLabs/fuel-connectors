@@ -8,11 +8,13 @@ import { QUERY_KEYS } from '../utils';
 import { useProvider } from './useProvider';
 
 /**
- * `useChain` is a React hook that returns the chain info for the current provider.
+ * A hook that returns the chain info for the current provider.
  *
- * @returns {Promise<ChainInfo | null>} ChainInfo for the current provider.
- *
- * @see {@link https://github.com/FuelLabs/fuel-connectors/blob/main/packages/react/src/hooks/useProvider.ts | useProvider.ts}
+ * @returns {object} An object containing:
+ * - `chain`: The current chain info.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * @todo Add a link to fuel connector's documentation.
+ * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
  *
  * @example
  * ```ts
