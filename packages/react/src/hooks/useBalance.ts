@@ -8,7 +8,7 @@ import { QUERY_KEYS } from '../utils';
 import { useProvider } from './useProvider';
 
 /**
- * `useAssets` is a React hook that returns assets of the user.
+ * `useBalance` is a React hook that returns assets of the user.
  *
  * @param {object} options - An object containing:
  * @param {string} options.address - The address of the user.
