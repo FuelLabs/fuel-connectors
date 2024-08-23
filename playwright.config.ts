@@ -7,13 +7,20 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const config: PlaywrightTestConfig = defineConfig({
-  testDir: './playwright',
-  retries: 0,
+  testDir: './e2e-tests',
+  projects: [
+    {
+      name: 'react-app',
+      testDir: './e2e-tests/react-app',
+      use: { ...devices['Desktop Chrome'] },
+    },
+  ],
+  retries: 1,
   workers: 1,
   timeout: 60_000,
   reporter: [['html', { printSteps: true }]],
   webServer: {
-    command: `pnpm dev --port ${process.env.PORT}`,
+    command: `pnpm --filter react-app dev --port ${process.env.PORT}`,
     port: Number(process.env.PORT),
     reuseExistingServer: true,
     timeout: 20000,
@@ -23,12 +30,6 @@ const config: PlaywrightTestConfig = defineConfig({
     permissions: ['clipboard-read', 'clipboard-write'],
     trace: 'on-first-retry',
   },
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-  ],
 });
 
 export default config;

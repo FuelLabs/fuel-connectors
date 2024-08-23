@@ -21,6 +21,10 @@ export const testSetup = async ({
   extensionId: string;
   amountToFund: BNInput;
 }) => {
+  // log envs
+  console.log('VITE_FUEL_PROVIDER_URL', VITE_FUEL_PROVIDER_URL);
+  console.log('VITE_WALLET_SECRET', VITE_WALLET_SECRET);
+  console.log('VITE_MASTER_WALLET_MNEMONIC', VITE_MASTER_WALLET_MNEMONIC);
   const fuelProvider = await Provider.create(VITE_FUEL_PROVIDER_URL);
   const _masterWallet = Wallet.fromMnemonic(VITE_MASTER_WALLET_MNEMONIC);
   _masterWallet.connect(fuelProvider);
