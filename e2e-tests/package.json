@@ -1,0 +1,40 @@
+{
+  "name": "fuel-connectors",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Fuel Wallet Connectors",
+  "author": "Fuel Labs <contact@fuel.sh> (https://fuel.network/)",
+  "homepage": "https://github.com/FuelLabs/fuel-connectors",
+  "type": "module",
+  "scripts": {
+    "test:react-app": "playwright test --ui e2e-tests/react-app --project=react-app"
+  },
+  "devDependencies": {
+    "@fuels/playwright-utils": "0.23.0",
+    "@fuels/ts-config": "0.20.0",
+    "@playwright/test": "1.46.1",
+    "@types/node": "20.12.11",
+    "dotenv": "16.4.5",
+    "fuels": "0.93.0",
+    "husky": "9.0.11",
+    "lint-staged": "15.2.2",
+    "tsx": "^4.16.2"
+  },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8"
+  },
+  "pnpm": {
+    "overrides": {
+      "braces@<3.0.3": ">=3.0.3",
+      "ws@>=8.0.0 <8.17.1": ">=8.17.1",
+      "ws@>=7.0.0 <7.5.10": ">=7.5.10",
+      "ws@>=6.0.0 <6.2.3": ">=6.2.3",
+      "fast-xml-parser@<4.4.1": ">=4.4.1"
+    }
+  },
+  "packageManager": "pnpm@8.15.7",
+  "dependencies": {
+    "playwright": "1.46.1"
+  }
+}

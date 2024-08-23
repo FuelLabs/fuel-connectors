@@ -7,11 +7,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const config: PlaywrightTestConfig = defineConfig({
-  testDir: './e2e-tests',
+  testDir: './',
   projects: [
     {
       name: 'react-app',
-      testDir: './e2e-tests/react-app',
+      testDir: './react-app',
       use: { ...devices['Desktop Chrome'] },
     },
   ],
