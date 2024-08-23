@@ -127,9 +127,9 @@ describe('Solana Connector', () => {
     });
   });
 
-  describe('currentAccount()', () => {
-    test('throws error', () => {
-      // @ts-expect-error currentAccount is protected
+  describe('getAccountAddress()', () => {
+    test('is null', () => {
+      // @ts-expect-error getAccountAddress is protected
       expect(connector.getAccountAddress()).toBeNull();
     });
   });
