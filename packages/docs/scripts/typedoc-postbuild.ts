@@ -59,10 +59,11 @@ const removeUnwantedFiles = () =>
   });
 
 const renameInterfaces = () => {
-  renameSync(
-    join(apiDocsDir, 'interfaces'),
-    join(apiDocsDir, 'interfaces_typedoc'),
-  );
+  existsSync(join(apiDocsDir, 'interfaces')) &&
+    renameSync(
+      join(apiDocsDir, 'interfaces'),
+      join(apiDocsDir, 'interfaces_typedoc'),
+    );
 };
 
 /**
@@ -172,6 +173,7 @@ const alterFileStructure = () => {
   ];
 
   modulesFiles.forEach((modulesFile) => {
+    console.log(modulesFile);
     // Create a new directory for each module
     const newDirName = modulesFile.split('.')[0];
     const newDirPath = join(apiDocsDir, newDirName);
@@ -180,6 +182,7 @@ const alterFileStructure = () => {
     // Prepare new module directory to remove 'fuel_connectors_' prefix
     let formattedDirName = newDirPath.split('fuel_connectors_')[1];
     if (!formattedDirName) formattedDirName = newDirPath.split('fuels_')[1];
+    if (!formattedDirName) formattedDirName = newDirName;
     const capitalisedDirName =
       formattedDirName.charAt(0).toUpperCase() + formattedDirName.slice(1);
 

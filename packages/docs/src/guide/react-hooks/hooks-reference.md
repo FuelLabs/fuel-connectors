@@ -1,4 +1,4 @@
 # Hooks Reference
 
 ---
-<!--@include: ../../api/React-hooks/index.md{4,}-->
+<!--@include: ../../api/Hooks/index.md{4,}-->
