@@ -10,15 +10,15 @@ The first step is to add the `@fuels/connectors` dependency to your project. You
 ::: code-group
 
 ```sh-vue [npm]
-npm install @fuels/connectors@{{fuels}} --save
+npm install @fuels/connectors@{{version}} --save
 ```
 
 ```sh-vue [pnpm]
-pnpm add @fuels/connectors@{{fuels}}
+pnpm add @fuels/connectors@{{version}}
 ```
 
 ```sh-vue [bun]
-bun add @fuels/connectors@{{fuels}}
+bun add @fuels/connectors@{{version}}
 ```
 
 :::
