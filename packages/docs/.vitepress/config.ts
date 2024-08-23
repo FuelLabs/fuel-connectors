@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitepress';
-import apiLinks from '../.typedoc/api-links.json';
+import hooksLinks from '../.typedoc/hooks-links.json';
 import { codeInContextPlugin } from './plugins/codeInContextPlugin';
 import { snippetPlugin } from './plugins/snippetPlugin';
 
@@ -67,12 +67,7 @@ export default defineConfig({
             text: 'React Hooks',
             link: '/guide/react-hooks/',
             collapsed: true,
-            items: [
-              {
-                text: 'Hooks Reference',
-                link: '/guide/react-hooks/hooks-reference',
-              },
-            ],
+            items: [...hooksLinks],
           },
         ],
       },

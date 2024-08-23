@@ -2,6 +2,7 @@ import {
   copyFileSync,
   existsSync,
   mkdirSync,
+  readFileSync,
   readdirSync,
   renameSync,
   rmSync,
@@ -296,6 +297,49 @@ const recreateInternalLinks = () => {
     });
 };
 
+const generateHooks = () => {
+  const hooks = [] as { text: string; link: string; items: [] }[];
+  const hooksDir = join(apiDocsDir, 'Hooks');
+  const reactHooksDir = join(docsDir, 'guide', 'react-hooks');
+  const writeLines = [] as string[];
+
+  const md = readFileSync(`${hooksDir}/index.md`, 'utf-8');
+  const lines = md.split('\n');
+
+  for (let i = 0; i < lines.length; i++) {
+    // If the line starts with '###', it's a hook
+    if (lines[i].startsWith('### ')) {
+      // If we have a hook to write, write it
+      if (writeLines.length > 0) {
+        const name = writeLines[0].split('# ')[1].trim();
+        writeFileSync(join(reactHooksDir, `${name}.md`), writeLines.join('\n'));
+        writeLines.length = 0;
+        hooks.push({
+          text: name,
+          link: `/guide/react-hooks/${name}`,
+          items: [],
+        });
+      }
+
+      // Add new hook to the list
+      const name = lines[i].split('### ')[1].trim();
+      writeLines.push(`# ${name}`);
+      writeLines.push('---');
+
+      i += 3; // Skip the next 3 lines
+    }
+    if (lines[i].startsWith('#### Returns')) {
+      writeLines.push(lines[i]);
+      i += 3; // Skip the next 3 lines
+    }
+
+    // If there's lines to write, we're in a hook scope
+    if (writeLines.length > 0) writeLines.push(lines[i]);
+  }
+
+  writeFileSync('.typedoc/hooks-links.json', JSON.stringify(hooks));
+};
+
 const main = () => {
   log('Cleaning up API docs.');
   renameInterfaces();
@@ -305,6 +349,7 @@ const main = () => {
   removeUnwantedFiles();
   exportLinksJson();
   recreateInternalLinks();
+  generateHooks();
 };
 
 main();
