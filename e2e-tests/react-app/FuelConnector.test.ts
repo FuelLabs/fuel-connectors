@@ -12,13 +12,11 @@ test.use({ pathToExtension: fuelPathToExtension });
 
 test.describe('FuelWalletConnector', () => {
   let fuelWalletTestHelper: FuelWalletTestHelper;
-  let _fuelWallet: WalletUnlocked;
-  let _masterWallet: WalletUnlocked;
 
   const depositAmount = '0.00000001';
 
   test.beforeEach(async ({ context, extensionId, page }) => {
-    ({ fuelWalletTestHelper, _fuelWallet, _masterWallet } = await testSetup({
+    ({ fuelWalletTestHelper } = await testSetup({
       context,
       page,
       extensionId,

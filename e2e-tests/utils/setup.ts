@@ -21,27 +21,23 @@ export const testSetup = async ({
   extensionId: string;
   amountToFund: BNInput;
 }) => {
-  // log envs
-  console.log('VITE_FUEL_PROVIDER_URL', VITE_FUEL_PROVIDER_URL);
-  console.log('VITE_WALLET_SECRET', VITE_WALLET_SECRET);
-  console.log('VITE_MASTER_WALLET_MNEMONIC', VITE_MASTER_WALLET_MNEMONIC);
   const fuelProvider = await Provider.create(VITE_FUEL_PROVIDER_URL);
-  const _masterWallet = Wallet.fromMnemonic(VITE_MASTER_WALLET_MNEMONIC);
-  _masterWallet.connect(fuelProvider);
+  const masterWallet = Wallet.fromMnemonic(VITE_MASTER_WALLET_MNEMONIC);
+  masterWallet.connect(fuelProvider);
   if (VITE_WALLET_SECRET) {
     await seedWallet(
-      _masterWallet.address.toString(),
+      masterWallet.address.toString(),
       bn.parseUnits('100'),
       VITE_FUEL_PROVIDER_URL,
       VITE_WALLET_SECRET,
     );
   }
   const randomMnemonic = Mnemonic.generate();
-  const _fuelWallet = Wallet.fromMnemonic(randomMnemonic);
-  _fuelWallet.connect(fuelProvider);
+  const fuelWallet = Wallet.fromMnemonic(randomMnemonic);
+  fuelWallet.connect(fuelProvider);
   const chainName = (await fuelProvider.fetchChain()).name;
-  const txResponse = await _masterWallet.transfer(
-    _fuelWallet.address,
+  const txResponse = await masterWallet.transfer(
+    fuelWallet.address,
     bn(amountToFund),
   );
   await txResponse.waitForResult();
@@ -57,5 +53,5 @@ export const testSetup = async ({
   await page.goto('/');
   await page.bringToFront();
 
-  return { _fuelWallet, fuelWalletTestHelper, _masterWallet };
+  return { fuelWallet, fuelWalletTestHelper, masterWallet };
 };
