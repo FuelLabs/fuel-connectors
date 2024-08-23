@@ -43,11 +43,11 @@
       "**/.turbo",
       "**/build",
       "**/contracts",
-      "**/examples/react-next/.next",
       "pnpm-lock.yaml",
       "**/examples/react-app/src/types",
       "**/examples/react-next/.next",
-      "**/factories/**/*.ts"
+      "**/factories/**/*.ts",
+      "**/.vitepress"
     ]
   }
 }
