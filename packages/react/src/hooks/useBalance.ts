@@ -7,12 +7,21 @@ import { QUERY_KEYS } from '../utils';
 
 import { useProvider } from './useProvider';
 
+type UseBalanceParams = {
+  /**
+   * The address to fetch the balance for.
+   */
+  address?: string;
+  /**
+   * The asset ID to fetch the balance for.
+   */
+  assetId?: BytesLike;
+};
+
 /**
  * A hook that returns the balance of the user.
  *
- * @param {object} options - An object containing:
- * @param {string} options.address - The address of the user.
- * @param {string} options.assetId - The assetId of the user.
+ * @param {UseBalanceParams} options - An object containing:
  * @returns {object} An object containing:
  * - `balance`: The balance of the user.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
@@ -25,13 +34,7 @@ import { useProvider } from './useProvider';
  * console.log(balance.format());
  * ```
  */
-export const useBalance = ({
-  address,
-  assetId,
-}: {
-  address?: string;
-  assetId?: BytesLike;
-}) => {
+export const useBalance = ({ address, assetId }: UseBalanceParams) => {
   const { provider } = useProvider();
 
   const query = useNamedQuery('balance', {

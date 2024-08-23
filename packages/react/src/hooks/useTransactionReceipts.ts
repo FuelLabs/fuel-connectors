@@ -7,13 +7,19 @@ import { useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
 
+type UseTransactionReceiptsParams = {
+  /**
+   * The transaction ID to fetch the receipts for.
+   */
+  txId?: string;
+};
+
 /**
  * @deprecated `useTransactionReceipts` is deprecated. Use `useTransactionResult` instead with `select` function in the `query` parameter.
  *
  * A hook that returns the transaction receipts for the given transaction ID.
  *
- * @param {object} options The options object.
- * @param {string} options.txId The transaction ID.
+ * @param {UseTransactionReceiptsParams} options The options object.
  * @returns {object} An object containing
  * - `transactionReceipts`: The transaction receipts or `null`.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
@@ -28,7 +34,9 @@ import { QUERY_KEYS } from '../utils';
  * console.log(transactionReceipts);
  * ```
  */
-export const useTransactionReceipts = ({ txId }: { txId?: string }) => {
+export const useTransactionReceipts = ({
+  txId,
+}: UseTransactionReceiptsParams) => {
   const { fuel } = useFuel();
 
   return useNamedQuery('transactionReceipts', {

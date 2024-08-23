@@ -16,8 +16,7 @@ type NodeInfoParams = {
 /**
  * A hook to fetch node information from the provider and check compatibility.
  *
- * @param {object} [params={}] - Parameters to configure the hook.
- * @param {string} [params.version='0.0.0'] - The minimum version of the node that is considered compatible.
+ * @param {NodeInfoParams} params Parameters to configure the hook.
  * @returns {object} An object containing:
  * - `nodeInfo`: The node information data or `null`.
  * - `isCompatible`: Whether the node is compatible with the specified version.

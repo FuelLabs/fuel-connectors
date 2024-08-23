@@ -42,12 +42,7 @@ type ContractReadProps<
  *
  * @template TAbi - The ABI of the contract.
  * @template TFunctionName - The name of the function to call on the contract.
- *
- * @param {object} props
- * @param {Contract | ContractData<TAbi>} props.contract - The contract instance or contract data (address, ABI, and provider).
- * @param {TFunctionName} props.functionName - The name of the function to call on the contract.
- * @param {InputsForFunctionName<TAbi, TFunctionName>} props.args - The arguments to pass to the contract function.
- *
+ * @param {ContractReadProps<TAbi, TFunctionName>} props - The properties of the hook.
  * @returns {object} An object containing:
  * - The result of the contract function call.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.

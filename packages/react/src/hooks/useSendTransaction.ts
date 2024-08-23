@@ -21,12 +21,8 @@ type UseSendTransactionParams = {
 /**
  * A hook to send transactions in the connected app.
  *
- * @typedef {Object} UseSendTransactionResult
- * @property {(params: UseSendTransactionParams) => string} sendTransaction A function to send a transaction synchronously.
- * @property {(params: UseSendTransactionParams) => string} sendTransactionAsync A function to send a transaction asynchronously.
- * @property {Object} queryProps Additional properties from `useMutation`.
- *
- * @returns {object} Methods to send transactions.
+ * @params {UseSendTransactionParams} params The parameters to send a transaction.
+ * @returns {Object} Methods to send transactions.
  * - `sendTransaction`: function to send a transaction synchronously.
  * - `sendTransactionAsync`: function to send a transaction asynchronously.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
