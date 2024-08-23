@@ -26,18 +26,17 @@ type UseSendTransactionParams = {
  * - `sendTransaction`: function to send a transaction synchronously.
  * - `sendTransactionAsync`: function to send a transaction asynchronously.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
- * @example
- * ```ts To send a transaction synchronously
+ * @todo Add a link to fuel connector's documentation.
+ * @see {@link https://github.com/FuelLabs/fuels-connectors/blob/master/packages/docs/src/guide/react-hooks/hooks-reference.md | Hook Reference in Fuel Connectors Documentation}
+ *
+ * @example To send a transaction synchronously
+ * ```ts
  * const { sendTransaction } = useSendTransaction();
  * sendTransaction({ address: '0x...', transaction: {...} });
  * ```
  *
- * @example
- * ```ts To send a transaction asynchronously
- * const { sendTransactionAsync } = useSendTransaction();
- * await sendTransactionAsync({ address: '0x...', transaction: {...} });
- * ```
- */
+ * @example To send a transaction asynchronously
+ * ```ts
  * const { sendTransactionAsync } = useSendTransaction();
  * await sendTransactionAsync({ address: '0x...', transaction: {...} });
  * ```
