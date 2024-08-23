@@ -1,5 +1,6 @@
 import {
   copyFileSync,
+  existsSync,
   mkdirSync,
   readdirSync,
   renameSync,
@@ -109,10 +110,12 @@ const exportLinksJson = () => {
  * has multiple entry points.
  */
 const flattenSecondaryModules = () => {
-  const modulesFiles = readdirSync(modulesDir);
-  const classesFiles = readdirSync(classesDir);
-  const interfacesFiles = readdirSync(interfacesDir);
-  const enumsFiles = readdirSync(enumsDir);
+  const modulesFiles = existsSync(modulesDir) ? readdirSync(modulesDir) : [];
+  const classesFiles = existsSync(classesDir) ? readdirSync(classesDir) : [];
+  const interfacesFiles = existsSync(interfacesDir)
+    ? readdirSync(interfacesDir)
+    : [];
+  const enumsFiles = existsSync(enumsDir) ? readdirSync(enumsDir) : [];
 
   const files = [
     ...classesFiles.map((c) => ({ name: c, path: classesDir })),
@@ -155,10 +158,12 @@ const flattenSecondaryModules = () => {
  * Alters the typedoc generated file structure to be more semantic.
  */
 const alterFileStructure = () => {
-  const modulesFiles = readdirSync(modulesDir);
-  const classesFiles = readdirSync(classesDir);
-  const interfacesFiles = readdirSync(interfacesDir);
-  const enumsFiles = readdirSync(enumsDir);
+  const modulesFiles = existsSync(modulesDir) ? readdirSync(modulesDir) : [];
+  const classesFiles = existsSync(classesDir) ? readdirSync(classesDir) : [];
+  const interfacesFiles = existsSync(interfacesDir)
+    ? readdirSync(interfacesDir)
+    : [];
+  const enumsFiles = existsSync(enumsDir) ? readdirSync(enumsDir) : [];
 
   const files = [
     ...classesFiles.map((c) => ({ name: c, path: classesDir })),

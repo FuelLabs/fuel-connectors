@@ -2,7 +2,7 @@
   "$schema": "https://typedoc.org/schema.json",
   "includeVersion": true,
   "entryPointStrategy": "packages",
-  "entryPoints": ["../connectors", "../react", "../common"],
+  "entryPoints": ["../react"],
   "out": "src/api",
   "githubPages": false,
   "readme": ".typedoc/api-readme.md",
