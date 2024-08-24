@@ -7,8 +7,7 @@
     "fuels:build": "fuels build",
     "fuels:typegen": "fuels typegen --output=./src/types/contracts --inputs=./contracts/out/debug/counter-abi.json",
     "dev": "vite",
-    "build": "vite build",
-    "test-ui": "playwright test --ui --debug"
+    "build": "vite build"
   },
   "dependencies": {
     "@fuels/connectors": "workspace:*",
@@ -24,10 +23,7 @@
     "react-dom": "18.3.1"
   },
   "devDependencies": {
-    "@fuels/playwright-utils": "0.23.0",
-    "@playwright/test": "1.46.1",
     "@tanstack/react-query-devtools": "5.35.1",
-    "@types/node": "20.12.11",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
     "@vitejs/plugin-react": "4.2.1",
