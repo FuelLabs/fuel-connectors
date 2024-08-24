@@ -29,7 +29,7 @@ runs:
 
     - name: Run E2E Contract Tests
       shell: bash
-      run: xvfb-run --auto-servernum -- pnpm test:e2e:connectors
+      run: xvfb-run --auto-servernum -- pnpm test:react-app:ci
       env:
         PORT: 5173
         VITE_FUEL_PROVIDER_URL: ${{ inputs.providerUrl }}

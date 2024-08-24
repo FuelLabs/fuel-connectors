@@ -77,37 +77,32 @@ jobs:
           json-summary-path: ./coverage/coverage-summary.json
           json-final-path: ./coverage/coverage-final.json
   tests-e2e-connectors:
-    name: E2E Connector Tests - Local
-    runs-on: buildjet-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: FuelLabs/github-actions/setups/node@master
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 18.18.0
-          pnpm-version: 8.15.7
-      - uses: FuelLabs/github-actions/setups/docker@master
-        with:
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          node-version: '18'
 
-      - name: Run PNPM install
-        id: pnpm-cache
-        run:
-          pnpm recursive install --frozen-lockfile
+      - name: Install pnpm
+        run: npm install -g pnpm
 
-      - name: Start Test Node
-        run: pnpm node:up
+      - name: Install dependencies for React app
+        run: pnpm install
+        working-directory: ./examples/react-app
 
-      - name: Generate .env app
-        run: cp packages/app/.env.example packages/app/.env
+      - name: Install Playwright dependencies
+        run: pnpm install
+        working-directory: ./e2e-tests
 
-      - name: Build & Deploy Contracts
-        run: pnpm deploy:contracts
-        working-directory: ./packages/e2e-contract-tests
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install
+        working-directory: ./e2e-tests
 
-      - name: Run E2E Contract Tests - Local
-        uses: ./.github/actions/e2e-tests-contracts
-        with:
-          providerUrl: "http://localhost:4000/v1/graphql"
-          masterMnemonic: ${{ secrets.VITE_MASTER_WALLET_MNEMONIC }}
-          genesisSecret: "0xa449b1ffee0e2205fa924c6740cc48b3b473aa28587df6dab12abc245d1f5298"
+      - name: Run Playwright tests
+        run: pnpm exec playwright test
+        working-directory: ./e2e-tests
