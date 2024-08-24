@@ -127,11 +127,10 @@ describe('Solana Connector', () => {
     });
   });
 
-  describe('currentAccount()', () => {
-    test('throws error', async () => {
-      await expect(() => connector.currentAccount()).rejects.toThrowError(
-        'No connected accounts',
-      );
+  describe('getAccountAddress()', () => {
+    test('is null', () => {
+      // @ts-expect-error getAccountAddress is protected
+      expect(connector.getAccountAddress()).toBeNull();
     });
   });
 
