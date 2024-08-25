@@ -1,13 +1,28 @@
-import { downloadFuel } from '@fuels/playwright-utils';
-import type { FuelWalletTestHelper } from '@fuels/playwright-utils';
+import {
+  downloadFuel,
+  getButtonByText,
+  getByAriaLabel,
+} from '@fuels/playwright-utils';
+import { FuelWalletTestHelper } from '@fuels/playwright-utils';
 import { test } from '@fuels/playwright-utils';
-import { expect } from '@playwright/test';
+import { type Page, expect } from '@playwright/test';
+import dotenv from 'dotenv';
 import { type WalletUnlocked, bn } from 'fuels';
-import { testSetup, transferMaxBalance } from '../utils/index.js';
-import { connect } from './utils';
+import { testSetup, transferMaxBalance } from '../setup';
+dotenv.config();
 
 const fuelPathToExtension = await downloadFuel('0.21.0');
 test.use({ pathToExtension: fuelPathToExtension });
+
+const connect = async (
+  page: Page,
+  fuelWalletTestHelper: FuelWalletTestHelper,
+) => {
+  const connectButton = getButtonByText(page, 'Connect');
+  await connectButton.click();
+  await getByAriaLabel(page, 'Connect to Fuel Wallet', true).click();
+  await fuelWalletTestHelper.walletConnect();
+};
 
 test.describe('FuelWalletConnector', () => {
   let fuelWalletTestHelper: FuelWalletTestHelper;
@@ -17,12 +32,23 @@ test.describe('FuelWalletConnector', () => {
   const depositAmount = '0.0003'; // Should be enough to cover the increment and transfer
 
   test.beforeEach(async ({ context, extensionId, page }) => {
-    ({ fuelWalletTestHelper } = await testSetup({
+    const { fuelProvider, chainName, randomMnemonic } = await testSetup({
       context,
       page,
       extensionId,
       amountToFund: bn.parseUnits(depositAmount),
-    }));
+    });
+
+    fuelWalletTestHelper = await FuelWalletTestHelper.walletSetup(
+      context,
+      extensionId,
+      fuelProvider.url,
+      chainName,
+      randomMnemonic,
+    );
+
+    await page.goto('/');
+    await connect(page, fuelWalletTestHelper);
   });
 
   test.afterEach(async () => {
@@ -33,13 +59,10 @@ test.describe('FuelWalletConnector', () => {
   });
 
   test('should connect and show fuel address', async ({ page }) => {
-    await connect(page, fuelWalletTestHelper);
     expect(await page.waitForSelector('text=Your Fuel Address')).toBeTruthy();
   });
 
   test('should connect and increment', async ({ page }) => {
-    await connect(page, fuelWalletTestHelper);
-
     await page.click('text=Increment');
     await fuelWalletTestHelper.walletApprove();
 
@@ -50,8 +73,6 @@ test.describe('FuelWalletConnector', () => {
   });
 
   test('should connect and transfer', async ({ page }) => {
-    await connect(page, fuelWalletTestHelper);
-
     await page.click('text=Transfer 0.0001 ETH');
     await fuelWalletTestHelper.walletApprove();
 
@@ -62,18 +83,13 @@ test.describe('FuelWalletConnector', () => {
   });
 
   test('should connect, disconnect, and reconnect', async ({ page }) => {
-    await connect(page, fuelWalletTestHelper);
-
     await page.click('text=Disconnect');
     await page.waitForSelector('text=Connect Wallet');
 
-    await connect(page, fuelWalletTestHelper);
     expect(await page.waitForSelector('text=Your Fuel Address')).toBeTruthy();
   });
 
   test('should connect, refresh and stay connected', async ({ page }) => {
-    await connect(page, fuelWalletTestHelper);
-
     await page.reload();
     await page.waitForSelector('text=Your Fuel Address');
   });
@@ -81,8 +97,6 @@ test.describe('FuelWalletConnector', () => {
   test('should connect, disconnect, refresh and stay disconnected', async ({
     page,
   }) => {
-    await connect(page, fuelWalletTestHelper);
-
     await page.click('text=Disconnect');
     await page.waitForSelector('text=Connect Wallet');
 
