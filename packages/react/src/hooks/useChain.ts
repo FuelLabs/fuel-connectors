@@ -15,7 +15,7 @@ import { useProvider } from './useProvider';
  * - `chain`: The current chain info.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
  *
- * @example
+ * @examples
  * ```ts
  * const { chain } = useChain();
  * console.log(chain);

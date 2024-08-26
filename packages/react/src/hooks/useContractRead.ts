@@ -41,16 +41,19 @@ type ContractReadProps<
 /**
  * A hook to read data from a smart contract in the connected app.
  *
- * @template TAbi - The ABI of the contract.
- * @template TFunctionName - The name of the function to call on the contract.
- * @param {ContractReadProps<TAbi, TFunctionName>} props - The properties of the hook.
+ * @params {object} The properties of the hook.
+ * - `contract`: The contract instance or contract data (address, ABI, and provider).
+ * - `functionName`: The name of the function to call on the contract.
+ * - `args`: The arguments to pass to the contract function.
+ *
  * @returns {object} An object containing:
  * - The result of the contract function call.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
  *
  * @throws {Error} Throws an error if the contract or function is invalid or if the function attempts to write to storage.
  *
- * @example To read data from a contract
+ * @examples
+ * To read data from a contract
  * ```ts
  * const { data } = useContractRead({
  *   contract: myContractInstance,

@@ -10,14 +10,15 @@ object An object containing:
 - `connectAsync`: An async function to trigger the connection and return a promise.
 - [Properties of `@tanstack/react-query`, `useMutation` method](https://tanstack.com/query/latest/docs/framework/react/reference/useMutation).
 
-**`Example`**
+#### Examples
 
+To connect to the Fuel network
 ```ts
 const { connect } = useConnect();
 connect('myConnector');
 ```
 
-**`Example`**
+#### Example
 
 ```ts
 const { connectAsync } = useConnect();
@@ -25,6 +26,6 @@ await connectAsync('myConnector');
 
 #### Defined in
 
-[packages/react/src/hooks/useConnect.ts:26](https://github.com/LeoCourbassier/fuel-connectors/blob/3be030f46c51ceec060dd54c83d891fef5f785a0/packages/react/src/hooks/useConnect.ts#L26)
+[packages/react/src/hooks/useConnect.ts:27](https://github.com/LeoCourbassier/fuel-connectors/blob/9fb74b5f15e12bc00681e63ea33b85bae3773662/packages/react/src/hooks/useConnect.ts#L27)
 
 ___

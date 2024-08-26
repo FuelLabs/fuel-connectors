@@ -11,7 +11,8 @@ import { useFuel } from '../providers';
  * - `connectAsync`: An async function to trigger the connection and return a promise.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
  *
- * @example To connect to the Fuel network
+ * @examples
+ * To connect to the Fuel network
  * ```ts
  * const { connect } = useConnect();
  * connect('myConnector');

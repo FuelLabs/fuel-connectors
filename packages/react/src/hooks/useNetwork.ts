@@ -10,7 +10,8 @@ import { QUERY_KEYS } from '../utils';
  * - `network`: The network information data.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
  *
- * @example To get the current network information
+ * @examples
+ *  To get the current network information
  * ```ts
  * const { network } = useNetwork();
  * console.log(network);

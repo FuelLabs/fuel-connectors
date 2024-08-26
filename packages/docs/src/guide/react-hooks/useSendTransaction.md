@@ -10,19 +10,21 @@ Methods to send transactions.
 - `sendTransactionAsync`: function to send a transaction asynchronously.
 - [Properties of `@tanstack/react-query`, `useMutation` method](https://tanstack.com/query/latest/docs/framework/react/reference/useMutation).
 
-**`Params`**
+#### Params
 
-params The parameters to send a transaction.
+The parameters to send a transaction.
+- `address`: The address to send the transaction to.
+- `transaction`: The transaction request object that defines the transaction details.
 
-**`Example`**
+#### Examples
 
+To send a transaction synchronously:
 ```ts
 const { sendTransaction } = useSendTransaction();
 sendTransaction({ address: '0x...', transaction: {...} });
 ```
 
-**`Example`**
-
+To send a transaction asynchronously:
 ```ts
 const { sendTransactionAsync } = useSendTransaction();
 await sendTransactionAsync({ address: '0x...', transaction: {...} });
@@ -30,6 +32,6 @@ await sendTransactionAsync({ address: '0x...', transaction: {...} });
 
 #### Defined in
 
-[packages/react/src/hooks/useSendTransaction.ts:43](https://github.com/LeoCourbassier/fuel-connectors/blob/3be030f46c51ceec060dd54c83d891fef5f785a0/packages/react/src/hooks/useSendTransaction.ts#L43)
+[packages/react/src/hooks/useSendTransaction.ts:47](https://github.com/LeoCourbassier/fuel-connectors/blob/9fb74b5f15e12bc00681e63ea33b85bae3773662/packages/react/src/hooks/useSendTransaction.ts#L47)
 
 ___

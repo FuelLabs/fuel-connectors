@@ -22,12 +22,15 @@ type UseBalanceParams = {
 /**
  * A hook that returns the balance of the user.
  *
- * @param {UseBalanceParams} UseBalanceParams The options to fetch the balance for.
+ * @params {object} The options to fetch the balance for.
+ * - `address`: The address to fetch the balance for.
+ * - `assetId`: The asset ID to fetch the balance for.
+ *
  * @returns {object} An object containing:
  * - `balance`: The balance of the user.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
  *
- * @example
+ * @examples
  * ```ts
  * const { balance } = useBalance({address: '0x1234', assetId: '0x1234'});
  * console.log(balance.format());

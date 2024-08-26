@@ -10,15 +10,15 @@ An object containing:
 - `disconnectAsync`: A function to trigger the disconnection process asynchronously.
 - [Properties of `@tanstack/react-query`, `useMutation` method](https://tanstack.com/query/latest/docs/framework/react/reference/useMutation).
 
-**`Example`**
+#### Examples
 
+To disconnect synchronously:
 ```ts
 const { disconnect } = useDisconnect();
 disconnect();
 ```
 
-**`Example`**
-
+To disconnect asynchronously:
 ```ts
 const { disconnectAsync } = useDisconnect();
 await disconnectAsync();
@@ -26,6 +26,6 @@ await disconnectAsync();
 
 #### Defined in
 
-[packages/react/src/hooks/useDisconnect.ts:26](https://github.com/LeoCourbassier/fuel-connectors/blob/3be030f46c51ceec060dd54c83d891fef5f785a0/packages/react/src/hooks/useDisconnect.ts#L26)
+[packages/react/src/hooks/useDisconnect.ts:27](https://github.com/LeoCourbassier/fuel-connectors/blob/9fb74b5f15e12bc00681e63ea33b85bae3773662/packages/react/src/hooks/useDisconnect.ts#L27)
 
 ___

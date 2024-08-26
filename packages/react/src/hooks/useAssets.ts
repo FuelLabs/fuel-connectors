@@ -11,7 +11,7 @@ import { QUERY_KEYS } from '../utils';
  * - `assets`: User's assets.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
  *
- * @example
+ * @examples
  * ```ts
  * const { assets } = useAssets();
  * console.log(assets);

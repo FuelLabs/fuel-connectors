@@ -9,8 +9,9 @@ An object containing:
 - `connectors`: The list of available connectors.
 - [Properties of `@tanstack/react-query`, `useQuery` method](https://tanstack.com/query/latest/docs/framework/react/reference/useQuery).
 
-**`Example`**
+#### Examples
 
+To fetch connectors:
 ```ts
 const { connectors } = useConnectors();
 console.log(connectors);
@@ -18,6 +19,6 @@ console.log(connectors);
 
 #### Defined in
 
-[packages/react/src/hooks/useConnectors.ts:20](https://github.com/LeoCourbassier/fuel-connectors/blob/3be030f46c51ceec060dd54c83d891fef5f785a0/packages/react/src/hooks/useConnectors.ts#L20)
+[packages/react/src/hooks/useConnectors.ts:21](https://github.com/LeoCourbassier/fuel-connectors/blob/9fb74b5f15e12bc00681e63ea33b85bae3773662/packages/react/src/hooks/useConnectors.ts#L21)
 
 ___

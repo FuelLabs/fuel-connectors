@@ -12,13 +12,14 @@ import { MUTATION_KEYS } from '../utils';
  * - `addNetworkAsync` function to add a network asynchronously.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
  *
- * @example To add a network synchronously:
+ * @examples
+ *  To add a network synchronously:
  * ```ts
  * const { addNetwork } = useAddNetwork();
  * addNetwork(network);
  * ```
  *
- * @example To add a network asynchronously:
+ * To add a network asynchronously:
  * ```ts
  * const { addNetworkAsync } = useAddNetwork();
  * await addNetworkAsync(network);

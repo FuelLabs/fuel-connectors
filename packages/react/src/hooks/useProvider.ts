@@ -10,7 +10,8 @@ import { QUERY_KEYS } from '../utils';
  * - `provider`: The provider data or `null`.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
  *
- * @example To get the current provider
+ * @examples
+ * To get the current provider:
  * ```ts
  * const { provider } = useProvider();
  * ```

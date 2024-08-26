@@ -10,15 +10,15 @@ An object containing:
 - `addAssetsAsync`: function to add assets asynchronously.
 - [Properties of `@tanstack/react-query`, `useMutation` method](https://tanstack.com/query/latest/docs/framework/react/reference/useMutation).
 
-**`Example`**
+#### Examples
 
+To add assets synchronously:
 ```ts
 const { addAssets } = useAddAssets();
 addAssets(asset);
 ```
 
-**`Example`**
-
+To add assets asynchronously:
 ```ts
 const { addAssetsAsync } = useAddAssets();
 await addAssetsAsync([asset1, asset2]);
@@ -26,6 +26,6 @@ await addAssetsAsync([asset1, asset2]);
 
 #### Defined in
 
-[packages/react/src/hooks/useAddAssets.ts:28](https://github.com/LeoCourbassier/fuel-connectors/blob/3be030f46c51ceec060dd54c83d891fef5f785a0/packages/react/src/hooks/useAddAssets.ts#L28)
+[packages/react/src/hooks/useAddAssets.ts:29](https://github.com/LeoCourbassier/fuel-connectors/blob/9fb74b5f15e12bc00681e63ea33b85bae3773662/packages/react/src/hooks/useAddAssets.ts#L29)
 
 ___

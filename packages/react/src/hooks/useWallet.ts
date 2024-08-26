@@ -8,16 +8,19 @@ import { QUERY_KEYS } from '../utils';
 /**
  * A hook to fetch and manage a wallet by its address in the connected app.
  *
- * @param {string | null | undefined} address - The wallet address to fetch. If not provided, the current account's address will be used.
+ * @params {object} The parameters to fetch a wallet.
+ * - `address`: The wallet address to fetch. If not provided, the current account's address will be used.
+ *
  * @returns {object} An object containing:
  * - `wallet`: The wallet or `null` if the wallet could not be fetched or the address is invalid.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
  *
- * @example To get a wallet by address
+ * @examples
+ * To get a wallet by address:
  * ```ts
  * const { wallet } = useWallet('0x...');
  * ```
- * @example To get the current account's wallet
+ * To get the current account's wallet:
  * ```ts
  * const { wallet } = useWallet();
  * ```

@@ -17,13 +17,16 @@ type NodeInfoParams = {
 /**
  * A hook to fetch node information from the provider and check compatibility.
  *
- * @param {NodeInfoParams} params Parameters to configure the hook.
+ * @params {object} The parameters to configure the hook.
+ * - `version`: The minimum version of the node that is considered compatible.
+ *
  * @returns {object} An object containing:
  * - `nodeInfo`: The node information data or `null`.
  * - `isCompatible`: Whether the node is compatible with the specified version.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
  *
- * @example To fetch node information and check compatibility
+ * @examples
+ * To fetch node information and check compatibility
  * ```ts
  * const { nodeInfo, isCompatible } = useNodeInfo({ version: '1.2.3' });
  * ```

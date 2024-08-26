@@ -10,13 +10,15 @@ import { QUERY_KEYS } from '../utils';
 /**
  * A hook to fetch transaction details using a transaction ID in the connected app.
  *
- * @param {string} txId The ID of the transaction to fetch
+ * @params {string} The parameters to fetch the transaction.
+ * - `txId`: A string value representing the transaction ID.
  *
  * @returns {object} An object containing:
  * - `transaction`: The transaction details retrieved from the provider, or `null` if not found.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
  *
- * @example To fetch transaction details
+ * @examples
+ * To fetch transaction details:
  * ```ts
  * const { transaction, error, isLoading } = useTransaction('0x1234');
  * ```

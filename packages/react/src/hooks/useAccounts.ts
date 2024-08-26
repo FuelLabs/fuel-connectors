@@ -10,7 +10,7 @@ import { QUERY_KEYS } from '../utils';
  * - `accounts`: User accounts.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
  *
- * @example
+ * @examples
  * ```ts
  * const { accounts } = useAccounts();
  * console.log(accounts);

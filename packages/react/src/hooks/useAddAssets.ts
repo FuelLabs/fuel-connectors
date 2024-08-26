@@ -13,13 +13,14 @@ import { MUTATION_KEYS } from '../utils';
  * - `addAssetsAsync`: function to add assets asynchronously.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
  *
- * @example To add assets synchronously:
+ * @examples
+ *  To add assets synchronously:
  * ```ts
  * const { addAssets } = useAddAssets();
  * addAssets(asset);
  * ```
  *
- * @example To add assets asynchronously:
+ * To add assets asynchronously:
  * ```ts
  * const { addAssetsAsync } = useAddAssets();
  * await addAssetsAsync([asset1, asset2]);

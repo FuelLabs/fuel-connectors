@@ -11,7 +11,8 @@ import { QUERY_KEYS } from '../utils';
  * - `connectors`: The list of available connectors.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
  *
- * @example To fetch connectors:
+ * @examples
+ * To fetch connectors:
  * ```ts
  * const { connectors } = useConnectors();
  * console.log(connectors);

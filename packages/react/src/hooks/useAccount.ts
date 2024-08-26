@@ -10,7 +10,7 @@ import { QUERY_KEYS } from '../utils';
  * - `account`: The current account of the user.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
  *
- * @example
+ * @examples
  * ```ts
  * const { account } = useAccount();
  * console.log(account);

@@ -10,7 +10,8 @@ import { QUERY_KEYS } from '../utils';
  * - `isConnected`: A boolean value indicating the connector is connected.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
  *
- * @example To check if a connection is established:
+ * @examples
+ *  To check if a connection is established:
  * ```ts
  * const { isConnected } = useIsConnected();
  * ```

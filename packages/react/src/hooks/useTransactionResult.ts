@@ -32,16 +32,16 @@ type UseTransactionResultParams<
 /**
  * A hook to fetch the result of a specific transaction in the connected app.
  *
- * @template TTransactionType - The type of the transaction.
- * @template TName - The name of the query, defaults to 'transactionResult'.
- * @template TData - The type of the data returned by the query, defaults to `TransactionResult<TTransactionType> | null`.
+ * @params {UseTransactionResultParams<TTransactionType, TName, TData>} Parameters to configure the hook.
+ * - `txId`: A string value representing the transaction ID.
+ * - `query`: Additional query parameters to customize the behavior of `useNamedQuery`.
  *
- * @param {UseTransactionResultParams<TTransactionType, TName, TData>} params - Parameters to configure the hook.
  * @returns {object} An object containing
  * - `transactionResult`: The result of the transaction or `null`.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
  *
- * @example To get a transaction result by its ID
+ * @examples
+ * To fetch the result of a transaction:
  * ```ts
  * const { transactionResult } = useTransactionResult({
  *   txId: '0x...',

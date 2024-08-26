@@ -11,13 +11,14 @@ import { useFuel } from '../providers';
  * - `disconnectAsync`: A function to trigger the disconnection process asynchronously.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
  *
- * @example To disconnect synchronously:
+ * @examples
+ * To disconnect synchronously:
  * ```ts
  * const { disconnect } = useDisconnect();
  * disconnect();
  * ```
  *
- * @example To disconnect asynchronously:
+ * To disconnect asynchronously:
  * ```ts
  * const { disconnectAsync } = useDisconnect();
  * await disconnectAsync();

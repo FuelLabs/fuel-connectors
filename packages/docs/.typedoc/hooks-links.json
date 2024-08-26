@@ -85,5 +85,6 @@
     "text": "useTransactionResult",
     "link": "/guide/react-hooks/useTransactionResult",
     "items": []
-  }
+  },
+  { "text": "useWallet", "link": "/guide/react-hooks/useWallet", "items": [] }
 ]
