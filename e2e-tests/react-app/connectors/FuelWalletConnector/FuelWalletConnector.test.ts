@@ -11,7 +11,7 @@ import { type WalletUnlocked, bn } from 'fuels';
 import { testSetup, transferMaxBalance } from '../setup';
 dotenv.config();
 
-const fuelPathToExtension = await downloadFuel('0.21.0');
+const fuelPathToExtension = await downloadFuel('0.27.0');
 test.use({ pathToExtension: fuelPathToExtension });
 
 const connect = async (
