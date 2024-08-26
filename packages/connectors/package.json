@@ -23,7 +23,7 @@
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
-    "@wagmi/core": "2.12.2",
+    "@wagmi/core": "2.13.4",
     "@web3modal/wagmi": "5.0.0",
     "viem": "2.10.2",
     "socket.io-client": "4.7.2",
