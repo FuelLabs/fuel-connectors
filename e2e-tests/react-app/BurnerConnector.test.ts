@@ -1,6 +1,12 @@
-import { test } from '@fuels/playwright-utils';
-import { expect } from '@playwright/test';
-import { connectBurner } from './utils';
+import { getButtonByText, getByAriaLabel, test } from '@fuels/playwright-utils';
+import { type Page, expect } from '@playwright/test';
+
+const connectBurner = async (page: Page, walletName = 'Burner Wallet') => {
+  await page.bringToFront();
+  const connectButton = getButtonByText(page, 'Connect');
+  await connectButton.click();
+  await getByAriaLabel(page, `Connect to ${walletName}`, true).click();
+};
 
 test.describe('BurnerWalletConnector', () => {
   test.beforeEach(async ({ page }) => {
