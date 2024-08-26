@@ -1,4 +1,4 @@
-import { FuelWalletTestHelper, seedWallet } from '@fuels/playwright-utils';
+import { seedWallet } from '@fuels/playwright-utils';
 import type { BrowserContext, Page } from '@playwright/test';
 import dotenv from 'dotenv';
 import {
@@ -18,9 +18,6 @@ const {
 } = process.env as Record<string, string>;
 
 export const testSetup = async ({
-  context,
-  extensionId,
-  page,
   amountToFund,
 }: {
   context: BrowserContext;
@@ -49,18 +46,7 @@ export const testSetup = async ({
   );
   await txResponse.waitForResult();
 
-  const fuelWalletTestHelper = await FuelWalletTestHelper.walletSetup(
-    context,
-    extensionId,
-    fuelProvider.url,
-    chainName,
-    randomMnemonic,
-  );
-
-  await page.goto('/');
-  await page.bringToFront();
-
-  return { fuelWallet, fuelWalletTestHelper, masterWallet };
+  return { fuelWallet, masterWallet, fuelProvider, randomMnemonic, chainName };
 };
 
 export const transferMaxBalance = async ({
