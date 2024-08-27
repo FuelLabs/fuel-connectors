@@ -32,7 +32,7 @@
     "@wagmi/core": "2.13.4",
     "@web3modal/wagmi": "5.0.0",
     "memoizee": "0.4.15",
-    "viem": "2.10.2"
+    "viem": "2.20.1"
   },
   "devDependencies": {
     "@fuel-ts/account": "0.93.0",

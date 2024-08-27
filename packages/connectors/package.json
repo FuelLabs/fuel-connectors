@@ -25,7 +25,7 @@
     "@ethersproject/bytes": "5.7.0",
     "@wagmi/core": "2.13.4",
     "@web3modal/wagmi": "5.0.0",
-    "viem": "2.10.2",
+    "viem": "2.20.1",
     "socket.io-client": "4.7.2",
     "@web3modal/solana": "5.0.0",
     "@web3modal/scaffold": "5.0.0",
