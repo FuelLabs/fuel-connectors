@@ -29,7 +29,7 @@ type UseSendTransactionParams = {
  * @returns {Object} Methods to send transactions.
  * - `sendTransaction`: function to send a transaction synchronously.
  * - `sendTransactionAsync`: function to send a transaction asynchronously.
- * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | `...mutationProps`}: Destructured properties from `useMutation` result.
  *
  * @examples
  * To send a transaction synchronously:

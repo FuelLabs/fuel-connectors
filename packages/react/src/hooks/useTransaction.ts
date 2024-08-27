@@ -8,14 +8,14 @@ import { QUERY_KEYS } from '../utils';
 
 // @TODO: Add a link to fuel connector's documentation.
 /**
- * A hook to fetch transaction details using a transaction ID in the connected app.
+ * A hook to fetch transaction details using a transaction ID.
  *
  * @params {string} The parameters to fetch the transaction.
  * - `txId`: A string value representing the transaction ID.
  *
  * @returns {object} An object containing:
  * - `transaction`: The transaction details retrieved from the provider, or `null` if not found.
- * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | `...queryProps`}: Destructured properties from `useQuery` result.
  *
  * @examples
  * To fetch transaction details:

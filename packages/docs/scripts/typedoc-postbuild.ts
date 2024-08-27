@@ -301,40 +301,36 @@ const generateHooks = () => {
   const hooks = [] as { text: string; link: string; items: [] }[];
   const hooksDir = join(apiDocsDir, 'Hooks');
   const reactHooksDir = join(docsDir, 'guide', 'react-hooks');
-  const writeLines = [] as string[];
+  const writeLines: Record<string, Record<string, string[]>> = {};
   const sectionsToIgnore = ['Parameters', 'Type parameters'];
 
   const md = readFileSync(`${hooksDir}/index.md`, 'utf-8');
   const lines = md.split('\n');
   // Skip whole section
-  let skipSection = false;
+  let skipSection = true;
+  let currentHook = '';
+  let currentSection = 'index';
 
   for (let i = 0; i < lines.length; i++) {
     // If the line starts with '###', it's a hook
     if (lines[i].startsWith('### ')) {
       skipSection = false;
-      // If we have a hook to write, write it
-      if (writeLines.length > 0) {
-        const name = writeLines[0].split('# ')[1].trim();
-        writeFileSync(join(reactHooksDir, `${name}.md`), writeLines.join('\n'));
-        writeLines.length = 0;
-        hooks.push({
-          text: name,
-          link: `/guide/react-hooks/${name}`,
-          items: [],
-        });
-      }
 
       // Add new hook to the list
       const name = lines[i].split('### ')[1].trim();
-      writeLines.push(`# ${name}`);
-      writeLines.push('---');
+      currentHook = name;
+      currentSection = 'index';
+      writeLines[currentHook] = { index: [] };
+      writeLines[currentHook][currentSection].push(`# ${name}`);
+      writeLines[currentHook][currentSection].push('---');
 
       i += 3; // Skip the next 3 lines
     }
     if (lines[i].startsWith('#### Returns')) {
       skipSection = false;
-      writeLines.push(lines[i]);
+      currentSection = 'Returns';
+      writeLines[currentHook][currentSection] = [];
+      writeLines[currentHook][currentSection].push(lines[i]);
       i += 3; // Skip the next 3 lines
     }
     for (const section of sectionsToIgnore) {
@@ -345,20 +341,30 @@ const generateHooks = () => {
     if (lines[i].startsWith('**`')) {
       skipSection = false;
       const name = lines[i].split('**`')[1].split('`')[0];
-      writeLines.push(`#### ${name}`);
+      currentSection = `${name}`;
+      writeLines[currentHook][currentSection] = [];
+      writeLines[currentHook][currentSection].push(`#### ${name}`);
       i += 1; // Skip the next line
     }
 
     // If there's lines to write, we're in a hook scope
-    if (writeLines.length > 0 && !skipSection) writeLines.push(lines[i]);
+    if (!skipSection) writeLines[currentHook][currentSection].push(lines[i]);
   }
-  if (writeLines.length > 0) {
-    const name = writeLines[0].split('# ')[1].trim();
-    writeFileSync(join(reactHooksDir, `${name}.md`), writeLines.join('\n'));
-    writeLines.length = 0;
+  for (const hook of Object.keys(writeLines)) {
+    const hookLines = [] as string[];
+    hookLines.push(...writeLines[hook].index);
+    const validSections = ['Params', 'Returns', 'Examples', 'Deprecated'];
+    for (const section of validSections) {
+      if (
+        writeLines[hook][section] &&
+        writeLines[hook][section].filter(Boolean).length > 1
+      )
+        hookLines.push(...writeLines[hook][section]);
+    }
+    writeFileSync(join(reactHooksDir, `${hook}.md`), hookLines.join('\n'));
     hooks.push({
-      text: name,
-      link: `/guide/react-hooks/${name}`,
+      text: hook,
+      link: `/guide/react-hooks/${hook}`,
       items: [],
     });
   }

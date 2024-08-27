@@ -11,7 +11,7 @@ import { MUTATION_KEYS } from '../utils';
  * @returns {object} An object containing:
  * - `addAssets`: function to add assets synchronously
  * - `addAssetsAsync`: function to add assets asynchronously.
- * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | `...mutationProps`}: Destructured properties from `useMutation` result.
  *
  * @examples
  *  To add assets synchronously:

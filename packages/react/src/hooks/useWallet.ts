@@ -13,7 +13,7 @@ import { QUERY_KEYS } from '../utils';
  *
  * @returns {object} An object containing:
  * - `wallet`: The wallet or `null` if the wallet could not be fetched or the address is invalid.
- * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | `...queryProps`}: Destructured properties from `useQuery` result.
  *
  * @examples
  * To get a wallet by address:

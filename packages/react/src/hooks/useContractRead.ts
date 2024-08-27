@@ -48,7 +48,7 @@ type ContractReadProps<
  *
  * @returns {object} An object containing:
  * - The result of the contract function call.
- * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | `...queryProps`}: Destructured properties from `useQuery` result.
  *
  * @throws {Error} Throws an error if the contract or function is invalid or if the function attempts to write to storage.
  *

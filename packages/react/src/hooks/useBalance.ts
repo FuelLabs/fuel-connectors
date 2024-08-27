@@ -28,7 +28,7 @@ type UseBalanceParams = {
  *
  * @returns {object} An object containing:
  * - `balance`: The balance of the user.
- * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | `...queryProps`}: Destructured properties from `useQuery` result.
  *
  * @examples
  * ```ts

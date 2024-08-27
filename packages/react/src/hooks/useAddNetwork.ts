@@ -10,7 +10,7 @@ import { MUTATION_KEYS } from '../utils';
  * @returns {object} An object containing:
  * - `addNetwork`: function to add a network synchronously
  * - `addNetworkAsync` function to add a network asynchronously.
- * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | Properties of `@tanstack/react-query`, `useMutation` method}.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | `...mutationProps`}: Destructured properties from `useMutation` result.
  *
  * @examples
  *  To add a network synchronously:

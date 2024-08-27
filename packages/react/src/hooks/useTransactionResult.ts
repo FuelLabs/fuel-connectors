@@ -38,7 +38,7 @@ type UseTransactionResultParams<
  *
  * @returns {object} An object containing
  * - `transactionResult`: The result of the transaction or `null`.
- * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | `...queryProps`}: Destructured properties from `useQuery` result.
  *
  * @examples
  * To fetch the result of a transaction:

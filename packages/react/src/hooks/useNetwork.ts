@@ -8,7 +8,7 @@ import { QUERY_KEYS } from '../utils';
  *
  * @returns {object} An object containing:
  * - `network`: The network information data.
- * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | `...queryProps`}: Destructured properties from `useQuery` result.
  *
  * @examples
  *  To get the current network information

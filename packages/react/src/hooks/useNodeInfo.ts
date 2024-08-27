@@ -23,7 +23,7 @@ type NodeInfoParams = {
  * @returns {object} An object containing:
  * - `nodeInfo`: The node information data or `null`.
  * - `isCompatible`: Whether the node is compatible with the specified version.
- * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | `...queryProps`}: Destructured properties from `useQuery` result.
  *
  * @examples
  * To fetch node information and check compatibility

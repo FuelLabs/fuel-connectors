@@ -13,7 +13,7 @@ import { useProvider } from './useProvider';
  *
  * @returns {object} An object containing:
  * - `chain`: The current chain info.
- * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | `...queryProps`}: Destructured properties from `useQuery` result.
  *
  * @examples
  * ```ts

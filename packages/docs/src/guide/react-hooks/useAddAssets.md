@@ -8,7 +8,7 @@ A hook to add one or more assets in the connected app asynchronously or synchron
 An object containing:
 - `addAssets`: function to add assets synchronously
 - `addAssetsAsync`: function to add assets asynchronously.
-- [Properties of `@tanstack/react-query`, `useMutation` method](https://tanstack.com/query/latest/docs/framework/react/reference/useMutation).
+- [`...mutationProps`](https://tanstack.com/query/latest/docs/framework/react/reference/useMutation): Destructured properties from `useMutation` result.
 
 #### Examples
 
@@ -26,6 +26,6 @@ await addAssetsAsync([asset1, asset2]);
 
 #### Defined in
 
-[packages/react/src/hooks/useAddAssets.ts:29](https://github.com/LeoCourbassier/fuel-connectors/blob/9fb74b5f15e12bc00681e63ea33b85bae3773662/packages/react/src/hooks/useAddAssets.ts#L29)
+[packages/react/src/hooks/useAddAssets.ts:29](https://github.com/LeoCourbassier/fuel-connectors/blob/f33236b78c83c4d8956637865372a08961d56b69/packages/react/src/hooks/useAddAssets.ts#L29)
 
 ___

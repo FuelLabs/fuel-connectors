@@ -1,14 +1,14 @@
 # useDisconnect
 ---
 
-A hook that disconnects a connected connector in the connected app.
+A hook to disconnect from current connector.
 
 #### Returns
 
 An object containing:
 - `disconnect`: A function to trigger the disconnection process synchronously.
 - `disconnectAsync`: A function to trigger the disconnection process asynchronously.
-- [Properties of `@tanstack/react-query`, `useMutation` method](https://tanstack.com/query/latest/docs/framework/react/reference/useMutation).
+- [`...mutationProps`](https://tanstack.com/query/latest/docs/framework/react/reference/useMutation): Destructured properties from `useMutation` result.
 
 #### Examples
 
@@ -26,6 +26,6 @@ await disconnectAsync();
 
 #### Defined in
 
-[packages/react/src/hooks/useDisconnect.ts:27](https://github.com/LeoCourbassier/fuel-connectors/blob/9fb74b5f15e12bc00681e63ea33b85bae3773662/packages/react/src/hooks/useDisconnect.ts#L27)
+[packages/react/src/hooks/useDisconnect.ts:27](https://github.com/LeoCourbassier/fuel-connectors/blob/f33236b78c83c4d8956637865372a08961d56b69/packages/react/src/hooks/useDisconnect.ts#L27)
 
 ___

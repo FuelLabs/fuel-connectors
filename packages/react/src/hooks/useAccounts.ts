@@ -8,7 +8,7 @@ import { QUERY_KEYS } from '../utils';
  *
  * @returns {object} An object containing:
  * - `accounts`: User accounts.
- * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | Properties of `@tanstack/react-query`, `useQuery` method}.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | `...queryProps`}: Destructured properties from `useQuery` result.
  *
  * @examples
  * ```ts
