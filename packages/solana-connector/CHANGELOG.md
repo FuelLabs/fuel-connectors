@@ -1,5 +1,7 @@
 # @fuel-connectors/solana-connector
 
+## 0.26.0
+
 ## 0.25.0
 
 ### Minor Changes
