@@ -1,5 +1,11 @@
 # @fuels/connectors
 
+## 0.26.0
+
+### Minor Changes
+
+- [#208](https://github.com/FuelLabs/fuel-connectors/pull/208) [`2c194a4`](https://github.com/FuelLabs/fuel-connectors/commit/2c194a46f144c82a0f9a3205d79ef58f938eb297) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Updated wagmi to 12.12.7 alongside core and connectors
+
 ## 0.25.0
 
 ## 0.24.0
