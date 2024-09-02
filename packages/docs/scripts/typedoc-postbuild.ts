@@ -354,13 +354,17 @@ const generateHooks = () => {
       writeLines[currentHook][currentSection] = [];
       writeLines[currentHook][currentSection].push(lines[i]);
       i += 2; // Skip the next lines
-      const definedIn = lines[i].split('[')[1].split(']')[0];
-      const newLine = `[${definedIn}](${githubPrefix}/${definedIn.replace(
-        ':',
-        '#L',
-      )})`;
-      writeLines[currentHook][currentSection].push(newLine);
-      i += 1; // Skip the next line
+      let definedIn = lines[i].split('[')[1];
+      if (definedIn) {
+        definedIn = definedIn.split(']')[0];
+
+        const newLine = `[${definedIn}](${githubPrefix}/${definedIn.replace(
+          ':',
+          '#L',
+        )})`;
+        writeLines[currentHook][currentSection].push(newLine);
+        i += 1; // Skip the next line
+      }
     }
 
     // If there's lines to write, we're in a hook scope
