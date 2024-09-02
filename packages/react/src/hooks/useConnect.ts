@@ -6,9 +6,12 @@ import { useFuel } from '../providers';
 /**
  * A hook to handle connection to the Fuel network in the connected app.
  *
+ * @params {object} The properties of the hook.
+ * - `connectorName`: The connector's name to use in the connect function.
+ *
  * @returns {object} An object containing:
- * - `connect`: A function to trigger the connection to the Fuel network.
- * - `connectAsync`: An async function to trigger the connection and return a promise.
+ * - `connect`: function to connect to the Fuel Network synchronously.
+ * - `connectAsync`: function to connect to the Fuel Network asynchronously.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | `...mutationProps`}: Destructured properties from `useMutation` result.
  *
  * @examples

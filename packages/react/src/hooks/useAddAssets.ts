@@ -9,7 +9,7 @@ import { MUTATION_KEYS } from '../utils';
  * A hook to add one or more assets in the connected app asynchronously or synchronously.
  *
  * @returns {object} An object containing:
- * - `addAssets`: function to add assets synchronously
+ * - `addAssets`: function to add assets synchronously.
  * - `addAssetsAsync`: function to add assets asynchronously.
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useMutation | `...mutationProps`}: Destructured properties from `useMutation` result.
  *

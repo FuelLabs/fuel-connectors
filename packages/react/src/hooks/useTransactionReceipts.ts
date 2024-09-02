@@ -15,7 +15,9 @@ type UseTransactionReceiptsParams = {
 };
 
 /**
- * @deprecated `useTransactionReceipts` is deprecated. Use `useTransactionResult` instead with `select` function in the `query` parameter.
+ * @deprecated
+ *
+ * Use `useTransactionResult` instead with `select` function in the `query` parameter.
  */
 export const useTransactionReceipts = ({
   txId,

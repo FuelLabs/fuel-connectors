@@ -23,7 +23,6 @@ const { nodeInfo, isCompatible } = useNodeInfo({ version: '1.2.3' });
 ```
 
 #### Defined in
-
-[packages/react/src/hooks/useNodeInfo.ts:34](https://github.com/LeoCourbassier/fuel-connectors/blob/f33236b78c83c4d8956637865372a08961d56b69/packages/react/src/hooks/useNodeInfo.ts#L34)
+[packages/react/src/hooks/useNodeInfo.ts:34](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useNodeInfo.ts#L34)
 
 ___

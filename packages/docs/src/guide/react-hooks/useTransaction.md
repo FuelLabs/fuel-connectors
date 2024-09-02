@@ -22,7 +22,6 @@ const { transaction, error, isLoading } = useTransaction('0x1234');
 ```
 
 #### Defined in
-
-[packages/react/src/hooks/useTransaction.ts:26](https://github.com/LeoCourbassier/fuel-connectors/blob/f33236b78c83c4d8956637865372a08961d56b69/packages/react/src/hooks/useTransaction.ts#L26)
+[packages/react/src/hooks/useTransaction.ts:26](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useTransaction.ts#L26)
 
 ___

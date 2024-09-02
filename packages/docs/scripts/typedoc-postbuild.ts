@@ -174,7 +174,6 @@ const alterFileStructure = () => {
   ];
 
   modulesFiles.forEach((modulesFile) => {
-    console.log(modulesFile);
     // Create a new directory for each module
     const newDirName = modulesFile.split('.')[0];
     const newDirPath = join(apiDocsDir, newDirName);
@@ -303,6 +302,7 @@ const generateHooks = () => {
   const reactHooksDir = join(docsDir, 'guide', 'react-hooks');
   const writeLines: Record<string, Record<string, string[]>> = {};
   const sectionsToIgnore = ['Parameters', 'Type parameters'];
+  const githubPrefix = 'https://github.com/fuellabs/fuel-connectors/blob/main';
 
   const md = readFileSync(`${hooksDir}/index.md`, 'utf-8');
   const lines = md.split('\n');
@@ -347,13 +347,35 @@ const generateHooks = () => {
       i += 1; // Skip the next line
     }
 
+    // Replace repository links if they came from a fork
+    if (lines[i].startsWith('#### Defined in')) {
+      skipSection = false;
+      currentSection = 'Defined in';
+      writeLines[currentHook][currentSection] = [];
+      writeLines[currentHook][currentSection].push(lines[i]);
+      i += 2; // Skip the next lines
+      const definedIn = lines[i].split('[')[1].split(']')[0];
+      const newLine = `[${definedIn}](${githubPrefix}/${definedIn.replace(
+        ':',
+        '#L',
+      )})`;
+      writeLines[currentHook][currentSection].push(newLine);
+      i += 1; // Skip the next line
+    }
+
     // If there's lines to write, we're in a hook scope
     if (!skipSection) writeLines[currentHook][currentSection].push(lines[i]);
   }
   for (const hook of Object.keys(writeLines)) {
     const hookLines = [] as string[];
     hookLines.push(...writeLines[hook].index);
-    const validSections = ['Params', 'Returns', 'Examples', 'Deprecated'];
+    const validSections = [
+      'Params',
+      'Returns',
+      'Examples',
+      'Deprecated',
+      'Defined in',
+    ];
     for (const section of validSections) {
       if (
         writeLines[hook][section] &&
