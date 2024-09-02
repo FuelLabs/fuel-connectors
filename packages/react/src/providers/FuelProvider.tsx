@@ -2,6 +2,7 @@ import type { FuelConfig } from 'fuels';
 
 import { Connect } from '../ui/Connect';
 
+import { WebWallet } from '../ui/WebWallet';
 import { FuelHooksProvider } from './FuelHooksProvider';
 import { FuelUIProvider, type FuelUIProviderProps } from './FuelUIProvider';
 
@@ -24,6 +25,7 @@ export function FuelProvider({
       <FuelHooksProvider fuelConfig={fuelConfig}>
         <FuelUIProvider theme={theme} fuelConfig={fuelConfig}>
           <Connect />
+          <WebWallet />
           {children}
         </FuelUIProvider>
       </FuelHooksProvider>
