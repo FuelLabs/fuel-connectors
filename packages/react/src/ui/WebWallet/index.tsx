@@ -1,49 +1,34 @@
 import { useEffect, useState } from 'react';
-import { Profile } from './components/Profile';
-import { Container, DashedSeparator, Header, Modal } from './styles';
+import { Balance } from './components/Balance';
+import { Header } from './components/Header';
+import { Modal } from './components/Modal';
+import { Separator } from './components/Separator';
+import { Anchor } from './composites/Anchor';
+import { Assets } from './composites/Assets';
+import { Profile } from './composites/Profile';
+import { Overlay } from './styles';
 
 export function WebWallet() {
-  const [_isClient, setIsClient] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [username] = useState('Nick D');
+  const [address] = useState('0x1234567890abcdef1234567890abcdef12345678');
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  // Create animation for modal open
+  const toggleModal = () => setIsOpen(!isOpen);
 
   return (
-    <Container>
-      <Modal>
-        <Header>
-          {/* o que a imagem tem que mostrar? */}
-          <Profile name={username} />
-        </Header>
-        <div>
-          <h1>Total Balance</h1>
-          <h2>0.00000000 BTC</h2>
-        </div>
-        <DashedSeparator />
-        <div>
-          <h1>Assets</h1>
-          <table>
-            <thead>
-              <tr>
-                <th>Token</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Bitcoin</td>
-                <td>0.00000000 BTC</td>
-              </tr>
-              <tr>
-                <td>Ethereum</td>
-                <td>0.00000000 BTC</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </Modal>
-    </Container>
+    <Overlay>
+      {isOpen && (
+        <Modal>
+          <Header>
+            <Profile name={username} address={address} />
+          </Header>
+          <Balance />
+          <Separator color="#ADADAD" type="dashed" />
+          <Assets />
+        </Modal>
+      )}
+      <Anchor address={address} onClick={toggleModal} />
+    </Overlay>
   );
 }

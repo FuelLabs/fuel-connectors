@@ -1,12 +1,23 @@
 export interface ICopyProps {
   width?: string;
   height?: string;
+  onClick?: React.MouseEventHandler<SVGSVGElement>;
 }
-export const CopyIcon = ({ width, height }: ICopyProps) => {
+
+export const CopyIcon = ({ width, height, onClick }: ICopyProps) => {
+  const w = width ?? '24';
+  const h = height ?? '24';
+  const style = {
+    fill: 'currentColor',
+    cursor: 'pointer',
+  };
   return (
+    // biome-ignore lint: no need for keyUp here
     <svg
-      width={width || '24'}
-      height={height || '24'}
+      style={style}
+      onClick={onClick}
+      width={w}
+      height={h}
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
