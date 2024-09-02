@@ -13,7 +13,13 @@ type UseTransactionResultParams<
   TName extends string,
   TData,
 > = {
+  /**
+   * The ID of the transaction to retrieve the result for.
+   */
   txId?: string;
+  /**
+   * Additional query parameters to customize the behavior of `useNamedQuery`.
+   */
   query?: UseNamedQueryParams<
     TName,
     TransactionResult<TTransactionType> | null,
@@ -22,6 +28,27 @@ type UseTransactionResultParams<
   >;
 };
 
+// @TODO: Add a link to fuel connector's documentation.
+/**
+ * A hook to fetch the result of a specific transaction in the connected app.
+ *
+ * @params {UseTransactionResultParams<TTransactionType, TName, TData>} Parameters to configure the hook.
+ * - `txId`: A string value representing the transaction ID.
+ * - `query`: Additional query parameters to customize the behavior of `useNamedQuery`.
+ *
+ * @returns {object} An object containing
+ * - `transactionResult`: The result of the transaction or `null`.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | `...queryProps`}: Destructured properties from `useQuery` result.
+ *
+ * @examples
+ * To fetch the result of a transaction:
+ * ```ts
+ * const { transactionResult } = useTransactionResult({
+ *   txId: '0x...',
+ * });
+ * console.log(transactionResult);
+ * ```
+ */
 export const useTransactionResult = <
   TTransactionType extends TransactionType,
   TName extends string = string,

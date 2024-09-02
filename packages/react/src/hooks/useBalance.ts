@@ -1,4 +1,4 @@
-import type { BytesLike } from 'fuels';
+import type { BN, BytesLike } from 'fuels';
 import { Address } from 'fuels';
 import { useEffect } from 'react';
 
@@ -7,13 +7,36 @@ import { QUERY_KEYS } from '../utils';
 
 import { useProvider } from './useProvider';
 
-export const useBalance = ({
-  address,
-  assetId,
-}: {
+type UseBalanceParams = {
+  /**
+   * The address to fetch the balance for.
+   */
   address?: string;
+  /**
+   * The asset ID to fetch the balance for.
+   */
   assetId?: BytesLike;
-}) => {
+};
+
+// @TODO: Add a link to fuel connector's documentation.
+/**
+ * A hook that returns the balance of the user.
+ *
+ * @params {object} The options to fetch the balance for.
+ * - `address`: The address to fetch the balance for.
+ * - `assetId`: The asset ID to fetch the balance for.
+ *
+ * @returns {object} An object containing:
+ * - `balance`: The balance of the user.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | `...queryProps`}: Destructured properties from `useQuery` result.
+ *
+ * @examples
+ * ```ts
+ * const { balance } = useBalance({address: '0x1234', assetId: '0x1234'});
+ * console.log(balance.format());
+ * ```
+ */
+export const useBalance = ({ address, assetId }: UseBalanceParams) => {
   const { provider } = useProvider();
 
   const query = useNamedQuery('balance', {
