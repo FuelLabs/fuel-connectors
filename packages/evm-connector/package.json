@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/evm-connector",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "private": true,
   "type": "module",
   "files": ["dist"],
@@ -43,7 +43,7 @@
     "vite": "5.2.11",
     "vite-plugin-dts": "3.9.1",
     "vitest": "2.0.2",
-    "viem": "2.10.2",
+    "viem": "2.20.1",
     "vite-tsconfig-paths": "4.3.2"
   }
 }

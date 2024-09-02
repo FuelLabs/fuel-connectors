@@ -22,3 +22,12 @@ yarn-error.log*
 
 # Sway
 **/out/release
+
+# Test
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/e2e-tests/playwright-report
+.env
+/e2e-tests/test-results
