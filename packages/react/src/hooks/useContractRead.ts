@@ -5,8 +5,17 @@ import { useNamedQuery } from '../core/useNamedQuery';
 import { QUERY_KEYS } from '../utils';
 
 type ContractData<TAbi extends JsonAbi> = {
+  /**
+   * The address of the contract.
+   */
   address: Address;
+  /**
+   * The ABI of the contract.
+   */
   abi: TAbi;
+  /**
+   * The provider used to interact with the contract.
+   */
   provider: Provider;
 };
 
@@ -14,11 +23,46 @@ type ContractReadProps<
   TAbi extends JsonAbi,
   TFunctionName extends FunctionNames<TAbi>,
 > = {
+  /**
+   * The contract instance or contract data (address, ABI, and provider).
+   */
   contract: Contract | ContractData<TAbi>;
+  /**
+   * The name of the function to call on the contract.
+   */
   functionName: TFunctionName;
+  /**
+   * The arguments to pass to the contract function.
+   */
   args: InputsForFunctionName<TAbi, TFunctionName>;
 };
 
+// @TODO: Add a link to fuel connector's documentation.
+/**
+ * A hook to read data from a smart contract in the connected app.
+ *
+ * @params {object} The properties of the hook.
+ * - `contract`: The contract instance or contract data (address, ABI, and provider).
+ * - `functionName`: The name of the function to call on the contract.
+ * - `args`: The arguments to pass to the contract function.
+ *
+ * @returns {object} An object containing:
+ * - The result of the contract function call.
+ * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | `...queryProps`}: Destructured properties from `useQuery` result.
+ *
+ * @throws {Error} Throws an error if the contract or function is invalid or if the function attempts to write to storage.
+ *
+ * @examples
+ * To read data from a contract
+ * ```ts
+ * const { data } = useContractRead({
+ *   contract: myContractInstance,
+ *   functionName: 'getBalance',
+ *   args: [userAddress],
+ * });
+ * console.log(data);
+ * ```
+ */
 export const useContractRead = <
   TAbi extends JsonAbi,
   TFunctionName extends FunctionNames<TAbi>,
