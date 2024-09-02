@@ -248,13 +248,8 @@ export class WalletConnectConnector extends PredicateConnector {
     transaction: TransactionRequestLike,
   ): Promise<string> {
     const { ethProvider, fuelProvider } = await this.getProviders();
-    const {
-      request,
-      transactionId,
-      account,
-      transactionRequest,
-      afterTransaction,
-    } = await this.prepareTransaction(address, transaction);
+    const { request, transactionId, account, transactionRequest } =
+      await this.prepareTransaction(address, transaction);
 
     const signature = (await ethProvider?.request({
       method: 'personal_sign',
@@ -277,8 +272,6 @@ export class WalletConnectConnector extends PredicateConnector {
         transactionWithPredicateEstimated.toTransactionBytes(),
       ),
     });
-
-    afterTransaction?.(response.submit.id);
 
     return response.submit.id;
   }
