@@ -89,7 +89,7 @@ export const useContractRead = <
 
       if (!isValid) {
         throw new Error(
-          'Valind input `contract` is required to read the contract',
+          'Invalid input `contract` is required to read the contract',
         );
       }
       const contract = isContractData
