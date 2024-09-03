@@ -47,5 +47,4 @@ export type PreparedTransaction = {
   transactionId: string;
   account: string;
   transactionRequest: TransactionRequest;
-  afterTransaction?: (id: string) => MaybeAsync<unknown>;
 };
