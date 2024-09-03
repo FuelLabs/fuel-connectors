@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLogEvents } from '../hooks/use-log-events';
 import { useWallet } from '../hooks/useWallet';
-import { CounterAbi__factory } from '../types';
+import { Counter } from '../types';
 import { counter as COUNTER_CONTRACT_ID } from '../types/contract-ids.json';
 import type { CustomError } from '../utils/customError';
 import { DEFAULT_AMOUNT } from './balance';
@@ -62,7 +62,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
     if (wallet) {
       setLoading(true);
       setIsSigning(true);
-      const contract = CounterAbi__factory.connect(COUNTER_CONTRACT_ID, wallet);
+      const contract = new Counter(COUNTER_CONTRACT_ID, wallet);
       try {
         const { waitForResult } = await contract.functions
           .increment_counter()
@@ -124,10 +124,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
   async function getCount() {
     if (!wallet) return;
 
-    const counterContract = CounterAbi__factory.connect(
-      COUNTER_CONTRACT_ID,
-      wallet,
-    );
+    const counterContract = new Counter(COUNTER_CONTRACT_ID, wallet);
 
     try {
       const { value } = await counterContract.functions
