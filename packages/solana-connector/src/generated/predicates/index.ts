@@ -2,9 +2,9 @@
 
 import type { PredicateVersion } from '@fuel-connectors/common';
 import {
-  abi as abi1720742400000,
-  bin as bin1720742400000,
-  generationDate as generationDate1720742400000,
+  abi as abi1722890207063,
+  bin as bin1722890207063,
+  generationDate as generationDate1722890207063,
 } from './0x8f562b4f23ce90b0547d11e4e02462d3cd660f4f3fe5f719ae725eab4d7a5d42';
 import {
   abi as abi1722897424142,
@@ -14,8 +14,8 @@ import {
 
 export const PREDICATE_VERSIONS = {
   '0x8f562b4f23ce90b0547d11e4e02462d3cd660f4f3fe5f719ae725eab4d7a5d42': {
-    predicate: { abi: abi1720742400000, bin: bin1720742400000 },
-    generatedAt: generationDate1720742400000,
+    predicate: { abi: abi1722890207063, bin: bin1722890207063 },
+    generatedAt: generationDate1722890207063,
   },
   '0xde460159d843b97ff69209d996687424b9b6ee95ef7a92a6950f4e99540f23f7': {
     predicate: { abi: abi1722897424142, bin: bin1722897424142 },
