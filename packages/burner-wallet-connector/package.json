@@ -17,7 +17,6 @@
     "fuels": ">=0.94.0"
   },
   "devDependencies": {
-    "@fuel-ts/account": "0.93.0",
     "fuels": "0.94.3",
     "jsdom": "24.0.0",
     "tsup": "8.0.2",
