@@ -7,10 +7,21 @@ import { useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
 
+type UseTransactionReceiptsParams = {
+  /**
+   * The transaction ID to fetch the receipts for.
+   */
+  txId?: string;
+};
+
 /**
- * @deprecated `useTransactionReceipts` is deprecated. Use `useTransactionResult` instead with `select` function in the `query` parameter.
+ * @deprecated
+ *
+ * Use `useTransactionResult` instead with `select` function in the `query` parameter.
  */
-export const useTransactionReceipts = ({ txId }: { txId?: string }) => {
+export const useTransactionReceipts = ({
+  txId,
+}: UseTransactionReceiptsParams) => {
   const { fuel } = useFuel();
 
   return useNamedQuery('transactionReceipts', {
