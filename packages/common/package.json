@@ -20,6 +20,7 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsup --dts",
+    "build:watch": "tsup --watch --dts",
     "ts:check": "tsc --noEmit",
     "test": "vitest"
   },
