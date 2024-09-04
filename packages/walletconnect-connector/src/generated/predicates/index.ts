@@ -7,19 +7,14 @@ import {
   generationDate as generationDate1715360301393,
 } from './0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33';
 import {
-  abi as abi1725378729292,
-  bin as bin1725378729292,
-  generationDate as generationDate1725378729292,
-} from './0xb2e7afecbc573e7412ca0bbb8d8f01d75c5c63f09e14c0921913ca9b7df70e63';
-import {
   abi as abi1723073762756,
   bin as bin1723073762756,
   generationDate as generationDate1723073762756,
 } from './0xca07380d3c0d9890519ee727bf522eaf19e2acefab240c9a22b0aa90f41c87d6';
 import {
-  abi as abi1725474468613,
-  bin as bin1725474468613,
-  generationDate as generationDate1725474468613,
+  abi as abi1725479086554,
+  bin as bin1725479086554,
+  generationDate as generationDate1725479086554,
 } from './0xfdac03fc617c264fa6f325fd6f4d2a5470bf44cfbd33bc11efb3bf8b7ee2e938';
 
 export const PREDICATE_VERSIONS = {
@@ -27,16 +22,12 @@ export const PREDICATE_VERSIONS = {
     predicate: { abi: abi1715360301393, bin: bin1715360301393 },
     generatedAt: generationDate1715360301393,
   },
-  '0xb2e7afecbc573e7412ca0bbb8d8f01d75c5c63f09e14c0921913ca9b7df70e63': {
-    predicate: { abi: abi1725378729292, bin: bin1725378729292 },
-    generatedAt: generationDate1725378729292,
-  },
   '0xca07380d3c0d9890519ee727bf522eaf19e2acefab240c9a22b0aa90f41c87d6': {
     predicate: { abi: abi1723073762756, bin: bin1723073762756 },
     generatedAt: generationDate1723073762756,
   },
   '0xfdac03fc617c264fa6f325fd6f4d2a5470bf44cfbd33bc11efb3bf8b7ee2e938': {
-    predicate: { abi: abi1725474468613, bin: bin1725474468613 },
-    generatedAt: generationDate1725474468613,
+    predicate: { abi: abi1725479086554, bin: bin1725479086554 },
+    generatedAt: generationDate1725479086554,
   },
 } as Record<string, PredicateVersion>;
