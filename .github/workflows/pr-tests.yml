@@ -14,7 +14,7 @@ concurrency:
 
 env:
   FORC_VERSION: 0.63.3
-  CORE_VERSION: 0.34.0
+  CORE_VERSION: 0.35.0
 
 jobs:
   tests-vitest:
