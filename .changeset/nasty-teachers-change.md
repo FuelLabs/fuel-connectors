@@ -13,4 +13,4 @@
 "docs": minor
 ---
 
-Update `fuels` to `0.94.4`
+Update to `fuel-core@0.35.0`, `forc@0.63.3` and `fuels@0.94.4`
