@@ -146,7 +146,7 @@ export class FuelWalletConnector extends FuelConnector {
    * ============================================================
    */
   async ping(): Promise<boolean> {
-    return this.client.timeout(800).request('ping', {});
+    return this.client.timeout(800).request('version', {});
   }
 
   async isConnected(): Promise<boolean> {
