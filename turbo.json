@@ -6,12 +6,15 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
+    "fuels:build": {
+      "dependsOn": []
+    },
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^fuels:build", "^build"],
       "outputs": ["dist/**"]
     },
     "build:watch": {
-      "dependsOn": ["ts:check", "^build"],
+      "dependsOn": ["ts:check", "^fuels:build", "^build"],
       "outputs": ["dist/**"]
     },
     "test": {
