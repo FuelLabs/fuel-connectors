@@ -379,6 +379,9 @@ importers:
       '@fuel-connectors/common':
         specifier: workspace:*
         version: link:../common
+      '@fuel-connectors/evm-predicates':
+        specifier: workspace:*
+        version: link:../evm-predicates
       '@types/memoizee':
         specifier: 0.4.11
         version: 0.4.11
