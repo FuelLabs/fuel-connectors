@@ -1,4 +1,4 @@
-import { Address, Provider } from 'fuels';
+import { Address } from 'fuels';
 import { useState } from 'react';
 import { useWallet } from '../hooks/useWallet';
 import type { CustomError } from '../utils/customError';
@@ -40,10 +40,6 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
         receiverAddress,
         DEFAULT_AMOUNT,
         asset_id,
-        {
-          gasLimit: 150_000,
-          maxFee: 150_000,
-        },
       );
 
       setToast({
@@ -67,7 +63,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
                 <p>
                   Transferred successfully! View it on the{' '}
                   <a
-                    href={`https://app.fuel.network/tx/${result.id}`}
+                    href={`https://app.fuel.network/tx/${result?.id}`}
                     className="underline"
                     target="_blank"
                     rel="noreferrer"
