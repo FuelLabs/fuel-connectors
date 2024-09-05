@@ -214,12 +214,6 @@ export class SolanaConnector extends PredicateConnector {
     return this.isConnected();
   }
 
-  public truncateTxId(txId: string): Uint8Array {
-    const txIdNo0x = txId.slice(2);
-    const idBytes = `${txIdNo0x.slice(0, 16)}${txIdNo0x.slice(-16)}`;
-    return new TextEncoder().encode(idBytes);
-  }
-
   public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
@@ -230,7 +224,7 @@ export class SolanaConnector extends PredicateConnector {
     const predicateSignatureIndex = getMockedSignatureIndex(
       transactionRequest.witnesses,
     );
-    const txId = this.truncateTxId(transactionId);
+    const txId = new TextEncoder().encode(transactionId.slice(2));
     const provider: Maybe<Provider> =
       this.web3Modal.getWalletProvider() as Provider;
     if (!provider) {
