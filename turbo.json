@@ -19,9 +19,6 @@
     },
     "test": {
       "dependsOn": ["^build"]
-    },
-    "dev": {
-      "dependsOn": []
     }
   }
 }
