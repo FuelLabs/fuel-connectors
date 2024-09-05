@@ -12,6 +12,7 @@ import {
 import { useConnect } from '../hooks/useConnect';
 import { useConnectors } from '../hooks/useConnectors';
 
+import { Theme, type ThemeProps } from '@fuels/ui';
 import { useFuel } from './FuelHooksProvider';
 
 export type FuelUIProviderProps = {
@@ -132,7 +133,7 @@ export function FuelUIProvider({
         },
       }}
     >
-      {children}
+      <Theme hasBackground={false}>{children}</Theme>
     </FuelConnectContext.Provider>
   );
 }
