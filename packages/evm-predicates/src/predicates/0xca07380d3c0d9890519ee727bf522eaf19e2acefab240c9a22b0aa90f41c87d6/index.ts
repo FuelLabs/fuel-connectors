@@ -2,7 +2,7 @@
 
 import type { BytesLike, JsonAbi } from 'fuels';
 
-export const generationDate = 1723073762756;
+export const generationDate = 1722897433097;
 export const abi: JsonAbi = {
   programType: 'predicate',
   specVersion: '1',

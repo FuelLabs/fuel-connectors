@@ -2,6 +2,6 @@ import { createConfig } from 'fuels';
 
 export default createConfig({
   predicates: ['./predicate'],
-  output: './src/generated',
+  output: './src',
   forcBuildFlags: ['--release'],
 });
