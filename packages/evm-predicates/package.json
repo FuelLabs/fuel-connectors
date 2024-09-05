@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/generated/index.ts"
+    ".": "./src/index.ts"
   },
   "scripts": {
     "fuels:build": "pnpm fuels build",
