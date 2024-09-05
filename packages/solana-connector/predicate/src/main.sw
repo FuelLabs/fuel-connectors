@@ -22,18 +22,6 @@ const ASCII_MAP: [u8; 16] = [
     48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102
 ];
 
-pub fn create_txid_small(tx_id: b256) -> Bytes {
-    let mut ascii_bytes = Bytes::with_capacity(32);
-    let bytes_ascii = b256_to_ascii_bytes(tx_id);
-    let (begin, rest) = bytes_ascii.split_at(16);
-    let (_rest, end) = rest.split_at(32);
-
-    ascii_bytes.append(begin);
-    ascii_bytes.append(end);
-
-    ascii_bytes
-}
-
 pub fn b256_to_ascii_bytes(val: b256) -> Bytes {
     let bytes = Bytes::from(val);
     let mut ascii_bytes = Bytes::with_capacity(64);
@@ -55,7 +43,7 @@ configurable {
 
 fn main(witness_index: u64) -> bool {
     let signature: B512 = tx_witness_data(witness_index).unwrap();
-    let encoded = create_txid_small(tx_id());
+    let encoded = b256_to_ascii_bytes(tx_id());
     let result = ed_verify(SIGNER, signature, encoded);
 
     if result.is_ok() {
