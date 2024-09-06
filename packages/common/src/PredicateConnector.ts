@@ -113,7 +113,7 @@ export abstract class PredicateConnector extends FuelConnector {
 
       const balance = await predicate.getBalance();
 
-      if (balance.toString() !== bn(0).toString()) {
+      if (!balance.isZero()) {
         return predicateInstance;
       }
     }
@@ -175,25 +175,6 @@ export abstract class PredicateConnector extends FuelConnector {
     }
 
     const transactionRequest = transactionRequestify(transaction);
-    const newestPredicate = this.getNewestPredicate();
-    let changedPredicate = false;
-    if (!!newestPredicate && !this.predicateAccount.equals(newestPredicate)) {
-      const predicateAddress =
-        newestPredicate.getPredicateAddress(walletAccount);
-
-      if (transactionRequest.getChangeOutputs().length > 0) {
-        transactionRequest.outputs.forEach((output) => {
-          if (
-            output.type === OutputType.Change &&
-            this.isAddressPredicate(output.to, walletAccount)
-          ) {
-            output.to = Address.fromAddressOrString(predicateAddress).toB256();
-            changedPredicate = true;
-          }
-        });
-      }
-    }
-
     const transactionFee = transactionRequest.maxFee.toNumber();
     const predicateSignatureIndex = getMockedSignatureIndex(
       transactionRequest.witnesses,
@@ -250,24 +231,12 @@ export abstract class PredicateConnector extends FuelConnector {
       requestWithPredicateAttached,
     );
 
-    const afterTransaction = changedPredicate
-      ? (id: string) =>
-          setTimeout(async () => {
-            const response = new TransactionResponse(id, fuelProvider);
-            const result = await response.waitForResult();
-            if (result.isStatusSuccess) {
-              await this.emitAccountChange(walletAccount);
-            }
-          })
-      : undefined;
-
     return {
       predicate,
       request: requestWithPredicateAttached,
       transactionId: requestWithPredicateAttached.getTransactionId(chainId),
       account: walletAccount,
       transactionRequest,
-      afterTransaction,
     };
   }
 
