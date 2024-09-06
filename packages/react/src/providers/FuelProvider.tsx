@@ -11,6 +11,7 @@ export { useConnectUI } from './FuelUIProvider';
 
 type FuelProviderProps = {
   ui?: boolean;
+  showWebWallet?: boolean;
   fuelConfig?: FuelConfig;
 } & FuelUIProviderProps;
 
@@ -19,13 +20,14 @@ export function FuelProvider({
   children,
   fuelConfig,
   ui = true,
+  showWebWallet = false,
 }: FuelProviderProps) {
   if (ui) {
     return (
       <FuelHooksProvider fuelConfig={fuelConfig}>
         <FuelUIProvider theme={theme} fuelConfig={fuelConfig}>
           <Connect />
-          <WebWallet />
+          {showWebWallet && <WebWallet />}
           {children}
         </FuelUIProvider>
       </FuelHooksProvider>
