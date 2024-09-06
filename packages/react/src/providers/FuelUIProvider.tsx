@@ -112,6 +112,11 @@ export function FuelUIProvider({
     return isLoadingConnectors || hasLoadedConnectors;
   }, [connectors, isLoadingConnectors, fuelConfig]);
 
+  const dsTheme: ThemeProps = {
+    hasBackground: false,
+    appearance: theme === 'dark' ? 'dark' : 'light',
+  };
+
   return (
     <FuelConnectContext.Provider
       value={{
@@ -133,7 +138,7 @@ export function FuelUIProvider({
         },
       }}
     >
-      <Theme hasBackground={false}>{children}</Theme>
+      <Theme {...dsTheme}>{children}</Theme>
     </FuelConnectContext.Provider>
   );
 }

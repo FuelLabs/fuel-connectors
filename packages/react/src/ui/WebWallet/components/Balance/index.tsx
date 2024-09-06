@@ -1,4 +1,4 @@
-import { Card, Heading, LoadingBox, Text, VStack } from '@fuels/ui';
+import { Card, Text, VStack } from '@fuels/ui';
 
 export interface IBalanceProps {
   value: string | null;
@@ -10,7 +10,7 @@ export const Balance = ({ value }: IBalanceProps) => {
         <Text color="gray" size="1">
           Total Balance
         </Text>
-        <Heading size="6">{value} ETH</Heading>
+        <Text size="6">{value} ETH</Text>
       </VStack>
     </Card>
   );
