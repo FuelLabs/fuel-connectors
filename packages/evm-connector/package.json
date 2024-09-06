@@ -22,7 +22,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.93.0"
+    "fuels": ">=0.94.0"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -30,20 +30,19 @@
     "memoizee": "0.4.15"
   },
   "devDependencies": {
-    "@fuel-ts/account": "0.93.0",
-    "@types/memoizee": "0.4.11",
     "@fuel-connectors/common": "workspace:*",
-    "fuels": "0.93.0",
+    "@types/memoizee": "0.4.11",
+    "fuels": "0.94.4",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
     "tsup": "8.0.2",
     "tsx": "4.9.3",
     "typescript": "5.4.5",
+    "viem": "2.20.1",
     "vite": "5.2.11",
     "vite-plugin-dts": "3.9.1",
-    "vitest": "2.0.2",
-    "viem": "2.20.1",
-    "vite-tsconfig-paths": "4.3.2"
+    "vite-tsconfig-paths": "4.3.2",
+    "vitest": "2.0.2"
   }
 }

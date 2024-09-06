@@ -22,9 +22,9 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.93.0",
+    "@web3modal/core": ">=5.0.0",
     "@web3modal/scaffold": ">=5.0.0",
-    "@web3modal/core": ">=5.0.0"
+    "fuels": ">=0.94.0"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -35,9 +35,10 @@
     "viem": "2.20.1"
   },
   "devDependencies": {
-    "@fuel-ts/account": "0.93.0",
+    "@fuel-connectors/common": "workspace:*",
     "@types/memoizee": "0.4.11",
-    "fuels": "0.93.0",
+    "@web3modal/core": "5.0.0",
+    "fuels": "0.94.4",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
@@ -46,8 +47,6 @@
     "typescript": "5.4.5",
     "vite": "5.2.11",
     "vite-plugin-dts": "3.9.1",
-    "vitest": "2.0.2",
-    "@fuel-connectors/common": "workspace:*",
-    "@web3modal/core": "5.0.0"
+    "vitest": "2.0.2"
   }
 }
