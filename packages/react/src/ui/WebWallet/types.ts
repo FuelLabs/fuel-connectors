@@ -1,5 +1,9 @@
+import type { BN } from 'fuels';
+
 export interface IAssetsBalance {
-  token: string;
+  id: string;
   name: string;
-  price: string;
+  symbol: string;
+  icon: string;
+  amount: BN;
 }
