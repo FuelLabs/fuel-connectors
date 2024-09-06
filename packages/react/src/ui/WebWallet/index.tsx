@@ -74,6 +74,11 @@ export const WebWallet = () => {
 
   const isLoading = !isFetchedAccount || !isFetchedWallet || balance === '';
 
+  // Fixes an issue where the Tooltip would be the focused element
+  const preventAutoFocus = (e: Event) => {
+    e.preventDefault();
+  };
+
   return (
     <Overlay>
       <Popover className="mr-4 rounded-md right-12 bottom-12">
@@ -84,7 +89,11 @@ export const WebWallet = () => {
             isConnected={isConnected}
           />
         </Popover.Trigger>
-        <Popover.Content side="top" sticky="always">
+        <Popover.Content
+          side="top"
+          sticky="always"
+          onOpenAutoFocus={preventAutoFocus}
+        >
           <VStack gap="3" minHeight={{ md: '400px', xl: '400px' }}>
             <EntityItem>
               <EntityItemInfo id={address} title="Your Wallet" />
