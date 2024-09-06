@@ -34,6 +34,7 @@ export const Assets = ({ assets, hideAmount }: IAssetsProps) => {
         });
         const valueOrHidden = hideAmount ? '••••••' : value;
         return (
+          // @ts-expect-error Card does have variant
           <Card key={asset.id} variant="classic">
             <HStack align="center" justify="between">
               <EntityItem key={asset.id}>

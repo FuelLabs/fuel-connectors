@@ -42,6 +42,11 @@
     "items": []
   },
   {
+    "text": "useCurrentConnector",
+    "link": "/guide/react-hooks/useCurrentConnector",
+    "items": []
+  },
+  {
     "text": "useDisconnect",
     "link": "/guide/react-hooks/useDisconnect",
     "items": []
