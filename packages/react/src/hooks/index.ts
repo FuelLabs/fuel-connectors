@@ -7,6 +7,7 @@ export * from './useBalance';
 export * from './useChain';
 export * from './useConnect';
 export * from './useContractRead';
+export * from './useCurrentConnector';
 export * from './useConnectors';
 export * from './useDisconnect';
 export * from './useIsConnected';

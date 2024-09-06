@@ -29,7 +29,7 @@ import {
 } from './types';
 
 export class FuelWalletConnector extends FuelConnector {
-  name = '';
+  name = 'Fuel Wallet';
   connected = false;
   installed = false;
   events = FuelConnectorEventTypes;

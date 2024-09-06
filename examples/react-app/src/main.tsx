@@ -76,7 +76,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <ScreenSizeIndicator />
       </FuelProvider>
 
-      <ReactQueryDevtools initialIsOpen={false} />
+      <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
     </QueryClientProvider>
   </React.StrictMode>,
 );

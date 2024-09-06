@@ -15,7 +15,6 @@ const AnchorComponent = (
 ) => {
   return (
     <Button
-      variant="solid"
       radius="full"
       onClick={onClick}
       leftIcon={IconWallet}
@@ -23,10 +22,7 @@ const AnchorComponent = (
       isLoading={isLoading && isConnected}
       disabled={!isConnected}
       ref={ref}
-      style={{
-        backgroundColor: 'grey',
-      }}
-      highContrast
+      color="gray"
     >
       {address && isConnected ? address : 'Connect your wallet'}
     </Button>

@@ -10,11 +10,12 @@ import {
   VStack,
   shortAddress,
 } from '@fuels/ui';
-import { type Asset, type BN, type CoinQuantity, bn } from 'fuels';
+import { type Asset, bn } from 'fuels';
 import { useEffect, useState } from 'react';
 import {
   useAccount,
   useAssets,
+  useCurrentConnector,
   useDisconnect,
   useIsConnected,
   useWallet,
@@ -30,6 +31,7 @@ import type { IAssetsBalance } from './types';
 export const WebWallet = () => {
   const [address, setAddress] = useState('');
   const [balance, setBalance] = useState('');
+  const [hideAmount, setHideAmount] = useState(false);
   const [assetsBalances, setAssetsBalances] = useState<IAssetsBalance[]>([]);
 
   const { isConnected } = useIsConnected();
@@ -37,14 +39,25 @@ export const WebWallet = () => {
   const { account, isFetched: isFetchedAccount } = useAccount();
   const { assets, isFetched: isFetchedAssets } = useAssets();
   const { wallet, isFetched: isFetchedWallet } = useWallet();
-
-  const disconnectWallet = () => {
-    disconnect();
-  };
+  const {
+    connector,
+    isFetched: isFetchedConnector,
+    refetch,
+  } = useCurrentConnector();
 
   const getAssetId = (asset: Asset) => {
     return asset.networks?.find((n) => n.type === 'fuel')?.assetId;
   };
+
+  const toggleHideAmount = () => {
+    setHideAmount(!hideAmount);
+  };
+
+  useEffect(() => {
+    if (isConnected && !connector?.name) {
+      refetch();
+    }
+  }, [isConnected, refetch, connector?.name]);
 
   useEffect(() => {
     if (!isConnected) {
@@ -92,8 +105,11 @@ export const WebWallet = () => {
   useEffect(() => {
     if (assetsBalances.length > 0 && balance === '') {
       const balance =
-        assetsBalances.find((ab) => ab.symbol === 'ETH')?.amount.format() ??
-        bn(0).format();
+        assetsBalances
+          .find((ab) => ab.symbol === 'ETH')
+          ?.amount.format({
+            precision: 4,
+          }) ?? bn(0).format();
       setBalance(balance);
     }
   }, [assetsBalances, balance]);
@@ -105,16 +121,23 @@ export const WebWallet = () => {
   }, [account, isFetchedAccount, address]);
 
   const isLoading =
-    !isFetchedAccount || !isFetchedWallet || !isFetchedAssets || balance === '';
+    !isFetchedAccount ||
+    !isFetchedWallet ||
+    !isFetchedAssets ||
+    !isFetchedConnector ||
+    balance === '';
 
   // Fixes an issue where the Tooltip would be the focused element
   const preventAutoFocus = (e: Event) => {
     e.preventDefault();
   };
 
+  if (!isConnected) {
+    return null;
+  }
   return (
     <Overlay>
-      <Popover className="mr-4 rounded-md right-12 bottom-12">
+      <Popover>
         <Popover.Trigger>
           <Anchor
             address={shortAddress(address)}
@@ -125,6 +148,7 @@ export const WebWallet = () => {
         <Popover.Content
           side="top"
           sticky="always"
+          sideOffset={20}
           onOpenAutoFocus={preventAutoFocus}
         >
           <VStack
@@ -143,38 +167,44 @@ export const WebWallet = () => {
                   background={useGenerateBackground(address)}
                 />
               </EntityItemSlot>
-              <EntityItemInfo id={address} title="Your Wallet" />
+              <EntityItemInfo id={address} title={connector?.name} />
             </EntityItem>
             <Inset side="x">
               <Separator size="4" />
             </Inset>
-            <Balance value={balance} />
+            <Balance
+              value={balance}
+              hideAmount={hideAmount}
+              toggleHideAmount={toggleHideAmount}
+            />
             <Inset side="x">
               <Separator size="4" />
             </Inset>
-            <Assets assets={assetsBalances} />
+            <Assets assets={assetsBalances} hideAmount={hideAmount} />
+            <Inset side="x">
+              <Separator size="4" />
+            </Inset>
 
             <Popover.Close>
-              <HStack mt="auto" justify="end" gap="1">
+              <HStack gap="1">
                 <Button
                   as="a"
                   href={`https://app.fuel.network/account/${address}/transactions`}
                   target="_blank"
                   rel="noreferrer"
-                  variant="outline"
-                  size="1"
+                  size="2"
                   leftIcon={IconHistory}
-                  radius="full"
+                  color="gray"
+                  className="flex-1"
                 >
                   History
                 </Button>
                 <Button
                   color="red"
-                  variant="outline"
-                  size="1"
+                  size="2"
                   leftIcon={IconLogout}
-                  radius="full"
-                  onClick={() => disconnectWallet()}
+                  onClick={() => disconnect()}
+                  className="flex-1"
                 >
                   Disconnect
                 </Button>
