@@ -34,7 +34,7 @@ import type { WalletConnectConfig } from './types';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
 export class WalletConnectConnector extends PredicateConnector {
-  name = 'Ethereum Wallet';
+  name = 'Ethereum Wallets';
   installed = true;
   events = FuelConnectorEventTypes;
   metadata: ConnectorMetadata = {

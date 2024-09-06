@@ -12,7 +12,7 @@ export const Balance = ({
   toggleHideAmount,
   hideAmount,
 }: IBalanceProps) => {
-  const valueOrHidden = hideAmount ? '••••••' : value;
+  const valueOrHidden = hideAmount ? '•'.repeat(value?.length ?? 1) : value;
   const icon = hideAmount ? IconEyeClosed : IconEye;
   return (
     <VStack gap="1">

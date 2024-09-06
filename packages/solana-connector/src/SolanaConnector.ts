@@ -24,7 +24,7 @@ import type { SolanaConfig } from './types';
 import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
 
 export class SolanaConnector extends PredicateConnector {
-  name = 'Solana Wallet';
+  name = 'Solana Wallets';
   events = FuelConnectorEventTypes;
   metadata: ConnectorMetadata = {
     image: SOLANA_ICON,

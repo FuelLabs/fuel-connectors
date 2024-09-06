@@ -26,7 +26,7 @@ import '@fuels/ui/styles.css';
 import { IconHistory, IconLogout } from '@tabler/icons-react';
 import { AvatarGenerated } from './components/AvatarGenerated';
 import { useGenerateBackground } from './hooks/useGenerateBackground';
-import type { IAssetsBalance } from './types';
+import { type IAssetsBalance, defaultAssetsBalance } from './types';
 
 export const WebWallet = () => {
   const [address, setAddress] = useState('');
@@ -36,9 +36,21 @@ export const WebWallet = () => {
 
   const { isConnected } = useIsConnected();
   const { disconnect } = useDisconnect();
-  const { account, isFetched: isFetchedAccount } = useAccount();
-  const { assets, isFetched: isFetchedAssets } = useAssets();
-  const { wallet, isFetched: isFetchedWallet } = useWallet();
+  const {
+    account,
+    isFetched: isFetchedAccount,
+    refetch: refetchAccount,
+  } = useAccount();
+  const {
+    assets,
+    isFetched: isFetchedAssets,
+    refetch: refetchAssets,
+  } = useAssets();
+  const {
+    wallet,
+    isFetched: isFetchedWallet,
+    refetch: refetchWallet,
+  } = useWallet();
   const {
     connector,
     isFetched: isFetchedConnector,
@@ -54,10 +66,13 @@ export const WebWallet = () => {
   };
 
   useEffect(() => {
-    if (isConnected && !connector?.name) {
+    if (isConnected) {
       refetch();
+      refetchAccount();
+      refetchAssets();
+      refetchWallet();
     }
-  }, [isConnected, refetch, connector?.name]);
+  }, [isConnected, refetch, refetchAccount, refetchAssets, refetchWallet]);
 
   useEffect(() => {
     if (!isConnected) {
@@ -89,7 +104,9 @@ export const WebWallet = () => {
               id: balance.assetId,
             } as IAssetsBalance;
           });
-          setAssetsBalances(enrichedAssets);
+          setAssetsBalances(
+            enrichedAssets.length === 0 ? defaultAssetsBalance : enrichedAssets,
+          );
         })
         .catch(console.error);
     }
