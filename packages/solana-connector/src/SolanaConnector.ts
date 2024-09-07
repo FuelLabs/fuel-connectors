@@ -220,14 +220,19 @@ export class SolanaConnector extends PredicateConnector {
     return address in txIdEncoders;
   }
 
-  public async sendTransaction(
-    address: string,
-    transaction: TransactionRequestLike,
-  ): Promise<string> {
+  private async encodeTxId(txId: string): Promise<Uint8Array> {
     if (!this.isValidPredicateAddress(this.predicateAddress)) {
       throw new Error(`Unknown predicate address ${this.predicateAddress}`);
     }
 
+    const encoder = txIdEncoders[this.predicateAddress];
+    return encoder.encodeTxId(txId);
+  }
+
+  public async sendTransaction(
+    address: string,
+    transaction: TransactionRequestLike,
+  ): Promise<string> {
     const { predicate, transactionId, transactionRequest } =
       await this.prepareTransaction(address, transaction);
 
@@ -235,7 +240,7 @@ export class SolanaConnector extends PredicateConnector {
       transactionRequest.witnesses,
     );
 
-    const txId = txIdEncoders[this.predicateAddress].encodeTxId(transactionId);
+    const txId = await this.encodeTxId(transactionId);
     const provider: Maybe<Provider> =
       this.web3Modal.getWalletProvider() as Provider;
     if (!provider) {
