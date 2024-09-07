@@ -1,5 +1,11 @@
 # @fuel-connectors/walletconnect-connector
 
+## 0.27.1
+
+### Patch Changes
+
+- [#242](https://github.com/FuelLabs/fuel-connectors/pull/242) [`9b6b7d3`](https://github.com/FuelLabs/fuel-connectors/commit/9b6b7d3d271aa68fab01c6d236095cc2537b100e) Thanks [@helciofranco](https://github.com/helciofranco)! - Introduce custom `encodeTxId` methods for different predicate versions in Solana due to difference in implementation regarding limitation of 32 bytes on sway method use to sign the old predicates
+
 ## 0.27.0
 
 ### Minor Changes
