@@ -30,4 +30,4 @@ export const PREDICATE_VERSIONS = {
     predicate: { abi: abi1725479086554, bin: bin1725479086554 },
     generatedAt: generationDate1725479086554,
   },
-} as Record<string, PredicateVersion>;
+} as const satisfies Record<string, PredicateVersion>;
