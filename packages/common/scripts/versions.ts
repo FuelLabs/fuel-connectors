@@ -92,7 +92,7 @@ export const syncPredicate = async (__dirname: string) => {
         `\t'${v.version}':{ predicate: {abi: abi${v.date}, bin: bin${v.date}}, generatedAt: generationDate${v.date} }`,
     )
     .join(',\n')}
-} as Record<string, PredicateVersion>;\n`;
+} as const satisfies Record<string, PredicateVersion>;\n`;
   fs.appendFileSync(dictPath, `${headers.join('\n')}${code}`);
   console.info('Dictionary updated.');
 };
