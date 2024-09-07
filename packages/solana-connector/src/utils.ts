@@ -5,6 +5,8 @@ type TxIdEncoder = {
   encodeTxId: (txId: string) => Uint8Array;
 };
 
+// the signature method used in the predicate didn't support more than 32 bytes
+// this encoder will keep retrocompatibility with the old predicates implementation
 const encodeLegacyTxId = (txId: string) => {
   const txIdNo0x = txId.slice(2);
   const idBytes = `${txIdNo0x.slice(0, 16)}${txIdNo0x.slice(-16)}`;
