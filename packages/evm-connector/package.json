@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/evm-connector",
-  "version": "0.26.0",
+  "version": "0.27.1",
   "private": true,
   "type": "module",
   "files": ["dist"],

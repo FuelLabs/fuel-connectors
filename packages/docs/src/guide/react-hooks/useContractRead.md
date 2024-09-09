@@ -6,7 +6,7 @@ A hook to read data from a smart contract in the connected app.
 #### Params
 
 The properties of the hook.
-- `contract`: The contract instance or contract data (address, ABI, and provider).
+- `contract`: The contract instance.
 - `functionName`: The name of the function to call on the contract.
 - `args`: The arguments to pass to the contract function.
 
