@@ -1,8 +1,7 @@
 import path from 'node:path';
-import { hexToBytes } from '@ethereumjs/util';
 import { PredicateFactory } from '@fuel-connectors/common';
-import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
 import { type Asset, type Network, Provider } from 'fuels';
+import { launchTestNode } from 'fuels/test-utils';
 import {
   afterAll,
   beforeAll,
@@ -33,8 +32,8 @@ describe('Solana Connector', () => {
   beforeAll(async () => {
     process.env.GENESIS_SECRET =
       '0x6e48a022f9d4ae187bca4e2645abd62198ae294ee484766edbdaadf78160dc68';
-    const { stop, provider } = await launchNodeAndGetWallets({
-      launchNodeOptions: {
+    const { cleanup, provider } = await launchTestNode({
+      nodeOptions: {
         args: ['--snapshot', snapshotPath],
         loggingEnabled: false,
         // use fixed port to don't conflict with other packages,
@@ -43,7 +42,7 @@ describe('Solana Connector', () => {
     });
 
     fuelProvider = provider;
-    stopProvider = stop;
+    stopProvider = cleanup;
   });
 
   afterAll(() => {

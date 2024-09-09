@@ -1,48 +1,45 @@
 import { type Address, Contract, type JsonAbi, type Provider } from 'fuels';
-import type { FunctionNames, InputsForFunctionName } from '../types';
-
 import { useNamedQuery } from '../core/useNamedQuery';
 import { QUERY_KEYS } from '../utils';
 
-type ContractData<TAbi extends JsonAbi> = {
-  /**
-   * The address of the contract.
-   */
-  address: Address;
-  /**
-   * The ABI of the contract.
-   */
-  abi: TAbi;
-  /**
-   * The provider used to interact with the contract.
-   */
-  provider: Provider;
+type ContractReadWithInstanceProps<
+  C extends Contract,
+  F extends keyof C['functions'],
+> = {
+  contract: C;
+  functionName: F;
+  args?: Parameters<C['functions'][F]>;
+};
+
+type ContractReadWithAbiProps<A extends JsonAbi> = {
+  contract: {
+    address: Address;
+    abi: A;
+    provider: Provider;
+  };
+  functionName: string;
+  args?: unknown[];
 };
 
 type ContractReadProps<
-  TAbi extends JsonAbi,
-  TFunctionName extends FunctionNames<TAbi>,
-> = {
-  /**
-   * The contract instance or contract data (address, ABI, and provider).
-   */
-  contract: Contract | ContractData<TAbi>;
-  /**
-   * The name of the function to call on the contract.
-   */
-  functionName: TFunctionName;
-  /**
-   * The arguments to pass to the contract function.
-   */
-  args: InputsForFunctionName<TAbi, TFunctionName>;
+  A extends JsonAbi,
+  C extends Contract | ContractReadWithAbiProps<A>['contract'],
+  F extends C extends Contract ? keyof C['functions'] : string,
+> = C extends Contract
+  ? ContractReadWithInstanceProps<C, F>
+  : ContractReadWithAbiProps<A>;
+
+const isContract = <A extends JsonAbi, C extends Contract>(
+  contract: Contract | ContractReadWithAbiProps<A>['contract'],
+): contract is C => {
+  return 'functions' in contract;
 };
 
-// @TODO: Add a link to fuel connector's documentation.
 /**
  * A hook to read data from a smart contract in the connected app.
  *
  * @params {object} The properties of the hook.
- * - `contract`: The contract instance or contract data (address, ABI, and provider).
+ * - `contract`: The contract instance or contract data (address, ABI, and provider)..
  * - `functionName`: The name of the function to call on the contract.
  * - `args`: The arguments to pass to the contract function.
  *
@@ -64,37 +61,38 @@ type ContractReadProps<
  * ```
  */
 export const useContractRead = <
-  TAbi extends JsonAbi,
-  TFunctionName extends FunctionNames<TAbi>,
+  A extends JsonAbi,
+  C extends Contract | ContractReadWithAbiProps<A>['contract'],
+  F extends C extends Contract ? keyof C['functions'] : string,
 >({
+  contract: _contract,
   functionName,
   args,
-  contract: _contract,
-}: ContractReadProps<TAbi, TFunctionName>) => {
-  const isContractData =
-    _contract && 'abi' in _contract && 'address' in _contract;
-  const { abi, address, provider } = (_contract as ContractData<TAbi>) ?? {};
+}: ContractReadProps<A, C, F>) => {
+  const isContractInstance = isContract(_contract);
   const chainId = _contract?.provider?.getChainId();
 
   return useNamedQuery('contractRead', {
     queryKey: QUERY_KEYS.contract(
-      isContractData ? address?.toString() : _contract?.id?.toString(),
+      isContractInstance
+        ? _contract?.id?.toString()
+        : _contract?.address?.toString(),
       chainId,
       args?.toString(),
     ),
     queryFn: async () => {
-      const isValid = isContractData
-        ? !!abi && !!address && !!provider
-        : !!_contract && 'provider' in _contract;
+      const isValid = isContractInstance
+        ? !!_contract && 'provider' in _contract
+        : !!_contract.abi && !!_contract.address && !!_contract.provider;
 
       if (!isValid) {
         throw new Error(
-          'Valind input `contract` is required to read the contract',
+          'Invalid input `contract` is required to read the contract',
         );
       }
-      const contract = isContractData
-        ? new Contract(address, abi, provider)
-        : (_contract as Contract);
+      const contract = isContractInstance
+        ? _contract
+        : new Contract(_contract.address, _contract.abi, _contract.provider);
 
       if (!contract?.functions?.[functionName]) {
         throw new Error(`Function ${functionName || ''} not found on contract`);

@@ -1,4 +1,3 @@
-import { hexToBytes } from '@ethereumjs/util';
 import {
   type Maybe,
   PredicateConnector,
@@ -21,6 +20,7 @@ import {
 import { SOLANA_ICON, TESTNET_URL } from './constants';
 import { PREDICATE_VERSIONS } from './generated/predicates';
 import type { SolanaConfig } from './types';
+import { type SolanaPredicateRoot, txIdEncoders } from './utils';
 import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
 
 export class SolanaConnector extends PredicateConnector {
@@ -214,10 +214,19 @@ export class SolanaConnector extends PredicateConnector {
     return this.isConnected();
   }
 
-  public truncateTxId(txId: string): Uint8Array {
-    const txIdNo0x = txId.slice(2);
-    const idBytes = `${txIdNo0x.slice(0, 16)}${txIdNo0x.slice(-16)}`;
-    return new TextEncoder().encode(idBytes);
+  private isValidPredicateAddress(
+    address: string,
+  ): address is SolanaPredicateRoot {
+    return address in txIdEncoders;
+  }
+
+  private async encodeTxId(txId: string): Promise<Uint8Array> {
+    if (!this.isValidPredicateAddress(this.predicateAddress)) {
+      throw new Error(`Unknown predicate address ${this.predicateAddress}`);
+    }
+
+    const encoder = txIdEncoders[this.predicateAddress];
+    return encoder.encodeTxId(txId);
   }
 
   public async sendTransaction(
@@ -230,7 +239,8 @@ export class SolanaConnector extends PredicateConnector {
     const predicateSignatureIndex = getMockedSignatureIndex(
       transactionRequest.witnesses,
     );
-    const txId = this.truncateTxId(transactionId);
+
+    const txId = await this.encodeTxId(transactionId);
     const provider: Maybe<Provider> =
       this.web3Modal.getWalletProvider() as Provider;
     if (!provider) {
