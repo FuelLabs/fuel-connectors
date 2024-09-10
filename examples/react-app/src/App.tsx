@@ -3,6 +3,7 @@ import Account from './components/account';
 import Balance from './components/balance';
 import Button from './components/button';
 import Counter from './components/counter';
+import MinterCounter from './components/mint-asset';
 import Notification, {
   type Props as NotificationProps,
 } from './components/notification';
@@ -118,6 +119,10 @@ export default function App() {
                         setIsSigning={setIsSigning}
                       />
                       <Counter
+                        isSigning={isSigning}
+                        setIsSigning={setIsSigning}
+                      />
+                      <MinterCounter
                         isSigning={isSigning}
                         setIsSigning={setIsSigning}
                       />
