@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default function ContractCounter({ isSigning, setIsSigning }: Props) {
-  const { balance, wallet } = useWallet();
+  const { balance, wallet, refetchBalance } = useWallet();
 
   const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
     open: false,
@@ -98,6 +98,10 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
                 </p>
               ),
             });
+
+            refetchBalance();
+            setLoading(false);
+            setIsSigning(false);
           }
 
           checkResult();
@@ -114,7 +118,6 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
             32,
           )}...`,
         });
-      } finally {
         setLoading(false);
         setIsSigning(false);
       }

@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function Transfer({ isSigning, setIsSigning }: Props) {
-  const { balance, wallet, refetchWallet } = useWallet();
+  const { balance, wallet, refetchBalance } = useWallet();
 
   const [receiver, setReceiver] = useState(DEFAULT_ADDRESS);
   const [isLoading, setLoading] = useState(false);
@@ -73,6 +73,10 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
                 </p>
               ),
             });
+
+            refetchBalance();
+            setLoading(false);
+            setIsSigning(false);
           }
         }
 
@@ -91,10 +95,9 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
             : error.message.substring(0, 32)
         }...`,
       });
-    } finally {
+
       setLoading(false);
       setIsSigning(false);
-      refetchWallet();
     }
   };
 
