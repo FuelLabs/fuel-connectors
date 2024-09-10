@@ -13,7 +13,7 @@ The properties of the hook.
 #### Returns
 
 An object containing:
-- `contractRead`: The result of the contract function call.
+- The result of the contract function call.
 - [`...queryProps`](https://tanstack.com/query/latest/docs/framework/react/reference/useQuery): Destructured properties from `useQuery` result.
 
 #### Examples

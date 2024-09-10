@@ -1,6 +1,6 @@
 import { createConfig } from 'fuels';
 
 export default createConfig({
-  contracts: ['./contracts/'],
+  workspace: './contracts/',
   output: './src/types/',
 });
