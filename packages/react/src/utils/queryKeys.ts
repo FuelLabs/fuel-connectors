@@ -28,6 +28,9 @@ export const QUERY_KEYS = {
   isConnected: (): QueryKey => {
     return QUERY_KEYS.base.concat('isConnected');
   },
+  networks: (): QueryKey => {
+    return QUERY_KEYS.base.concat('networks');
+  },
   provider: (): QueryKey => {
     return QUERY_KEYS.base.concat('provider');
   },

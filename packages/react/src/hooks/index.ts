@@ -11,6 +11,7 @@ export * from './useConnectors';
 export * from './useDisconnect';
 export * from './useIsConnected';
 export * from './useNetwork';
+export * from './useNetworks';
 export * from './useNodeInfo';
 export * from './useProvider';
 export * from './useSelectNetwork';

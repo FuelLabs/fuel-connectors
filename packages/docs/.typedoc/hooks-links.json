@@ -57,6 +57,11 @@
     "items": []
   },
   {
+    "text": "useNetworks",
+    "link": "/guide/react-hooks/useNetworks",
+    "items": []
+  },
+  {
     "text": "useNodeInfo",
     "link": "/guide/react-hooks/useNodeInfo",
     "items": []
