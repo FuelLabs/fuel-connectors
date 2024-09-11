@@ -13,6 +13,7 @@ export * from './useIsConnected';
 export * from './useNetwork';
 export * from './useNodeInfo';
 export * from './useProvider';
+export * from './useSelectNetwork';
 export * from './useSendTransaction';
 export * from './useTransaction';
 export * from './useTransactionReceipts';

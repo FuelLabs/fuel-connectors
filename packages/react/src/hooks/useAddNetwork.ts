@@ -30,7 +30,7 @@ export const useAddNetwork = () => {
   const { fuel } = useFuel();
 
   const { mutate, mutateAsync, ...queryProps } = useMutation({
-    mutationKey: [MUTATION_KEYS.addAssets],
+    mutationKey: [MUTATION_KEYS.addNetwork],
     mutationFn: async (networkUrl: string) => {
       return fuel.addNetwork(networkUrl);
     },

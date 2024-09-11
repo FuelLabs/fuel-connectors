@@ -67,6 +67,11 @@
     "items": []
   },
   {
+    "text": "useSelectNetwork",
+    "link": "/guide/react-hooks/useSelectNetwork",
+    "items": []
+  },
+  {
     "text": "useSendTransaction",
     "link": "/guide/react-hooks/useSendTransaction",
     "items": []
