@@ -2,15 +2,15 @@
 
 import type { PredicateVersion } from '@fuel-connectors/common';
 import {
-  abi as abi1722890207063,
-  bin as bin1722890207063,
-  generationDate as generationDate1722890207063,
-} from './0x8f562b4f23ce90b0547d11e4e02462d3cd660f4f3fe5f719ae725eab4d7a5d42';
-import {
   abi as abi1725561405784,
   bin as bin1725561405784,
   generationDate as generationDate1725561405784,
 } from './0x15f8fd16e3281aa89e7567c5f8423f77b34983a8cd7d0a1714100c8bc3d4c8d0';
+import {
+  abi as abi1722890207063,
+  bin as bin1722890207063,
+  generationDate as generationDate1722890207063,
+} from './0x8f562b4f23ce90b0547d11e4e02462d3cd660f4f3fe5f719ae725eab4d7a5d42';
 import {
   abi as abi1722897424142,
   bin as bin1722897424142,
