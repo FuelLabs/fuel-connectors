@@ -56,6 +56,10 @@ export const useConnectUI = () => {
   return context;
 };
 
+const sortConnectors = (connectors: FuelConnector[]) => {
+  return connectors.sort((a, b) => a.name.localeCompare(b.name));
+};
+
 export function FuelUIProvider({
   fuelConfig,
   children,
@@ -63,7 +67,9 @@ export function FuelUIProvider({
 }: FuelUIProviderProps) {
   const { fuel } = useFuel();
   const { isPending: isConnecting, isError, connect } = useConnect();
-  const { connectors, isLoading: isLoadingConnectors } = useConnectors();
+  const { connectors, isLoading: isLoadingConnectors } = useConnectors({
+    query: { select: sortConnectors },
+  });
   const [connector, setConnector] = useState<FuelConnector | null>(null);
   const [isOpen, setOpen] = useState(false);
   const [error, setError] = useState<Error | null>(null);
