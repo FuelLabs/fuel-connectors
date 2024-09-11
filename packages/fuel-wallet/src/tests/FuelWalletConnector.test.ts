@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import {
   type FuelABI,
+  type Network,
   type TransactionRequestLike,
   TransactionType,
 } from 'fuels';
@@ -215,18 +216,35 @@ describe('FuelWalletConnector', () => {
 
   describe('networks', () => {
     test('should list networks', async () => {
-      const request = requestMock.mockReturnValue(
-        Promise.resolve([
-          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
-        ]),
-      );
+      const networks: Network[] = [
+        {
+          chainId: 0,
+          url: 'https://testnet.fuel.network/v1/graphql',
+        },
+      ];
+      const request = requestMock.mockReturnValue(Promise.resolve(networks));
 
       const connector = new FuelWalletConnector();
       const result = await connector.networks();
-      expect(result).toEqual([
-        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
-      ]);
+      expect(result).toEqual(networks);
       expect(request).toHaveBeenCalledWith('networks', {});
+    });
+
+    test('should select network', async () => {
+      const request = requestMock.mockReturnValue(Promise.resolve(true));
+
+      const connector = new FuelWalletConnector();
+      const result = await connector.selectNetwork({
+        chainId: 0,
+        url: 'https://testnet.fuel.network/v1/graphql',
+      });
+      expect(result).toBe(true);
+      expect(request).toHaveBeenCalledWith('selectNetwork', {
+        network: {
+          chainId: 0,
+          url: 'https://testnet.fuel.network/v1/graphql',
+        },
+      });
     });
 
     test('should return version', async () => {
