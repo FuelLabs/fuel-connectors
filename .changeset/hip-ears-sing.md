@@ -13,4 +13,4 @@
 "@fuel-connectors/walletconnect-connector": minor
 ---
 
-Bump pnpm version to v9.4.0
+Bump pnpm version to v9.5.0

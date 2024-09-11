@@ -48,5 +48,5 @@
       "fast-xml-parser@<4.4.1": ">=4.4.1"
     }
   },
-  "packageManager": "pnpm@9.4.0"
+  "packageManager": "pnpm@9.5.0"
 }
