@@ -82,6 +82,11 @@
     "items": []
   },
   {
+    "text": "useSwitchNetwork",
+    "link": "/guide/react-hooks/useSwitchNetwork",
+    "items": []
+  },
+  {
     "text": "useTransaction",
     "link": "/guide/react-hooks/useTransaction",
     "items": []
