@@ -10,11 +10,11 @@
       "dependsOn": []
     },
     "build": {
-      "dependsOn": ["^fuels:build", "^build"],
+      "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
     "build:watch": {
-      "dependsOn": ["ts:check", "^fuels:build", "^build"],
+      "dependsOn": ["ts:check", "^build"],
       "outputs": ["dist/**"]
     },
     "test": {
