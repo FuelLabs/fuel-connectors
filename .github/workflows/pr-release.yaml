@@ -1,11 +1,14 @@
 name: Release to @pr-<number> tag on npm
 on:
+  pull_request:
   workflow_dispatch:
 
 jobs:
   release-pr:
     name: 'Release PR to npm'
     runs-on: buildjet-4vcpu-ubuntu-2204
+    # Comment if:false to enable release PR to npm
+    # if: false
     permissions: write-all
     steps:
       - uses: actions/checkout@v3
