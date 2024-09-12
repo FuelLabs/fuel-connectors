@@ -22,7 +22,6 @@
     "node": ">=18",
     "pnpm": ">=9"
   },
-  "packageManager": "pnpm@9.5.0",
   "dependencies": {
     "playwright": "1.46.1"
   }
