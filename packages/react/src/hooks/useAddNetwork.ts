@@ -7,6 +7,8 @@ import { MUTATION_KEYS } from '../utils';
 /**
  * A hook to add a network in the connected app.
  *
+ * @deprecated Use `useSelectNetwork` instead. This hook will be removed in the next major release.
+ *
  * @returns {object} An object containing:
  * - `addNetwork`: function to add a network synchronously.
  * - `addNetworkAsync` function to add a network asynchronously.
