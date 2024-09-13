@@ -1,1 +1,1 @@
-export * from './predicates';
+export { PREDICATE_VERSIONS } from './generated/predicates';
