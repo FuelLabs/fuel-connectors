@@ -7,6 +7,7 @@ import {
   type JsonAbi,
   type Network,
   Provider,
+  type SelectNetworkArguments,
   type StorageAbstract,
   type TransactionRequestLike,
   type Version,
@@ -247,7 +248,7 @@ export class BurnerWalletConnector extends FuelConnector {
     throw new Error('Method not implemented.');
   }
 
-  async selectNetwork(_network: Network): Promise<boolean> {
+  async selectNetwork(_network: SelectNetworkArguments): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
 
