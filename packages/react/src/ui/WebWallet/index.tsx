@@ -236,6 +236,7 @@ export const WebWallet = () => {
                   leftIcon={IconHistory}
                   color="gray"
                   className="flex-1"
+                  variant="outline"
                 >
                   History
                 </Button>
@@ -245,6 +246,7 @@ export const WebWallet = () => {
                   leftIcon={IconLogout}
                   onClick={() => disconnect()}
                   className="flex-1"
+                  variant="outline"
                 >
                   Disconnect
                 </Button>
