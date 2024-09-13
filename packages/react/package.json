@@ -35,7 +35,7 @@
     "events": "^3.3.0"
   },
   "devDependencies": {
-    "@fuels/ui": "file:/Users/leonardo/Infinity/fuel-explorer/packages/ui/fuels-ui-0.0.1.tgz",
+    "@fuels/ui": "0.0.1",
     "@tanstack/react-query": "5.35.1",
     "@types/react": "18.2.54",
     "compare-versions": "^6.1.0",
