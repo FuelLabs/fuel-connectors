@@ -1,28 +1,64 @@
-import { HStack, Icon, Text, VStack } from '@fuels/ui';
-import { IconEyeClosed, IconEyeOff, IconEyeX } from '@tabler/icons-react';
-import { IconEye } from '@tabler/icons-react';
+import { HStack, Icon, Text, Tooltip, VStack } from '@fuels/ui';
+import { IconEye, IconEyeClosed } from '@tabler/icons-react';
+import type { BN } from 'fuels';
+import { useBalanceFormat } from '../../hooks/useBalanceFormat';
 
 export interface IBalanceProps {
-  value: string | null;
+  value: BN;
   toggleHideAmount: () => void;
   hideAmount: boolean;
 }
+
 export const Balance = ({
   value,
   toggleHideAmount,
   hideAmount,
 }: IBalanceProps) => {
-  const valueOrHidden = hideAmount ? '•'.repeat(value?.length ?? 1) : value;
-  const icon = hideAmount ? IconEyeClosed : IconEye;
+  const { formattedBalance, formattedBalanceFull } = useBalanceFormat(value);
+  const normalProps = {
+    value: formattedBalance,
+    icon: IconEye,
+    tooltip: formattedBalanceFull,
+  };
+  const hiddenProps = {
+    value: '•'.repeat(5),
+    icon: IconEyeClosed,
+    tooltip: 'Hidden balance',
+  };
+  const props = hideAmount ? hiddenProps : normalProps;
+
   return (
     <VStack gap="1">
-      <Text color="gray" size="2">
+      <Text
+        color="gray"
+        size={{
+          md: '2',
+          initial: '1',
+        }}
+      >
         Balance
       </Text>
       <HStack gap="2" align="center">
-        <Text size="5">ETH</Text>
-        <Text size="5">{valueOrHidden}</Text>
-        <Icon onClick={toggleHideAmount} icon={icon} cursor="pointer" />
+        <Text
+          size={{
+            initial: '2',
+            md: '5',
+          }}
+        >
+          ETH
+        </Text>
+        <Tooltip content={props.tooltip} sideOffset={-5}>
+          <Text
+            size={{
+              initial: '2',
+              md: '5',
+            }}
+            aria-label={props.value}
+          >
+            {props.value}
+          </Text>
+        </Tooltip>
+        <Icon onClick={toggleHideAmount} icon={props.icon} cursor="pointer" />
       </HStack>
     </VStack>
   );

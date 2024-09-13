@@ -1,0 +1,16 @@
+
+/* Fix for popper content wrapper */
+[data-radix-popper-content-wrapper] {
+    @media (max-width: 1024px) {
+      transform: none !important;
+      bottom: 0px;
+      top: auto !important;
+
+      & > .fuel-PopoverContent {
+        --radius-factor: 1.5;
+        --radius-full: 0px;
+        --radius-thumb: 9999px;
+        border-radius: var(--radius-6) var(--radius-6) 0 0;
+      }
+    }
+}
