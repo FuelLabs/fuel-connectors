@@ -24,7 +24,11 @@ const { addNetworkAsync } = useAddNetwork();
 await addNetworkAsync(network);
 ```
 
+#### Deprecated
+
+Use `useSelectNetwork` instead. This hook will be removed in the next major release.
+
 #### Defined in
-[packages/react/src/hooks/useAddNetwork.ts:29](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useAddNetwork.ts#L29)
+[packages/react/src/hooks/useAddNetwork.ts:31](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useAddNetwork.ts#L31)
 
 ___
