@@ -1,5 +1,25 @@
 # @fuels/react
 
+## 0.28.0
+
+### Minor Changes
+
+- [#252](https://github.com/FuelLabs/fuel-connectors/pull/252) [`eea98c9`](https://github.com/FuelLabs/fuel-connectors/commit/eea98c991ed9aca318f65743f2734d5aa32e2e0e) Thanks [@helciofranco](https://github.com/helciofranco)! - Update SDK to `0.94.6` version. https://github.com/FuelLabs/fuels-ts/releases/tag/v0.94.6
+
+- [#224](https://github.com/FuelLabs/fuel-connectors/pull/224) [`1f6ee86`](https://github.com/FuelLabs/fuel-connectors/commit/1f6ee8679994528ae36faec51535a183d582a58b) Thanks [@helciofranco](https://github.com/helciofranco)! - Bump pnpm version to v9.5.0
+
+- [#251](https://github.com/FuelLabs/fuel-connectors/pull/251) [`d10db6d`](https://github.com/FuelLabs/fuel-connectors/commit/d10db6d28e74d958addbb113ec07bd75c0821e74) Thanks [@helciofranco](https://github.com/helciofranco)! - Add `useSelectNetwork` to select a network in the connected app.
+
+- [#251](https://github.com/FuelLabs/fuel-connectors/pull/251) [`d10db6d`](https://github.com/FuelLabs/fuel-connectors/commit/d10db6d28e74d958addbb113ec07bd75c0821e74) Thanks [@helciofranco](https://github.com/helciofranco)! - Add `useNetworks` to get the list of networks available in the connected app.
+
+- [#251](https://github.com/FuelLabs/fuel-connectors/pull/251) [`d10db6d`](https://github.com/FuelLabs/fuel-connectors/commit/d10db6d28e74d958addbb113ec07bd75c0821e74) Thanks [@helciofranco](https://github.com/helciofranco)! - Deprecate `useAddNetwork` hook. Use `useSelectNetwork` instead.
+
+### Patch Changes
+
+- [#246](https://github.com/FuelLabs/fuel-connectors/pull/246) [`b662c8d`](https://github.com/FuelLabs/fuel-connectors/commit/b662c8d36f078764a4f6a146ad9758db3882e5ac) Thanks [@helciofranco](https://github.com/helciofranco)! - Add optional query parameters to `useConnectors`, allowing developers to customize the `select` query.
+
+- [#246](https://github.com/FuelLabs/fuel-connectors/pull/246) [`b662c8d`](https://github.com/FuelLabs/fuel-connectors/commit/b662c8d36f078764a4f6a146ad9758db3882e5ac) Thanks [@helciofranco](https://github.com/helciofranco)! - Sort connectors by name in the `Connect Wallet` modal.
+
 ## 0.27.1
 
 ## 0.27.0
