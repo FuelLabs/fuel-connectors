@@ -9,6 +9,7 @@ import {
   type JsonAbi,
   type Network,
   OutputType,
+  type SelectNetworkArguments,
   type TransactionRequestLike,
   TransactionResponse,
   type Version,
@@ -318,7 +319,9 @@ export abstract class PredicateConnector extends FuelConnector {
     throw new Error('Method not implemented.');
   }
 
-  public async selectNetwork(_network: Network): Promise<boolean> {
+  public async selectNetwork(
+    _network: SelectNetworkArguments,
+  ): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
 
