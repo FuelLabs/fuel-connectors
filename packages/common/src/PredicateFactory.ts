@@ -55,7 +55,7 @@ export class PredicateFactory {
     <T extends InputValue[]>(
       address: string | B256Address,
       provider: Provider,
-      inputData?: T,
+      data?: T,
     ): Predicate<T> =>
       new Predicate({
         bytecode: arrayify(this.bytecode),
@@ -64,7 +64,7 @@ export class PredicateFactory {
         configurableConstants: {
           SIGNER: this.adapter.convertAddress(address),
         },
-        inputData,
+        data,
       }),
   );
 

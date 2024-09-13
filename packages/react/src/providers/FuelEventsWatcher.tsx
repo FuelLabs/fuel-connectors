@@ -43,6 +43,7 @@ export function FuelEventsWatcher({ fuelConfig }: { fuelConfig?: FuelConfig }) {
 
   function onNetworkChange() {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.currentNetwork() });
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.networks() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.provider() });
     queryClient.invalidateQueries({
       queryKey: QUERY_KEYS.transactionReceipts(),

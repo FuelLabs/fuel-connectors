@@ -2,23 +2,32 @@
 
 import type { PredicateVersion } from '@fuel-connectors/common';
 import {
-  abi as abi1722890207063,
-  bin as bin1722890207063,
-  generationDate as generationDate1722890207063,
+  abi as abi1715360301393,
+  bin as bin1715360301393,
+  generationDate as generationDate1715360301393,
 } from './0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33';
 import {
   abi as abi1723073762756,
   bin as bin1723073762756,
   generationDate as generationDate1723073762756,
 } from './0xca07380d3c0d9890519ee727bf522eaf19e2acefab240c9a22b0aa90f41c87d6';
+import {
+  abi as abi1725479086554,
+  bin as bin1725479086554,
+  generationDate as generationDate1725479086554,
+} from './0xfdac03fc617c264fa6f325fd6f4d2a5470bf44cfbd33bc11efb3bf8b7ee2e938';
 
 export const PREDICATE_VERSIONS = {
+  '0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33': {
+    predicate: { abi: abi1715360301393, bin: bin1715360301393 },
+    generatedAt: generationDate1715360301393,
+  },
   '0xca07380d3c0d9890519ee727bf522eaf19e2acefab240c9a22b0aa90f41c87d6': {
     predicate: { abi: abi1723073762756, bin: bin1723073762756 },
     generatedAt: generationDate1723073762756,
   },
-  '0x4a45483e0309350adb9796f7b9f4a4af263a6b03160e52e8c9df9f22d11b4f33': {
-    predicate: { abi: abi1722890207063, bin: bin1722890207063 },
-    generatedAt: generationDate1722890207063,
+  '0xfdac03fc617c264fa6f325fd6f4d2a5470bf44cfbd33bc11efb3bf8b7ee2e938': {
+    predicate: { abi: abi1725479086554, bin: bin1725479086554 },
+    generatedAt: generationDate1725479086554,
   },
-} as Record<string, PredicateVersion>;
+} as const satisfies Record<string, PredicateVersion>;

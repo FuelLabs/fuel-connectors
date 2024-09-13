@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/burner-wallet-connector",
-  "version": "0.26.0",
+  "version": "0.27.1",
   "private": true,
   "type": "module",
   "types": "./dist/index.d.ts",
@@ -14,11 +14,10 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.93.0"
+    "fuels": ">=0.94.0"
   },
   "devDependencies": {
-    "@fuel-ts/account": "0.93.0",
-    "fuels": "0.93.0",
+    "fuels": "0.94.4",
     "jsdom": "24.0.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5",

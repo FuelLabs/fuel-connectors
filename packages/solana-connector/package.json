@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/solana-connector",
-  "version": "0.26.0",
+  "version": "0.27.1",
   "private": true,
   "type": "module",
   "files": ["dist"],
@@ -22,9 +22,9 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "@web3modal/scaffold": ">=5.0.0",
     "@web3modal/core": ">=5.0.0",
-    "fuels": ">=0.93.0"
+    "@web3modal/scaffold": ">=5.0.0",
+    "fuels": ">=0.94.0"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -36,9 +36,10 @@
     "tweetnacl": "1.0.3"
   },
   "devDependencies": {
-    "@fuel-ts/account": "0.93.0",
+    "@fuel-connectors/common": "workspace:*",
     "@types/memoizee": "0.4.11",
-    "fuels": "0.93.0",
+    "@web3modal/core": "5.0.0",
+    "fuels": "0.94.4",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
@@ -47,8 +48,6 @@
     "typescript": "5.4.5",
     "vite": "5.2.11",
     "vite-plugin-dts": "3.9.1",
-    "vitest": "2.0.2",
-    "@web3modal/core": "5.0.0",
-    "@fuel-connectors/common": "workspace:*"
+    "vitest": "2.0.2"
   }
 }

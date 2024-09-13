@@ -1,7 +1,8 @@
 import path from 'node:path';
-import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
 import { type Asset, type Network, Provider, Wallet } from 'fuels';
+import { launchTestNode } from 'fuels/test-utils';
 import {
+  afterAll,
   afterEach,
   beforeAll,
   beforeEach,
@@ -27,15 +28,15 @@ const getBurnerWallet = async (config: BurnerWalletConfig = {}) => {
 
 describe('Burner Wallet Connector', () => {
   let fuelProvider: Provider;
+  let stopProvider: () => void;
 
   const snapshotPath = path.join(__dirname, '');
 
   beforeAll(async () => {
     process.env.GENESIS_SECRET =
       '0x6e48a022f9d4ae187bca4e2645abd62198ae294ee484766edbdaadf78160dc68';
-    // @TODO: Add "stop" function call when it gets fixed in the sdk
-    const { provider } = await launchNodeAndGetWallets({
-      launchNodeOptions: {
+    const { cleanup, provider } = await launchTestNode({
+      nodeOptions: {
         args: ['--snapshot', snapshotPath],
         loggingEnabled: false,
         // use fixed port to don't conflict with other packages,
@@ -44,6 +45,11 @@ describe('Burner Wallet Connector', () => {
     });
 
     fuelProvider = provider;
+    stopProvider = cleanup;
+  });
+
+  afterAll(() => {
+    stopProvider?.();
   });
 
   beforeEach(async () => {
