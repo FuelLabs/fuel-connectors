@@ -27,9 +27,9 @@ import {
   getMockedSignatureIndex,
   getOrThrow,
 } from '@fuel-connectors/common';
+import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
 import { ApiController } from '@web3modal/core';
 import { ETHEREUM_ICON, TESTNET_URL } from './constants';
-import { PREDICATE_VERSIONS } from './generated/predicates';
 import type { WalletConnectConfig } from './types';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 

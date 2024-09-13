@@ -21,8 +21,8 @@ import {
   getMockedSignatureIndex,
   getOrThrow,
 } from '@fuel-connectors/common';
+import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
 import { METAMASK_ICON, TESTNET_URL, WINDOW } from './constants';
-import { PREDICATE_VERSIONS } from './generated/predicates';
 import {
   type EIP1193Provider,
   type EVMWalletConnectorConfig,

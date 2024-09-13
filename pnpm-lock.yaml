@@ -379,6 +379,9 @@ importers:
       '@fuel-connectors/common':
         specifier: workspace:*
         version: link:../common
+      '@fuel-connectors/evm-predicates':
+        specifier: workspace:*
+        version: link:../evm-predicates
       '@types/memoizee':
         specifier: 0.4.11
         version: 0.4.11
@@ -418,6 +421,21 @@ importers:
       vitest:
         specifier: 2.0.2
         version: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.31.0)
+
+  packages/evm-predicates:
+    devDependencies:
+      '@fuel-connectors/common':
+        specifier: workspace:*
+        version: link:../common
+      fuels:
+        specifier: 0.94.4
+        version: 0.94.4
+      tsx:
+        specifier: 4.9.3
+        version: 4.9.3
+      typescript:
+        specifier: 5.4.5
+        version: 5.4.5
 
   packages/fuel-development-wallet:
     devDependencies:
@@ -617,6 +635,9 @@ importers:
       '@fuel-connectors/common':
         specifier: workspace:*
         version: link:../common
+      '@fuel-connectors/evm-predicates':
+        specifier: workspace:*
+        version: link:../evm-predicates
       '@types/memoizee':
         specifier: 0.4.11
         version: 0.4.11
