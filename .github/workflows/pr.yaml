@@ -80,7 +80,7 @@ jobs:
           node-version: 20.11.0
           pnpm-version: 9.5.0
 
-      - name: Run lint  & ts:check
+      - name: Run lint & ts:check
         run: |
           pnpm lint:ci
           pnpm ts:check

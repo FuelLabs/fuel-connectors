@@ -6,6 +6,9 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
+    "fuels:build": {
+      "dependsOn": []
+    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
@@ -16,9 +19,6 @@
     },
     "test": {
       "dependsOn": ["^build"]
-    },
-    "dev": {
-      "dependsOn": []
     }
   }
 }
