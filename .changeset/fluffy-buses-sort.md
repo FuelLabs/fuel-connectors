@@ -13,5 +13,4 @@
 "docs": minor
 ---
 
-Update SDK to `0.94.6` version. 
-https://github.com/FuelLabs/fuels-ts/releases/tag/v0.94.6
+Update SDK to `0.94.6` version. https://github.com/FuelLabs/fuels-ts/releases/tag/v0.94.6
