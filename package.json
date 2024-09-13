@@ -8,7 +8,7 @@
   "scripts": {
     "build": "turbo build",
     "build:docs": "turbo run build --filter=docs",
-    "fuels:build": "turbo run fuels:build",
+    "fuels:build": "turbo run fuels:build && pnpm format",
     "dev:docs": "turbo run dev --filter=docs",
     "build:watch": "turbo build:watch",
     "ts:check": "turbo run ts:check",
