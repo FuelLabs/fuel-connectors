@@ -39,7 +39,7 @@ const isContract = <A extends JsonAbi, C extends Contract>(
  * A hook to read data from a smart contract in the connected app.
  *
  * @params {object} The properties of the hook.
- * - `contract`: The contract instance or contract data (address, ABI, and provider)..
+ * - `contract`: The contract instance or contract data (address, ABI, and provider).
  * - `functionName`: The name of the function to call on the contract.
  * - `args`: The arguments to pass to the contract function.
  *

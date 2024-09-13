@@ -7,6 +7,8 @@ import { MUTATION_KEYS } from '../utils';
 /**
  * A hook to add a network in the connected app.
  *
+ * @deprecated Use `useSelectNetwork` instead. This hook will be removed in the next major release.
+ *
  * @returns {object} An object containing:
  * - `addNetwork`: function to add a network synchronously.
  * - `addNetworkAsync` function to add a network asynchronously.
@@ -30,7 +32,7 @@ export const useAddNetwork = () => {
   const { fuel } = useFuel();
 
   const { mutate, mutateAsync, ...queryProps } = useMutation({
-    mutationKey: [MUTATION_KEYS.addAssets],
+    mutationKey: [MUTATION_KEYS.addNetwork],
     mutationFn: async (networkUrl: string) => {
       return fuel.addNetwork(networkUrl);
     },

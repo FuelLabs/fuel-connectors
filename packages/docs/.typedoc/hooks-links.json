@@ -57,6 +57,11 @@
     "items": []
   },
   {
+    "text": "useNetworks",
+    "link": "/guide/react-hooks/useNetworks",
+    "items": []
+  },
+  {
     "text": "useNodeInfo",
     "link": "/guide/react-hooks/useNodeInfo",
     "items": []
@@ -64,6 +69,11 @@
   {
     "text": "useProvider",
     "link": "/guide/react-hooks/useProvider",
+    "items": []
+  },
+  {
+    "text": "useSelectNetwork",
+    "link": "/guide/react-hooks/useSelectNetwork",
     "items": []
   },
   {
