@@ -4,5 +4,3 @@
 </script>
 
 # _targetObject
-
-**Note**: Use version `{{version}}` to ensure compatibility with `testnet` network — check the [docs](https://docs.fuel.network/guides/installation/#using-the-latest-toolchain).

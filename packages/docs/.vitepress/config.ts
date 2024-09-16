@@ -53,16 +53,66 @@ export default defineConfig({
       {
         items: [
           {
-            text: 'Getting Started',
-            link: '/guide/getting-started/',
+            text: 'About',
+            link: '/guide/getting-started/about',
+          },
+          {
+            text: 'Installation',
+            link: '/guide/getting-started/installation',
+          },
+          {
+            text: 'Configuration',
+            link: '/guide/configuration',
             items: [
               {
-                text: 'About',
-                link: '/guide/getting-started/about',
+                text: '_targetObject',
+                link: '/guide/configuration/_targetObject',
               },
               {
-                text: 'Installation',
-                link: '/guide/getting-started/installation',
+                text: 'Storage',
+                link: '/guide/configuration/storage',
+              },
+              {
+                text: 'Connectors',
+                link: '/guide/configuration/connectors',
+              },
+            ],
+          },
+          {
+            text: 'Connectors',
+            link: '/guide/connectors',
+            items: [
+              {
+                text: 'defaultConnectors',
+                link: '/guide/connectors/defaultConnectors',
+              },
+              {
+                text: 'Ethereum',
+                link: '/guide/connectors/ethereum',
+              },
+              {
+                text: 'Bako Safe',
+                link: '/guide/connectors/bako-safe',
+              },
+              {
+                text: 'Burner Wallet',
+                link: '/guide/connectors/burner-wallet',
+              },
+              {
+                text: 'Fuel Development Wallet',
+                link: '/guide/connectors/fuel-development-wallet',
+              },
+              {
+                text: 'Fuel Wallet',
+                link: '/guide/connectors/fuel-wallet',
+              },
+              {
+                text: 'Fuelet Wallet',
+                link: '/guide/connectors/fuelet-wallet',
+              },
+              {
+                text: 'Solana',
+                link: '/guide/connectors/solana',
               },
             ],
           },
@@ -101,98 +151,6 @@ export default defineConfig({
               {
                 text: 'Wallet Connectors',
                 link: '/guide/usage/wallet-connectors',
-              },
-            ],
-          },
-          {
-            text: 'Configuration',
-            link: '/guide/configuration',
-            items: [
-              {
-                text: '_targetObject',
-                link: '/guide/configuration/_targetObject',
-              },
-              {
-                text: 'Storage',
-                link: '/guide/configuration/storage',
-              },
-              {
-                text: 'Connectors',
-                link: '/guide/configuration/connectors',
-              },
-            ],
-          },
-          {
-            text: 'Connectors',
-            link: '/guide/connectors',
-            items: [
-              {
-                text: 'defaultConnectors',
-                link: '/guide/connectors/defaultConnectors',
-                items: [
-                  {
-                    text: 'devMode',
-                    link: '/guide/connectors/defaultConnectors/devMode',
-                  },
-                  {
-                    text: 'wcProjectId',
-                    link: '/guide/connectors/defaultConnectors/wcProjectId',
-                  },
-                  {
-                    text: 'BurnerWalletConfig',
-                    link: '/guide/connectors/defaultConnectors/burnerWalletConfig',
-                  },
-                  {
-                    text: 'ethWagmiConfig',
-                    link: '/guide/connectors/defaultConnectors/ethWagmiConfig',
-                  },
-                  {
-                    text: 'solanaConfig',
-                    link: '/guide/connectors/defaultConnectors/solanaConfig',
-                  },
-                ],
-              },
-              {
-                text: 'Ethereum',
-                link: '/guide/connectors/ethereum',
-                items: [
-                  {
-                    text: 'wagmiConfig',
-                    link: '/guide/connectors/wagmiConfig',
-                  },
-                  {
-                    text: 'WalletConnect',
-                    link: '/guide/connectors/wallet-connect',
-                  },
-                  {
-                    text: 'EVM Connector',
-                    link: '/guide/connectors/evm-connector',
-                  },
-                ],
-              },
-              {
-                text: 'Bako Safe',
-                link: '/guide/connectors/bako-safe',
-              },
-              {
-                text: 'Burner Wallet',
-                link: '/guide/connectors/burner-wallet',
-              },
-              {
-                text: 'Fuel Development Wallet',
-                link: '/guide/connectors/fuel-development-wallet',
-              },
-              {
-                text: 'Fuel Wallet',
-                link: '/guide/connectors/fuel-wallet',
-              },
-              {
-                text: 'Fuelet Wallet',
-                link: '/guide/connectors/fuelet-wallet',
-              },
-              {
-                text: 'Solana',
-                link: '/guide/connectors/solana',
               },
             ],
           },

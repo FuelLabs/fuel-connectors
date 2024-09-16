@@ -4,5 +4,3 @@
 </script>
 
 # Connecting to the Fuel Network
-
-**Note**: Use version `{{version}}` to ensure compatibility with `testnet` network — check the [docs](https://docs.fuel.network/guides/installation/#using-the-latest-toolchain).
