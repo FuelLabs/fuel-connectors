@@ -55,8 +55,11 @@ export default defineConfig({
           {
             text: 'Getting Started',
             link: '/guide/getting-started/',
-            collapsed: true,
             items: [
+              {
+                text: 'About',
+                link: '/guide/getting-started/about',
+              },
               {
                 text: 'Installation',
                 link: '/guide/getting-started/installation',
@@ -64,10 +67,190 @@ export default defineConfig({
             ],
           },
           {
-            text: 'React Hooks',
-            link: '/guide/react-hooks/',
-            collapsed: true,
-            items: [...hooksLinks],
+            text: 'Usage',
+            link: '/guide/usage',
+            items: [
+              {
+                text: 'Connecting',
+                link: '/guide/usage/connecting',
+              },
+              {
+                text: 'Accounts',
+                link: '/guide/usage/accounts',
+              },
+              {
+                text: 'Assets',
+                link: '/guide/usage/assets',
+              },
+              {
+                text: 'Sign Transaction',
+                link: '/guide/usage/sign-transaction',
+              },
+              {
+                text: 'Sign Message',
+                link: '/guide/usage/sign-message',
+              },
+              {
+                text: 'Networks',
+                link: '/guide/usage/networks',
+              },
+              {
+                text: 'ABIs',
+                link: '/guide/usage/abis',
+              },
+              {
+                text: 'Wallet Connectors',
+                link: '/guide/usage/wallet-connectors',
+              },
+            ],
+          },
+          {
+            text: 'Configuration',
+            link: '/guide/configuration',
+            items: [
+              {
+                text: '_targetObject',
+                link: '/guide/configuration/_targetObject',
+              },
+              {
+                text: 'Storage',
+                link: '/guide/configuration/storage',
+              },
+              {
+                text: 'Connectors',
+                link: '/guide/configuration/connectors',
+              },
+            ],
+          },
+          {
+            text: 'Connectors',
+            link: '/guide/connectors',
+            items: [
+              {
+                text: 'defaultConnectors',
+                link: '/guide/connectors/defaultConnectors',
+                items: [
+                  {
+                    text: 'devMode',
+                    link: '/guide/connectors/defaultConnectors/devMode',
+                  },
+                  {
+                    text: 'wcProjectId',
+                    link: '/guide/connectors/defaultConnectors/wcProjectId',
+                  },
+                  {
+                    text: 'BurnerWalletConfig',
+                    link: '/guide/connectors/defaultConnectors/burnerWalletConfig',
+                  },
+                  {
+                    text: 'ethWagmiConfig',
+                    link: '/guide/connectors/defaultConnectors/ethWagmiConfig',
+                  },
+                  {
+                    text: 'solanaConfig',
+                    link: '/guide/connectors/defaultConnectors/solanaConfig',
+                  },
+                ],
+              },
+              {
+                text: 'Ethereum',
+                link: '/guide/connectors/ethereum',
+                items: [
+                  {
+                    text: 'wagmiConfig',
+                    link: '/guide/connectors/wagmiConfig',
+                  },
+                  {
+                    text: 'WalletConnect',
+                    link: '/guide/connectors/wallet-connect',
+                  },
+                  {
+                    text: 'EVM Connector',
+                    link: '/guide/connectors/evm-connector',
+                  },
+                ],
+              },
+              {
+                text: 'Bako Safe',
+                link: '/guide/connectors/bako-safe',
+              },
+              {
+                text: 'Burner Wallet',
+                link: '/guide/connectors/burner-wallet',
+              },
+              {
+                text: 'Fuel Development Wallet',
+                link: '/guide/connectors/fuel-development-wallet',
+              },
+              {
+                text: 'Fuel Wallet',
+                link: '/guide/connectors/fuel-wallet',
+              },
+              {
+                text: 'Fuelet Wallet',
+                link: '/guide/connectors/fuelet-wallet',
+              },
+              {
+                text: 'Solana',
+                link: '/guide/connectors/solana',
+              },
+            ],
+          },
+          {
+            text: 'With React',
+            link: '/guide/with-react',
+            items: [
+              {
+                text: 'Installation',
+                link: '/guide/with-react/installation',
+              },
+              {
+                text: 'React Query',
+                link: '/guide/with-react/react-query',
+              },
+              {
+                text: 'Fuel Provider',
+                link: '/guide/with-react/fuel-provider',
+                items: [
+                  {
+                    text: 'theme',
+                    link: '/guide/with-react/fuel-provider/theme',
+                  },
+                  {
+                    text: 'ui',
+                    link: '/guide/with-react/fuel-provider/ui',
+                  },
+                  {
+                    text: 'fuelConfig',
+                    link: '/guide/with-react/fuel-provider/fuel-config',
+                  },
+                ],
+              },
+              {
+                text: 'React Hooks',
+                link: '/guide/react-hooks',
+                collapsed: true,
+                items: [...hooksLinks],
+              },
+            ],
+          },
+          {
+            text: 'Build your Connector',
+            link: '/guide/build-your-connector',
+            items: [
+              {
+                text: 'Contribution Guide',
+                link: '/guide/build-your-connector/contribution-guide',
+              },
+              {
+                text: 'Create a Connector',
+                link: '/guide/build-your-connector/create-new-connector',
+              },
+              {
+                text: 'Running locally',
+                link: '/guide/build-your-connector/running-locally',
+              },
+            ],
           },
         ],
       },
