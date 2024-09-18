@@ -3,6 +3,7 @@ const commonTheme = {
   '--fuel-font-family':
     '"Inter", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;',
   '--fuel-font-size': '16px',
+  '--fuel-font-size-xs': '12px',
   '--fuel-letter-spacing': '-0.64px',
   /* Spacing */
   '--fuel-border-radius': '6px',
@@ -24,6 +25,10 @@ const lightTheme = {
   '--fuel-button-background-hover': 'rgb(203 205 207)',
   '--fuel-loader-background':
     'linear-gradient(to right, hsl(0, 0%, 92%) 8%, hsl(0, 0%, 85%) 18%, hsl(0, 0%, 92%) 33%)',
+  '--fuel-green-3': '#D9FCE3',
+  '--fuel-green-11': '#008347',
+  '--fuel-blue-3': '#E6F4FE',
+  '--fuel-blue-11': '#0D74CE',
 };
 
 const darkTheme = {
@@ -39,6 +44,10 @@ const darkTheme = {
   '--fuel-button-background-hover': 'hsla(0, 0%, 40%, 1)',
   '--fuel-loader-background':
     'linear-gradient(to right, hsl(0, 0%, 20%) 8%, hsl(0, 0%, 25%) 18%, hsl(0, 0%, 20%) 33%)',
+  '--fuel-green-3': '#0F2E1B',
+  '--fuel-green-11': '#00DD75',
+  '--fuel-blue-3': '#0D2847',
+  '--fuel-blue-11': '#70B9FF',
 };
 
 type CustomTheme = Partial<typeof commonTheme & typeof lightTheme>;
