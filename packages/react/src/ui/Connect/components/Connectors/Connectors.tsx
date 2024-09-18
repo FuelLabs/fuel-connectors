@@ -36,6 +36,7 @@ export function Connectors() {
           />
           <ConnectorName>{connector.name}</ConnectorName>
           <ConnectorBadge
+            name={connector.name}
             connected={connector.connected}
             installed={connector.installed}
           />
