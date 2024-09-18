@@ -22,6 +22,7 @@
   },
   "scripts": {
     "build": "pnpm ts:check && tsup",
+    "build:watch": "tsup --watch",
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
