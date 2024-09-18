@@ -3,18 +3,23 @@ import { IconEye, IconEyeClosed } from '@tabler/icons-react';
 import type { BN } from 'fuels';
 import { useBalanceFormat } from '../../hooks/useBalanceFormat';
 
-export interface IBalanceProps {
+export interface BalanceProps {
   value: BN;
+  decimals: number;
   toggleHideAmount: () => void;
   hideAmount: boolean;
 }
 
 export const Balance = ({
   value,
+  decimals,
   toggleHideAmount,
   hideAmount,
-}: IBalanceProps) => {
-  const { formattedBalance, formattedBalanceFull } = useBalanceFormat(value);
+}: BalanceProps) => {
+  const { formattedBalance, formattedBalanceFull } = useBalanceFormat(
+    value,
+    decimals,
+  );
   const normalProps = {
     value: formattedBalance,
     icon: IconEye,
@@ -41,6 +46,7 @@ export const Balance = ({
       <HStack gap="2" align="center">
         <Text
           size={{
+            // @ts-ignore
             initial: '2',
             md: '5',
           }}
@@ -50,6 +56,7 @@ export const Balance = ({
         <Tooltip content={props.tooltip} sideOffset={-5}>
           <Text
             size={{
+              // @ts-ignore
               initial: '2',
               md: '5',
             }}

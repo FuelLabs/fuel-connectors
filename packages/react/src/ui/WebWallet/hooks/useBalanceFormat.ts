@@ -12,14 +12,18 @@ export type IBalanceFormat = {
   formattedBalance: string;
   formattedBalanceFull: string;
 };
-export const useBalanceFormat = (value: BN) =>
+export const useBalanceFormat = (value: BN, decimals: number) =>
   useMemo<IBalanceFormat>(
     () => ({
       formattedBalance: value.format({
         ...formatOpts,
-        precision: value.eq(0) ? 1 : DEFAULT_MIN_PRECISION,
+        precision: value.isZero() ? 1 : DEFAULT_MIN_PRECISION,
+        units: decimals,
       }),
-      formattedBalanceFull: format(value, formatOpts),
+      formattedBalanceFull: format(value, {
+        ...formatOpts,
+        units: decimals,
+      }),
     }),
-    [value],
+    [value, decimals],
   );

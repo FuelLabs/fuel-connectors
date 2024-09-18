@@ -11,6 +11,19 @@
         --radius-full: 0px;
         --radius-thumb: 9999px;
         border-radius: var(--radius-6) var(--radius-6) 0 0;
+        height: 70vh;
+        max-height: 70vh;
+        width: 100vw;
+        max-width: 100%;
       }
+    }
+
+    @media (min-width: 1025px) {
+        & > .fuel-PopoverContent {
+            height: 50vh;
+            max-height: 50vh;
+            width: 370px;
+            max-width: 370px;
+        }
     }
 }

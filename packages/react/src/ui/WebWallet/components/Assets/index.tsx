@@ -1,27 +1,25 @@
 import {
   Card,
-  Container,
   EntityItem,
   EntityItemInfo,
   EntityItemSlot,
-  Flex,
   HStack,
   Icon,
   Text,
+  Tooltip,
   VStack,
 } from '@fuels/ui';
 import { IconCoins } from '@tabler/icons-react';
 import { useBalanceFormat } from '../../hooks/useBalanceFormat';
-import { useGenerateBackground } from '../../hooks/useGenerateBackground';
 import type { IAssetsBalance } from '../../types';
 import { AvatarGenerated } from '../AvatarGenerated';
 
-export interface IAssetsProps {
+export interface AssetsProps {
   assets: IAssetsBalance[];
   hideAmount: boolean;
 }
 
-export const Assets = ({ assets, hideAmount }: IAssetsProps) => {
+export const Assets = ({ assets, hideAmount }: AssetsProps) => {
   return (
     <VStack
       gap={{
@@ -43,20 +41,22 @@ export const Assets = ({ assets, hideAmount }: IAssetsProps) => {
       </HStack>
       <VStack gap="1">
         {assets.map((asset) => {
-          const { formattedBalance } = useBalanceFormat(asset.amount);
+          const { formattedBalance, formattedBalanceFull } = useBalanceFormat(
+            asset.amount,
+            asset.decimals,
+          );
           const valueOrHidden = hideAmount ? '•'.repeat(5) : formattedBalance;
           const tokenOrId = asset.symbol === 'UNK' ? asset.id : asset.symbol;
+
           return (
-            // @ts-expect-error Card does have variant
-            <Card key={asset.id} variant="classic">
+            <Card key={asset.id} variant="classic" p={'4'}>
               <HStack align="center" justify="between">
                 <EntityItem key={asset.id}>
                   <EntityItemSlot>
                     <AvatarGenerated
-                      fallback=""
                       size="2"
                       src={asset.icon}
-                      background={useGenerateBackground(asset.id)}
+                      hash={asset.id}
                     />
                   </EntityItemSlot>
                   <EntityItemInfo
@@ -71,9 +71,11 @@ export const Assets = ({ assets, hideAmount }: IAssetsProps) => {
                   />
                 </EntityItem>
 
-                <Text size="2" weight="regular" color="gray" highContrast>
-                  {valueOrHidden}
-                </Text>
+                <Tooltip content={formattedBalanceFull}>
+                  <Text size="2" weight="regular" color="gray" highContrast>
+                    {valueOrHidden}
+                  </Text>
+                </Tooltip>
               </HStack>
             </Card>
           );

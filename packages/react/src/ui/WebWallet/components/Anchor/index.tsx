@@ -1,8 +1,8 @@
-import { Button, Popover } from '@fuels/ui';
+import { Button } from '@fuels/ui';
 import { IconWallet } from '@tabler/icons-react';
 import React from 'react';
 
-export interface IAnchorProps {
+export interface AnchorProps {
   address: string;
   onClick?: () => void;
   isLoading: boolean;
@@ -10,7 +10,7 @@ export interface IAnchorProps {
 }
 
 const AnchorComponent = (
-  { address, onClick, isLoading, isConnected }: IAnchorProps,
+  { address, onClick, isLoading, isConnected }: AnchorProps,
   ref: React.ForwardedRef<HTMLButtonElement> | null,
 ) => {
   return (

@@ -7,5 +7,4 @@ export default defineConfig((options) => ({
   minify: true,
   clean: true,
   entry: ['src/index.ts'],
-  external: ['@fuels/ui'],
 }));

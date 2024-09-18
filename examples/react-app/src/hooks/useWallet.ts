@@ -34,7 +34,7 @@ export const useWallet = () => {
 
   const address = account ?? '';
 
-  const { wallet } = useFuelWallet(address);
+  const { wallet, refetch: refetchWallet } = useFuelWallet(address);
 
   const {
     balance,
@@ -86,5 +86,6 @@ export const useWallet = () => {
     connect,
     refetchConnected,
     refetchBalance,
+    refetchWallet,
   };
 };
