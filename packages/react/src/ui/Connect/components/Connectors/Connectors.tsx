@@ -3,13 +3,7 @@ import { ConnectorIcon } from '../ConnectorIcon';
 import { ConnectorBadge } from './ConnectorBadge';
 
 import { ConnectorsLoader } from './ConnectorsLoader';
-import {
-  BadgeInfo,
-  BadgeSuccess,
-  ConnectorItem,
-  ConnectorList,
-  ConnectorName,
-} from './styles';
+import { ConnectorItem, ConnectorList, ConnectorName } from './styles';
 
 export function Connectors() {
   const {
