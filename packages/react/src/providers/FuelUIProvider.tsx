@@ -57,7 +57,17 @@ export const useConnectUI = () => {
 };
 
 const sortConnectors = (connectors: FuelConnector[]) => {
-  return connectors.sort((a, b) => a.name.localeCompare(b.name));
+  return connectors.sort((a, b) => {
+    if (a.connected !== b.connected) {
+      return a.connected ? -1 : 1;
+    }
+
+    if (a.installed !== b.installed) {
+      return a.installed ? -1 : 1;
+    }
+
+    return a.name.localeCompare(b.name);
+  });
 };
 
 export function FuelUIProvider({
