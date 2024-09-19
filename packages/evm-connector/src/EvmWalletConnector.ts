@@ -192,11 +192,7 @@ export class EVMWalletConnector extends PredicateConnector {
   }
 
   public async ping(): Promise<boolean> {
-    await Promise.all([
-      this.getProviders(),
-      this.setup(),
-      this.setupPredicate(),
-    ]);
+    await Promise.all([this.getProviders(), this.setup()]);
 
     return true;
   }
