@@ -1,4 +1,4 @@
-import type { FuelConfig, FuelConnector } from 'fuels';
+import type { Fuel, FuelConfig, FuelConnector } from 'fuels';
 import {
   type ReactNode,
   createContext,
@@ -12,6 +12,7 @@ import {
 import { useConnect } from '../hooks/useConnect';
 import { useConnectors } from '../hooks/useConnectors';
 
+import { BADGE_BLACKLIST } from '../ui/Connect/components/Connectors/ConnectorBadge';
 import { useFuel } from './FuelHooksProvider';
 
 export type FuelUIProviderProps = {
@@ -56,8 +57,21 @@ export const useConnectUI = () => {
   return context;
 };
 
-const sortConnectors = (connectors: FuelConnector[]) => {
-  return connectors.sort((a, b) => a.name.localeCompare(b.name));
+const sortConnectors = (connectors: FuelConnector[]): FuelConnector[] => {
+  return connectors.sort((a, b) => {
+    if (a.connected !== b.connected) {
+      return a.connected ? -1 : 1;
+    }
+
+    // Use temporary variables to represent "installed" status for sorting
+    const aInstalled = !BADGE_BLACKLIST.includes(a.name) && a.installed;
+    const bInstalled = !BADGE_BLACKLIST.includes(b.name) && b.installed;
+    if (aInstalled !== bInstalled) {
+      return aInstalled ? -1 : 1;
+    }
+
+    return a.name.localeCompare(b.name);
+  });
 };
 
 export function FuelUIProvider({

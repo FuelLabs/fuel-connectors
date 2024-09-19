@@ -38,3 +38,21 @@ export const ConnectorName = styled.div`
 export const ConnectorImg = styled.img`
   object-fit: cover;
 `;
+
+const Badge = styled.div`
+  border-radius: var(--fuel-border-radius);
+  font-size: var(--fuel-font-size-xs);
+  padding: 2px 8px;
+  text-transform: uppercase;
+  margin-left: auto;
+`;
+
+export const BadgeInfo = styled(Badge)`;
+  background-color: var(--fuel-blue-3);
+  color: var(--fuel-blue-11);
+`;
+
+export const BadgeSuccess = styled(Badge)`;
+  background-color: var(--fuel-green-3);
+  color: var(--fuel-green-11);
+`;

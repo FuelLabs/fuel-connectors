@@ -1,5 +1,6 @@
 import { useConnectUI } from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../ConnectorIcon';
+import { ConnectorBadge } from './ConnectorBadge';
 
 import { ConnectorsLoader } from './ConnectorsLoader';
 import { ConnectorItem, ConnectorList, ConnectorName } from './styles';
@@ -34,6 +35,11 @@ export function Connectors() {
             theme={theme}
           />
           <ConnectorName>{connector.name}</ConnectorName>
+          <ConnectorBadge
+            name={connector.name}
+            connected={connector.connected}
+            installed={connector.installed}
+          />
         </ConnectorItem>
       ))}
       {isLoading && (
