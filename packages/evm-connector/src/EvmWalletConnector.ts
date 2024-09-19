@@ -92,14 +92,31 @@ export class EVMWalletConnector extends PredicateConnector {
     await this.setupEventBridge();
   }
 
+  private isCurrentAccount(account: string) {
+    const parsedAccount = account?.startsWith('0x')
+      ? this.predicateAccount?.getPredicateAddress(account)
+      : account;
+    return parsedAccount === this._currentAccount;
+  }
+
   private async setupEventBridge() {
     const { ethProvider } = await this.getProviders();
 
     ethProvider?.on(this.events.ACCOUNTS_CHANGED, async (accounts) => {
       this.emit('accounts', await this.accounts());
-      if (this._currentAccount !== accounts[0]) {
+      if (
+        !this._currentAccount ||
+        (accounts.length && !this.isCurrentAccount(accounts[0]))
+      ) {
         await this.setupCurrentAccount();
         await this.setupPredicate();
+        if (
+          this._currentAccount &&
+          accounts.length &&
+          !this.isCurrentAccount(accounts[0])
+        ) {
+          throw new Error('Current account not switched to selection');
+        }
       }
     });
 
