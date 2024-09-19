@@ -180,6 +180,11 @@ export class EVMWalletConnector extends PredicateConnector {
     return true;
   }
 
+  public async isConnected(): Promise<boolean> {
+    const accounts = await this.accounts();
+    return accounts.length > 0;
+  }
+
   public async connect(): Promise<boolean> {
     if (!(await this.isConnected())) {
       const { ethProvider } = await this.getProviders();
