@@ -63,10 +63,13 @@ const sortConnectors = (connectors: FuelConnector[]): FuelConnector[] => {
       return a.connected ? -1 : 1;
     }
 
+    // Use temporary variables to represent "installed" status for sorting
     const aIsBlacklisted = BADGE_BLACKLIST.includes(a.name);
     const bIsBlacklisted = BADGE_BLACKLIST.includes(b.name);
-    if (!aIsBlacklisted && !bIsBlacklisted && a.installed !== b.installed) {
-      return a.installed ? -1 : 1;
+    const aInstalled = aIsBlacklisted ? false : a.installed;
+    const bInstalled = bIsBlacklisted ? false : b.installed;
+    if (aInstalled !== bInstalled) {
+      return aInstalled ? -1 : 1;
     }
 
     return a.name.localeCompare(b.name);
