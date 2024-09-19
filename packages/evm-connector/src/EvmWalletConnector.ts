@@ -128,7 +128,11 @@ export class EVMWalletConnector extends PredicateConnector {
     return PREDICATE_VERSIONS;
   }
 
-  protected requireConnection(): MaybeAsync<void> {}
+  protected async requireConnection() {
+    if (!this.connected) {
+      return await this.connect().then(() => {});
+    }
+  }
 
   protected async configProviders(config: EVMWalletConnectorConfig = {}) {
     this.config = Object.assign(config, {
