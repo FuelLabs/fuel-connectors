@@ -103,7 +103,6 @@ export class WalletConnectConnector extends PredicateConnector {
     }
 
     await this.setupPredicate();
-    await this.signAndValidate(account.address);
     this.emit(this.events.connection, true);
     this.emit(
       this.events.currentAccount,
@@ -113,6 +112,7 @@ export class WalletConnectConnector extends PredicateConnector {
       this.events.accounts,
       this.predicateAccount?.getPredicateAddresses(await this.walletAccounts()),
     );
+    this.signAndValidate(account.address);
   }
 
   private setupWatchers() {
