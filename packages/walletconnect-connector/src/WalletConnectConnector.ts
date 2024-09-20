@@ -357,9 +357,17 @@ export class WalletConnectConnector extends PredicateConnector {
       if (!ethProvider) {
         throw new Error('Ethereum provider not found');
       }
-      if (!ethProvider) {
-        throw new Error('No Ethereum provider found');
+
+      // Check if the account is a contract (potential multi-sig)
+      const code = await ethProvider.request({
+        method: 'eth_getCode',
+        params: [account, 'latest'],
+      });
+
+      if (code !== '0x') {
+        throw new Error('Multi-signature wallets are not supported');
       }
+
       if (!account.startsWith('0x')) {
         throw new Error('Invalid account address');
       }
