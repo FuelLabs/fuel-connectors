@@ -8,3 +8,8 @@ export type WalletConnectConfig = {
   wagmiConfig?: WagmiConfig;
   predicateConfig?: PredicateConfig;
 };
+
+export interface SignatureData {
+  message: string;
+  signature: string;
+}

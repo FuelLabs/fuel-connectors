@@ -1,4 +1,10 @@
-import { hexToBytes } from '@ethereumjs/util';
+import {
+  ecrecover,
+  fromRpcSig,
+  hashPersonalMessage,
+  hexToBytes,
+  pubToAddress,
+} from '@ethereumjs/util';
 import { hexlify, splitSignature } from '@ethersproject/bytes';
 import {
   type Config,
@@ -29,8 +35,13 @@ import {
 } from '@fuel-connectors/common';
 import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
 import { ApiController } from '@web3modal/core';
-import { ETHEREUM_ICON, TESTNET_URL } from './constants';
-import type { WalletConnectConfig } from './types';
+import {
+  ETHEREUM_ICON,
+  SIGNATURE_STORAGE_KEY,
+  TESTNET_URL,
+  WINDOW,
+} from './constants';
+import type { SignatureData, WalletConnectConfig } from './types';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
 export class WalletConnectConnector extends PredicateConnector {
@@ -89,6 +100,13 @@ export class WalletConnectConnector extends PredicateConnector {
     if (!account?.address) {
       return;
     }
+
+    const { ethProvider } = await this.getProviders();
+    if (!ethProvider) {
+      throw new Error('Ethereum provider not found');
+    }
+
+    await this.signAndValidate(ethProvider, account.address);
     await this.setupPredicate();
     this.emit(this.events.connection, true);
     this.emit(
@@ -232,6 +250,7 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   public async disconnect(): Promise<boolean> {
+    WINDOW?.localStorage.removeItem(SIGNATURE_STORAGE_KEY);
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
 
@@ -274,5 +293,87 @@ export class WalletConnectConnector extends PredicateConnector {
     });
 
     return response.submit.id;
+  }
+
+  private setSignatureData({ message, signature }: SignatureData) {
+    const signatureData = {
+      message,
+      signature,
+    };
+    WINDOW?.localStorage.setItem(
+      SIGNATURE_STORAGE_KEY,
+      JSON.stringify(signatureData),
+    );
+    return signatureData;
+  }
+
+  private getSignatureData() {
+    try {
+      const signatureData =
+        WINDOW?.localStorage.getItem(SIGNATURE_STORAGE_KEY) || '{}';
+      if (!signatureData) {
+        return null;
+      }
+      return JSON.parse(signatureData) as SignatureData;
+    } catch (error) {
+      console.error('Failed to parse signature data', error);
+      return null;
+    }
+  }
+
+  private validateSignature(
+    account: string,
+    lastAccountSignature: SignatureData,
+  ) {
+    if (!lastAccountSignature) {
+      return false;
+    }
+    const { message, signature } = lastAccountSignature;
+    if (!message || !signature) {
+      return false;
+    }
+    const msgBuffer = Buffer.from(message);
+    const msgHash = hashPersonalMessage(msgBuffer);
+    const { v, r, s } = fromRpcSig(signature);
+    const pubKey = ecrecover(msgHash, v, r, s);
+    const recoveredAddress = Buffer.from(pubToAddress(pubKey)).toString('hex');
+
+    // The recovered address doesn't have the 0x prefix
+    return recoveredAddress.toLowerCase() === account.toLowerCase().slice(2);
+  }
+
+  private async signAndValidate(ethProvider: EIP1193Provider, account: string) {
+    try {
+      if (!ethProvider) {
+        throw new Error('No Ethereum provider found');
+      }
+      if (!account.startsWith('0x')) {
+        throw new Error('Invalid account address');
+      }
+
+      const lastAccountSignature = this.getSignatureData();
+      const revalidationNotRequired =
+        lastAccountSignature &&
+        this.validateSignature(account, lastAccountSignature);
+
+      if (revalidationNotRequired) {
+        return;
+      }
+
+      const message = `Sign this message to verify the connected account: ${account}`;
+      const signature = (await ethProvider.request({
+        method: 'personal_sign',
+        params: [message, account],
+      })) as string;
+
+      const signatureData = this.setSignatureData({ message, signature });
+
+      if (!this.validateSignature(account, signatureData)) {
+        throw new Error('Signature address validation failed');
+      }
+    } catch (error) {
+      await this.disconnect();
+      throw error;
+    }
   }
 }
