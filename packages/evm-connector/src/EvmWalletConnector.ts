@@ -315,7 +315,7 @@ export class EVMWalletConnector extends PredicateConnector {
     if (!message || !signature) {
       return false;
     }
-    const msgBuffer = Buffer.from(message);
+    const msgBuffer = Uint8Array.from(Buffer.from(message));
     const msgHash = hashPersonalMessage(msgBuffer);
     const { v, r, s } = fromRpcSig(signature);
     const pubKey = ecrecover(msgHash, v, r, s);
