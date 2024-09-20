@@ -92,6 +92,11 @@ export class EVMWalletConnector extends PredicateConnector {
     await this.setupEventBridge();
   }
 
+  // So we avoid accidentally selecting the wrong account
+  private selectAccount(accounts: string[]): string {
+    return accounts[0] as string;
+  }
+
   private isCurrentAccount(account: string) {
     const parsedAccount = account?.startsWith('0x')
       ? this.predicateAccount?.getPredicateAddress(account)
@@ -106,14 +111,15 @@ export class EVMWalletConnector extends PredicateConnector {
       this.emit('accounts', await this.accounts());
       if (
         !this._currentAccount ||
-        (accounts.length && !this.isCurrentAccount(accounts[0]))
+        (accounts.length &&
+          !this.isCurrentAccount(this.selectAccount(accounts)))
       ) {
         await this.setupCurrentAccount();
         await this.setupPredicate();
         if (
           this._currentAccount &&
           accounts.length &&
-          !this.isCurrentAccount(accounts[0])
+          !this.isCurrentAccount(this.selectAccount(accounts))
         ) {
           throw new Error('Current account not switched to selection');
         }
