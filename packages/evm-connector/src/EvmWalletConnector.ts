@@ -1,4 +1,11 @@
-import { hexToBytes } from '@ethereumjs/util';
+import {
+  ecrecover,
+  fromRpcSig,
+  hashPersonalMessage,
+  hexToBytes,
+  pubToAddress,
+} from '@ethereumjs/util';
+
 // External libraries
 import { hexlify, splitSignature } from '@ethersproject/bytes';
 
@@ -22,11 +29,17 @@ import {
   getOrThrow,
 } from '@fuel-connectors/common';
 import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
-import { METAMASK_ICON, TESTNET_URL, WINDOW } from './constants';
+import {
+  METAMASK_ICON,
+  SIGNATURE_STORAGE_KEY,
+  TESTNET_URL,
+  WINDOW,
+} from './constants';
 import {
   type EIP1193Provider,
   type EVMWalletConnectorConfig,
   EVMWalletConnectorEvents,
+  type SignatureData,
 } from './types';
 
 export class EVMWalletConnector extends PredicateConnector {
@@ -46,6 +59,7 @@ export class EVMWalletConnector extends PredicateConnector {
     ...EVMWalletConnectorEvents,
   };
 
+  private connecting = false;
   private setupLock = false;
   private _currentAccount: string | null = null;
   private config: EVMWalletConnectorConfig = {};
@@ -58,6 +72,12 @@ export class EVMWalletConnector extends PredicateConnector {
 
     this.configProviders(config);
     this.setUpEvents();
+
+    if (config.recoverConnection ?? true) {
+      this.hasConnectedAccounts().then((accountsConnected) => {
+        accountsConnected && this.connect();
+      });
+    }
   }
 
   private async getLazyEthereum() {
@@ -123,6 +143,9 @@ export class EVMWalletConnector extends PredicateConnector {
         ) {
           throw new Error('Current account not switched to selection');
         }
+        if (this.connected) {
+          await this.signAndValidate(ethProvider, this.selectAccount(accounts));
+        }
       }
     });
 
@@ -169,6 +192,7 @@ export class EVMWalletConnector extends PredicateConnector {
 
     const accounts = await ethProvider?.request({
       method: 'eth_accounts',
+      params: [],
     });
 
     return accounts as Array<string>;
@@ -208,30 +232,151 @@ export class EVMWalletConnector extends PredicateConnector {
     return accounts.length > 0;
   }
 
+  private async hasConnectedAccounts() {
+    try {
+      return !!(await this.walletAccounts())?.length;
+    } catch {
+      return false;
+    }
+  }
+
   public async connect(): Promise<boolean> {
-    if (!(await this.isConnected())) {
+    try {
+      if (this.connected || this.connecting) {
+        return this.connected;
+      }
+      this.connecting = true;
+
       const { ethProvider } = await this.getProviders();
 
-      await ethProvider?.request({
-        method: 'wallet_requestPermissions',
-        params: [
-          {
-            eth_accounts: {},
-          },
-        ],
-      });
+      if (!(await this.hasConnectedAccounts())) {
+        await ethProvider?.request({
+          method: 'wallet_requestPermissions',
+          params: [
+            {
+              eth_accounts: {},
+            },
+          ],
+        });
+      }
+
+      await this.signAndValidate(ethProvider);
 
       await this.setupPredicate();
+      this.connected = true;
+      this.connecting = false;
       this.emit(this.events.connection, true);
 
-      return true;
+      return this.connected;
+    } finally {
+      this.connecting = false;
     }
+  }
 
-    return this.connected;
+  private setSignatureData({
+    message,
+    signature,
+  }: {
+    message: string;
+    signature: string;
+  }) {
+    const signatureData = {
+      message,
+      signature,
+    };
+    WINDOW?.localStorage.setItem(
+      SIGNATURE_STORAGE_KEY,
+      JSON.stringify(signatureData),
+    );
+    return signatureData;
+  }
+
+  private getSignatureData() {
+    try {
+      const signatureData =
+        WINDOW?.localStorage.getItem(SIGNATURE_STORAGE_KEY) || '{}';
+      if (!signatureData) {
+        return null;
+      }
+      return JSON.parse(signatureData) as SignatureData;
+    } catch (error) {
+      console.error('Failed to parse signature data', error);
+      return null;
+    }
+  }
+
+  private validateSignature(
+    account: string,
+    lastAccountSignature: SignatureData,
+  ) {
+    if (!lastAccountSignature) {
+      return false;
+    }
+    const { message, signature } = lastAccountSignature;
+    if (!message || !signature) {
+      return false;
+    }
+    const msgBuffer = Buffer.from(message);
+    const msgHash = hashPersonalMessage(msgBuffer);
+    const { v, r, s } = fromRpcSig(signature);
+    const pubKey = ecrecover(msgHash, v, r, s);
+    const recoveredAddress = Buffer.from(pubToAddress(pubKey)).toString('hex');
+
+    // The recovered address doesn't have the 0x prefix
+    return recoveredAddress.toLowerCase() === account.toLowerCase().slice(2);
+  }
+
+  private async signAndValidate(
+    ethProvider: EIP1193Provider | undefined,
+    account?: string,
+  ) {
+    try {
+      if (!ethProvider) {
+        throw new Error('No Ethereum provider found');
+      }
+      if (account && !account.startsWith('0x')) {
+        throw new Error('Invalid account address');
+      }
+
+      const currentAccount =
+        account ||
+        (
+          (await ethProvider.request({
+            method: 'eth_requestAccounts',
+          })) as string[]
+        )[0];
+      if (!currentAccount) {
+        throw new Error('No Ethereum account selected');
+      }
+      const lastAccountSignature = this.getSignatureData();
+      const revalidationNotRequired =
+        lastAccountSignature &&
+        this.validateSignature(currentAccount, lastAccountSignature);
+
+      if (revalidationNotRequired) {
+        return;
+      }
+
+      const message = `Sign this message to verify the connected account: ${currentAccount}`;
+      const signature = (await ethProvider.request({
+        method: 'personal_sign',
+        params: [message, account],
+      })) as string;
+
+      const signatureData = this.setSignatureData({ message, signature });
+
+      if (!this.validateSignature(currentAccount, signatureData)) {
+        throw new Error('Signature address validation failed');
+      }
+    } catch (error) {
+      this.disconnect();
+      throw error;
+    }
   }
 
   public async disconnect(): Promise<boolean> {
-    if (await this.isConnected()) {
+    WINDOW?.localStorage.removeItem(SIGNATURE_STORAGE_KEY);
+    if (this.connected) {
       const { ethProvider } = await this.getProviders();
 
       await ethProvider?.request({
@@ -246,9 +391,10 @@ export class EVMWalletConnector extends PredicateConnector {
       this.emit(this.events.connection, false);
       this.emit(this.events.accounts, []);
       this.emit(this.events.currentAccount, null);
+      this.connected = false;
     }
 
-    return false;
+    return this.connected;
   }
 
   public async sendTransaction(
