@@ -143,9 +143,8 @@ export class EVMWalletConnector extends PredicateConnector {
         ) {
           throw new Error('Current account not switched to selection');
         }
-        if (this.connected) {
-          await this.signAndValidate(ethProvider, this.selectAccount(accounts));
-        }
+
+        await this.signAndValidate(ethProvider, this.selectAccount(accounts));
       }
     });
 
@@ -260,11 +259,11 @@ export class EVMWalletConnector extends PredicateConnector {
         });
       }
 
-      await this.setupPredicate();
       this.connected = true;
+      await this.signAndValidate(ethProvider);
+      await this.setupPredicate();
       this.connecting = false;
       this.emit(this.events.connection, true);
-      this.signAndValidate(ethProvider);
 
       return this.connected;
     } finally {

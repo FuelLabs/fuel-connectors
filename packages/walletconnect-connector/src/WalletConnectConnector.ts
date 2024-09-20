@@ -102,6 +102,7 @@ export class WalletConnectConnector extends PredicateConnector {
     }
 
     await this.setupPredicate();
+    await this.signAndValidate(account.address);
     this.emit(this.events.connection, true);
     this.emit(
       this.events.currentAccount,
@@ -111,7 +112,6 @@ export class WalletConnectConnector extends PredicateConnector {
       this.events.accounts,
       this.predicateAccount?.getPredicateAddresses(await this.walletAccounts()),
     );
-    this.signAndValidate(account.address);
   }
 
   private setupWatchers() {
@@ -228,7 +228,7 @@ export class WalletConnectConnector extends PredicateConnector {
           case 'MODAL_OPEN':
             if (wagmiConfig) {
               const account = getAccount(wagmiConfig);
-              this.revalidateWithCurrentAccount();
+              await this.revalidateWithCurrentAccount();
               if (account?.isConnected) {
                 this.web3Modal.close();
                 resolve(true);
@@ -240,7 +240,7 @@ export class WalletConnectConnector extends PredicateConnector {
             this.createModal();
             break;
           case 'CONNECT_SUCCESS': {
-            this.revalidateWithCurrentAccount();
+            await this.revalidateWithCurrentAccount();
             unsub();
             resolve(true);
             break;
