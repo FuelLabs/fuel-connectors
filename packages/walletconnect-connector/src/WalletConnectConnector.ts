@@ -60,6 +60,7 @@ export class WalletConnectConnector extends PredicateConnector {
   private fuelProvider!: FuelProvider;
   private web3Modal!: Web3Modal;
   private config: WalletConnectConfig = {} as WalletConnectConfig;
+  private revalidationTimeout: NodeJS.Timeout | null = null;
 
   constructor(config: WalletConnectConfig) {
     super();
@@ -101,13 +102,8 @@ export class WalletConnectConnector extends PredicateConnector {
       return;
     }
 
-    const { ethProvider } = await this.getProviders();
-    if (!ethProvider) {
-      throw new Error('Ethereum provider not found');
-    }
-
-    await this.signAndValidate(ethProvider, account.address);
     await this.setupPredicate();
+    await this.signAndValidate(account.address);
     this.emit(this.events.connection, true);
     this.emit(
       this.events.currentAccount,
@@ -157,7 +153,7 @@ export class WalletConnectConnector extends PredicateConnector {
 
   protected async configProviders(config: WalletConnectConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
+      fuelProvider: FuelProvider.create(TESTNET_URL),
     });
   }
 
@@ -204,13 +200,23 @@ export class WalletConnectConnector extends PredicateConnector {
     const ethProvider = wagmiConfig
       ? ((await getAccount(
           wagmiConfig,
-        ).connector?.getProvider()) as EIP1193Provider)
+        ).connector?.getProvider?.()) as EIP1193Provider)
       : undefined;
 
     return {
       fuelProvider: this.fuelProvider,
       ethProvider,
     };
+  }
+
+  private async revalidateWithCurrentAccount() {
+    const wagmiConfig = this.getWagmiConfig();
+    if (!wagmiConfig) return;
+
+    const account = getAccount(wagmiConfig);
+    if (!account?.address || !account.isConnected) return;
+
+    await this.signAndValidate(account.address);
   }
 
   public async connect(): Promise<boolean> {
@@ -223,6 +229,7 @@ export class WalletConnectConnector extends PredicateConnector {
           case 'MODAL_OPEN':
             if (wagmiConfig) {
               const account = getAccount(wagmiConfig);
+              this.revalidateWithCurrentAccount();
               if (account?.isConnected) {
                 this.web3Modal.close();
                 resolve(true);
@@ -234,8 +241,9 @@ export class WalletConnectConnector extends PredicateConnector {
             this.createModal();
             break;
           case 'CONNECT_SUCCESS': {
-            resolve(true);
+            this.revalidateWithCurrentAccount();
             unsub();
+            resolve(true);
             break;
           }
           case 'MODAL_CLOSE':
@@ -250,6 +258,7 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   public async disconnect(): Promise<boolean> {
+    this.revalidationTimeout && clearTimeout(this.revalidationTimeout);
     WINDOW?.localStorage.removeItem(SIGNATURE_STORAGE_KEY);
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
@@ -342,8 +351,12 @@ export class WalletConnectConnector extends PredicateConnector {
     return recoveredAddress.toLowerCase() === account.toLowerCase().slice(2);
   }
 
-  private async signAndValidate(ethProvider: EIP1193Provider, account: string) {
+  private async signAndValidate(account: string) {
     try {
+      const { ethProvider } = await this.getProviders();
+      if (!ethProvider) {
+        throw new Error('Ethereum provider not found');
+      }
       if (!ethProvider) {
         throw new Error('No Ethereum provider found');
       }
@@ -352,6 +365,15 @@ export class WalletConnectConnector extends PredicateConnector {
       }
 
       const lastAccountSignature = this.getSignatureData();
+      const connected = (await this.isConnected()) && this.connected;
+      if (!connected) {
+        this.revalidationTimeout = setTimeout(
+          () => this.revalidateWithCurrentAccount(),
+          3000,
+        );
+        return;
+      }
+
       const revalidationNotRequired =
         lastAccountSignature &&
         this.validateSignature(account, lastAccountSignature);
@@ -366,6 +388,9 @@ export class WalletConnectConnector extends PredicateConnector {
         params: [message, account],
       })) as string;
 
+      if (!signature) {
+        throw new Error('Signature not found');
+      }
       const signatureData = this.setSignatureData({ message, signature });
 
       if (!this.validateSignature(account, signatureData)) {
