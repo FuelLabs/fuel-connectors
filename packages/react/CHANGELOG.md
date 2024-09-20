@@ -1,5 +1,13 @@
 # @fuels/react
 
+## 0.28.1
+
+### Patch Changes
+
+- [#257](https://github.com/FuelLabs/fuel-connectors/pull/257) [`b789ad0`](https://github.com/FuelLabs/fuel-connectors/commit/b789ad04054d4c7a57b0e6c14e33dd83cb479013) Thanks [@helciofranco](https://github.com/helciofranco)! - Sort connectors by `connected` and then `installed` status.
+
+- [#257](https://github.com/FuelLabs/fuel-connectors/pull/257) [`b789ad0`](https://github.com/FuelLabs/fuel-connectors/commit/b789ad04054d4c7a57b0e6c14e33dd83cb479013) Thanks [@helciofranco](https://github.com/helciofranco)! - Add a `Installed` and `Connected` badge in the Connectors List.
+
 ## 0.28.0
 
 ### Minor Changes
