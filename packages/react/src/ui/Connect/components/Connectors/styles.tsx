@@ -56,3 +56,22 @@ export const BadgeSuccess = styled(Badge)`;
   background-color: var(--fuel-green-3);
   color: var(--fuel-green-11);
 `;
+
+export const GroupTitle = styled.p`
+  color: #797979;
+  font-family: Inter;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.13px;
+`;
+export const GroupTitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-start;
+  width: 100%;
+  padding-left: 3px;
+  margin: 2px 0px 2px 0px;
+`;
