@@ -57,6 +57,8 @@ export class WalletConnectConnector extends PredicateConnector {
     },
   };
 
+  private revalidationTimeout: NodeJS.Timeout | null = null;
+  private validatingSignature = false;
   private fuelProvider!: FuelProvider;
   private web3Modal!: Web3Modal;
   private config: WalletConnectConfig = {} as WalletConnectConfig;
@@ -186,6 +188,21 @@ export class WalletConnectConnector extends PredicateConnector {
     if (state.status === 'disconnected' && state.connections.size > 0) {
       await reconnect(wagmiConfig);
     }
+  }
+  private async waitForValidation(depth = 0) {
+    if (depth > 10) {
+      throw new Error('Validation never completed after 15 minutes');
+    }
+    await new Promise((resolve) => {
+      this.revalidationTimeout = setTimeout(async () => {
+        if (!this.validatingSignature) {
+          resolve(true);
+        } else {
+          await this.waitForValidation(depth + 1);
+        }
+        resolve(true);
+      }, 3000);
+    });
   }
 
   protected async getProviders(): Promise<ProviderDictionary> {
@@ -355,6 +372,10 @@ export class WalletConnectConnector extends PredicateConnector {
 
   private async signAndValidate(account: string) {
     try {
+      if (this.validatingSignature) {
+        await this.waitForValidation();
+      }
+      this.validatingSignature = true;
       const { ethProvider } = await this.getProviders();
       if (!ethProvider) {
         throw new Error('Ethereum provider not found');
@@ -369,7 +390,7 @@ export class WalletConnectConnector extends PredicateConnector {
           // Check if the account is a contract (potential multi-sig)
           if (code !== '0x') {
             console.warn(
-              'Multi-sig wallet detected. Your assets can sent to the wrong address, use with caution.',
+              'Multi-sig wallet detected. Your assets can be sent to the wrong address, use with caution.',
             );
           }
         });
@@ -410,6 +431,8 @@ export class WalletConnectConnector extends PredicateConnector {
     } catch (error) {
       await this.disconnect();
       throw error;
+    } finally {
+      this.validatingSignature = false;
     }
   }
 }

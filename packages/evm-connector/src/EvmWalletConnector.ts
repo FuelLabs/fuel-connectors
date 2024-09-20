@@ -20,7 +20,6 @@ import {
 import {
   EthereumWalletAdapter,
   type Maybe,
-  type MaybeAsync,
   PredicateConnector,
   type PredicateVersion,
   type PredicateWalletAdapter,
@@ -59,6 +58,8 @@ export class EVMWalletConnector extends PredicateConnector {
     ...EVMWalletConnectorEvents,
   };
 
+  private revalidationTimeout: NodeJS.Timeout | null = null;
+  private validatingSignature = false;
   private connecting = false;
   private setupLock = false;
   private _currentAccount: string | null = null;
@@ -89,6 +90,22 @@ export class EVMWalletConnector extends PredicateConnector {
     }
 
     return null;
+  }
+
+  private async waitForValidation(depth = 0) {
+    if (depth > 10) {
+      throw new Error('Validation never completed after 15 minutes');
+    }
+    await new Promise((resolve) => {
+      this.revalidationTimeout = setTimeout(async () => {
+        if (!this.validatingSignature) {
+          resolve(true);
+        } else {
+          await this.waitForValidation(depth + 1);
+        }
+        resolve(true);
+      }, 3000);
+    });
   }
 
   private setUpEvents() {
@@ -329,6 +346,10 @@ export class EVMWalletConnector extends PredicateConnector {
     account?: string,
   ) {
     try {
+      if (this.validatingSignature) {
+        await this.waitForValidation();
+      }
+      this.validatingSignature = true;
       if (!ethProvider) {
         throw new Error('No Ethereum provider found');
       }
@@ -374,10 +395,13 @@ export class EVMWalletConnector extends PredicateConnector {
     } catch (error) {
       this.disconnect();
       throw error;
+    } finally {
+      this.validatingSignature = false;
     }
   }
 
   public async disconnect(): Promise<boolean> {
+    this.revalidationTimeout && clearTimeout(this.revalidationTimeout);
     this.connectionTimeout && clearTimeout(this.connectionTimeout);
     WINDOW?.localStorage.removeItem(SIGNATURE_STORAGE_KEY);
     if (this.connected) {
