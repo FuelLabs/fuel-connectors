@@ -81,7 +81,7 @@ describe('WalletConnect Connector', () => {
       expect(walletWalletConnector.installed).to.be.true;
       expect(await walletWalletConnector.currentNetwork()).to.be.deep.equal({
         chainId: 0,
-        url: fuelProvider.url,
+        url: 'https://testnet.fuel.network/v1/graphql',
       });
     });
 
@@ -98,7 +98,7 @@ describe('WalletConnect Connector', () => {
       expect(walletWalletConnector.installed).to.be.true;
       expect(await walletWalletConnector.currentNetwork()).to.be.deep.equal({
         chainId: 0,
-        url: fuelProvider.url,
+        url: 'https://testnet.fuel.network/v1/graphql',
       });
     });
   });
