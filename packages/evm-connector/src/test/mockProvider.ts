@@ -127,7 +127,11 @@ export class MockProvider extends EventEmitter implements IMockProvider {
         const account = this.accounts.find((a) => a.address === address);
         if (!account) throw new Error('Account not found');
 
-        const hash = hashPersonalMessage(hexToBytes(message));
+        const messageBytes = message.startsWith('0x')
+          ? hexToBytes(message)
+          : Uint8Array.from(Buffer.from(message, 'utf8'));
+
+        const hash = hashPersonalMessage(messageBytes);
         const signed = ecsign(hash, account.privateKey);
         const signedStr = toRpcSig(signed.v, signed.r, signed.s);
 
