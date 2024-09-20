@@ -345,6 +345,7 @@ export class EVMWalletConnector extends PredicateConnector {
             method: 'eth_requestAccounts',
           })) as string[]
         )[0];
+
       if (!currentAccount) {
         throw new Error('No Ethereum account selected');
       }
@@ -360,7 +361,7 @@ export class EVMWalletConnector extends PredicateConnector {
       const message = `Sign this message to verify the connected account: ${currentAccount}`;
       const signature = (await ethProvider.request({
         method: 'personal_sign',
-        params: [message, account],
+        params: [message, currentAccount],
       })) as string;
 
       const signatureData = this.setSignatureData({ message, signature });
