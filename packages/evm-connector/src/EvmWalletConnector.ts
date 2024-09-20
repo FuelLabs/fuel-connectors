@@ -336,6 +336,10 @@ export class EVMWalletConnector extends PredicateConnector {
         throw new Error('Invalid account address');
       }
 
+      if (!this.connected) {
+        await this.waitForConnection();
+      }
+
       const currentAccount =
         account ||
         (
@@ -374,6 +378,7 @@ export class EVMWalletConnector extends PredicateConnector {
   }
 
   public async disconnect(): Promise<boolean> {
+    this.connectionTimeout && clearTimeout(this.connectionTimeout);
     WINDOW?.localStorage.removeItem(SIGNATURE_STORAGE_KEY);
     if (this.connected) {
       const { ethProvider } = await this.getProviders();

@@ -102,6 +102,7 @@ export class WalletConnectConnector extends PredicateConnector {
     }
 
     await this.setupPredicate();
+    this.connected = true;
     await this.signAndValidate(account.address);
     this.emit(this.events.connection, true);
     this.emit(
@@ -257,7 +258,9 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   public async disconnect(): Promise<boolean> {
+    this.connected = false;
     this.revalidationTimeout && clearTimeout(this.revalidationTimeout);
+    this.connectionTimeout && clearTimeout(this.connectionTimeout);
     WINDOW?.localStorage.removeItem(SIGNATURE_STORAGE_KEY);
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
@@ -375,15 +378,12 @@ export class WalletConnectConnector extends PredicateConnector {
         throw new Error('Invalid account address');
       }
 
-      const lastAccountSignature = this.getSignatureData();
       const connected = (await this.isConnected()) && this.connected;
       if (!connected) {
-        this.revalidationTimeout = setTimeout(
-          () => this.revalidateWithCurrentAccount(),
-          3000,
-        );
-        return;
+        await this.waitForConnection();
       }
+
+      const lastAccountSignature = this.getSignatureData();
 
       const revalidationNotRequired =
         lastAccountSignature &&
