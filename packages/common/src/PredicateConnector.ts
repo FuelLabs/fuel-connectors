@@ -35,6 +35,7 @@ import type {
 export abstract class PredicateConnector extends FuelConnector {
   public connected = false;
   public installed = false;
+  public connectionTimeout: NodeJS.Timeout | null = null;
   public events = FuelConnectorEventTypes;
   protected predicateAddress!: string;
   protected customPredicate: Maybe<PredicateConfig>;
@@ -287,6 +288,22 @@ export abstract class PredicateConnector extends FuelConnector {
 
   public async networks(): Promise<Network[]> {
     return [await this.currentNetwork()];
+  }
+
+  public async waitForConnection(depth = 0) {
+    if (depth > 20) {
+      throw new Error('Account never connected');
+    }
+    await new Promise((resolve) => {
+      this.connectionTimeout = setTimeout(async () => {
+        if ((await this.isConnected()) && this.connected) {
+          resolve(true);
+        } else {
+          await this.waitForConnection(depth + 1);
+        }
+        resolve(true);
+      }, 500);
+    });
   }
 
   public async currentNetwork(): Promise<Network> {

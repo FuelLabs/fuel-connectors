@@ -60,7 +60,6 @@ export class WalletConnectConnector extends PredicateConnector {
   private fuelProvider!: FuelProvider;
   private web3Modal!: Web3Modal;
   private config: WalletConnectConfig = {} as WalletConnectConfig;
-  private revalidationTimeout: NodeJS.Timeout | null = null;
 
   constructor(config: WalletConnectConfig) {
     super();
