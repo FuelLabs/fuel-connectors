@@ -66,7 +66,7 @@ export function Connectors() {
     () =>
       connectors.reduce(
         (acc, curr) => {
-          if (curr.name.startsWith('Fuel')) {
+          if (curr.name.startsWith('Fuel') || curr.name === 'Bako Safe') {
             acc.native.push(curr);
           } else {
             acc.external.push(curr);
