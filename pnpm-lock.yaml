@@ -507,32 +507,32 @@ importers:
   packages/react:
     dependencies:
       '@radix-ui/react-dialog':
-        specifier: ^1.0.5
+        specifier: 1.1.1
         version: 1.1.1(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/react':
-        specifier: 18.3.1
-        version: 18.3.1
       events:
-        specifier: ^3.3.0
+        specifier: 3.3.0
         version: 3.3.0
     devDependencies:
       '@tanstack/react-query':
         specifier: 5.35.1
         version: 5.35.1(react@18.3.1)
+      '@types/react':
+        specifier: 18.3.1
+        version: 18.3.1
       compare-versions:
-        specifier: ^6.1.0
+        specifier: 6.1.0
         version: 6.1.0
       fuels:
         specifier: 0.94.6
         version: 0.94.6
       react:
-        specifier: ^18.2.0
+        specifier: 18.3.1
         version: 18.3.1
       styled-components:
-        specifier: ^6.1.1
+        specifier: 6.1.12
         version: 6.1.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tsup:
-        specifier: ^7.2.0
+        specifier: 7.3.0
         version: 7.3.0(postcss@8.4.41)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(typescript@5.4.5)
       tsx:
         specifier: 4.9.3
