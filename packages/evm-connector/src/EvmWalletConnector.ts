@@ -260,11 +260,10 @@ export class EVMWalletConnector extends PredicateConnector {
         });
       }
 
-      await this.signAndValidate(ethProvider);
-
       await this.setupPredicate();
       this.connected = true;
       this.connecting = false;
+      await this.signAndValidate(ethProvider);
       this.emit(this.events.connection, true);
 
       return this.connected;
