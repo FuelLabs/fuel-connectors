@@ -88,14 +88,14 @@ export function Connectors() {
     <ConnectorList>
       {shouldTitleGroups && (
         <GroupTitleContainer>
-          <GroupTitle>Native</GroupTitle>
+          <GroupTitle>Fuel Native Wallets</GroupTitle>
           <InfoCircleIcon size={12} />
         </GroupTitleContainer>
       )}
       {!isLoading && native.map(renderConnectorItem)}
       {shouldTitleGroups && (
         <GroupTitleContainer>
-          <GroupTitle>External</GroupTitle>
+          <GroupTitle>Non-Native Wallets</GroupTitle>
           <InfoCircleIcon size={12} />
         </GroupTitleContainer>
       )}
