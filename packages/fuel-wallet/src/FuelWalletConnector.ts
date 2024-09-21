@@ -9,6 +9,7 @@ import {
   FuelConnectorEventTypes,
   type Network,
   Provider,
+  type SelectNetworkArguments,
   type TransactionRequestLike,
   type Version,
   transactionRequestify,
@@ -267,7 +268,7 @@ export class FuelWalletConnector extends FuelConnector {
     return this.client.request('network', {});
   }
 
-  async selectNetwork(network: Network): Promise<boolean> {
+  async selectNetwork(network: SelectNetworkArguments): Promise<boolean> {
     return this.client.request('selectNetwork', {
       network,
     });

@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/fuel-wallet",
-  "version": "0.27.1",
+  "version": "0.28.1",
   "private": true,
   "types": "./dist/index.d.ts",
   "exports": {
@@ -13,14 +13,14 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.94.0"
+    "fuels": ">=0.94.6"
   },
   "dependencies": {
     "json-rpc-2.0": "1.7.0"
   },
   "devDependencies": {
     "events": "3.3.0",
-    "fuels": "0.94.4",
+    "fuels": "0.94.6",
     "tsup": "8.0.2",
     "typescript": "5.4.5",
     "undici": "6.16.0",

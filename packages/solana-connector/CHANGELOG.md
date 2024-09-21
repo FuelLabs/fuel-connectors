@@ -1,5 +1,17 @@
 # @fuel-connectors/solana-connector
 
+## 0.28.1
+
+## 0.28.0
+
+### Minor Changes
+
+- [#235](https://github.com/FuelLabs/fuel-connectors/pull/235) [`01c65cc`](https://github.com/FuelLabs/fuel-connectors/commit/01c65cc6d75dd677f6fbe5fdb6975af36465a967) Thanks [@helciofranco](https://github.com/helciofranco)! - Add a shared internal package for `EVM predicates` to be used across `Wallet Connect` and `EVM Connector`.
+
+- [#252](https://github.com/FuelLabs/fuel-connectors/pull/252) [`eea98c9`](https://github.com/FuelLabs/fuel-connectors/commit/eea98c991ed9aca318f65743f2734d5aa32e2e0e) Thanks [@helciofranco](https://github.com/helciofranco)! - Update SDK to `0.94.6` version. https://github.com/FuelLabs/fuels-ts/releases/tag/v0.94.6
+
+- [#224](https://github.com/FuelLabs/fuel-connectors/pull/224) [`1f6ee86`](https://github.com/FuelLabs/fuel-connectors/commit/1f6ee8679994528ae36faec51535a183d582a58b) Thanks [@helciofranco](https://github.com/helciofranco)! - Bump pnpm version to v9.5.0
+
 ## 0.27.1
 
 ### Patch Changes

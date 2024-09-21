@@ -5,6 +5,7 @@ import {
   FuelConnectorEventTypes,
   type Network,
   Provider,
+  type SelectNetworkArguments,
   type StorageAbstract,
   type TransactionRequestLike,
 } from 'fuels';
@@ -283,7 +284,7 @@ export class BakoSafeConnector extends FuelConnector {
     return false;
   }
 
-  async currentNetwork() {
+  async currentNetwork(): Promise<Network> {
     const data = await this.api.get(
       `/connections/${this.sessionId}/currentNetwork`,
     );
@@ -320,7 +321,7 @@ export class BakoSafeConnector extends FuelConnector {
     throw new Error('Method not implemented.');
   }
 
-  async selectNetwork(_network: Network): Promise<boolean> {
+  async selectNetwork(_network: SelectNetworkArguments): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
 
