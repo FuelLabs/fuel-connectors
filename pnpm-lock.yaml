@@ -489,8 +489,8 @@ importers:
   packages/react:
     dependencies:
       '@fuels/ui':
-        specifier: file:/Users/leonardo/Infinity/fuels-ui-0.1.1.tgz
-        version: file:../fuels-ui-0.1.1.tgz(@types/react-dom@18.3.0)(@types/react@18.2.54)(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(utf-8-validate@5.0.10)
+        specifier: 0.1.2
+        version: 0.1.2(@types/react-dom@18.3.0)(@types/react@18.2.54)(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(utf-8-validate@5.0.10)
       '@radix-ui/react-dialog':
         specifier: ^1.0.5
         version: 1.1.1(@types/react-dom@18.3.0)(@types/react@18.2.54)(react-dom@18.2.0(react@18.2.0))(react@18.3.1)
@@ -2723,9 +2723,8 @@ packages:
     peerDependencies:
       tsup: ^7.2.0
 
-  '@fuels/ui@file:../fuels-ui-0.1.1.tgz':
-    resolution: {integrity: sha512-UxUg4PB2DZs+00JEWjspaeFqfbErUtdx+/dXZkGyJa6JvCdSs7FUYZfkD3IYB4RZpldR9jm9Eo3wuY9lBLeSsA==, tarball: file:../fuels-ui-0.1.1.tgz}
-    version: 0.1.0
+  '@fuels/ui@0.1.2':
+    resolution: {integrity: sha512-PCdvboOtkEPL0qZYXl2VBarYFH70727hl2KcKrvmHBlF//WIxxxy/ZNKaoCb8aqXy1v9fqWhc6CdG0jXPK5GbQ==}
 
   '@fuels/vm-asm@0.56.0':
     resolution: {integrity: sha512-oa9P55qkez/UASB8VNhTg3XflVWLHAC0JTKuCDLKZ+2ivxzLeHHcrIO+3AtJXLvUwTU9kC4rHMNUqXDaKz7HrA==}
@@ -12518,7 +12517,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       tsup: 8.0.2(@microsoft/api-extractor@7.43.0(@types/node@20.12.11))(postcss@8.4.41)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(typescript@5.4.5)
 
-  '@fuels/ui@file:../fuels-ui-0.1.1.tgz(@types/react-dom@18.3.0)(@types/react@18.2.54)(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(utf-8-validate@5.0.10)':
+  '@fuels/ui@0.1.2(@types/react-dom@18.3.0)(@types/react@18.2.54)(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(utf-8-validate@5.0.10)':
     dependencies:
       '@fuel-ts/address': 0.76.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@fuel-ts/math': 0.76.0
