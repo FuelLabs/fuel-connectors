@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Dialog from '@radix-ui/react-dialog';
 import { keyframes, styled } from 'styled-components';
 
