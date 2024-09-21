@@ -6,8 +6,7 @@ import {
 import { ConnectorIcon } from '../ConnectorIcon';
 import { ConnectorBadge } from './ConnectorBadge';
 
-import type { FuelConnector } from 'fuels';
-import { InfoCircleIcon } from '../../icons/InfoCircleIcon';
+// import { InfoCircleIcon } from '../../icons/InfoCircleIcon';
 import { ConnectorsLoader } from './ConnectorsLoader';
 import {
   ConnectorItem,
