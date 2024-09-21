@@ -13,8 +13,9 @@ import {
   ConnectorItem,
   ConnectorList,
   ConnectorName,
-  GroupTitle,
-  GroupTitleContainer,
+  GroupFirstTitleContainer,
+  GroupLastTitle,
+  GroupLastTitleContainer,
 } from './styles';
 
 const renderConnector = (
@@ -91,17 +92,17 @@ export function Connectors() {
   return (
     <ConnectorList>
       {shouldTitleGroups && (
-        <GroupTitleContainer>
-          <GroupTitle>Fuel Native Wallets</GroupTitle>
+        <GroupFirstTitleContainer>
+          <GroupLastTitle>Fuel Native Wallets</GroupLastTitle>
           {/* <InfoCircleIcon size={12} /> */}
-        </GroupTitleContainer>
+        </GroupFirstTitleContainer>
       )}
       {!isLoading && native.map(renderConnectorItem)}
       {shouldTitleGroups && (
-        <GroupTitleContainer>
-          <GroupTitle>Non-Native Wallets</GroupTitle>
+        <GroupLastTitleContainer>
+          <GroupLastTitle>Non-Native Wallets</GroupLastTitle>
           {/* <InfoCircleIcon size={12} /> */}
-        </GroupTitleContainer>
+        </GroupLastTitleContainer>
       )}
       {!isLoading && external.map(renderConnectorItem)}
       {isLoading && (
