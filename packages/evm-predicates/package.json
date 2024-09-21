@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",
-    "fuels": "0.94.4",
+    "fuels": "0.94.6",
     "tsx": "4.9.3",
     "typescript": "5.4.5"
   }
