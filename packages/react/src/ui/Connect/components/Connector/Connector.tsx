@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useConnectUI } from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../ConnectorIcon';
 
+import { Spinner } from '../Spinner/Spinner';
 import {
   ConnectorButton,
   ConnectorContent,
@@ -44,6 +45,8 @@ export function Connector({ className, connector, theme }: ConnectorProps) {
     ping();
   }, [connector, connect, setError]);
 
+  const actionText = action || 'Install';
+
   return (
     <div className={className}>
       <ConnectorImage>
@@ -56,15 +59,15 @@ export function Connector({ className, connector, theme }: ConnectorProps) {
       </ConnectorImage>
       <ConnectorContent>
         <ConnectorTitle>{connector.name}</ConnectorTitle>
-        <ConnectorDescription>
-          {isLoading ? 'Loading...' : description}
-        </ConnectorDescription>
+        <ConnectorDescription>{description}</ConnectorDescription>
       </ConnectorContent>
-      {!isLoading && (
-        <ConnectorButton href={link} target="_blank">
-          {action || 'Install'}
-        </ConnectorButton>
-      )}
+      <ConnectorButton href={link} target="_blank" aria-disabled={isLoading}>
+        {isLoading ? (
+          <Spinner size={26} color="var(--fuel-loader-background)" />
+        ) : (
+          actionText
+        )}
+      </ConnectorButton>
     </div>
   );
 }
