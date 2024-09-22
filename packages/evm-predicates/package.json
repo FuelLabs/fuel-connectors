@@ -12,11 +12,11 @@
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "fuels": ">=0.94.0"
+    "fuels": ">=pr-3201"
   },
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",
-    "fuels": "0.94.4",
+    "fuels": "pr-3201",
     "tsx": "4.9.3",
     "typescript": "5.4.5"
   }
