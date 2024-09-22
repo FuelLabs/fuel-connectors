@@ -10,6 +10,7 @@ const commonTheme = {
   '--fuel-items-gap': '8px',
   /* Border */
   '--fuel-border': '1px solid var(--fuel-border-color)',
+  '--fuel-color-error': '#f25a68',
 };
 
 const lightTheme = {

@@ -4,13 +4,12 @@ import { useEffect, useState } from 'react';
 import { useConnectUI } from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../ConnectorIcon';
 
-import { useQuery } from '@tanstack/react-query';
-import { useConnect, useConnectors } from '../../../../hooks';
 import { Spinner } from '../Spinner/Spinner';
 import {
   ConnectorButton,
   ConnectorContent,
   ConnectorDescription,
+  ConnectorDescriptionError,
   ConnectorImage,
   ConnectorTitle,
 } from './styles';
@@ -21,24 +20,12 @@ type ConnectorProps = {
   connector: FuelConnector;
 };
 
-export function Connector({ className, connector, theme }: ConnectorProps) {
+export function Connecting({ className, connector, theme }: ConnectorProps) {
   const {
-    install: { action, link, description },
-  } = connector.metadata;
-  const { connect } = useConnect();
-  const { isLoading } = useQuery({
-    queryKey: [connector.name],
-    queryFn: async () => {
-      const isInstall = await connector.ping();
-      if (isInstall) connect(connector.name);
-      return isInstall;
-    },
-    initialData: connector.installed,
-    refetchInterval: 1000,
-  });
-
-  const actionText = action || 'Install';
-
+    error,
+    isConnecting,
+    dialog: { retryConnect },
+  } = useConnectUI();
   return (
     <div className={className}>
       <ConnectorImage>
@@ -51,13 +38,19 @@ export function Connector({ className, connector, theme }: ConnectorProps) {
       </ConnectorImage>
       <ConnectorContent>
         <ConnectorTitle>{connector.name}</ConnectorTitle>
-        <ConnectorDescription>{description}</ConnectorDescription>
+        {error ? (
+          <ConnectorDescriptionError>{error.message}</ConnectorDescriptionError>
+        ) : (
+          <ConnectorDescription>
+            Requesting connection to <br /> {connector.name}.
+          </ConnectorDescription>
+        )}
       </ConnectorContent>
-      <ConnectorButton href={link} target="_blank" aria-disabled={isLoading}>
-        {isLoading ? (
+      <ConnectorButton onClick={retryConnect}>
+        {isConnecting ? (
           <Spinner size={26} color="var(--fuel-loader-background)" />
         ) : (
-          actionText
+          'Connect'
         )}
       </ConnectorButton>
     </div>

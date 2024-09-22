@@ -21,6 +21,11 @@ export type FuelUIProviderProps = {
   theme?: string;
 };
 
+export enum DialogState {
+  INSTALL = 'install',
+  CONNECTING = 'connecting',
+}
+
 export type FuelUIContextType = {
   fuelConfig: FuelConfig;
   theme: string;
@@ -34,9 +39,11 @@ export type FuelUIContextType = {
   error: Error | null;
   dialog: {
     connector: FuelConnector | null;
+    state: DialogState;
     isOpen: boolean;
     back: () => void;
     connect: (connector: FuelConnector) => void;
+    retryConnect: () => Promise<void>;
   };
 };
 
@@ -80,18 +87,27 @@ export function FuelUIProvider({
   theme,
 }: FuelUIProviderProps) {
   const { fuel } = useFuel();
-  const { isPending: isConnecting, isError, connect } = useConnect();
+  const {
+    isPending: isConnecting,
+    data: isConnected,
+    isError,
+    connectAsync,
+  } = useConnect();
   const { connectors, isLoading: isLoadingConnectors } = useConnectors({
     query: { select: sortConnectors },
   });
   const [connector, setConnector] = useState<FuelConnector | null>(null);
+  const [dialogState, setDialogState] = useState<DialogState>(
+    DialogState.INSTALL,
+  );
   const [isOpen, setOpen] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     setOpen(false);
     setConnector(null);
-  };
+    setError(null);
+  }, []);
 
   const handleConnect = () => {
     setOpen(true);
@@ -102,27 +118,36 @@ export function FuelUIProvider({
   };
 
   useEffect(() => {
-    if (connector?.installed) {
-      handleBack();
+    if (!isConnected) return;
+    handleCancel();
+  }, [isConnected, handleCancel]);
+
+  const handleRetryConnect = useCallback(async () => {
+    if (!connector) return;
+    try {
+      setError(null);
+      await connectAsync(connector.name);
+    } catch (err) {
+      setError(err as Error);
     }
-  }, [connector?.installed, handleBack]);
+  }, [connectAsync, connector]);
 
   const handleSelectConnector = useCallback(
     async (connector: FuelConnector) => {
       if (!fuel) return setConnector(connector);
-
+      setConnector(connector);
       if (connector.installed) {
-        handleCancel();
+        setDialogState(DialogState.CONNECTING);
         try {
-          await connect(connector.name);
+          await connectAsync(connector.name);
         } catch (err) {
           setError(err as Error);
         }
       } else {
-        setConnector(connector);
+        setDialogState(DialogState.INSTALL);
       }
     },
-    [fuel, connect, handleCancel],
+    [fuel, connectAsync],
   );
 
   const isLoading = useMemo(() => {
@@ -145,9 +170,11 @@ export function FuelUIProvider({
         connect: handleConnect,
         cancel: handleCancel,
         dialog: {
+          state: dialogState,
           connector,
           isOpen,
           connect: handleSelectConnector,
+          retryConnect: handleRetryConnect,
           back: handleBack,
         },
       }}

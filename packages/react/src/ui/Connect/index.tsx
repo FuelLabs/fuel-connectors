@@ -1,7 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { useEffect, useState } from 'react';
 
-import { useConnectUI } from '../../providers/FuelUIProvider';
+import { DialogState, useConnectUI } from '../../providers/FuelUIProvider';
 
 import { Connector } from './components/Connector/Connector';
 import { Connectors } from './components/Connectors';
@@ -18,6 +18,25 @@ import {
 import { getThemeVariables } from './themes';
 
 import './index.css';
+import type { FuelConnector } from 'fuels';
+import { Connecting } from './components/Connector/Connecting';
+
+const ConnectRoutes = ({
+  state,
+  connector,
+  theme,
+}: { state: DialogState; connector?: FuelConnector | null; theme: string }) => {
+  if (!connector) return <Connectors />;
+
+  switch (state) {
+    case DialogState.INSTALL:
+      return <Connector connector={connector} theme={theme} />;
+    case DialogState.CONNECTING:
+      return <Connecting connector={connector} theme={theme} />;
+    default:
+      return null;
+  }
+};
 
 export function Connect() {
   // Fix hydration problem between nextjs render and frontend render
@@ -27,7 +46,7 @@ export function Connect() {
   const {
     theme,
     cancel,
-    dialog: { isOpen, connector, back },
+    dialog: { isOpen, state, connector, back },
   } = useConnectUI();
 
   useEffect(() => {
@@ -60,11 +79,11 @@ export function Connect() {
               </Dialog.Close>
               <BackIcon size={32} onClick={back} data-connector={!!connector} />
               <DialogMain>
-                {connector ? (
-                  <Connector connector={connector} theme={theme} />
-                ) : (
-                  <Connectors />
-                )}
+                <ConnectRoutes
+                  state={state}
+                  connector={connector}
+                  theme={theme}
+                />
               </DialogMain>
             </DialogContent>
           </FuelRoot>
