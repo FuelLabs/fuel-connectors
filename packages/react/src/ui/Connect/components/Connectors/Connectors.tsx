@@ -67,15 +67,8 @@ export function Connectors() {
     () =>
       connectors.reduce(
         (acc, curr) => {
-          if (
-            curr.name.startsWith('Fuel') ||
-            curr.name === 'Bako Safe' ||
-            curr.name === 'Burner Wallet'
-          ) {
-            acc.native.push(curr);
-          } else {
-            acc.external.push(curr);
-          }
+          const array = curr.external ? acc.external : acc.native;
+          array.push(curr);
 
           return acc;
         },
