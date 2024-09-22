@@ -35,6 +35,7 @@ import type {
 export abstract class PredicateConnector extends FuelConnector {
   public connected = false;
   public installed = false;
+  external = true;
   public events = FuelConnectorEventTypes;
   protected predicateAddress!: string;
   protected customPredicate: Maybe<PredicateConfig>;
