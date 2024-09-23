@@ -162,6 +162,10 @@ export function FuelUIProvider({
     async (_connector: FuelConnector) => {
       setError(null);
       setConnector(_connector);
+      if (_connector.external) {
+        setOpen(false);
+        return;
+      }
       if (_connector.installed) {
         handleDialogAction(_connector);
       }
