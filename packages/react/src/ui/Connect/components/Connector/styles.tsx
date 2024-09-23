@@ -6,6 +6,7 @@ export const ConnectorTitle = styled.h2`
   font-weight: 500;
   color: var(--fuel-color-bold);
   margin: 0 0 0.8em 0;
+  padding: 0 1.8em;
 `;
 
 export const ConnectorDescription = styled.p`
@@ -47,9 +48,9 @@ export const ConnectorButton = styled.a`
   cursor: pointer;
   justify-content: center;
   align-items: center;
-  margin: 0.4em 1em 0;
-  padding: 0.6em 0;
-  font-size: 1.1em;
+  margin: 0.4rem 1rem 0;
+  padding: 0.6rem 0;
+  font-size: var(--fuel-font-size);
   color: var(--fuel-color-bold);
   border-radius: var(--fuel-border-radius);
   background-color: var(--fuel-button-background);

@@ -21,6 +21,7 @@ import './index.css';
 import type { FuelConnector } from 'fuels';
 import { Bridge } from './components/Bridge/Bridge';
 import { Connecting } from './components/Connector/Connecting';
+import { ExternalDisclaimer } from './components/ExternalDisclaimer/ExternalDisclaimer';
 
 const ConnectRoutes = ({
   state,
@@ -40,6 +41,9 @@ const ConnectRoutes = ({
     case Routes.CONNECTING:
       if (!connector) return <Connectors />;
       return <Connecting connector={connector} theme={theme} />;
+    case Routes.EXTERNAL_DISCLAIMER:
+      if (!connector) return <Connectors />;
+      return <ExternalDisclaimer connector={connector} />;
     case Routes.BRIDGE:
       return <Bridge theme={theme} bridgeURL={bridgeURL} />;
     default:
