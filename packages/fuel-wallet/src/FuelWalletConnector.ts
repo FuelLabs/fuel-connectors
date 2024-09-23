@@ -266,7 +266,12 @@ export class FuelWalletConnector extends FuelConnector {
   }
 
   async currentNetwork(): Promise<Network> {
-    return this.client.request('network', {});
+    const { url } = await this.client.request('network', {});
+    const provider = await Provider.create(url);
+    return {
+      url: provider.url,
+      chainId: provider.getChainId(),
+    };
   }
 
   async selectNetwork(network: SelectNetworkArguments): Promise<boolean> {
@@ -276,7 +281,7 @@ export class FuelWalletConnector extends FuelConnector {
   }
 
   async networks(): Promise<Network[]> {
-    return this.client.request('networks', {});
+    return [await this.currentNetwork()];
   }
 
   async addNetwork(networkUrl: string): Promise<boolean> {
