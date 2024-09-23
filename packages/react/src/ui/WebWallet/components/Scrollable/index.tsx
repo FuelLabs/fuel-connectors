@@ -20,8 +20,7 @@ export const Scrollable = ({
     <ScrollableWrapper>
       <ScrollableContent>
         <Balance
-          value={mainAsset?.amount}
-          decimals={mainAsset?.decimals}
+          asset={mainAsset}
           hideAmount={hideAmount}
           toggleHideAmount={toggleHideAmount}
         />

@@ -1,6 +1,7 @@
 import { IconEye, IconEyeClosed } from '@tabler/icons-react';
-import type { BN } from 'fuels';
+import type { AssetFuel, BN } from 'fuels';
 import { useBalanceFormat } from '../../hooks/useBalanceFormat';
+import type { IAssetsBalance } from '../../types';
 import {
   BalanceTitle,
   BalanceValue,
@@ -8,22 +9,17 @@ import {
   BalanceWrapper,
 } from './styles';
 export interface BalanceProps {
-  value: BN;
-  decimals: number;
+  asset: IAssetsBalance;
   toggleHideAmount: () => void;
   hideAmount: boolean;
 }
 
 export const Balance = ({
-  value,
-  decimals,
+  asset,
   toggleHideAmount,
   hideAmount,
 }: BalanceProps) => {
-  const { formattedBalance, formattedBalanceFull } = useBalanceFormat(
-    value,
-    decimals,
-  );
+  const { formattedBalance, formattedBalanceFull } = useBalanceFormat(asset);
   const normalProps = {
     value: formattedBalance,
     icon: IconEye,

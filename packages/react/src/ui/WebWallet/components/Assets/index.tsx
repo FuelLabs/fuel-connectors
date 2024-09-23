@@ -1,8 +1,9 @@
-import { IconAsset, IconCoins } from '@tabler/icons-react';
+import { IconCoins } from '@tabler/icons-react';
 import { handleCopy, shortAddress } from '../../../../utils';
 import { useBalanceFormat } from '../../hooks/useBalanceFormat';
-import type { IAssetsBalance } from '../../types';
+import { type IAssetsBalance, isUnknownAsset } from '../../types';
 import { AvatarGenerated } from '../AvatarGenerated';
+import { Tooltip } from '../Tooltip';
 import {
   AssetCard,
   AssetCardAssetInfoCopy,
@@ -33,7 +34,7 @@ export const Assets = ({ assets, hideAmount }: AssetsProps) => {
       <AssetsList>
         {assets.map((asset) => {
           const { formattedBalance, formattedBalanceFull: _ } =
-            useBalanceFormat(asset.amount, asset.decimals);
+            useBalanceFormat(asset);
           const valueOrHidden = hideAmount ? '•'.repeat(5) : formattedBalance;
 
           return (
@@ -41,17 +42,19 @@ export const Assets = ({ assets, hideAmount }: AssetsProps) => {
               <AssetCardLeft>
                 <AvatarGenerated src={asset.icon} hash={asset.id} />
                 <AssetCardAssetInfoWrapper>
-                  {asset?.name !== 'Unknown' && (
+                  {!isUnknownAsset(asset) && (
                     <AssetCardAssetInfoName>
                       {asset?.name}
                     </AssetCardAssetInfoName>
                   )}
                   <AssetCardAssetInfoSymbolWrapper>
-                    <AssetCardAssetInfoSymbol>
-                      {asset.symbol === 'UNK'
-                        ? shortAddress(asset.id)
-                        : asset.symbol}
-                    </AssetCardAssetInfoSymbol>
+                    <Tooltip value={asset.id}>
+                      <AssetCardAssetInfoSymbol>
+                        {isUnknownAsset(asset)
+                          ? shortAddress(asset.id)
+                          : asset.symbol}
+                      </AssetCardAssetInfoSymbol>
+                    </Tooltip>
                     <AssetCardAssetInfoCopy
                       size={18}
                       onClick={() => handleCopy(asset.id)}

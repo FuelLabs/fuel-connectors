@@ -13,6 +13,7 @@ const commonTheme = {
   '--fuel-items-gap': '8px',
   /* Border */
   '--fuel-border': '1px solid var(--fuel-border-color)',
+  '--fuel-border-danger': '2px solid var(--fuel-red-3)',
 };
 
 const lightTheme = {
@@ -33,6 +34,8 @@ const lightTheme = {
   '--fuel-green-11': '#008347',
   '--fuel-blue-3': '#E6F4FE',
   '--fuel-blue-11': '#0D74CE',
+  '--fuel-red-3': '#3B1219',
+  '--fuel-red-11': '#FF9592',
 };
 
 const darkTheme = {
@@ -54,6 +57,8 @@ const darkTheme = {
   '--fuel-green-11': '#00DD75',
   '--fuel-blue-3': '#0D2847',
   '--fuel-blue-11': '#70B9FF',
+  '--fuel-red-3': '#B54548',
+  '--fuel-red-11': '#FF9592',
 };
 
 type CustomTheme = Partial<typeof commonTheme & typeof lightTheme>;

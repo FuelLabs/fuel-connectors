@@ -1,6 +1,7 @@
 import { IconX } from '@tabler/icons-react';
 import { DisconnectButton } from '../DisconnectButton';
 import { HistoryButton } from '../HistoryButton';
+import { FooterContent, FooterWrapper } from './styles';
 
 export interface FooterProps {
   address: string;
@@ -8,7 +9,15 @@ export interface FooterProps {
 }
 
 export const Footer = ({ address: _a, disconnect: _d }: FooterProps) => {
-  return 'FOOTER';
+  // return 'FOOTER';
+  return (
+    <FooterWrapper>
+      <FooterContent>
+        <HistoryButton address={_a} />
+        <DisconnectButton disconnect={_d} />
+      </FooterContent>
+    </FooterWrapper>
+  );
   // return (
   //   <Flex gap="1">
   //     <HistoryButton address={address} />

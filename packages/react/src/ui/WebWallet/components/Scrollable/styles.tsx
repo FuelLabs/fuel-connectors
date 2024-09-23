@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 
 export const ScrollableWrapper = styled.div`
   overflow-y: auto;
-  max-height: 100%;
+  max-height: calc(100% - 190px);
   flex: 1;
 
   scroll-behavior: smooth;

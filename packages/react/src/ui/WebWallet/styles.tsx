@@ -42,7 +42,6 @@ export const DialogContent = styled(Dialog.Content)`
   width: 370px;
   height: 700px;
   border: var(--fuel-border);
-  
 
   overflow: hidden;
   color: var(--fuel-color);
@@ -92,7 +91,6 @@ export const DialogMain = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 16px;
   height: 100%;
 `;
 
