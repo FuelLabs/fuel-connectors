@@ -1,5 +1,5 @@
 import type { FuelConnector } from 'fuels';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   DialogState,
@@ -30,11 +30,20 @@ export function Connector({ className, connector, theme }: ConnectorProps) {
   const {
     dialog: { state: dialogState, action },
   } = useConnectUI();
-  const loading = dialogState === DialogState.CONNECTING;
+  const actionTimeout = useRef<NodeJS.Timeout | null>(null);
   const dialogLabels = useMemo(
     () => getDialogLabels(dialogState, connector),
     [dialogState, connector],
   );
+  const loading = dialogState === DialogState.CONNECTING;
+
+  const handleClick = () => {
+    // This exist so that `href` doesn't get invalidated too soon
+    if (!loading) {
+      actionTimeout.current && clearTimeout(actionTimeout.current);
+      actionTimeout.current = setTimeout(() => action(connector));
+    }
+  };
 
   return (
     <div className={className}>
@@ -53,11 +62,9 @@ export function Connector({ className, connector, theme }: ConnectorProps) {
         </ConnectorDescription>
       </ConnectorContent>
       <ConnectorLinkButton
-        href={
-          !loading && dialogState === DialogState.INSTALL ? link : undefined
-        }
+        href={dialogState === DialogState.INSTALL ? link : undefined}
         target="_blank"
-        onClick={() => !loading && action(connector)}
+        onClick={handleClick}
         aria-disabled={loading}
       >
         {loading && <Spinner size={26} color="var(--fuel-loader-background)" />}
