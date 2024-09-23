@@ -24,6 +24,8 @@ export type FuelUIProviderProps = {
 export enum DialogState {
   INSTALL = 'install',
   CONNECTING = 'connecting',
+  INSTALLED = 'installed',
+  ERROR = 'error',
 }
 
 export type FuelUIContextType = {
