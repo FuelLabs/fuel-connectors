@@ -7,7 +7,6 @@ import { ConnectorIcon } from '../ConnectorIcon';
 import { ConnectorBadge } from './ConnectorBadge';
 
 import type { FuelConnector } from 'fuels';
-// import { InfoCircleIcon } from '../../icons/InfoCircleIcon';
 import { ConnectorsLoader } from './ConnectorsLoader';
 import {
   ConnectorItem,
@@ -87,14 +86,12 @@ export function Connectors() {
       {shouldTitleGroups && (
         <GroupFirstTitleContainer>
           <GroupLastTitle>Fuel Native Wallets</GroupLastTitle>
-          {/* <InfoCircleIcon size={12} /> */}
         </GroupFirstTitleContainer>
       )}
       {!isLoading && native.map(renderConnectorItem)}
       {shouldTitleGroups && (
         <GroupLastTitleContainer>
           <GroupLastTitle>Non-Native Wallets</GroupLastTitle>
-          {/* <InfoCircleIcon size={12} /> */}
         </GroupLastTitleContainer>
       )}
       {!isLoading && external.map(renderConnectorItem)}
