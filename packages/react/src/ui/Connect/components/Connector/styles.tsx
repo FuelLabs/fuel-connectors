@@ -58,3 +58,13 @@ export const ConnectorContent = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
+export const ConnectorHelper = styled.p`
+  font-size: 0.8em;
+  font-weight: 400;
+  text-align: center;
+  margin: 0.6em 1.2em;
+  line-height: 1.2em;
+  padding: 0 2em;
+  opacity: 0.5;
+`;

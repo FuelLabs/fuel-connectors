@@ -11,6 +11,7 @@ import { Spinner } from '../Spinner/Spinner';
 import {
   ConnectorContent,
   ConnectorDescription,
+  ConnectorHelper,
   ConnectorImage,
   ConnectorLinkButton,
   ConnectorTitle,
@@ -71,6 +72,12 @@ export function Connector({ className, connector, theme }: ConnectorProps) {
         {loading && <Spinner size={26} color="var(--fuel-loader-background)" />}
         {!loading && (dialogLabels.buttonLabel || actionText)}
       </ConnectorLinkButton>
+      {dialogState === DialogState.CONNECTING && !connector.installed && (
+        <ConnectorHelper>
+          If you have installed and is not detected <br /> try refreshing the
+          page.
+        </ConnectorHelper>
+      )}
     </div>
   );
 }
