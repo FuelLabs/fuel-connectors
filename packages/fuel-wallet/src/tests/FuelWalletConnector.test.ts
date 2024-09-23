@@ -114,11 +114,18 @@ describe('FuelWalletConnector', () => {
     });
 
     test('should request send transaction', async () => {
-      const request = requestMock.mockReturnValue(
-        Promise.resolve(
-          '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
-        ),
-      );
+      const mockedUrl = 'https://devnet.fuel.network/v1/graphql';
+      const mockedTxId =
+        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb';
+
+      requestMock.mockImplementation(async (method, _params) => {
+        if (method === 'network') {
+          return { url: mockedUrl };
+        }
+        if (method === 'sendTransaction') {
+          return mockedTxId;
+        }
+      });
 
       const connector = new FuelWalletConnector();
       const result = await connector.sendTransaction(
@@ -127,10 +134,17 @@ describe('FuelWalletConnector', () => {
           type: TransactionType.Create,
         },
       );
-      expect(result).toBe(
-        '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+      expect(result).toBe(mockedTxId);
+      expect(requestMock).toHaveBeenCalledWith('network', {});
+      expect(requestMock).toHaveBeenCalledWith(
+        'sendTransaction',
+        expect.objectContaining({
+          address:
+            '0x1dc6604c6943e7c618ecdee1e815dd4051ebf0a0e822986f5550b960ff4126fb',
+          transaction: expect.any(String),
+          provider: { url: mockedUrl },
+        }),
       );
-      expect(request).toHaveBeenCalled();
     });
 
     test('should require a transaction', async () => {
@@ -222,12 +236,17 @@ describe('FuelWalletConnector', () => {
           url: 'https://testnet.fuel.network/v1/graphql',
         },
       ];
-      const request = requestMock.mockReturnValue(Promise.resolve(networks));
+      const request = requestMock.mockReturnValue(
+        Promise.resolve({
+          chainId: 0,
+          url: 'https://testnet.fuel.network/v1/graphql',
+        }),
+      );
 
       const connector = new FuelWalletConnector();
       const result = await connector.networks();
       expect(result).toEqual(networks);
-      expect(request).toHaveBeenCalledWith('networks', {});
+      expect(request).toHaveBeenCalledWith('network', {});
     });
 
     test('should select network', async () => {
