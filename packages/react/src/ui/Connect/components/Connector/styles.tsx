@@ -8,13 +8,14 @@ export const ConnectorTitle = styled.h2`
   margin: 0 0 0.8em 0;
 `;
 
-export const ConnectorDescription = styled.p`
+export const ConnectorDescription = styled.p<{ isError: boolean }>`
   font-weight: 400;
   text-align: center;
   margin: 0 1.2em;
   line-height: 1.2em;
   padding: 0 2em;
-  opacity: 0.8;
+  opacity: ${({ isError }) => (isError ? 0.8 : 1)};
+  color: ${({ isError }) => (isError ? 'var(--fuel-color-error)' : 'inherit')};
 `;
 
 export const ConnectorDescriptionError = styled(ConnectorDescription)`

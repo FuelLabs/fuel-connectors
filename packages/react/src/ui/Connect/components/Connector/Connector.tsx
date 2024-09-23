@@ -25,15 +25,16 @@ type ConnectorProps = {
 
 export function Connector({ className, connector, theme }: ConnectorProps) {
   const {
-    install: { action: actionText, link, description },
+    install: { action: actionText, link, description: _description },
   } = connector.metadata;
   const {
     dialog: { state: dialogState, action },
+    error,
   } = useConnectUI();
   const actionTimeout = useRef<NodeJS.Timeout | null>(null);
   const dialogLabels = useMemo(
-    () => getDialogLabels(dialogState, connector),
-    [dialogState, connector],
+    () => getDialogLabels(dialogState, connector, error),
+    [dialogState, connector, error],
   );
   const loading = dialogState === DialogState.CONNECTING;
 
@@ -57,8 +58,8 @@ export function Connector({ className, connector, theme }: ConnectorProps) {
       </ConnectorImage>
       <ConnectorContent>
         <ConnectorTitle>{dialogLabels.title}</ConnectorTitle>
-        <ConnectorDescription>
-          {dialogLabels.description || description}
+        <ConnectorDescription isError={dialogState === DialogState.ERROR}>
+          {dialogLabels.description || _description}
         </ConnectorDescription>
       </ConnectorContent>
       <ConnectorLinkButton
