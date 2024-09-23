@@ -56,7 +56,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <FuelProvider
-        ui={true}
         theme="dark"
         fuelConfig={{
           connectors: defaultConnectors({
