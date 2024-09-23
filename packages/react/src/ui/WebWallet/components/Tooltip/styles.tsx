@@ -6,7 +6,7 @@ export const TooltipWrapper = styled.div`
 `;
 
 export const TooltipContent = styled.div`
-  visibility: visible;
+  visibility: hidden;
   width: 300px;
   background-color: black;
   color: #fff;
