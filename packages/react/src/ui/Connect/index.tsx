@@ -18,6 +18,15 @@ import {
 import { getThemeVariables } from './themes';
 
 import './index.css';
+import type { FuelConnector } from 'fuels';
+
+const ConnectRoutes = ({
+  connector,
+  theme,
+}: { connector?: FuelConnector | null; theme: string }) => {
+  if (!connector) return <Connectors />;
+  return <Connector connector={connector} theme={theme} />;
+};
 
 export function Connect() {
   // Fix hydration problem between nextjs render and frontend render
@@ -60,11 +69,7 @@ export function Connect() {
               </Dialog.Close>
               <BackIcon size={32} onClick={back} data-connector={!!connector} />
               <DialogMain>
-                {connector ? (
-                  <Connector connector={connector} theme={theme} />
-                ) : (
-                  <Connectors />
-                )}
+                <ConnectRoutes connector={connector} theme={theme} />
               </DialogMain>
             </DialogContent>
           </FuelRoot>

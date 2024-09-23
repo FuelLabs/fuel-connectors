@@ -1,17 +1,22 @@
 import type { FuelConnector } from 'fuels';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { useConnectUI } from '../../../../providers/FuelUIProvider';
+import {
+  DialogState,
+  useConnectUI,
+} from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../ConnectorIcon';
 
 import { Spinner } from '../Spinner/Spinner';
 import {
-  ConnectorButton,
   ConnectorContent,
   ConnectorDescription,
+  ConnectorHelper,
   ConnectorImage,
+  ConnectorLinkButton,
   ConnectorTitle,
 } from './styles';
+import { getDialogLabels } from './utils';
 
 type ConnectorProps = {
   theme?: string;
@@ -21,31 +26,26 @@ type ConnectorProps = {
 
 export function Connector({ className, connector, theme }: ConnectorProps) {
   const {
-    install: { action, link, description },
+    install: { action: actionText, link, description: _description },
   } = connector.metadata;
-
   const {
-    setError,
-    dialog: { connect },
+    dialog: { state: dialogState, action },
+    error,
   } = useConnectUI();
-  const [isLoading, setLoading] = useState(!connector.installed);
+  const actionTimeout = useRef<NodeJS.Timeout | null>(null);
+  const dialogLabels = useMemo(
+    () => getDialogLabels(dialogState, connector, error),
+    [dialogState, connector, error],
+  );
+  const loading = dialogState === DialogState.CONNECTING;
 
-  useEffect(() => {
-    const ping = async () => {
-      try {
-        await connector.ping();
-        connector.installed = true;
-        connect(connector);
-      } catch (error) {
-        setLoading(false);
-        setError(error as Error);
-      }
-    };
-
-    ping();
-  }, [connector, connect, setError]);
-
-  const actionText = action || 'Install';
+  const handleClick = () => {
+    // This exist so that `href` doesn't get invalidated too soon
+    if (!loading) {
+      actionTimeout.current && clearTimeout(actionTimeout.current);
+      actionTimeout.current = setTimeout(() => action(connector));
+    }
+  };
 
   return (
     <div className={className}>
@@ -58,16 +58,26 @@ export function Connector({ className, connector, theme }: ConnectorProps) {
         />
       </ConnectorImage>
       <ConnectorContent>
-        <ConnectorTitle>{connector.name}</ConnectorTitle>
-        <ConnectorDescription>{description}</ConnectorDescription>
+        <ConnectorTitle>{dialogLabels.title}</ConnectorTitle>
+        <ConnectorDescription isError={dialogState === DialogState.ERROR}>
+          {dialogLabels.description || _description}
+        </ConnectorDescription>
       </ConnectorContent>
-      <ConnectorButton href={link} target="_blank" aria-disabled={isLoading}>
-        {isLoading ? (
-          <Spinner size={26} color="var(--fuel-loader-background)" />
-        ) : (
-          actionText
-        )}
-      </ConnectorButton>
+      <ConnectorLinkButton
+        href={dialogState === DialogState.INSTALL ? link : undefined}
+        target="_blank"
+        onClick={handleClick}
+        aria-disabled={loading}
+      >
+        {loading && <Spinner size={26} color="var(--fuel-loader-background)" />}
+        {!loading && (dialogLabels.buttonLabel || actionText)}
+      </ConnectorLinkButton>
+      {dialogState === DialogState.CONNECTING && !connector.installed && (
+        <ConnectorHelper>
+          If you have installed and is not detected <br /> try refreshing the
+          page.
+        </ConnectorHelper>
+      )}
     </div>
   );
 }
