@@ -1,4 +1,4 @@
-import type { Fuel, FuelConfig, FuelConnector } from 'fuels';
+import type { FuelConfig, FuelConnector } from 'fuels';
 import {
   type ReactNode,
   createContext,
@@ -21,6 +21,11 @@ export type FuelUIProviderProps = {
   theme?: string;
 };
 
+export enum Routes {
+  INSTALL = 'install',
+  CONNECTING = 'connecting',
+}
+
 export type FuelUIContextType = {
   fuelConfig: FuelConfig;
   theme: string;
@@ -37,6 +42,11 @@ export type FuelUIContextType = {
     isOpen: boolean;
     back: () => void;
     connect: (connector: FuelConnector) => void;
+    retryConnect: () => Promise<void>;
+    // @TODO: Remove this to use tiny router library
+    // react-router maybe too big for the bundle
+    route: Routes;
+    setRoute: (state: Routes) => void;
   };
 };
 
@@ -80,18 +90,40 @@ export function FuelUIProvider({
   theme,
 }: FuelUIProviderProps) {
   const { fuel } = useFuel();
-  const { isPending: isConnecting, isError, connect } = useConnect();
+  const {
+    isPending: isConnecting,
+    data: isConnected,
+    isError,
+    connectAsync,
+  } = useConnect();
   const { connectors, isLoading: isLoadingConnectors } = useConnectors({
     query: { select: sortConnectors },
   });
   const [connector, setConnector] = useState<FuelConnector | null>(null);
+  const [dialogRoute, setDialogRoute] = useState<Routes>(Routes.INSTALL);
   const [isOpen, setOpen] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const handleCancel = () => {
+  // If connectors list is updated we need to update the data of the current
+  // selected connector and change routes depending on the dialog route
+  useEffect(() => {
+    if (!connectors.length) return;
+    const selectedConnector = connectors.find((c: FuelConnector) => {
+      return c.name === connector?.name;
+    });
+    if (selectedConnector) {
+      setConnector(selectedConnector);
+      if (selectedConnector.installed && dialogRoute === Routes.INSTALL) {
+        setDialogRoute(Routes.CONNECTING);
+      }
+    }
+  }, [connectors, dialogRoute, connector]);
+
+  const handleCancel = useCallback(() => {
     setOpen(false);
     setConnector(null);
-  };
+    setError(null);
+  }, []);
 
   const handleConnect = () => {
     setOpen(true);
@@ -99,31 +131,45 @@ export function FuelUIProvider({
 
   const handleBack = () => {
     setConnector(null);
+    setError(null);
   };
 
   useEffect(() => {
-    if (connector?.installed) {
-      handleBack();
+    if (!isConnected) return;
+    handleCancel();
+  }, [isConnected, handleCancel]);
+
+  const handleRetryConnect = useCallback(async () => {
+    if (!connector) return;
+    try {
+      setError(null);
+      await connectAsync(connector.name);
+    } catch (err) {
+      setError(err as Error);
     }
-  }, [connector?.installed, handleBack]);
+  }, [connectAsync, connector]);
 
   const handleSelectConnector = useCallback(
     async (connector: FuelConnector) => {
       if (!fuel) return setConnector(connector);
-
+      setConnector(connector);
       if (connector.installed) {
-        handleCancel();
+        setDialogRoute(Routes.CONNECTING);
         try {
-          await connect(connector.name);
+          await connectAsync(connector.name);
         } catch (err) {
           setError(err as Error);
         }
       } else {
-        setConnector(connector);
+        setDialogRoute(Routes.INSTALL);
       }
     },
-    [fuel, connect, handleCancel],
+    [fuel, connectAsync],
   );
+
+  const setRoute = useCallback((state: Routes) => {
+    setDialogRoute(state);
+  }, []);
 
   const isLoading = useMemo(() => {
     const hasLoadedConnectors =
@@ -145,9 +191,12 @@ export function FuelUIProvider({
         connect: handleConnect,
         cancel: handleCancel,
         dialog: {
+          route: dialogRoute,
+          setRoute,
           connector,
           isOpen,
           connect: handleSelectConnector,
+          retryConnect: handleRetryConnect,
           back: handleBack,
         },
       }}
