@@ -15,10 +15,10 @@ import {
   Divider,
   FuelRoot,
 } from './styles';
-import { getThemeVariables } from './themes';
 
 import './index.css';
 import type { FuelConnector } from 'fuels';
+import { getThemeVariables } from '../../constants/themes';
 import { Bridge } from './components/Bridge/Bridge';
 import { Connecting } from './components/Connector/Connecting';
 import { ExternalDisclaimer } from './components/ExternalDisclaimer/ExternalDisclaimer';
@@ -80,7 +80,6 @@ export function Connect() {
               isClient
                 ? {
                     display: isOpen ? 'block' : 'none',
-                    ...getThemeVariables(theme),
                   }
                 : undefined
             }
