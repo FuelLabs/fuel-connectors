@@ -11,6 +11,7 @@ const commonTheme = {
   /* Border */
   '--fuel-border': '1px solid var(--fuel-border-color)',
   '--fuel-color-error': '#f25a68',
+  '--fuel-black-color': '#141414',
 };
 
 const lightTheme = {

@@ -12,6 +12,7 @@ import {
 import { useConnect } from '../hooks/useConnect';
 import { useConnectors } from '../hooks/useConnectors';
 
+import { useAccount, useBalance } from '../hooks';
 import { BADGE_BLACKLIST } from '../ui/Connect/components/Connectors/ConnectorBadge';
 import { useFuel } from './FuelHooksProvider';
 
@@ -19,14 +20,17 @@ export type FuelUIProviderProps = {
   children?: ReactNode;
   fuelConfig: FuelConfig;
   theme?: string;
+  bridgeURL?: string;
 };
 
 export enum Routes {
   INSTALL = 'install',
   CONNECTING = 'connecting',
+  BRIDGE = 'bridge',
 }
 
 export type FuelUIContextType = {
+  bridgeURL?: string;
   fuelConfig: FuelConfig;
   theme: string;
   connectors: Array<FuelConnector>;
@@ -34,7 +38,7 @@ export type FuelUIContextType = {
   isConnecting: boolean;
   isError: boolean;
   connect: () => void;
-  cancel: () => void;
+  cancel: (ignoreBalance?: boolean) => void;
   setError: (error: Error | null) => void;
   error: Error | null;
   dialog: {
@@ -88,6 +92,7 @@ export function FuelUIProvider({
   fuelConfig,
   children,
   theme,
+  bridgeURL,
 }: FuelUIProviderProps) {
   const { fuel } = useFuel();
   const {
@@ -99,10 +104,15 @@ export function FuelUIProvider({
   const { connectors, isLoading: isLoadingConnectors } = useConnectors({
     query: { select: sortConnectors },
   });
+  const { account } = useAccount();
+  const { balance } = useBalance({ account });
   const [connector, setConnector] = useState<FuelConnector | null>(null);
   const [dialogRoute, setDialogRoute] = useState<Routes>(Routes.INSTALL);
   const [isOpen, setOpen] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  // Controls is the process of connecting started if yes
+  // allows the code to track balance and open bridge step
+  const [isIgnoreBalance, setIgnoreBalance] = useState(true);
 
   // If connectors list is updated we need to update the data of the current
   // selected connector and change routes depending on the dialog route
@@ -123,9 +133,17 @@ export function FuelUIProvider({
     setOpen(false);
     setConnector(null);
     setError(null);
-  }, []);
+    // If bridge popup is closed set to ignore balance changes
+    // and avoid re-open the dialog
+    if (dialogRoute === Routes.BRIDGE) {
+      setIgnoreBalance(true);
+    }
+  }, [dialogRoute]);
 
   const handleConnect = () => {
+    setError(null);
+    setDialogRoute(Routes.INSTALL);
+    setIgnoreBalance(false);
     setOpen(true);
   };
 
@@ -136,8 +154,15 @@ export function FuelUIProvider({
 
   useEffect(() => {
     if (!isConnected) return;
-    handleCancel();
-  }, [isConnected, handleCancel]);
+    if (balance?.isZero()) {
+      if (!isOpen && !isIgnoreBalance) setOpen(true);
+      setDialogRoute(Routes.BRIDGE);
+      return;
+    }
+    if (balance?.gte(0)) {
+      handleCancel();
+    }
+  }, [isConnected, isOpen, isIgnoreBalance, balance, handleCancel]);
 
   const handleRetryConnect = useCallback(async () => {
     if (!connector) return;
@@ -180,6 +205,7 @@ export function FuelUIProvider({
   return (
     <FuelConnectContext.Provider
       value={{
+        bridgeURL,
         fuelConfig,
         theme: theme || 'light',
         isLoading,

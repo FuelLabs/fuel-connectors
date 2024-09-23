@@ -19,24 +19,29 @@ import { getThemeVariables } from './themes';
 
 import './index.css';
 import type { FuelConnector } from 'fuels';
+import { Bridge } from './components/Bridge/Bridge';
 import { Connecting } from './components/Connector/Connecting';
 
 const ConnectRoutes = ({
   state,
   connector,
   theme,
+  bridgeURL,
 }: {
   theme: string;
   state: Routes;
+  bridgeURL?: string;
   connector?: FuelConnector | null;
 }) => {
-  if (!connector) return <Connectors />;
-
   switch (state) {
     case Routes.INSTALL:
+      if (!connector) return <Connectors />;
       return <Connector connector={connector} theme={theme} />;
     case Routes.CONNECTING:
+      if (!connector) return <Connectors />;
       return <Connecting connector={connector} theme={theme} />;
+    case Routes.BRIDGE:
+      return <Bridge theme={theme} bridgeURL={bridgeURL} />;
     default:
       return null;
   }
@@ -50,6 +55,7 @@ export function Connect() {
   const {
     theme,
     cancel,
+    bridgeURL,
     dialog: { isOpen, route: state, connector, back },
   } = useConnectUI();
 
@@ -86,6 +92,7 @@ export function Connect() {
                 <ConnectRoutes
                   state={state}
                   connector={connector}
+                  bridgeURL={bridgeURL}
                   theme={theme}
                 />
               </DialogMain>
