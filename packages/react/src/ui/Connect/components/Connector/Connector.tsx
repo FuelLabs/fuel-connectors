@@ -1,19 +1,21 @@
 import type { FuelConnector } from 'fuels';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { useConnectUI } from '../../../../providers/FuelUIProvider';
+import {
+  DialogState,
+  useConnectUI,
+} from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../ConnectorIcon';
 
-import { useQuery } from '@tanstack/react-query';
-import { useConnect, useConnectors } from '../../../../hooks';
 import { Spinner } from '../Spinner/Spinner';
 import {
-  ConnectorButton,
   ConnectorContent,
   ConnectorDescription,
   ConnectorImage,
+  ConnectorLinkButton,
   ConnectorTitle,
 } from './styles';
+import { getDialogLabels } from './utils';
 
 type ConnectorProps = {
   theme?: string;
@@ -23,21 +25,16 @@ type ConnectorProps = {
 
 export function Connector({ className, connector, theme }: ConnectorProps) {
   const {
-    install: { action, link, description },
+    install: { action: actionText, link, description },
   } = connector.metadata;
-  const { connect } = useConnect();
-  const { isLoading } = useQuery({
-    queryKey: [connector.name],
-    queryFn: async () => {
-      const isInstall = await connector.ping();
-      if (isInstall) connect(connector.name);
-      return isInstall;
-    },
-    initialData: connector.installed,
-    refetchInterval: 1000,
-  });
-
-  const actionText = action || 'Install';
+  const {
+    dialog: { state: dialogState, action },
+  } = useConnectUI();
+  const loading = dialogState === DialogState.CONNECTING;
+  const dialogLabels = useMemo(
+    () => getDialogLabels(dialogState, connector),
+    [dialogState, connector],
+  );
 
   return (
     <div className={className}>
@@ -50,16 +47,22 @@ export function Connector({ className, connector, theme }: ConnectorProps) {
         />
       </ConnectorImage>
       <ConnectorContent>
-        <ConnectorTitle>{connector.name}</ConnectorTitle>
-        <ConnectorDescription>{description}</ConnectorDescription>
+        <ConnectorTitle>{dialogLabels.title}</ConnectorTitle>
+        <ConnectorDescription>
+          {dialogLabels.description || description}
+        </ConnectorDescription>
       </ConnectorContent>
-      <ConnectorButton href={link} target="_blank" aria-disabled={isLoading}>
-        {isLoading ? (
-          <Spinner size={26} color="var(--fuel-loader-background)" />
-        ) : (
-          actionText
-        )}
-      </ConnectorButton>
+      <ConnectorLinkButton
+        href={
+          !loading && dialogState === DialogState.INSTALL ? link : undefined
+        }
+        target="_blank"
+        onClick={() => !loading && action(connector)}
+        aria-disabled={loading}
+      >
+        {loading && <Spinner size={26} color="var(--fuel-loader-background)" />}
+        {!loading && (dialogLabels.buttonLabel || actionText)}
+      </ConnectorLinkButton>
     </div>
   );
 }

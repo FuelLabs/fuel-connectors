@@ -30,7 +30,7 @@ export const ConnectorImage = styled.div`
   margin-bottom: 1.2em;
 `;
 
-export const ConnectorButton = styled.a`
+export const ConnectorLinkButton = styled.a`
   display: flex;
   box-sizing: border-box;
   text-decoration: none;
