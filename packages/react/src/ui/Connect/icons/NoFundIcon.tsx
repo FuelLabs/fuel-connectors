@@ -35,24 +35,24 @@ export function NoFundIcon({ size, ...props }: SvgIconProps) {
       <path
         d="M67.166 73.13v5.368l4.166 2.027-4.166-7.395Z"
         fill="#fff"
-        fill-opacity=".602"
+        fillOpacity=".602"
       />
       <path d="M67.166 73.13 63 80.525l4.166-2.027V73.13Z" fill="#fff" />
       <path
         d="M67.166 84.004v3.647l4.17-6.281-4.17 2.634Z"
         fill="#fff"
-        fill-opacity=".602"
+        fillOpacity=".602"
       />
       <path d="M67.166 87.65v-3.646L63 81.37l4.166 6.28Z" fill="#fff" />
       <path
         d="m67.166 83.16 4.166-2.635-4.166-2.026v4.66Z"
         fill="#fff"
-        fill-opacity=".2"
+        fillOpacity=".2"
       />
       <path
         d="m63 80.525 4.166 2.634V78.5L63 80.525Z"
         fill="#fff"
-        fill-opacity=".602"
+        fillOpacity=".602"
       />
       <defs>
         <linearGradient
@@ -63,8 +63,8 @@ export function NoFundIcon({ size, ...props }: SvgIconProps) {
           y2="91.281"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#fff" stop-opacity=".5" />
-          <stop offset="1" stop-opacity=".5" />
+          <stop stopColor="#fff" stopOpacity=".5" />
+          <stop offset="1" stopOpacity=".5" />
         </linearGradient>
       </defs>
     </svg>

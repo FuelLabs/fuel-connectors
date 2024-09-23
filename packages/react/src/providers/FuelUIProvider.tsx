@@ -24,7 +24,6 @@ export type FuelUIProviderProps = {
 };
 
 export enum Routes {
-  CONNECTORS = 'connectors',
   INSTALL = 'install',
   CONNECTING = 'connecting',
   BRIDGE = 'bridge',
@@ -39,7 +38,7 @@ export type FuelUIContextType = {
   isConnecting: boolean;
   isError: boolean;
   connect: () => void;
-  cancel: () => void;
+  cancel: (ignoreBalance?: boolean) => void;
   setError: (error: Error | null) => void;
   error: Error | null;
   dialog: {
@@ -111,6 +110,9 @@ export function FuelUIProvider({
   const [dialogRoute, setDialogRoute] = useState<Routes>(Routes.INSTALL);
   const [isOpen, setOpen] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  // Controls is the process of connecting started if yes
+  // allows the code to track balance and open bridge step
+  const [isIgnoreBalance, setIgnoreBalance] = useState(true);
 
   // If connectors list is updated we need to update the data of the current
   // selected connector and change routes depending on the dialog route
@@ -131,9 +133,17 @@ export function FuelUIProvider({
     setOpen(false);
     setConnector(null);
     setError(null);
-  }, []);
+    // If bridge popup is closed set to ignore balance changes
+    // and avoid re-open the dialog
+    if (dialogRoute === Routes.BRIDGE) {
+      setIgnoreBalance(true);
+    }
+  }, [dialogRoute]);
 
   const handleConnect = () => {
+    setError(null);
+    setDialogRoute(Routes.INSTALL);
+    setIgnoreBalance(false);
     setOpen(true);
   };
 
@@ -145,14 +155,14 @@ export function FuelUIProvider({
   useEffect(() => {
     if (!isConnected) return;
     if (balance?.isZero()) {
-      if (!isOpen) setOpen(true);
+      if (!isOpen && !isIgnoreBalance) setOpen(true);
       setDialogRoute(Routes.BRIDGE);
       return;
     }
     if (balance?.gte(0)) {
       handleCancel();
     }
-  }, [isConnected, isOpen, balance, handleCancel]);
+  }, [isConnected, isOpen, isIgnoreBalance, balance, handleCancel]);
 
   const handleRetryConnect = useCallback(async () => {
     if (!connector) return;

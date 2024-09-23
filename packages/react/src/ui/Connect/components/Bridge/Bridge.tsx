@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { BRIDGE_URL } from '../../../../config';
+import { useConnectUI } from '../../../../providers/FuelUIProvider';
 import { NoFundIcon } from '../../icons/NoFundIcon';
 import {
   ConnectorButton,
@@ -24,6 +25,7 @@ export function Bridge({ className, bridgeURL, theme }: BridgeProps) {
     url.searchParams.set('auto_close', 'true');
     return url.toString();
   }, [bridgeURL]);
+  const { cancel } = useConnectUI();
 
   return (
     <div className={className}>
@@ -42,7 +44,9 @@ export function Bridge({ className, bridgeURL, theme }: BridgeProps) {
       <ConnectorButtonPrimary href={bridgeHref} target="_blank">
         Bridge now
       </ConnectorButtonPrimary>
-      <ConnectorButton>Continue to application</ConnectorButton>
+      <ConnectorButton onClick={() => cancel(true)}>
+        Continue to application
+      </ConnectorButton>
     </div>
   );
 }
