@@ -11,7 +11,7 @@ export function Connectors() {
     connectors,
     isLoading,
     theme,
-    dialog: { connect },
+    dialog: { selectConnector },
   } = useConnectUI();
 
   return (
@@ -25,7 +25,7 @@ export function Connectors() {
           data-connected={connector.connected}
           onClick={(e) => {
             e.preventDefault();
-            connect(connector);
+            selectConnector(connector);
           }}
         >
           <ConnectorIcon

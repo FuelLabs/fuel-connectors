@@ -13,7 +13,6 @@ import { useConnect } from '../hooks/useConnect';
 import { useConnectors } from '../hooks/useConnectors';
 
 import { BADGE_BLACKLIST } from '../ui/Connect/components/Connectors/ConnectorBadge';
-import { useFuel } from './FuelHooksProvider';
 
 export type FuelUIProviderProps = {
   children?: ReactNode;
@@ -44,10 +43,13 @@ export type FuelUIContextType = {
     state: DialogState;
     isOpen: boolean;
     back: () => void;
-    connect: (connector: FuelConnector) => void;
+    selectConnector: (connector: FuelConnector) => void;
+    action: (connector: FuelConnector | null) => Promise<void>;
     retryConnect: () => Promise<void>;
   };
 };
+
+const DIALOG_DEFAULT_STATE = DialogState.INSTALL;
 
 export const FuelConnectContext = createContext<FuelUIContextType | null>(null);
 
@@ -88,24 +90,24 @@ export function FuelUIProvider({
   children,
   theme,
 }: FuelUIProviderProps) {
-  const { fuel } = useFuel();
   const {
     isPending: isConnecting,
     data: isConnected,
     isError,
+    connect,
     connectAsync,
   } = useConnect();
   const { connectors, isLoading: isLoadingConnectors } = useConnectors({
     query: { select: sortConnectors },
   });
   const [connector, setConnector] = useState<FuelConnector | null>(null);
-  const [dialogState, setDialogState] = useState<DialogState>(
-    DialogState.INSTALL,
-  );
+  const [dialogState, setDialogState] =
+    useState<DialogState>(DIALOG_DEFAULT_STATE);
   const [isOpen, setOpen] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   const handleCancel = useCallback(() => {
+    setDialogState(DIALOG_DEFAULT_STATE);
     setOpen(false);
     setConnector(null);
     setError(null);
@@ -130,27 +132,101 @@ export function FuelUIProvider({
       setError(null);
       await connectAsync(connector.name);
     } catch (err) {
-      setError(err as Error);
+      onError(err as Error);
     }
   }, [connectAsync, connector]);
 
+  const onError = useCallback((err: Error) => {
+    setDialogState(DialogState.ERROR);
+    setError(err);
+  }, []);
+
+  const handleDialogAction = useCallback(
+    async (_connector: FuelConnector | null = connector) => {
+      if (!_connector) return;
+
+      setDialogState((prev) => {
+        if (
+          prev === DialogState.INSTALL ||
+          prev === DialogState.ERROR ||
+          connector?.installed
+        )
+          return DialogState.CONNECTING;
+
+        if (prev === DialogState.CONNECTING) return DialogState.INSTALLED;
+
+        return prev;
+      });
+    },
+    [connector],
+  );
+
   const handleSelectConnector = useCallback(
-    async (connector: FuelConnector) => {
-      if (!fuel) return setConnector(connector);
-      setConnector(connector);
-      if (connector.installed) {
-        setDialogState(DialogState.CONNECTING);
-        try {
-          await connectAsync(connector.name);
-        } catch (err) {
-          setError(err as Error);
-        }
-      } else {
-        setDialogState(DialogState.INSTALL);
+    async (_connector: FuelConnector) => {
+      setConnector(_connector);
+      if (_connector.installed) {
+        handleDialogAction(_connector);
       }
     },
-    [fuel, connectAsync],
+    [handleDialogAction],
   );
+
+  // Handle connection
+  useEffect(() => {
+    if (
+      (dialogState === DialogState.INSTALL ||
+        dialogState === DialogState.CONNECTING) &&
+      connector?.installed
+    ) {
+      connect(connector.name, {
+        onError,
+        onSuccess: (res) => {
+          if (res) {
+            setOpen(false);
+            return;
+          }
+          onError(new Error('Failed to connect'));
+        },
+      });
+    }
+  }, [connect, connector, dialogState, onError]);
+
+  // Handle install
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    let depth = 0;
+    if (dialogState === DialogState.CONNECTING && connector) {
+      waitForConnection();
+    }
+
+    async function waitForConnection() {
+      depth++;
+      timeout = setTimeout(async () => {
+        if (!connector || connector.connected) {
+          clearTimeout(timeout);
+          return;
+        }
+        try {
+          const success = await connector?.ping().catch(() => false);
+
+          if (success || connector?.installed) {
+            handleDialogAction(connector);
+          }
+        } catch (err) {
+          onError(err as Error);
+        } finally {
+          if (depth > 60) {
+            onError(new Error('Failed to connect'));
+          } else if (!connector?.installed) {
+            clearTimeout(timeout);
+            timeout = setTimeout(waitForConnection, 1000);
+          }
+        }
+      }, 1000);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [dialogState, connector, handleDialogAction, onError]);
 
   const isLoading = useMemo(() => {
     const hasLoadedConnectors =
@@ -175,7 +251,8 @@ export function FuelUIProvider({
           state: dialogState,
           connector,
           isOpen,
-          connect: handleSelectConnector,
+          action: handleDialogAction,
+          selectConnector: handleSelectConnector,
           retryConnect: handleRetryConnect,
           back: handleBack,
         },
