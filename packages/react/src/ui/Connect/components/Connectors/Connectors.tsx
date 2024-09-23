@@ -7,6 +7,7 @@ import { ConnectorIcon } from '../ConnectorIcon';
 import { ConnectorBadge } from './ConnectorBadge';
 
 import type { FuelConnector } from 'fuels';
+import { NATIVE_CONNECTORS } from '../../../../config';
 import { ConnectorsLoader } from './ConnectorsLoader';
 import {
   ConnectorItem,
@@ -66,7 +67,9 @@ export function Connectors() {
     () =>
       connectors.reduce(
         (acc, curr) => {
-          const array = curr.external ? acc.external : acc.native;
+          const array = NATIVE_CONNECTORS.includes(curr.name)
+            ? acc.native
+            : acc.external;
           array.push(curr);
 
           return acc;

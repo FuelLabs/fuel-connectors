@@ -1,5 +1,6 @@
 import type { FuelConnector } from 'fuels';
 import { useMemo } from 'react';
+import { NATIVE_CONNECTORS } from '../../../../config';
 import { BadgeInfo, BadgeSuccess } from './styles';
 
 interface ConnectorBadgeProps {
@@ -8,18 +9,13 @@ interface ConnectorBadgeProps {
   installed: FuelConnector['installed'];
 }
 
-// We don't want to show the INSTALLED badge for these connectors
-// Because we don't know exactly if externally they are installed or not
-// These, for example, are using WalletConnect as a provider
-export const BADGE_BLACKLIST = ['Ethereum Wallets', 'Solana Wallets'];
-
 export function ConnectorBadge({
   name,
   connected,
   installed,
 }: ConnectorBadgeProps) {
   const isBlacklisted = useMemo<boolean>(() => {
-    return BADGE_BLACKLIST.includes(name);
+    return !NATIVE_CONNECTORS.includes(name);
   }, [name]);
 
   if (connected) {
