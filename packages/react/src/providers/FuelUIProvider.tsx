@@ -106,19 +106,19 @@ export function FuelUIProvider({
   const [isOpen, setOpen] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const handleCancel = useCallback(() => {
+  const resetStates = useCallback(() => {
     setDialogState(DIALOG_DEFAULT_STATE);
-    setOpen(false);
     setConnector(null);
     setError(null);
   }, []);
 
+  const handleCancel = useCallback(() => {
+    setOpen(false);
+    resetStates();
+  }, [resetStates]);
+
   const handleConnect = () => {
     setOpen(true);
-  };
-
-  const handleBack = () => {
-    setConnector(null);
   };
 
   useEffect(() => {
