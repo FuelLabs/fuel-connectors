@@ -61,7 +61,7 @@ export function Connect() {
               <BackIcon size={32} onClick={back} data-connector={!!connector} />
               <DialogMain>
                 {connector ? (
-                  <Connector connector={connector} />
+                  <Connector connector={connector} theme={theme} />
                 ) : (
                   <Connectors />
                 )}

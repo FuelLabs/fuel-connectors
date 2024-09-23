@@ -1,4 +1,10 @@
-import { hexToBytes } from '@ethereumjs/util';
+import {
+  ecrecover,
+  fromRpcSig,
+  hashPersonalMessage,
+  hexToBytes,
+  pubToAddress,
+} from '@ethereumjs/util';
 import { hexlify, splitSignature } from '@ethersproject/bytes';
 import {
   type Config,
@@ -13,6 +19,8 @@ import {
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
+  LocalStorage,
+  type StorageAbstract,
   type TransactionRequestLike,
 } from 'fuels';
 
@@ -29,7 +37,12 @@ import {
 } from '@fuel-connectors/common';
 import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
 import { ApiController } from '@web3modal/core';
-import { ETHEREUM_ICON, TESTNET_URL } from './constants';
+import {
+  ETHEREUM_ICON,
+  SINGATURE_VALIDATION_TIMEOUT,
+  TESTNET_URL,
+  WINDOW,
+} from './constants';
 import type { WalletConnectConfig } from './types';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
@@ -48,11 +61,13 @@ export class WalletConnectConnector extends PredicateConnector {
 
   private fuelProvider!: FuelProvider;
   private web3Modal!: Web3Modal;
+  private storage: StorageAbstract;
   private config: WalletConnectConfig = {} as WalletConnectConfig;
 
   constructor(config: WalletConnectConfig) {
     super();
-
+    this.storage =
+      config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
     const wagmiConfig = config?.wagmiConfig ?? createWagmiConfig();
     this.customPredicate = config.predicateConfig || null;
     this.configProviders({ ...config, wagmiConfig });
@@ -65,7 +80,10 @@ export class WalletConnectConnector extends PredicateConnector {
 
     await this.config?.fuelProvider;
     await this.requireConnection();
-    await this.handleConnect(getAccount(wagmiConfig));
+    await this.handleConnect(
+      getAccount(wagmiConfig),
+      await this.getAccountAddress(),
+    );
   }
 
   // createModal re-instanciates the modal to update singletons from web3modal
@@ -85,15 +103,16 @@ export class WalletConnectConnector extends PredicateConnector {
 
   private async handleConnect(
     account: NonNullable<GetAccountReturnType<Config>>,
+    defaultAccount: string | null = null,
   ) {
-    if (!account?.address) {
-      return;
-    }
+    const address = defaultAccount ?? (account?.address as string);
+    if (!(await this.accountHasValidation(address))) return;
+    if (!address) return;
     await this.setupPredicate();
     this.emit(this.events.connection, true);
     this.emit(
       this.events.currentAccount,
-      this.predicateAccount?.getPredicateAddress(account.address),
+      this.predicateAccount?.getPredicateAddress(address),
     );
     this.emit(
       this.events.accounts,
@@ -143,24 +162,29 @@ export class WalletConnectConnector extends PredicateConnector {
     });
   }
 
-  protected walletAccounts(): Promise<Array<string>> {
-    return new Promise((resolve) => {
-      resolve(this.getAccountAddresses() as Array<string>);
-    });
+  protected async walletAccounts(): Promise<Array<string>> {
+    return Promise.resolve((await this.getAccountAddresses()) as Array<string>);
   }
 
-  protected getAccountAddress(): Maybe<string> {
+  protected async getAccountAddress(): Promise<Maybe<string>> {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) return null;
-
-    return getAccount(wagmiConfig).address;
+    const addresses = await this.getAccountAddresses();
+    if (!addresses) return null;
+    const address = addresses[0];
+    if (!address) return null;
+    if (!(await this.accountHasValidation(address))) return null;
+    return address;
   }
 
-  protected getAccountAddresses(): Maybe<readonly string[]> {
+  protected async getAccountAddresses(): Promise<Maybe<readonly string[]>> {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) return null;
-
-    return getAccount(wagmiConfig).addresses;
+    const addresses = getAccount(wagmiConfig).addresses || [];
+    const accountsValidations = await this.getAccountValidations(
+      addresses as `0x${string}`[],
+    );
+    return addresses.filter((_, i) => accountsValidations[i]);
   }
 
   protected async requireConnection() {
@@ -197,18 +221,25 @@ export class WalletConnectConnector extends PredicateConnector {
 
   public async connect(): Promise<boolean> {
     this.createModal();
-    return new Promise((resolve) => {
+    const result = await new Promise<boolean>((resolve, reject) => {
       this.web3Modal.open();
       const wagmiConfig = this.getWagmiConfig();
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
+        const requestValidations = () => {
+          this.requestValidations()
+            .then(() => resolve(true))
+            .catch((err) => reject(err))
+            .finally(() => unsub());
+        };
+
         switch (event.data.event) {
           case 'MODAL_OPEN':
             if (wagmiConfig) {
               const account = getAccount(wagmiConfig);
               if (account?.isConnected) {
-                this.web3Modal.close();
-                resolve(true);
                 unsub();
+                this.web3Modal.close();
+                requestValidations();
                 break;
               }
             }
@@ -216,12 +247,18 @@ export class WalletConnectConnector extends PredicateConnector {
             this.createModal();
             break;
           case 'CONNECT_SUCCESS': {
-            resolve(true);
-            unsub();
+            requestValidations();
             break;
           }
           case 'MODAL_CLOSE':
           case 'CONNECT_ERROR': {
+            if (wagmiConfig) {
+              const account = getAccount(wagmiConfig);
+              if (account) {
+                requestValidations();
+                break;
+              }
+            }
             resolve(false);
             unsub();
             break;
@@ -229,17 +266,83 @@ export class WalletConnectConnector extends PredicateConnector {
         }
       });
     });
+    return result;
+  }
+
+  private async getAccountValidations(
+    accounts: `0x${string}`[] | string[],
+  ): Promise<boolean[]> {
+    return Promise.all(
+      accounts.map(async (a) => {
+        const isValidated = await this.storage.getItem(
+          `SIGNATURE_VALIDATION_${a}`,
+        );
+        return isValidated === 'true';
+      }),
+    );
+  }
+
+  private async accountHasValidation(
+    account: `0x${string}` | string | undefined,
+  ) {
+    if (!account) return false;
+    const [hasValidate] = await this.getAccountValidations([account]);
+    return hasValidate;
+  }
+
+  async requestValidations() {
+    const wagmiConfig = this.getWagmiConfig();
+    if (!wagmiConfig) {
+      throw new Error('Wagmi config not found');
+    }
+    const account = getAccount(wagmiConfig);
+    const { addresses } = account;
+    for (const address of addresses || []) {
+      await this.requestValidation(address)
+        .then(() => {
+          this.handleConnect(account);
+        })
+        .catch((err) => {
+          this.disconnect();
+          throw err;
+        });
+    }
+  }
+
+  async requestValidation(address?: string) {
+    return new Promise(async (resolve, reject) => {
+      // Disconnect if user doesn't provide signature in time
+      const validationTimeout = setTimeout(() => {
+        reject(
+          new Error("User didn't provide signature in less than 1 minute"),
+        );
+      }, SINGATURE_VALIDATION_TIMEOUT);
+      const { ethProvider } = await this.getProviders();
+
+      if (!ethProvider) return;
+
+      this.signAndValidate(ethProvider, address)
+        .then(() => {
+          clearTimeout(validationTimeout);
+          this.storage.setItem(`SIGNATURE_VALIDATION_${address}`, 'true');
+          resolve(true);
+        })
+        .catch((err) => {
+          clearTimeout(validationTimeout);
+          reject(err);
+        });
+    });
   }
 
   public async disconnect(): Promise<boolean> {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
 
-    const { connector, isConnected } = getAccount(wagmiConfig);
+    const { addresses, connector, isConnected } = getAccount(wagmiConfig);
     await disconnect(wagmiConfig, {
       connector,
     });
-
+    addresses?.map((a) => this.storage.removeItem(`SIGNATURE_VALIDATION_${a}`));
     return isConnected || false;
   }
 
@@ -274,5 +377,60 @@ export class WalletConnectConnector extends PredicateConnector {
     });
 
     return response.submit.id;
+  }
+
+  private validateSignature(
+    account: string,
+    message: string,
+    signature: string,
+  ) {
+    const msgBuffer = Uint8Array.from(Buffer.from(message));
+    const msgHash = hashPersonalMessage(msgBuffer);
+    const { v, r, s } = fromRpcSig(signature);
+    const pubKey = ecrecover(msgHash, v, r, s);
+    const recoveredAddress = Buffer.from(pubToAddress(pubKey)).toString('hex');
+
+    // The recovered address doesn't have the 0x prefix
+    return recoveredAddress.toLowerCase() === account.toLowerCase().slice(2);
+  }
+
+  private async signAndValidate(
+    ethProvider: EIP1193Provider | undefined,
+    account?: string,
+  ) {
+    try {
+      if (!ethProvider) {
+        throw new Error('No Ethereum provider found');
+      }
+      if (account && !account.startsWith('0x')) {
+        throw new Error('Invalid account address');
+      }
+      const currentAccount =
+        account ||
+        (
+          (await ethProvider.request({
+            method: 'eth_requestAccounts',
+          })) as string[]
+        )[0];
+
+      if (!currentAccount) {
+        throw new Error('No Ethereum account selected');
+      }
+
+      const message = `Sign this message to verify the connected account: ${currentAccount}`;
+      const signature = (await ethProvider.request({
+        method: 'personal_sign',
+        params: [message, currentAccount],
+      })) as string;
+
+      if (!this.validateSignature(currentAccount, message, signature)) {
+        throw new Error('Signature address validation failed');
+      }
+
+      return true;
+    } catch (error) {
+      this.disconnect();
+      throw error;
+    }
   }
 }
