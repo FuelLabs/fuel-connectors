@@ -23,3 +23,8 @@ export interface EIP1193Provider extends EventEmitter {
     params?: unknown[];
   }): Promise<unknown | unknown[]>;
 }
+
+export interface SignatureData {
+  message: string;
+  signature: string;
+}

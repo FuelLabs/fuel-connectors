@@ -16,12 +16,12 @@ const BalanceSkeleton = () => (
 );
 
 export default function Balance({ isSigning }: Props) {
-  const { refetchWallet, balance, address } = useWallet();
+  const { refetchBalance, balance, address } = useWallet();
 
   useEffect(() => {
-    const interval = setInterval(() => refetchWallet(), 5000);
+    const interval = setInterval(() => refetchBalance(), 5000);
     return () => clearInterval(interval);
-  }, [refetchWallet]);
+  }, [refetchBalance]);
 
   return (
     <Feature title="Balance">
