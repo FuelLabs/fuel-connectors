@@ -10,6 +10,7 @@ import {
   VStack,
 } from '@fuels/ui';
 import { IconCoins } from '@tabler/icons-react';
+import { tv } from 'tailwind-variants';
 import { useBalanceFormat } from '../../hooks/useBalanceFormat';
 import type { IAssetsBalance } from '../../types';
 import { AvatarGenerated } from '../AvatarGenerated';
@@ -20,26 +21,21 @@ export interface AssetsProps {
 }
 
 export const Assets = ({ assets, hideAmount }: AssetsProps) => {
+  const classes = styles();
   return (
-    <VStack
-      gap={{
-        md: '3',
-        initial: '2',
-      }}
-    >
+    <VStack gap="4">
       <HStack gap="1" align="center">
-        <Icon icon={IconCoins} />
-        <Text
-          size={{
-            md: '3',
-            initial: '1',
-          }}
-          weight="medium"
-        >
+        <Icon
+          icon={IconCoins}
+          size={24}
+          style={{ color: '#00f58c' }}
+          stroke={1.6}
+        />
+        <Text size="4" weight="medium" className="ml-1">
           Assets
         </Text>
       </HStack>
-      <VStack gap="1">
+      <VStack gap="2">
         {assets.map((asset) => {
           const { formattedBalance, formattedBalanceFull } = useBalanceFormat(
             asset.amount,
@@ -54,7 +50,10 @@ export const Assets = ({ assets, hideAmount }: AssetsProps) => {
                 <EntityItem key={asset.id}>
                   <EntityItemSlot>
                     <AvatarGenerated
-                      size="2"
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                      }}
                       src={asset.icon}
                       hash={asset.id}
                     />
@@ -72,7 +71,13 @@ export const Assets = ({ assets, hideAmount }: AssetsProps) => {
                 </EntityItem>
 
                 <Tooltip content={formattedBalanceFull}>
-                  <Text size="2" weight="regular" color="gray" highContrast>
+                  <Text
+                    size="2"
+                    weight="regular"
+                    color="gray"
+                    highContrast
+                    className={classes.assetValue()}
+                  >
                     {valueOrHidden}
                   </Text>
                 </Tooltip>
@@ -84,3 +89,9 @@ export const Assets = ({ assets, hideAmount }: AssetsProps) => {
     </VStack>
   );
 };
+
+const styles = tv({
+  slots: {
+    assetValue: 'text-muted text-sm',
+  },
+});

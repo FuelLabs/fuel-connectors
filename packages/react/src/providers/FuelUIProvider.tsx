@@ -132,9 +132,22 @@ export function FuelUIProvider({
     return isLoadingConnectors || hasLoadedConnectors;
   }, [connectors, isLoadingConnectors, fuelConfig]);
 
+  const [appearance, setAppearance] = useState<'dark' | 'light'>('light');
+
+  useEffect(() => {
+    setAppearance(theme === 'dark' ? 'dark' : 'light');
+
+    setTimeout(() => {
+      setAppearance('light');
+      setTimeout(() => {
+        setAppearance('dark');
+      }, 5000);
+    }, 5000);
+  }, [theme]);
+
   const dsTheme: ThemeProps = {
     hasBackground: false,
-    appearance: theme === 'dark' ? 'dark' : 'light',
+    appearance,
   };
 
   return (

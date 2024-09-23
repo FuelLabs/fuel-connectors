@@ -2,6 +2,7 @@ export * from './Anchor';
 export * from './Assets';
 export * from './AvatarGenerated';
 export * from './Balance';
+export * from './CurrentConnectorLogo';
 export * from './DisconnectButton';
 export * from './Footer';
 export * from './Header';

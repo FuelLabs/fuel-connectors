@@ -1,6 +1,7 @@
 import { HStack, Icon, Text, Tooltip, VStack } from '@fuels/ui';
 import { IconEye, IconEyeClosed } from '@tabler/icons-react';
 import type { BN } from 'fuels';
+import { tv } from 'tailwind-variants';
 import { useBalanceFormat } from '../../hooks/useBalanceFormat';
 
 export interface BalanceProps {
@@ -20,6 +21,7 @@ export const Balance = ({
     value,
     decimals,
   );
+  const classes = styles();
   const normalProps = {
     value: formattedBalance,
     icon: IconEye,
@@ -34,34 +36,11 @@ export const Balance = ({
 
   return (
     <VStack gap="1">
-      <Text
-        color="gray"
-        size={{
-          md: '2',
-          initial: '1',
-        }}
-      >
-        Balance
-      </Text>
+      <Text className={classes.balanceTitle()}>Balance</Text>
       <HStack gap="2" align="center">
-        <Text
-          size={{
-            // @ts-ignore
-            initial: '2',
-            md: '5',
-          }}
-        >
-          ETH
-        </Text>
         <Tooltip content={props.tooltip} sideOffset={-5}>
-          <Text
-            size={{
-              // @ts-ignore
-              initial: '2',
-              md: '5',
-            }}
-            aria-label={props.value}
-          >
+          <Text className={classes.balanceValue()} aria-label={props.value}>
+            ETH&nbsp;&nbsp;
             {props.value}
           </Text>
         </Tooltip>
@@ -70,3 +49,10 @@ export const Balance = ({
     </VStack>
   );
 };
+
+const styles = tv({
+  slots: {
+    balanceTitle: 'text-sm text-muted',
+    balanceValue: 'text-2xl tracking-widest text-gray-7',
+  },
+});

@@ -15,6 +15,7 @@ import * as Toast from '@radix-ui/react-toast';
 
 import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
+// import '@fuels/react/styles.css';
 import './index.css';
 
 const queryClient = new QueryClient();
@@ -64,7 +65,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
             ethWagmiConfig: wagmiConfig,
           }),
         }}
-        showWebWallet
       >
         <Toast.Provider>
           <App />

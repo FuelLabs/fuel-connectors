@@ -19,6 +19,7 @@ export const ScrollableContent = ({
     <Inset side="x">
       <ScrollArea scrollbars="vertical" type="auto">
         <VStack gap="3" className="px-4">
+          <Separator size="4" className="min-h-px" />
           <Balance
             value={mainAsset?.amount}
             decimals={mainAsset?.decimals}

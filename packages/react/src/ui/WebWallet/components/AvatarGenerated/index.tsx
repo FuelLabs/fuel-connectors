@@ -18,7 +18,5 @@ const GeneratedFallback = ({ hash }: { hash: string }) => {
 };
 
 export const AvatarGenerated = ({ hash, ...props }: AvatarGeneratedProps) => {
-  return (
-    <Avatar {...props} size="4" fallback={<GeneratedFallback hash={hash} />} />
-  );
+  return <Avatar {...props} fallback={<GeneratedFallback hash={hash} />} />;
 };

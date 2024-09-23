@@ -8,5 +8,14 @@
       "@fuel-connectors/*": ["../*/src"]
     }
   },
-  "exclude": ["dist"]
+  "exclude": [
+    "dist",
+    "**/dist",
+    "build",
+    "**/build",
+    "node_modules",
+    "**/node_modules",
+    "**/tailwind.config.ts"
+  ],
+  "include": ["src"]
 }

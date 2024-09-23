@@ -11,7 +11,7 @@ import { useAssetsBalance } from './hooks';
 import { Overlay } from './styles';
 import type { IAssetsBalance } from './types';
 
-import '@fuels/ui/styles.css';
+// import '@fuels/ui/styles.css';
 import './index.css';
 
 export const WebWallet = () => {
@@ -35,7 +35,7 @@ export const WebWallet = () => {
   } = useAssetsBalance();
 
   const {
-    connector,
+    currentConnector,
     isFetched: isFetchedConnector,
     refetch,
   } = useCurrentConnector();
@@ -98,11 +98,10 @@ export const WebWallet = () => {
         </Popover.Trigger>
         <Popover.Content sticky="partial" onOpenAutoFocus={preventAutoFocus}>
           <VStack gap="3" className="h-full">
-            <Header address={address} title={connector?.name} />
-            <Inset side="x">
-              <Separator size="4" />
-            </Inset>
-
+            <Header
+              address={address}
+              currentConnector={currentConnector || undefined}
+            />
             <ScrollableContent
               assetsBalances={assetsBalance}
               hideAmount={hideAmount}

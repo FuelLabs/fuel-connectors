@@ -1,0 +1,10 @@
+@font-face {
+  font-family: 'GeistMono';
+  src: url('/fonts/GeistMonoVariableVF.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'GeistMono', monospace;
+}
