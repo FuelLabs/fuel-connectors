@@ -29,6 +29,7 @@ export const ConnectorList = styled.div`
   align-items: center;
   gap: var(--fuel-items-gap);
   padding: 0px 14px;
+  margin-top: 23px;
 `;
 
 export const ConnectorName = styled.div`
@@ -55,4 +56,34 @@ export const BadgeInfo = styled(Badge)`;
 export const BadgeSuccess = styled(Badge)`;
   background-color: var(--fuel-green-3);
   color: var(--fuel-green-11);
+`;
+
+export const GroupLastTitle = styled.p`
+  color: #797979;
+  font-family: Inter;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.13px;
+`;
+
+export const GroupFirstTitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-start;
+  width: 100%;
+  padding-left: 3px;
+  margin-bottom: 7px;
+`;
+
+export const GroupLastTitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-start;
+  width: 100%;
+  padding-left: 3px;
+  margin: 14px 0px 7px 0px;
 `;

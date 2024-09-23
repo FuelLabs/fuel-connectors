@@ -14,7 +14,6 @@ import { useConnectors } from '../hooks/useConnectors';
 
 import { NATIVE_CONNECTORS } from '../config';
 import { useAccount, useBalance } from '../hooks';
-import { BADGE_BLACKLIST } from '../ui/Connect/components/Connectors/ConnectorBadge';
 import { useFuel } from './FuelHooksProvider';
 
 export type FuelUIProviderProps = {
@@ -82,8 +81,8 @@ const sortConnectors = (connectors: FuelConnector[]): FuelConnector[] => {
     }
 
     // Use temporary variables to represent "installed" status for sorting
-    const aInstalled = !BADGE_BLACKLIST.includes(a.name) && a.installed;
-    const bInstalled = !BADGE_BLACKLIST.includes(b.name) && b.installed;
+    const aInstalled = NATIVE_CONNECTORS.includes(a.name) && a.installed;
+    const bInstalled = NATIVE_CONNECTORS.includes(b.name) && b.installed;
     if (aInstalled !== bInstalled) {
       return aInstalled ? -1 : 1;
     }
