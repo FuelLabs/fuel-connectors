@@ -1,8 +1,12 @@
-import { HStack, Icon, Text, Tooltip, VStack } from '@fuels/ui';
 import { IconEye, IconEyeClosed } from '@tabler/icons-react';
 import type { BN } from 'fuels';
 import { useBalanceFormat } from '../../hooks/useBalanceFormat';
-
+import {
+  BalanceTitle,
+  BalanceValue,
+  BalanceValueRow,
+  BalanceWrapper,
+} from './styles';
 export interface BalanceProps {
   value: BN;
   decimals: number;
@@ -33,40 +37,18 @@ export const Balance = ({
   const props = hideAmount ? hiddenProps : normalProps;
 
   return (
-    <VStack gap="1">
-      <Text
-        color="gray"
-        size={{
-          md: '2',
-          initial: '1',
-        }}
-      >
-        Balance
-      </Text>
-      <HStack gap="2" align="center">
-        <Text
-          size={{
-            // @ts-ignore
-            initial: '2',
-            md: '5',
-          }}
-        >
-          ETH
-        </Text>
-        <Tooltip content={props.tooltip} sideOffset={-5}>
-          <Text
-            size={{
-              // @ts-ignore
-              initial: '2',
-              md: '5',
-            }}
-            aria-label={props.value}
-          >
-            {props.value}
-          </Text>
-        </Tooltip>
-        <Icon onClick={toggleHideAmount} icon={props.icon} cursor="pointer" />
-      </HStack>
-    </VStack>
+    <BalanceWrapper>
+      <BalanceTitle>Balance</BalanceTitle>
+      <BalanceValueRow>
+        <BalanceValue>ETH</BalanceValue>
+        <BalanceValue>{props.value}</BalanceValue>
+        <IconEye
+          onClick={toggleHideAmount}
+          cursor="pointer"
+          stroke={1.5}
+          size={22}
+        />
+      </BalanceValueRow>
+    </BalanceWrapper>
   );
 };

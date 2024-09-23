@@ -1,15 +1,15 @@
-import { Avatar, type AvatarProps } from '@fuels/ui';
+import { useState } from 'react';
 import { useGenerateBackground } from '../../hooks/useGenerateBackground';
+import { Avatar, AvatarFallback } from './styles';
 
-export type AvatarGeneratedProps = { hash: string } & Omit<
-  AvatarProps,
-  'fallback'
->;
+interface AvatarProps {
+  src: string;
+  hash: string;
+}
 
 const GeneratedFallback = ({ hash }: { hash: string }) => {
   return (
-    <div
-      className="h-full w-full rounded-full"
+    <AvatarFallback
       style={{
         background: useGenerateBackground(hash),
       }}
@@ -17,8 +17,12 @@ const GeneratedFallback = ({ hash }: { hash: string }) => {
   );
 };
 
-export const AvatarGenerated = ({ hash, ...props }: AvatarGeneratedProps) => {
-  return (
-    <Avatar {...props} size="4" fallback={<GeneratedFallback hash={hash} />} />
-  );
+export const AvatarGenerated = ({ hash, src }: AvatarProps) => {
+  const [hasError, setHasError] = useState(false);
+
+  if (hasError) {
+    return <GeneratedFallback hash={hash} />;
+  }
+
+  return <Avatar src={src} onError={() => setHasError(true)} />;
 };

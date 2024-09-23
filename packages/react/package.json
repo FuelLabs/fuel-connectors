@@ -1,6 +1,6 @@
 {
   "name": "@fuels/react",
-  "description": "Interact with the Fuel Wallet Extension in React.",
+  "description": "Interact with the Fuel Connectors in React.",
   "version": "0.28.1",
   "license": "Apache-2.0",
   "main": "./src/index.ts",
@@ -32,25 +32,20 @@
     "react": ">=18.0.0"
   },
   "dependencies": {
-    "@fuels/ui": "0.1.2",
     "@tabler/icons-react": "2.47.0",
-    "events": "^3.3.0",
-    "tailwind-variants": "0.1.20"
+    "events": "^3.3.0"
   },
   "devDependencies": {
+    "@radix-ui/react-dialog": "1.1.1",
     "@tanstack/react-query": "5.35.1",
-    "@types/react": "18.2.54",
+    "@types/react": "18.3.1",
     "compare-versions": "^6.1.0",
     "fuels": "pr-3167",
-    "react": "^18.2.0",
+    "react": "18.2.0",
     "styled-components": "6.1.12",
-    "tailwindcss": "3.4.4",
     "tsup": "8.0.2",
-    "@radix-ui/react-dialog": "1.1.1",
     "events": "3.3.0",
     "tsx": "4.9.3",
-    "typescript": "5.4.5",
-    "postcss": "8.4.35",
-    "postcss-import": "16.0.1"
+    "typescript": "5.4.5"
   }
 }

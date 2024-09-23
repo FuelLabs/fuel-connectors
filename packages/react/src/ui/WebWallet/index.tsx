@@ -1,4 +1,4 @@
-import { Inset, Popover, Separator, VStack, shortAddress } from '@fuels/ui';
+import * as Dialog from '@radix-ui/react-dialog';
 import { useEffect, useState } from 'react';
 import {
   useAccount,
@@ -6,20 +6,38 @@ import {
   useDisconnect,
   useIsConnected,
 } from '../../hooks';
-import { Anchor, Footer, Header, ScrollableContent } from './components';
-import { useAssetsBalance } from './hooks';
-import { Overlay } from './styles';
+import { Footer, Header, Scrollable } from './components';
+import { useAssetsBalance, useWebWallet } from './hooks';
+import {
+  DialogClose,
+  DialogContent,
+  DialogMain,
+  DialogOverlay,
+  DialogTrigger,
+  Divider,
+  FuelRoot,
+} from './styles';
 import type { IAssetsBalance } from './types';
 
-import '@fuels/ui/styles.css';
 import './index.css';
+import { useConnectUI } from '../../providers/FuelUIProvider';
+import { shortAddress } from '../../utils';
+import { CloseIcon } from '../Connect/styles';
+import { getThemeVariables } from '../Connect/themes';
 
 export const WebWallet = () => {
+  const { isOpen, setOpen } = useWebWallet();
+  // Fix hydration problem between nextjs render and frontend render
+  // UI was not getting updated and theme colors was set wrongly
+  // see more here https://nextjs.org/docs/messages/react-hydration-error
+  const [isClient, setIsClient] = useState(false);
+
   const [address, setAddress] = useState('');
   const [mainAsset, setMainAsset] = useState({} as IAssetsBalance);
   const [hideAmount, setHideAmount] = useState(false);
   const [isFetchedBalance, setFetchedBalance] = useState(false);
 
+  const { theme } = useConnectUI();
   const { isConnected } = useIsConnected();
   const { disconnect } = useDisconnect();
   const {
@@ -35,10 +53,14 @@ export const WebWallet = () => {
   } = useAssetsBalance();
 
   const {
-    connector,
+    currentConnector,
     isFetched: isFetchedConnector,
     refetch,
   } = useCurrentConnector();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const toggleHideAmount = () => {
     setHideAmount(!hideAmount);
@@ -72,53 +94,71 @@ export const WebWallet = () => {
     }
   }, [account, isFetchedAccount, address]);
 
-  const isLoading =
+  const _isLoading =
     !isFetchedAccount ||
     !isFetchedAssetsBalance ||
     !isFetchedConnector ||
     !isFetchedBalance;
 
-  // Fixes an issue where the Tooltip would be the focused element
-  const preventAutoFocus = (e: Event) => {
-    e.preventDefault();
-  };
-
   if (!isConnected) {
     return null;
   }
+
+  const handleOpenChange = (openState: boolean) => {
+    setOpen(openState);
+  };
+
   return (
-    <Overlay>
-      <Popover>
-        <Popover.Trigger>
-          <Anchor
-            address={shortAddress(address)}
-            isLoading={isLoading}
-            isConnected={isConnected}
-          />
-        </Popover.Trigger>
-        <Popover.Content sticky="partial" onOpenAutoFocus={preventAutoFocus}>
-          <VStack gap="3" className="h-full">
-            <Header address={address} title={connector?.name} />
-            <Inset side="x">
-              <Separator size="4" />
-            </Inset>
-
-            <ScrollableContent
-              assetsBalances={assetsBalance}
-              hideAmount={hideAmount}
-              mainAsset={mainAsset}
-              toggleHideAmount={toggleHideAmount}
-            />
-            <Inset side="x" mt="auto">
-              <Separator size="4" />
-            </Inset>
-
-            <Popover.Close>
-              <Footer address={address} disconnect={disconnect} />
-            </Popover.Close>
-          </VStack>
-        </Popover.Content>
-      </Popover>
-    </Overlay>
+    <Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogTrigger
+        style={
+          isClient
+            ? {
+                display: 'block',
+                ...getThemeVariables(theme),
+              }
+            : undefined
+        }
+      >
+        {!!(isConnected && address) && shortAddress(address)}
+      </DialogTrigger>
+      <Dialog.Portal>
+        <DialogOverlay asChild>
+          <FuelRoot
+            style={
+              isClient
+                ? {
+                    display: isOpen ? 'block' : 'none',
+                    ...getThemeVariables(theme),
+                  }
+                : undefined
+            }
+          >
+            {currentConnector && (
+              <DialogContent>
+                <DialogClose>
+                  <CloseIcon size={32} onClick={() => setOpen(false)} />
+                </DialogClose>
+                <DialogMain>
+                  <Header
+                    address={address}
+                    currentConnector={currentConnector}
+                  />
+                  <Divider />
+                  <Scrollable
+                    assetsBalances={assetsBalance}
+                    hideAmount={hideAmount}
+                    mainAsset={mainAsset}
+                    toggleHideAmount={toggleHideAmount}
+                  />
+                  <Divider />
+                  <Footer address={address} disconnect={disconnect} />
+                </DialogMain>
+              </DialogContent>
+            )}
+          </FuelRoot>
+        </DialogOverlay>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 };

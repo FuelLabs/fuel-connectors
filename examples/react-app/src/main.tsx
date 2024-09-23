@@ -64,7 +64,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
             ethWagmiConfig: wagmiConfig,
           }),
         }}
-        showWebWallet
       >
         <Toast.Provider>
           <App />

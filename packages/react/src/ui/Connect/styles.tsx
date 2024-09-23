@@ -62,13 +62,13 @@ export const DialogContent = styled(Dialog.Content)`
     outline: none;
   }
 
-  @media (min-width: 431px) {
+  @media (min-width: 641px) {
     top: 50%;
     width: 360px;
     max-width: calc(100% - 20px);
   }
 
-  @media (max-width: 430px) {
+  @media (max-width: 640px) {
     top: auto;
     bottom: -246px;
     width: 100vw;

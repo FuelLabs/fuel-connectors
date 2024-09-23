@@ -12,7 +12,6 @@ import {
 import { useConnect } from '../hooks/useConnect';
 import { useConnectors } from '../hooks/useConnectors';
 
-import { Theme, type ThemeProps } from '@fuels/ui';
 import { BADGE_BLACKLIST } from '../ui/Connect/components/Connectors/ConnectorBadge';
 import { useFuel } from './FuelHooksProvider';
 
@@ -132,11 +131,6 @@ export function FuelUIProvider({
     return isLoadingConnectors || hasLoadedConnectors;
   }, [connectors, isLoadingConnectors, fuelConfig]);
 
-  const dsTheme: ThemeProps = {
-    hasBackground: false,
-    appearance: theme === 'dark' ? 'dark' : 'light',
-  };
-
   return (
     <FuelConnectContext.Provider
       value={{
@@ -158,7 +152,7 @@ export function FuelUIProvider({
         },
       }}
     >
-      <Theme {...dsTheme}>{children}</Theme>
+      {children}
     </FuelConnectContext.Provider>
   );
 }

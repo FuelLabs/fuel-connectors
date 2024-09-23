@@ -20,7 +20,7 @@ import { QUERY_KEYS } from '../utils';
 export const useCurrentConnector = () => {
   const { fuel } = useFuel();
 
-  return useNamedQuery('connector', {
+  return useNamedQuery('currentConnector', {
     queryKey: QUERY_KEYS.currentConnector(),
     queryFn: () => {
       return fuel.currentConnector() ?? null;

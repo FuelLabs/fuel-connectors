@@ -1,18 +1,37 @@
-import { EntityItem, EntityItemInfo, EntityItemSlot } from '@fuels/ui';
-import { AvatarGenerated } from '../AvatarGenerated';
+import type { FuelConnector } from 'fuels';
+import { handleCopy, shortAddress } from '../../../../utils';
+import { getImageUrl } from '../../../Connect/utils/getImageUrl';
+import {
+  ConnectorLogo,
+  HeaderConnected,
+  HeaderWalletAddress,
+  HeaderWalletAddressCopy,
+  HeaderWalletAddressWrapper,
+  HeaderWalletTitle,
+  HeaderWrapper,
+} from './styles';
 
 export interface HeaderProps {
   address: string;
-  title?: string;
+  currentConnector: FuelConnector;
 }
 
-export const Header = ({ address, title }: HeaderProps) => {
+export const Header = ({ address, currentConnector }: HeaderProps) => {
   return (
-    <EntityItem gap="0">
-      <EntityItemSlot>
-        <AvatarGenerated size="2" hash={address} />
-      </EntityItemSlot>
-      <EntityItemInfo id={address} title={title ?? 'Your Wallet'} />
-    </EntityItem>
+    <HeaderWrapper>
+      <ConnectorLogo src={getImageUrl(currentConnector.metadata)} />
+      <HeaderConnected>
+        <HeaderWalletTitle>
+          {currentConnector?.name ?? 'Your Wallet'}
+        </HeaderWalletTitle>
+        <HeaderWalletAddressWrapper>
+          <HeaderWalletAddress>{shortAddress(address)}</HeaderWalletAddress>
+          <HeaderWalletAddressCopy
+            size={18}
+            onClick={() => handleCopy(address)}
+          />
+        </HeaderWalletAddressWrapper>
+      </HeaderConnected>
+    </HeaderWrapper>
   );
 };
