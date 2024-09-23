@@ -43,7 +43,7 @@ export type FuelUIContextType = {
     state: DialogState;
     isOpen: boolean;
     back: () => void;
-    selectConnector: (connector: FuelConnector) => void;
+    connect: (connector: FuelConnector) => void;
     action: (connector: FuelConnector | null) => Promise<void>;
     retryConnect: () => Promise<void>;
   };
@@ -192,7 +192,9 @@ export function FuelUIProvider({
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     let depth = 0;
-    if (dialogState === DialogState.CONNECTING && connector) {
+    const shouldRetry = () =>
+      dialogState === DialogState.CONNECTING && !connector?.installed;
+    if (shouldRetry()) {
       waitForConnection();
     }
 
@@ -214,7 +216,7 @@ export function FuelUIProvider({
         } finally {
           if (depth > 60) {
             onError(new Error('Failed to connect'));
-          } else if (!connector?.installed) {
+          } else if (shouldRetry()) {
             clearTimeout(timeout);
             timeout = setTimeout(waitForConnection, 1000);
           }
@@ -251,7 +253,7 @@ export function FuelUIProvider({
           action: handleDialogAction,
           connect: handleSelectConnector,
           retryConnect: handleRetryConnect,
-          back: handleBack,
+          back: resetStates,
         },
       }}
     >
