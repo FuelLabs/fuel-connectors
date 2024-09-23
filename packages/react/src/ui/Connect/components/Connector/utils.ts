@@ -22,32 +22,32 @@ function getButtonLabel(dialogState: DialogState) {
 
 function getTitle(dialogState: DialogState, connector: FuelConnector) {
   switch (dialogState) {
-    case DialogState.CONNECTING:
-    case DialogState.INSTALLED:
-    case DialogState.INSTALL:
-      if (connector.installed) {
-        return `${connector.name} is Installed!`;
-      }
-      return `Don't have ${connector.name}?`;
     case DialogState.ERROR:
-      return `Failed to connect to ${connector.name}`;
+    case DialogState.CONNECTING:
+      return connector.name;
+    case DialogState.INSTALLED:
+      return `${connector.name} is Installed!`;
+    case DialogState.INSTALL:
+      return `Don't have ${connector.name}?`;
     default:
       return connector.name;
   }
 }
 
-function getDescription(dialogState: DialogState, connector: FuelConnector) {
+function getDescription(
+  dialogState: DialogState,
+  connector: FuelConnector,
+  error: Error | null,
+) {
   switch (dialogState) {
     case DialogState.CONNECTING:
+      return `Connecting to ${connector.name}`;
     case DialogState.INSTALL:
-      if (connector.installed) {
-        return `You will be requested to connect it to ${window.location.origin}`;
-      }
-      return `Install ${connector.name} now by clicking the link bellow and return here to connect it!`;
+      return 'Install now by clicking the link bellow and return here to connect it!';
     case DialogState.INSTALLED:
-      return `Click on the button bellow to connect your to ${window.location.origin}`;
+      return `Click on the button bellow to connect your wallet to ${window.location.origin}`;
     case DialogState.ERROR:
-      return 'Click on the button below to try again.';
+      return error?.message || 'Connection failed.';
     default:
       return undefined;
   }
@@ -56,8 +56,9 @@ function getDescription(dialogState: DialogState, connector: FuelConnector) {
 export const getDialogLabels: (
   state: DialogState,
   connector: FuelConnector,
-) => DialogLabelData = (state, connector) => ({
+  error: Error | null,
+) => DialogLabelData = (state, connector, error) => ({
   title: getTitle(state, connector),
-  description: getDescription(state, connector),
+  description: getDescription(state, connector, error),
   buttonLabel: getButtonLabel(state),
 });
