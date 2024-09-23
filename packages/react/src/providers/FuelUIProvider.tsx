@@ -209,7 +209,7 @@ export function FuelUIProvider({
         try {
           const success = await connector?.ping().catch(() => false);
 
-          if (success || connector?.installed) {
+          if (success && connector?.installed) {
             handleDialogAction(connector);
           }
         } catch (err) {
