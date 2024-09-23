@@ -311,7 +311,7 @@ export class WalletConnectConnector extends PredicateConnector {
 
   async requestValidation(address?: string) {
     return new Promise(async (resolve, reject) => {
-      // Disconnect if user doesn't provide signature in time
+      // Disconnect if user dosen't provide signature in time
       const validationTimeout = setTimeout(() => {
         reject(
           new Error("User didn't provide signature in less than 1 minute"),

@@ -12,6 +12,7 @@ import {
 import { useConnect } from '../hooks/useConnect';
 import { useConnectors } from '../hooks/useConnectors';
 
+import { NATIVE_CONNECTORS } from '../config';
 import { useAccount, useBalance } from '../hooks';
 import { BADGE_BLACKLIST } from '../ui/Connect/components/Connectors/ConnectorBadge';
 import { useFuel } from './FuelHooksProvider';
@@ -27,6 +28,7 @@ export enum Routes {
   INSTALL = 'install',
   CONNECTING = 'connecting',
   BRIDGE = 'bridge',
+  EXTERNAL_DISCLAIMER = 'disclaimer',
 }
 
 export type FuelUIContextType = {
@@ -51,6 +53,8 @@ export type FuelUIContextType = {
     // react-router maybe too big for the bundle
     route: Routes;
     setRoute: (state: Routes) => void;
+    // @TODO: This is meant to be private but is not possible at this moment
+    _startConnection: (connector: FuelConnector) => void;
   };
 };
 
@@ -174,22 +178,38 @@ export function FuelUIProvider({
     }
   }, [connectAsync, connector]);
 
+  const handleStartConnection = useCallback(
+    async (connector: FuelConnector) => {
+      setDialogRoute(Routes.CONNECTING);
+      try {
+        await connectAsync(connector.name);
+      } catch (err) {
+        setError(err as Error);
+      }
+    },
+    [connectAsync],
+  );
+
   const handleSelectConnector = useCallback(
     async (connector: FuelConnector) => {
+      // TODO: evaluate if this checking is needed
+      // maybe it can be removed
       if (!fuel) return setConnector(connector);
       setConnector(connector);
+
+      // If the connect is not native show a disclaimer
+      if (!NATIVE_CONNECTORS.includes(connector.name)) {
+        setDialogRoute(Routes.EXTERNAL_DISCLAIMER);
+        return;
+      }
+
       if (connector.installed) {
-        setDialogRoute(Routes.CONNECTING);
-        try {
-          await connectAsync(connector.name);
-        } catch (err) {
-          setError(err as Error);
-        }
+        handleStartConnection(connector);
       } else {
         setDialogRoute(Routes.INSTALL);
       }
     },
-    [fuel, connectAsync],
+    [fuel, handleStartConnection],
   );
 
   const setRoute = useCallback((state: Routes) => {
@@ -224,6 +244,7 @@ export function FuelUIProvider({
           connect: handleSelectConnector,
           retryConnect: handleRetryConnect,
           back: handleBack,
+          _startConnection: handleStartConnection,
         },
       }}
     >
