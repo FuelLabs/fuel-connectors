@@ -1,7 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { useEffect, useState } from 'react';
 
-import { DialogState, useConnectUI } from '../../providers/FuelUIProvider';
+import { Routes, useConnectUI } from '../../providers/FuelUIProvider';
 
 import { Connector } from './components/Connector/Connector';
 import { Connectors } from './components/Connectors';
@@ -25,13 +25,17 @@ const ConnectRoutes = ({
   state,
   connector,
   theme,
-}: { state: DialogState; connector?: FuelConnector | null; theme: string }) => {
+}: {
+  theme: string;
+  state: Routes;
+  connector?: FuelConnector | null;
+}) => {
   if (!connector) return <Connectors />;
 
   switch (state) {
-    case DialogState.INSTALL:
+    case Routes.INSTALL:
       return <Connector connector={connector} theme={theme} />;
-    case DialogState.CONNECTING:
+    case Routes.CONNECTING:
       return <Connecting connector={connector} theme={theme} />;
     default:
       return null;
@@ -46,7 +50,7 @@ export function Connect() {
   const {
     theme,
     cancel,
-    dialog: { isOpen, state, connector, back },
+    dialog: { isOpen, route: state, connector, back },
   } = useConnectUI();
 
   useEffect(() => {

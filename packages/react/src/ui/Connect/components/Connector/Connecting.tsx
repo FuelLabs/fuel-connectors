@@ -1,5 +1,4 @@
 import type { FuelConnector } from 'fuels';
-import { useEffect, useState } from 'react';
 
 import { useConnectUI } from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../ConnectorIcon';
@@ -26,6 +25,7 @@ export function Connecting({ className, connector, theme }: ConnectorProps) {
     isConnecting,
     dialog: { retryConnect },
   } = useConnectUI();
+
   return (
     <div className={className}>
       <ConnectorImage>

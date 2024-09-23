@@ -1,16 +1,15 @@
 import type { FuelConnector } from 'fuels';
-import { useEffect, useState } from 'react';
 
-import { useConnectUI } from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../ConnectorIcon';
 
 import { useQuery } from '@tanstack/react-query';
-import { useConnect, useConnectors } from '../../../../hooks';
-import { Spinner } from '../Spinner/Spinner';
+import { useConnectUI } from '../../../../providers';
+import { Routes } from '../../../../providers/FuelUIProvider';
 import {
   ConnectorButton,
   ConnectorContent,
   ConnectorDescription,
+  ConnectorFooterHelper,
   ConnectorImage,
   ConnectorTitle,
 } from './styles';
@@ -23,18 +22,20 @@ type ConnectorProps = {
 
 export function Connector({ className, connector, theme }: ConnectorProps) {
   const {
+    dialog: { setRoute },
+  } = useConnectUI();
+  const {
     install: { action, link, description },
   } = connector.metadata;
-  const { connect } = useConnect();
-  const { isLoading } = useQuery({
-    queryKey: [connector.name],
+
+  // Ping exetensin if it's installed it will trigger connector
+  useQuery({
+    queryKey: ['CONNECTOR_PING', connector.name, connector.installed],
     queryFn: async () => {
       const isInstall = await connector.ping();
-      if (isInstall) connect(connector.name);
-      return isInstall;
+      if (isInstall) setRoute(Routes.CONNECTING);
     },
-    initialData: connector.installed,
-    refetchInterval: 1000,
+    staleTime: Number.POSITIVE_INFINITY,
   });
 
   const actionText = action || 'Install';
@@ -53,13 +54,12 @@ export function Connector({ className, connector, theme }: ConnectorProps) {
         <ConnectorTitle>{connector.name}</ConnectorTitle>
         <ConnectorDescription>{description}</ConnectorDescription>
       </ConnectorContent>
-      <ConnectorButton href={link} target="_blank" aria-disabled={isLoading}>
-        {isLoading ? (
-          <Spinner size={26} color="var(--fuel-loader-background)" />
-        ) : (
-          actionText
-        )}
+      <ConnectorButton href={link} target="_blank">
+        {actionText}
       </ConnectorButton>
+      <ConnectorFooterHelper>
+        If you have install and is not detected <br /> try to refresh the page.
+      </ConnectorFooterHelper>
     </div>
   );
 }

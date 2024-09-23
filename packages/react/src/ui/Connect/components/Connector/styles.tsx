@@ -17,6 +17,16 @@ export const ConnectorDescription = styled.p`
   opacity: 0.8;
 `;
 
+export const ConnectorFooterHelper = styled.p`
+  font-size: 0.8em;
+  font-weight: 400;
+  text-align: center;
+  margin: 0.6em 1.2em;
+  line-height: 1.2em;
+  padding: 0 2em;
+  opacity: 0.5;
+`;
+
 export const ConnectorDescriptionError = styled(ConnectorDescription)`
   color: var(--fuel-color-error);
 `;
