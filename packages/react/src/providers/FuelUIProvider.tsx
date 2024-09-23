@@ -12,6 +12,7 @@ import {
 import { useConnect } from '../hooks/useConnect';
 import { useConnectors } from '../hooks/useConnectors';
 
+import { useAccount, useBalance } from '../hooks';
 import { BADGE_BLACKLIST } from '../ui/Connect/components/Connectors/ConnectorBadge';
 import { useFuel } from './FuelHooksProvider';
 
@@ -19,14 +20,18 @@ export type FuelUIProviderProps = {
   children?: ReactNode;
   fuelConfig: FuelConfig;
   theme?: string;
+  bridgeURL?: string;
 };
 
 export enum Routes {
+  CONNECTORS = 'connectors',
   INSTALL = 'install',
   CONNECTING = 'connecting',
+  BRIDGE = 'bridge',
 }
 
 export type FuelUIContextType = {
+  bridgeURL?: string;
   fuelConfig: FuelConfig;
   theme: string;
   connectors: Array<FuelConnector>;
@@ -88,6 +93,7 @@ export function FuelUIProvider({
   fuelConfig,
   children,
   theme,
+  bridgeURL,
 }: FuelUIProviderProps) {
   const { fuel } = useFuel();
   const {
@@ -99,6 +105,8 @@ export function FuelUIProvider({
   const { connectors, isLoading: isLoadingConnectors } = useConnectors({
     query: { select: sortConnectors },
   });
+  const { account } = useAccount();
+  const { balance } = useBalance({ account });
   const [connector, setConnector] = useState<FuelConnector | null>(null);
   const [dialogRoute, setDialogRoute] = useState<Routes>(Routes.INSTALL);
   const [isOpen, setOpen] = useState(false);
@@ -136,8 +144,15 @@ export function FuelUIProvider({
 
   useEffect(() => {
     if (!isConnected) return;
-    handleCancel();
-  }, [isConnected, handleCancel]);
+    if (balance?.isZero()) {
+      if (!isOpen) setOpen(true);
+      setDialogRoute(Routes.BRIDGE);
+      return;
+    }
+    if (balance?.gte(0)) {
+      handleCancel();
+    }
+  }, [isConnected, isOpen, balance, handleCancel]);
 
   const handleRetryConnect = useCallback(async () => {
     if (!connector) return;
@@ -180,6 +195,7 @@ export function FuelUIProvider({
   return (
     <FuelConnectContext.Provider
       value={{
+        bridgeURL,
         fuelConfig,
         theme: theme || 'light',
         isLoading,

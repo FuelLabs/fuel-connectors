@@ -5,7 +5,7 @@ import { ConnectorIcon } from '../ConnectorIcon';
 
 import { Spinner } from '../Spinner/Spinner';
 import {
-  ConnectorButton,
+  ConnectorButtonPrimary,
   ConnectorContent,
   ConnectorDescription,
   ConnectorDescriptionError,
@@ -40,19 +40,23 @@ export function Connecting({ className, connector, theme }: ConnectorProps) {
         <ConnectorTitle>{connector.name}</ConnectorTitle>
         {error ? (
           <ConnectorDescriptionError>{error.message}</ConnectorDescriptionError>
-        ) : (
+        ) : isConnecting ? (
           <ConnectorDescription>
             Requesting connection to <br /> {connector.name}.
           </ConnectorDescription>
+        ) : (
+          <ConnectorDescription>
+            Click on the button bellow to connect to {location.origin}.
+          </ConnectorDescription>
         )}
       </ConnectorContent>
-      <ConnectorButton onClick={retryConnect}>
+      <ConnectorButtonPrimary onClick={retryConnect}>
         {isConnecting ? (
           <Spinner size={26} color="var(--fuel-loader-background)" />
         ) : (
           'Connect'
         )}
-      </ConnectorButton>
+      </ConnectorButtonPrimary>
     </div>
   );
 }

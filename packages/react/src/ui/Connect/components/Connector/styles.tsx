@@ -47,7 +47,7 @@ export const ConnectorButton = styled.a`
   cursor: pointer;
   justify-content: center;
   align-items: center;
-  margin: 1.4em 1em 0;
+  margin: 0.4em 1em 0;
   padding: 0.6em 0;
   font-size: 1.1em;
   color: var(--fuel-color-bold);
@@ -66,4 +66,18 @@ export const ConnectorButton = styled.a`
 export const ConnectorContent = styled.div`
   display: flex;
   flex-direction: column;
+  margin-bottom: 1em;
+`;
+
+export const ConnectorButtonPrimary = styled(ConnectorButton)`
+  background-color: var(--fuel-green-11);
+  color: var(--fuel-black-color);
+
+  &:visited {
+    color: var(--fuel-black-color);
+  }
+
+  &:hover {
+    background-color: var(--fuel-green-11);
+  }
 `;

@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useConnectUI } from '../../../../providers';
 import { Routes } from '../../../../providers/FuelUIProvider';
 import {
-  ConnectorButton,
+  ConnectorButtonPrimary,
   ConnectorContent,
   ConnectorDescription,
   ConnectorFooterHelper,
@@ -55,9 +55,9 @@ export function Connector({ className, connector, theme }: ConnectorProps) {
         <ConnectorTitle>{connector.name}</ConnectorTitle>
         <ConnectorDescription>{description}</ConnectorDescription>
       </ConnectorContent>
-      <ConnectorButton href={link} target="_blank">
+      <ConnectorButtonPrimary href={link} target="_blank">
         {actionText}
-      </ConnectorButton>
+      </ConnectorButtonPrimary>
       <ConnectorFooterHelper>
         If you have install and is not detected <br /> try to refresh the page.
       </ConnectorFooterHelper>

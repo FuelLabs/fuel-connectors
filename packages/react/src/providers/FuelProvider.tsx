@@ -17,12 +17,17 @@ export function FuelProvider({
   theme,
   children,
   fuelConfig,
+  bridgeURL,
   ui = true,
 }: FuelProviderProps) {
   if (ui) {
     return (
       <FuelHooksProvider fuelConfig={fuelConfig}>
-        <FuelUIProvider theme={theme} fuelConfig={fuelConfig}>
+        <FuelUIProvider
+          theme={theme}
+          bridgeURL={bridgeURL}
+          fuelConfig={fuelConfig}
+        >
           <Connect />
           {children}
         </FuelUIProvider>
