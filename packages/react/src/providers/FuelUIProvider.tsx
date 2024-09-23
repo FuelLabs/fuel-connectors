@@ -163,6 +163,7 @@ export function FuelUIProvider({
 
   const handleSelectConnector = useCallback(
     async (_connector: FuelConnector) => {
+      setError(null);
       setConnector(_connector);
       if (_connector.installed) {
         handleDialogAction(_connector);
