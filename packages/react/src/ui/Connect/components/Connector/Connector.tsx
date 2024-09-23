@@ -34,6 +34,7 @@ export function Connector({ className, connector, theme }: ConnectorProps) {
     queryFn: async () => {
       const isInstall = await connector.ping();
       if (isInstall) setRoute(Routes.CONNECTING);
+      return isInstall;
     },
     staleTime: Number.POSITIVE_INFINITY,
   });
