@@ -207,9 +207,9 @@ export function FuelUIProvider({
           return;
         }
         try {
-          const success = await connector?.ping().catch(() => false);
+          await connector?.ping().catch(() => false);
 
-          if (success && connector?.installed) {
+          if (connector?.installed) {
             handleDialogAction(connector);
           }
         } catch (err) {
