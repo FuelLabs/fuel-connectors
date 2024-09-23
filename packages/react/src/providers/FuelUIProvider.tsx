@@ -253,7 +253,7 @@ export function FuelUIProvider({
           connector,
           isOpen,
           action: handleDialogAction,
-          selectConnector: handleSelectConnector,
+          connect: handleSelectConnector,
           retryConnect: handleRetryConnect,
           back: handleBack,
         },

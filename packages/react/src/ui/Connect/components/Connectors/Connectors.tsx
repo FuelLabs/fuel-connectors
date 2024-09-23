@@ -11,7 +11,7 @@ export function Connectors() {
     connectors,
     isLoading,
     theme,
-    dialog: { selectConnector },
+    dialog: { connect: selectConnector },
   } = useConnectUI();
 
   return (
