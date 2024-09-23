@@ -146,14 +146,10 @@ export function FuelUIProvider({
       if (!_connector) return;
 
       setDialogState((prev) => {
-        if (
-          prev === DialogState.INSTALL ||
-          prev === DialogState.ERROR ||
-          connector?.installed
-        )
-          return DialogState.CONNECTING;
-
-        if (prev === DialogState.CONNECTING) return DialogState.INSTALLED;
+        if (prev === DialogState.ERROR) return DialogState.CONNECTING;
+        if (prev === DialogState.CONNECTING && _connector?.installed)
+          return DialogState.INSTALLED;
+        if (prev === DialogState.INSTALL) return DialogState.CONNECTING;
 
         return prev;
       });
