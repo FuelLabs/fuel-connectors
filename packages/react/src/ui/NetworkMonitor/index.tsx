@@ -52,6 +52,10 @@ export function NetworkMonitor({
     }
   }, [chainId, walletChainId, validConnector]);
 
+  if (!currentConnector?.connected && isOpen) {
+    setIsOpen(false);
+  }
+
   return (
     <Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
       <Dialog.Portal>

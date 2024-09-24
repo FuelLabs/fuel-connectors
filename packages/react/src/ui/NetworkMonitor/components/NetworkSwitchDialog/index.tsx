@@ -46,9 +46,15 @@ export function NetworkSwitchDialog({
   const description = `${currentConnector?.name ?? 'Your wallet'}'s network does not match the target for this
   project.${canSwitch ? ' Switch to the correct network or disconnect.' : ''}`;
 
-  function onClick() {
+  function handleSwitch() {
     chainId != null && selectNetwork({ chainId }, { onSuccess: close });
   }
+
+  function handleDisconnect() {
+    currentConnector?.disconnect();
+    close();
+  }
+
   return (
     <Container>
       <Title>Network Switch Required</Title>
@@ -59,7 +65,7 @@ export function NetworkSwitchDialog({
         <Button
           type="button"
           disabled={isPending || chainId == null || !canSwitch}
-          onClick={onClick}
+          onClick={handleSwitch}
           value="Switch"
         />
       )}
@@ -83,7 +89,7 @@ export function NetworkSwitchDialog({
       </div>
       <ButtonDisconnect
         type="button"
-        onClick={currentConnector?.disconnect}
+        onClick={handleDisconnect}
         value="Disconnect"
         color="var(--fuel-border-color)"
       />
