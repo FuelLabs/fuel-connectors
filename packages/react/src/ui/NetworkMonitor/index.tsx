@@ -70,7 +70,17 @@ export function NetworkMonitor({
                 : undefined
             }
           >
-            <DialogContent data-connector={!!currentConnector}>
+            <DialogContent
+              data-connector={!!currentConnector}
+              // Disable closing when clicking outside the dialog
+              onPointerDownOutside={(e) => {
+                e.preventDefault();
+              }}
+              // Disable closing when pressing escape
+              onEscapeKeyDown={(e) => {
+                e.preventDefault();
+              }}
+            >
               <DialogMain>
                 <NetworkSwitchDialog
                   currentConnector={currentConnector}
