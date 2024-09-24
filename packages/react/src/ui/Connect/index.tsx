@@ -1,7 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { useEffect, useState } from 'react';
 
-import { useConnectUI } from '../../providers/FuelUIProvider';
+import { Routes, useConnectUI } from '../../providers/FuelUIProvider';
 
 import { Connector } from './components/Connector/Connector';
 import { Connectors } from './components/Connectors';
@@ -18,6 +18,38 @@ import {
 import { getThemeVariables } from './themes';
 
 import './index.css';
+import type { FuelConnector } from 'fuels';
+import { Bridge } from './components/Bridge/Bridge';
+import { Connecting } from './components/Connector/Connecting';
+import { ExternalDisclaimer } from './components/ExternalDisclaimer/ExternalDisclaimer';
+
+const ConnectRoutes = ({
+  state,
+  connector,
+  theme,
+  bridgeURL,
+}: {
+  theme: string;
+  state: Routes;
+  bridgeURL?: string;
+  connector?: FuelConnector | null;
+}) => {
+  switch (state) {
+    case Routes.INSTALL:
+      if (!connector) return <Connectors />;
+      return <Connector connector={connector} theme={theme} />;
+    case Routes.CONNECTING:
+      if (!connector) return <Connectors />;
+      return <Connecting connector={connector} theme={theme} />;
+    case Routes.EXTERNAL_DISCLAIMER:
+      if (!connector) return <Connectors />;
+      return <ExternalDisclaimer connector={connector} />;
+    case Routes.BRIDGE:
+      return <Bridge theme={theme} bridgeURL={bridgeURL} />;
+    default:
+      return null;
+  }
+};
 
 export function Connect() {
   // Fix hydration problem between nextjs render and frontend render
@@ -27,7 +59,8 @@ export function Connect() {
   const {
     theme,
     cancel,
-    dialog: { isOpen, connector, back },
+    bridgeURL,
+    dialog: { isOpen, route: state, connector, back },
   } = useConnectUI();
 
   useEffect(() => {
@@ -60,11 +93,12 @@ export function Connect() {
               </Dialog.Close>
               <BackIcon size={32} onClick={back} data-connector={!!connector} />
               <DialogMain>
-                {connector ? (
-                  <Connector connector={connector} />
-                ) : (
-                  <Connectors />
-                )}
+                <ConnectRoutes
+                  state={state}
+                  connector={connector}
+                  bridgeURL={bridgeURL}
+                  theme={theme}
+                />
               </DialogMain>
             </DialogContent>
           </FuelRoot>

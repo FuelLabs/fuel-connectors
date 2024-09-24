@@ -33,6 +33,7 @@ export class FuelWalletConnector extends FuelConnector {
   name = 'Fuel Wallet';
   connected = false;
   installed = false;
+  external = false;
   events = FuelConnectorEventTypes;
   metadata: ConnectorMetadata = {
     image: '/connectors/fuel-wallet.svg',

@@ -49,6 +49,7 @@ export class BakoSafeConnector extends FuelConnector {
   };
   installed = true;
   connected = false;
+  external = false;
 
   events = {
     ...BakoSafeConnectorEvents,

@@ -157,7 +157,7 @@ export const FuelRoot = styled.div`
   width: 100%;
   margin: 0;
   padding: 0;
-  z-index: 9999;
+  z-index: 99;
   font-size: var(--fuel-font-size);
 
   & * {
