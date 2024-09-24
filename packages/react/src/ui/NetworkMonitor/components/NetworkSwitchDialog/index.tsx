@@ -39,7 +39,7 @@ export function NetworkSwitchDialog({
     return `${currentConnector?.name ?? 'Your wallet'}'s network does not match the target for this
   project.${
     canSwitch
-      ? ' Switch to disconnect or close this dialog to disconnect.'
+      ? ' Switch or close this dialog to disconnect.'
       : ' This connector does not support switching networks.'
   }`;
   }
@@ -49,9 +49,9 @@ export function NetworkSwitchDialog({
   }
   return (
     <Container>
-      <IconContainer>
+      {/* <IconContainer>
         <CloseIcon size={100} color="var(--fuel-color-error)" />
-      </IconContainer>
+      </IconContainer> */}
       <Content>
         <Title>Network Switch Required</Title>
         <Description error={isError}>{getDescription()}</Description>
