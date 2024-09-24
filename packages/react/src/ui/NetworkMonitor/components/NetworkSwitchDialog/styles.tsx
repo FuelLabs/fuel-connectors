@@ -77,26 +77,18 @@ export const Button = styled.input`
     background-color: var(--fuel-border-color);
     cursor: not-allowed;
   }
-
-  &:hover {
-    background-color: var(--fuel-green-11);
-  }
-
   &:disabled {
     cursor: not-allowed;
   }
 `;
+
 export const ButtonDisconnect = styled.input`
   ${butonBase}
   color: var(--fuel-color-bold);
-  background-color: transparent;
-  border-color: var(--fuel-color-error);
-  color: var(--fuel-color-error);
-  border-width: 1px;
+  background-color: var(--fuel-button-background);
 
   &:hover {
-    border-color: var(--fuel-button-background-hover);
-    color: var(--fuel-button-background-hover); 
+    background-color: var(--fuel-button-background-hover);
   }
 `;
 
