@@ -15,12 +15,13 @@ type FuelProviderProps = {
 } & FuelUIProviderProps;
 
 export function FuelProvider({
-  theme,
+  theme: _theme,
   children,
   fuelConfig,
   bridgeURL,
   ui = true,
 }: FuelProviderProps) {
+  const theme = _theme || 'light';
   if (ui) {
     return (
       <FuelHooksProvider fuelConfig={fuelConfig}>
