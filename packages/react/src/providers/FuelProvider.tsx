@@ -19,13 +19,18 @@ export function FuelProvider({
   theme,
   children,
   fuelConfig,
+  bridgeURL,
   ui = true,
   hideWebWallet,
 }: FuelProviderProps) {
   if (ui) {
     return (
       <FuelHooksProvider fuelConfig={fuelConfig}>
-        <FuelUIProvider theme={theme} fuelConfig={fuelConfig}>
+        <FuelUIProvider
+          theme={theme}
+          bridgeURL={bridgeURL}
+          fuelConfig={fuelConfig}
+        >
           <Connect />
           {!hideWebWallet && <WebWallet />}
           {children}

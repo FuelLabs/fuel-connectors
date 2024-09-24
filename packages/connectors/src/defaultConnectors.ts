@@ -38,11 +38,13 @@ export function defaultConnectors({
     new SolanaConnector({
       projectId: wcProjectId,
     }),
-    new BurnerWalletConnector(burnerWalletConfig),
   ];
 
   if (devMode) {
-    connectors.push(new FuelWalletDevelopmentConnector());
+    connectors.push(
+      new FuelWalletDevelopmentConnector(),
+      new BurnerWalletConnector(burnerWalletConfig),
+    );
   }
 
   return connectors;

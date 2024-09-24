@@ -19,6 +19,9 @@
       },
       "complexity": {
         "noForEach": "off"
+      },
+      "suspicious": {
+        "noAsyncPromiseExecutor": "off"
       }
     }
   },

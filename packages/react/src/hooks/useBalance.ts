@@ -10,8 +10,13 @@ import { useProvider } from './useProvider';
 type UseBalanceParams = {
   /**
    * The address to fetch the balance for.
+   * @deprecated Use `account` instead.
    */
-  address?: string;
+  address?: string | null;
+  /**
+   * The account to fetch the balance for.
+   */
+  account?: string | null;
   /**
    * The asset ID to fetch the balance for.
    */
@@ -36,11 +41,11 @@ type UseBalanceParams = {
  * console.log(balance.format());
  * ```
  */
-export const useBalance = ({ address, assetId }: UseBalanceParams) => {
+export const useBalance = ({ address, account, assetId }: UseBalanceParams) => {
   const { provider } = useProvider();
 
   const query = useNamedQuery('balance', {
-    queryKey: QUERY_KEYS.balance(address, assetId),
+    queryKey: QUERY_KEYS.balance(account ?? address ?? undefined, assetId),
     queryFn: async () => {
       try {
         if (!provider) throw new Error('Provider is needed');
