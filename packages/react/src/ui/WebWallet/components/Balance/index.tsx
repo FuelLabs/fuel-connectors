@@ -1,13 +1,13 @@
 import { IconEye, IconEyeClosed } from '@tabler/icons-react';
-import type { AssetFuel, BN } from 'fuels';
+import type { IAssetsBalance } from '../../../../utils';
 import { useBalanceFormat } from '../../hooks/useBalanceFormat';
-import type { IAssetsBalance } from '../../types';
 import {
   BalanceTitle,
   BalanceValue,
   BalanceValueRow,
   BalanceWrapper,
 } from './styles';
+
 export interface BalanceProps {
   asset: IAssetsBalance;
   toggleHideAmount: () => void;

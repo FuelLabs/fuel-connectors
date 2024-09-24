@@ -8,7 +8,7 @@ export interface DisconnectButtonProps {
 export const DisconnectButton = ({ disconnect }: DisconnectButtonProps) => {
   return (
     <Button onClick={() => disconnect()}>
-      <IconLogout />
+      <IconLogout size={18} />
       Disconnect
     </Button>
   );

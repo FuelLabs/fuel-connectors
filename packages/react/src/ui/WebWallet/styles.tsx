@@ -1,11 +1,11 @@
 import * as Dialog from '@radix-ui/react-dialog';
+import { IconX } from '@tabler/icons-react';
 import { keyframes, styled } from 'styled-components';
 
 export const Overlay = styled.div`
   position: fixed;
   bottom: 1rem;
   right: 0.5rem;
-  z-index: 2;
 `;
 
 const overlayShow = keyframes`
@@ -49,7 +49,6 @@ export const DialogContent = styled(Dialog.Content)`
   box-sizing: border-box;
   background-color: var(--fuel-dialog-background);
   border-radius: 36px;
-  padding-bottom: 18px;
   animation: ${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow:
     hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
@@ -59,10 +58,11 @@ export const DialogContent = styled(Dialog.Content)`
     outline: none;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 1024px) {
     bottom: 0px;
     right: 0px;
     width: 100vw;
+    max-height: 100vh;
     max-width: 100%;
     border-radius: 36px 36px 0 0;
   }
@@ -92,18 +92,11 @@ export const DialogMain = styled.div`
   flex-direction: column;
   gap: 16px;
   height: 100%;
+  padding: 24px 16px;
 `;
 
 export const FuelRoot = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
+  position: absolute;
   z-index: 9999;
   font-size: var(--fuel-font-size);
 
@@ -120,11 +113,43 @@ export const DialogTrigger = styled(Dialog.Trigger)`
   color: var(--fuel-dialog-background);
   padding: 6px 8px;
   border-radius: 16px;
+
+  &[data-state="open"] {
+    pointer-events: none;
+  }
 `;
 
-export const DialogClose = styled(Dialog.Close)`
-  svg {
-    top: 12px;
-    right: 12px;
+export const DialogClose = styled(Dialog.Close)``;
+
+export const VisuallyHidden = styled.span`
+  visibility: hidden;
+`;
+
+export type ContainerProps = {
+  $align?: 'center' | 'flex-start' | 'flex-end';
+  $gap?: string;
+};
+
+export const Container = styled.div<ContainerProps>`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: ${(props) => props.$gap || '0'};
+  align-items: ${(props) => props.$align || 'initial'};
+`;
+
+export const CloseIcon = styled(IconX)`
+  fill: var(--fuel-color);
+  padding: 6px;
+  font-family: inherit;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  margin-top: -3px;
+
+  &:hover,
+  &:active {
+    background-color: var(--fuel-connector-hover);
+    opacity: 1;
   }
 `;

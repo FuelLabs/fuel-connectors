@@ -5,7 +5,6 @@ export const HeaderWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 0 16px;
   flex-shrink: 0;
 `;
 
@@ -33,9 +32,4 @@ export const HeaderWalletAddressWrapper = styled.div`
 export const HeaderWalletAddress = styled.div`
   color: var(--fuel-color-muted);
   font-size: var(--fuel-font-size-sm);
-`;
-
-export const HeaderWalletAddressCopy = styled(IconCopy)`
-  cursor: pointer;
-  color: var(--fuel-color-muted);
 `;

@@ -4,19 +4,21 @@ import { useEffect, useState } from 'react';
 import { Footer, Header, Scrollable } from './components';
 import { useWebWallet } from './hooks';
 import {
+  CloseIcon,
+  Container,
   DialogClose,
   DialogContent,
   DialogMain,
-  DialogOverlay,
   DialogTrigger,
   Divider,
   FuelRoot,
+  VisuallyHidden,
 } from './styles';
 
 import './index.css';
+import { IconWallet } from '@tabler/icons-react';
 import { useConnectUI } from '../../providers/FuelUIProvider';
 import { shortAddress } from '../../utils';
-import { CloseIcon } from '../Connect/styles';
 import { getThemeVariables } from '../Connect/themes';
 
 export const WebWallet = () => {
@@ -31,6 +33,7 @@ export const WebWallet = () => {
     currentConnector,
     assetsBalance,
     disconnect,
+    isLoading,
   } = useWebWallet();
   // Fix hydration problem between nextjs render and frontend render
   // UI was not getting updated and theme colors was set wrongly
@@ -42,70 +45,61 @@ export const WebWallet = () => {
     setIsClient(true);
   }, []);
 
-  if (!isConnected) {
-    return null;
-  }
-
   const handleOpenChange = (openState: boolean) => {
-    setOpen(openState);
-    console.log('openState', openState);
+    // Fix for dialog not opening on mobile
+    setTimeout(() => setOpen(openState), 0);
   };
 
   const toggleHideAmount = () => {
     setHideAmount(!hideAmount);
   };
 
+  if (!isClient || isLoading) return null;
+
+  const style = {
+    display: !isConnected ? 'none' : 'block',
+    ...getThemeVariables(theme),
+  } as React.CSSProperties;
+
   return (
-    <Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger
-        style={
-          isClient
-            ? {
-                display: 'block',
-                ...getThemeVariables(theme),
-              }
-            : undefined
-        }
-      >
-        {!!(isConnected && address) && shortAddress(address)}
-      </DialogTrigger>
-      <Dialog.Portal>
-        <DialogOverlay asChild>
-          <FuelRoot
-            style={
-              isClient
-                ? {
-                    display: isOpen ? 'block' : 'none',
-                    ...getThemeVariables(theme),
-                  }
-                : undefined
-            }
-          >
-            {currentConnector && (
-              <DialogContent>
-                <DialogClose>
-                  <CloseIcon size={32} onClick={() => setOpen(false)} />
-                </DialogClose>
-                <DialogMain>
-                  <Header
-                    address={address}
-                    currentConnector={currentConnector}
-                  />
-                  <Divider />
-                  <Scrollable
-                    assetsBalances={assetsBalance}
-                    hideAmount={hideAmount}
-                    mainAsset={mainAsset}
-                    toggleHideAmount={toggleHideAmount}
-                  />
-                  <Divider />
-                  <Footer address={address} disconnect={disconnect} />
-                </DialogMain>
-              </DialogContent>
-            )}
-          </FuelRoot>
-        </DialogOverlay>
-      </Dialog.Portal>
-    </Dialog.Root>
+    <FuelRoot style={style}>
+      <Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
+        <DialogTrigger>
+          <Container $align="center" $gap="4px">
+            <IconWallet size={20} />
+            <span>{!!(isConnected && address) && shortAddress(address)}</span>
+          </Container>
+        </DialogTrigger>
+
+        <DialogContent
+          forceMount
+          style={{
+            visibility: isOpen ? 'visible' : 'hidden',
+          }}
+        >
+          <DialogMain>
+            <VisuallyHidden>
+              <Dialog.DialogTitle />
+              <Dialog.Description />
+            </VisuallyHidden>
+            <Container>
+              <Header address={address} currentConnector={currentConnector} />
+              <DialogClose asChild>
+                <CloseIcon size={32} onClick={() => setOpen(false)} />
+              </DialogClose>
+            </Container>
+            <Divider />
+            <Scrollable
+              assetsBalances={assetsBalance}
+              hideAmount={hideAmount}
+              mainAsset={mainAsset}
+              toggleHideAmount={toggleHideAmount}
+            />
+            <Divider />
+            <Footer address={address} disconnect={disconnect} />
+          </DialogMain>
+        </DialogContent>
+      </Dialog.Root>
+    </FuelRoot>
   );
 };

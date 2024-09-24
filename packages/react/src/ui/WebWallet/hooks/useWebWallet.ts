@@ -5,7 +5,7 @@ import {
   useDisconnect,
   useIsConnected,
 } from '../../../hooks';
-import { EmptyAsset, type IAssetsBalance } from '../types';
+import { EmptyEthAsset, type IAssetsBalance, isEthAsset } from '../../../utils';
 import { useAssetsBalance } from './useAssetsBalance';
 
 export const useWebWallet = () => {
@@ -30,8 +30,9 @@ export const useWebWallet = () => {
   useEffect(() => {
     if (!isConnected) {
       setAddress('');
-      setMainAsset(EmptyAsset);
+      setMainAsset(EmptyEthAsset);
       setFetchedBalance(false);
+      setOpen(false);
     } else {
       refetch();
       refetchAccount();
@@ -42,8 +43,7 @@ export const useWebWallet = () => {
 
   useEffect(() => {
     if (assetsBalance.length > 0 && !isFetchedBalance) {
-      const asset =
-        assetsBalance.find((ab) => ab.symbol === 'ETH') ?? EmptyAsset;
+      const asset = assetsBalance.find(isEthAsset) ?? EmptyEthAsset;
       setMainAsset(asset);
       setFetchedBalance(true);
     }
@@ -66,6 +66,6 @@ export const useWebWallet = () => {
     currentConnector,
     assetsBalance,
     disconnect,
-    isLoading: !isFetchedBalance || !isFetchedAccount,
+    isLoading: !isFetchedBalance || !isFetchedAccount || !currentConnector,
   };
 };

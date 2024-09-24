@@ -1,13 +1,18 @@
 import {
   assets as AssetsSDK,
-  bn,
+  DEFAULT_MIN_PRECISION,
   getAssetFuel,
   getDefaultChainId,
 } from 'fuels';
 import { useNamedQuery } from '../../../core/useNamedQuery';
 import { useFuel } from '../../../providers';
-import { QUERY_KEYS } from '../../../utils';
-import { type IAssetsBalance, UnknownAsset, isUnknownAsset } from '../types';
+import {
+  type IAssetsBalance,
+  QUERY_KEYS,
+  UnknownAsset,
+  isUnknownAsset,
+  sortingFn,
+} from '../../../utils';
 
 export const useAssetsBalance = () => {
   const { fuel } = useFuel();
@@ -31,36 +36,23 @@ export const useAssetsBalance = () => {
             const asset = fullAssets
               .map((a) => getAssetFuel(a, chainId))
               .find((a) => a?.assetId === balance.assetId);
-            return isUnknownAsset(asset)
-              ? {
-                  name: asset?.name ?? UnknownAsset.name,
-                  symbol: asset?.symbol ?? UnknownAsset.symbol,
-                  icon: asset?.icon ?? UnknownAsset.icon,
-                  amount: balance.amount.mul(10),
-                  id: balance.assetId,
-                  decimals: asset?.decimals ?? UnknownAsset.decimals,
-                }
-              : ({
-                  name: asset?.name ?? UnknownAsset.name,
-                  symbol: asset?.symbol ?? UnknownAsset.symbol,
-                  icon: asset?.icon ?? UnknownAsset.icon,
-                  amount: balance.amount ?? UnknownAsset.amount,
-                  id: balance.assetId,
-                  decimals: asset?.decimals ?? UnknownAsset.decimals,
-                } as IAssetsBalance);
+
+            return {
+              id: balance.assetId,
+              amount: balance.amount,
+              decimals: asset?.decimals,
+              icon: asset?.icon,
+              name: asset?.name,
+              symbol: asset?.symbol,
+              precision: balance.amount.isZero() ? 1 : DEFAULT_MIN_PRECISION,
+              ...(isUnknownAsset(asset) && {
+                ...UnknownAsset,
+                id: balance.assetId,
+                amount: balance.amount.mul(10),
+              }),
+            } as IAssetsBalance;
           })
-          .sort((a, b) => {
-            // if asset.symbol is "ETH" then it will be should be first
-            if (a.symbol === 'ETH') return -1;
-
-            const aName = a.name.toLowerCase() ?? '';
-            const bName = b.name.toLowerCase() ?? '';
-            // sort ascendant by asset.name
-            if (aName > bName) return -1;
-            if (bName > aName) return 1;
-
-            return 0;
-          });
+          .sort(sortingFn);
       } catch (_error: unknown) {
         return [];
       }

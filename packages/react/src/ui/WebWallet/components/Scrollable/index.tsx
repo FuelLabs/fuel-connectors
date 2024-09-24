@@ -1,5 +1,5 @@
+import type { IAssetsBalance } from '../../../../utils';
 import { Divider } from '../../styles';
-import type { IAssetsBalance } from '../../types';
 import { Assets } from '../Assets';
 import { Balance } from '../Balance';
 import { ScrollableContent, ScrollableWrapper } from './styles';

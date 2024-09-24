@@ -8,7 +8,7 @@ export const HistoryButton = ({ address }: { address: string }) => {
       target="_blank"
       rel="noreferrer"
     >
-      <IconHistory />
+      <IconHistory size={18} />
       History
     </Button>
   );

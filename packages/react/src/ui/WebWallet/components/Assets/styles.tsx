@@ -5,7 +5,6 @@ export const AssetsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 0 16px;
 `;
 
 export const AssetsTitleWrapper = styled.div`
@@ -56,11 +55,6 @@ export const AssetCardAssetInfoSymbolWrapper = styled.div`
   font-size: var(--fuel-font-size-sm);
 `;
 export const AssetCardAssetInfoSymbol = styled.div``;
-
-export const AssetCardAssetInfoCopy = styled(IconCopy)`
-  cursor: pointer;
-  color: var(--fuel-color-muted);
-`;
 
 export const AssetCardValue = styled.div`
   font-size: var(--fuel-font-size-sm);

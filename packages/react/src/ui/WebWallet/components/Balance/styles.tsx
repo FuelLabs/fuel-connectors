@@ -4,7 +4,6 @@ export const BalanceWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 0 16px;
 `;
 
 export const BalanceTitle = styled.div`
