@@ -60,8 +60,9 @@ export function NetworkSwitchDialog({
     <Container>
       <Title>Network Switch Required</Title>
       <Description>{description}</Description>
-      {!!isError ||
-        (!canSwitch && <ErrorMessage>{getErrorMessage()}</ErrorMessage>)}
+      {(!!isError || !canSwitch) && (
+        <ErrorMessage>{getErrorMessage()}</ErrorMessage>
+      )}
       {!isPending && (
         <Button
           type="button"
