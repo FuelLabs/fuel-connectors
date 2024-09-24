@@ -4,6 +4,7 @@ import { Connect } from '../ui/Connect';
 
 import { FuelHooksProvider } from './FuelHooksProvider';
 import { FuelUIProvider, type FuelUIProviderProps } from './FuelUIProvider';
+import { ThemeVariablesProvider } from './ThemeVariablesProvider';
 
 export { useFuel } from './FuelHooksProvider';
 export { useConnectUI } from './FuelUIProvider';

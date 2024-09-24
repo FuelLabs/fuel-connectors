@@ -79,6 +79,7 @@ export function Connect() {
               isClient
                 ? {
                     display: isOpen ? 'block' : 'none',
+                    ...getThemeVariables(theme),
                   }
                 : undefined
             }
