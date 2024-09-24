@@ -1,8 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { keyframes, styled } from 'styled-components';
 
-import { CloseIcon as CCloseIcon } from '../../icons/CloseIcon';
-
 const overlayShow = keyframes`
   from {
     opacity: 0;
@@ -41,7 +39,7 @@ export const DialogContent = styled(Dialog.Content)`
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 36px;
-  padding: 14px 0px;
+  padding: 30px 0px;
   padding-bottom: 18px;
   animation: ${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow:
@@ -67,49 +65,8 @@ export const DialogContent = styled(Dialog.Content)`
   }
 ` as unknown as typeof Dialog.Content;
 
-export const DialogTitle = styled(Dialog.Title)`
-  padding: 8px 14px 12px;
-  margin: 0;
-  font-weight: normal;
-  text-align: center;
-  font-size: 16px;
-  letter-spacing: var(--fuel-letter-spacing);
-  font-weight: 700;
-`;
-
-export const Divider = styled.div`
-  height: 1px;
-  width: 100%;
-  background-color: var(--fuel-border-color);
-  margin: 10px 0;
-  padding: 0;
-  box-sizing: border-box;
-`;
-
 export const DialogMain = styled.div`
-  margin-top: 20px;
   position: relative;
-`;
-
-export const CloseIcon = styled(CCloseIcon)`
-  fill: var(--fuel-color);
-  padding: 7px;
-  font-family: inherit;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 18px;
-  right: 28px;
-  cursor: pointer;
-  font-weight: 700;
-
-  &:hover,
-  &:active {
-    background-color: var(--fuel-connector-hover);
-    opacity: 1;
-  }
 `;
 
 export const FuelRoot = styled.div`

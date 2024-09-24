@@ -2,16 +2,17 @@ import type { FuelConnector } from 'fuels';
 import { useMemo } from 'react';
 import { NATIVE_CONNECTORS } from '../../../../config';
 import { useSelectNetwork } from '../../../../hooks/useSelectNetwork';
-import { CloseIcon } from '../../../../icons/CloseIcon';
 import { Spinner } from '../../../../icons/Spinner';
 import { useFuelChain } from '../../../../providers';
 import {
   Button,
+  ButtonDisconnect,
   ButtonLoading,
   Container,
-  Content,
   Description,
-  IconContainer,
+  Divider,
+  ErrorMessage,
+  OrLabel,
   Title,
 } from './styles';
 
@@ -32,30 +33,28 @@ export function NetworkSwitchDialog({
     return null;
   }
 
-  function getDescription() {
+  function getErrorMessage() {
     if (isError) {
       return error?.message || 'Failed to switch network';
     }
-    return `${currentConnector?.name ?? 'Your wallet'}'s network does not match the target for this
-  project.${
-    canSwitch
-      ? ' Switch or close this dialog to disconnect.'
-      : ' This connector does not support switching networks.'
-  }`;
+    if (!canSwitch) {
+      return 'This connector does not support switching networks.';
+    }
+    return '';
   }
+
+  const description = `${currentConnector?.name ?? 'Your wallet'}'s network does not match the target for this
+  project.${canSwitch ? ' Switch to the correct network or disconnect.' : ''}`;
 
   function onClick() {
     chainId != null && selectNetwork({ chainId }, { onSuccess: close });
   }
   return (
     <Container>
-      {/* <IconContainer>
-        <CloseIcon size={100} color="var(--fuel-color-error)" />
-      </IconContainer> */}
-      <Content>
-        <Title>Network Switch Required</Title>
-        <Description error={isError}>{getDescription()}</Description>
-      </Content>
+      <Title>Network Switch Required</Title>
+      <Description>{description}</Description>
+      {!!isError ||
+        (!canSwitch && <ErrorMessage>{getErrorMessage()}</ErrorMessage>)}
       {!isPending && (
         <Button
           type="button"
@@ -69,6 +68,25 @@ export function NetworkSwitchDialog({
           <Spinner size={26} color="var(--fuel-loader-background)" />
         </ButtonLoading>
       )}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: '10px',
+          width: '100%',
+        }}
+      >
+        <Divider style={{ flex: 1 }} />
+        <OrLabel>or</OrLabel>
+        <Divider style={{ flex: 1 }} />
+      </div>
+      <ButtonDisconnect
+        type="button"
+        onClick={currentConnector?.disconnect}
+        value="Disconnect"
+        color="var(--fuel-border-color)"
+      />
     </Container>
   );
 }

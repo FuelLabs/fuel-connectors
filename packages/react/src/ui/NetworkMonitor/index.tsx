@@ -1,15 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { useEffect, useState } from 'react';
 
-import {
-  CloseIcon,
-  DialogContent,
-  DialogMain,
-  DialogOverlay,
-  DialogTitle,
-  Divider,
-  FuelRoot,
-} from './styles';
+import { DialogContent, DialogMain, DialogOverlay, FuelRoot } from './styles';
 
 import { NATIVE_CONNECTORS } from '../../config';
 import { getThemeVariables } from '../../constants/themes';
@@ -75,11 +67,6 @@ export function NetworkMonitor({
             }
           >
             <DialogContent data-connector={!!currentConnector}>
-              <DialogTitle>Network Switch</DialogTitle>
-              <Divider />
-              <Dialog.Close asChild>
-                <CloseIcon size={32} />
-              </Dialog.Close>
               <DialogMain>
                 <NetworkSwitchDialog
                   currentConnector={currentConnector}
