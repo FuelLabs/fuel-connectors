@@ -66,6 +66,11 @@ export const QUERY_KEYS = {
   connectorList: (): QueryKey => {
     return QUERY_KEYS.base.concat('connectorList');
   },
+  connectorNetwork: (connectorName: string | undefined): QueryKey => {
+    const keys = QUERY_KEYS.base.concat(['connectorNetwork']);
+    if (connectorName) keys.push(connectorName);
+    return keys;
+  },
   currentConnector: (): QueryKey => {
     return QUERY_KEYS.base.concat('currentConnector');
   },
