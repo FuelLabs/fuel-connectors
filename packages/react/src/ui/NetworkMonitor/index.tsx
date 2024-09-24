@@ -47,9 +47,9 @@ export function NetworkMonitor({
   }, []);
 
   useEffect(() => {
-    setIsOpen((prev) => {
+    setIsOpen(() => {
       if (!validConnector || walletChainId == null) {
-        return prev;
+        return false;
       }
       return walletChainId !== chainId;
     });
