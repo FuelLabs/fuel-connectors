@@ -1,8 +1,8 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { keyframes, styled } from 'styled-components';
 
-import { BackIcon as CBackIcon } from './icons/BackIcon';
-import { CloseIcon as CCloseIcon } from './icons/CloseIcon';
+import { BackIcon as CBackIcon } from '../../icons/BackIcon';
+import { CloseIcon as CCloseIcon } from '../../icons/CloseIcon';
 
 const overlayShow = keyframes`
   from {
