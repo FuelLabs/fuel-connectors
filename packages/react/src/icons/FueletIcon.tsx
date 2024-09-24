@@ -1,4 +1,4 @@
-import type { SvgIconProps } from '../../../ui/types';
+import type { SvgIconProps } from '../types';
 
 export function FueletIcon({ theme, size, ...props }: SvgIconProps) {
   return (

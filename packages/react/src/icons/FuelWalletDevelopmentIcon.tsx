@@ -1,4 +1,4 @@
-import type { SvgIconProps } from '../../types';
+import type { SvgIconProps } from '../types';
 
 export function FuelWalletDevelopmentIcon({ size, ...props }: SvgIconProps) {
   return (

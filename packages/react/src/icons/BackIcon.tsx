@@ -1,4 +1,4 @@
-import type { SvgIconProps } from '../../types';
+import type { SvgIconProps } from '../types';
 
 export function BackIcon({ size, ...props }: SvgIconProps) {
   return (
