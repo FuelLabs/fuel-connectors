@@ -75,6 +75,11 @@ export const Button = styled.input`
   &:hover {
     background-color: var(--fuel-green-11);
   }
+
+  &:disabled {
+    background-color: var(--fuel-border-color);
+    cursor: not-allowed;
+  }
 `;
 
 export const ButtonLoading = styled.div`
