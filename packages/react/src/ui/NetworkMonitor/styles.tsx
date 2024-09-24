@@ -19,7 +19,7 @@ export const DialogOverlay = styled(Dialog.Overlay)`
 
 export const DialogMain = styled.div`
   position: relative;
-  padding: calc(0.8em + 4px) 56px 0.8em 56px;
+  padding: calc(0.8em + 4px) 16px 0.8em 16px;
 `;
 
 export const FuelRoot = styled.div`

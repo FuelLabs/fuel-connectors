@@ -15,7 +15,6 @@ export const Title = styled.h2`
   font-weight: 500;
   color: var(--fuel-color-bold);
   line-height: 1;
-  margin-bottom: ${defaultVerticalMargin};
 `;
 
 export const Divider = styled.div`
@@ -26,12 +25,20 @@ export const Divider = styled.div`
   box-sizing: border-box;
 `;
 
+export const Header = styled.div`
+  margin: 0 51px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: ${defaultVerticalMargin};
+  margin-bottom: ${defaultVerticalMargin};
+`;
+
 export const Description = styled.p`
   font-weight: 400;
   text-align: center;
   line-height: 1.2em;
   color: var(--fuel-color-light-gray);
-  margin-bottom: ${defaultVerticalMargin};
 `;
 
 export const ErrorMessage = styled.div`
@@ -40,8 +47,7 @@ export const ErrorMessage = styled.div`
   line-height: 1.2em;
   opacity: 0.8;
   color: var(--fuel-color-error);
-  margin-bottom: ${defaultVerticalMargin};
-  `;
+`;
 
 const butonBase = css`
   width: 100%;

@@ -12,6 +12,7 @@ import {
   Description,
   Divider,
   ErrorMessage,
+  Header,
   OrLabel,
   Title,
 } from './styles';
@@ -58,11 +59,13 @@ export function NetworkSwitchDialog({
 
   return (
     <Container>
-      <Title>Network Switch Required</Title>
-      <Description>{description}</Description>
-      {(!!isError || !canSwitch) && (
-        <ErrorMessage>{getErrorMessage()}</ErrorMessage>
-      )}
+      <Header>
+        <Title>Network Switch Required</Title>
+        <Description>{description}</Description>
+        {(!!isError || !canSwitch) && (
+          <ErrorMessage>{getErrorMessage()}</ErrorMessage>
+        )}
+      </Header>
       {!isPending && (
         <Button
           type="button"
