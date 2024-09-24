@@ -43,8 +43,9 @@ export function NetworkSwitchDialog({
     return '';
   }
 
-  const description = `${currentConnector?.name ?? 'Your wallet'}'s network does not match the target for this
-  project.${canSwitch ? ' Switch to the correct network or disconnect.' : ''}`;
+  const description = `This app does not support the current connected network.${
+    canSwitch ? ' Switch or disconnect to continue.' : ''
+  }`;
 
   function handleSwitch() {
     chainId != null && selectNetwork({ chainId }, { onSuccess: close });
