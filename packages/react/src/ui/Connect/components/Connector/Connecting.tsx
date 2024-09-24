@@ -3,7 +3,7 @@ import type { FuelConnector } from 'fuels';
 import { useConnectUI } from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../ConnectorIcon';
 
-import { Spinner } from '../Spinner/Spinner';
+import { Spinner } from '../../../../icons/Spinner';
 import {
   ConnectorButton,
   ConnectorButtonPrimary,
