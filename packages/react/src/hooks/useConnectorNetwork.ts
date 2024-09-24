@@ -6,7 +6,7 @@ type UseConnectorNetworkParams = {
   /**
    * The connector to fetch the network for.
    */
-  connector: FuelConnector | undefined;
+  connector: FuelConnector | undefined | null;
 };
 
 /**
@@ -32,5 +32,6 @@ export const useConnectorNetwork = ({
     queryKey: QUERY_KEYS.connectorNetwork(connector?.name),
     queryFn: async () =>
       connector?.currentNetwork() || Promise.resolve(undefined),
+    enabled: !!connector,
   });
 };
