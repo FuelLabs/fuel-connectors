@@ -1,4 +1,4 @@
-import type { Fuel, Network } from 'fuels';
+import type { Network } from 'fuels';
 import { createContext, useContext } from 'react';
 
 const context = createContext<Network['chainId'] | null | undefined>(null);

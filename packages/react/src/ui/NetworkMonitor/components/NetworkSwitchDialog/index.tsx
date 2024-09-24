@@ -1,3 +1,6 @@
+import type { FuelConnector } from 'fuels';
+import { useMemo } from 'react';
+import { NATIVE_CONNECTORS } from '../../../../config';
 import { useSelectNetwork } from '../../../../hooks/useSelectNetwork';
 import { CloseIcon } from '../../../../icons/CloseIcon';
 import { Spinner } from '../../../../icons/Spinner';
@@ -13,16 +16,33 @@ import {
 } from './styles';
 
 export function NetworkSwitchDialog({
-  name,
+  currentConnector,
   close,
-}: { name: string | undefined; close: () => void }) {
+}: { currentConnector: FuelConnector | undefined | null; close: () => void }) {
   const { chainId } = useFuelChain();
   const { selectNetwork, isError, error, isPending } = useSelectNetwork();
+  const canSwitch = useMemo(
+    () =>
+      currentConnector?.name &&
+      NATIVE_CONNECTORS.includes(currentConnector?.name),
+    [currentConnector],
+  );
 
-  const description = isError
-    ? error?.message || 'Failed to switch network'
-    : `${name ?? 'Your wallet'}'s network does not match the target for this
-  project.`;
+  if (!currentConnector) {
+    return null;
+  }
+
+  function getDescription() {
+    if (isError) {
+      return error?.message || 'Failed to switch network';
+    }
+    return `${currentConnector?.name ?? 'Your wallet'}'s network does not match the target for this
+  project.${
+    canSwitch
+      ? ' Switch to disconnect or close this dialog to disconnect.'
+      : ' This connector does not support switching networks.'
+  }`;
+  }
 
   function onClick() {
     chainId != null && selectNetwork({ chainId }, { onSuccess: close });
@@ -34,12 +54,12 @@ export function NetworkSwitchDialog({
       </IconContainer>
       <Content>
         <Title>Network Switch Required</Title>
-        <Description error={isError}>{description}</Description>
+        <Description error={isError}>{getDescription()}</Description>
       </Content>
       {!isPending && (
         <Button
           type="button"
-          disabled={isPending || chainId == null}
+          disabled={isPending || chainId == null || !canSwitch}
           onClick={onClick}
           value="Switch"
         />

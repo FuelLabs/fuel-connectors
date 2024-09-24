@@ -14,10 +14,10 @@ type FuelProviderProps = {
   ui?: boolean;
   fuelConfig?: FuelConfig;
   /**
-   * Whether enforce connectors to be on the desired the network. Requires a FuelChainProvider wrapper.
+   * Whether enforce connectors to be on the desired the network.
    * @default true
    */
-  monitorNetwork?: boolean;
+  chainId?: number;
 } & FuelUIProviderProps;
 
 export function FuelProvider({
@@ -26,21 +26,23 @@ export function FuelProvider({
   fuelConfig,
   bridgeURL,
   ui = true,
-  monitorNetwork = true,
+  chainId,
 }: FuelProviderProps) {
   const theme = _theme || 'light';
   if (ui) {
     return (
       <FuelHooksProvider fuelConfig={fuelConfig}>
-        <FuelUIProvider
-          theme={theme}
-          bridgeURL={bridgeURL}
-          fuelConfig={fuelConfig}
-        >
-          <Connect />
-          {!!monitorNetwork && <NetworkMonitor theme={theme} />}
-          {children}
-        </FuelUIProvider>
+        <FuelChainProvider value={chainId ?? undefined}>
+          <FuelUIProvider
+            theme={theme}
+            bridgeURL={bridgeURL}
+            fuelConfig={fuelConfig}
+          >
+            <Connect />
+            {chainId != null && <NetworkMonitor theme={theme} />}
+            {children}
+          </FuelUIProvider>
+        </FuelChainProvider>
       </FuelHooksProvider>
     );
   }

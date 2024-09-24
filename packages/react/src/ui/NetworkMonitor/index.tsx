@@ -82,7 +82,7 @@ export function NetworkMonitor({
               </Dialog.Close>
               <DialogMain>
                 <NetworkSwitchDialog
-                  name={currentConnector?.name}
+                  currentConnector={currentConnector}
                   close={() => setIsOpen(false)}
                 />
               </DialogMain>
