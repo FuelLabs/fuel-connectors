@@ -12,7 +12,6 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   gap: var(--fuel-items-gap);
-  padding: 0px 14px;
 `;
 
 export const Title = styled.h2`
@@ -29,14 +28,12 @@ export const Divider = styled.div`
   width: 100%;
   background-color: var(--fuel-color-light-gray);
   margin: 10px 0;
-  padding: 0;
   box-sizing: border-box;
 `;
 
 export const Description = styled.p`
   font-weight: 400;
   text-align: center;
-  margin: 0 1.2em;
   line-height: 1.2em;
   color: var(--fuel-color-light-gray);
   ${defaultTextBottomMargin}
@@ -52,7 +49,7 @@ export const ErrorMessage = styled.div`
   `;
 
 const butonBase = css`
-  width: 80%;
+  width: 100%;
   height: 40px;
   display: flex;
   border-radius: 11px;
@@ -61,7 +58,7 @@ const butonBase = css`
   cursor: pointer;
   justify-content: center;
   align-items: center;
-  margin: 0.4rem 1rem 0;
+  margin: 0.4rem 0;
   font-size: var(--fuel-font-size);
   ${defaultButtonBottomMargin}
 
