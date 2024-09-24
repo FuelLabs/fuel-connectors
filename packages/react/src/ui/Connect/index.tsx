@@ -16,7 +16,6 @@ import {
   FuelRoot,
 } from './styles';
 
-import './index.css';
 import type { FuelConnector } from 'fuels';
 import { getThemeVariables } from '../../constants/themes';
 import { Bridge } from './components/Bridge/Bridge';
