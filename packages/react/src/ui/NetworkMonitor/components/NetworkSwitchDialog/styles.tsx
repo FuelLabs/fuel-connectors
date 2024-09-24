@@ -1,11 +1,6 @@
 import { css, styled } from 'styled-components';
 
-const defaultButtonBottomMargin = css`
-  margin-bottom: 0.2em;
-`;
-const defaultTextBottomMargin = css`
-  margin-bottom: 1.4em;
-`;
+const defaultVerticalMargin = '0.8em';
 
 export const Container = styled.div`
   display: flex;
@@ -20,7 +15,7 @@ export const Title = styled.h2`
   font-weight: 500;
   color: var(--fuel-color-bold);
   line-height: 1;
-  ${defaultTextBottomMargin}
+  margin-bottom: ${defaultVerticalMargin};
 `;
 
 export const Divider = styled.div`
@@ -36,7 +31,7 @@ export const Description = styled.p`
   text-align: center;
   line-height: 1.2em;
   color: var(--fuel-color-light-gray);
-  ${defaultTextBottomMargin}
+  margin-bottom: ${defaultVerticalMargin};
 `;
 
 export const ErrorMessage = styled.div`
@@ -45,7 +40,7 @@ export const ErrorMessage = styled.div`
   line-height: 1.2em;
   opacity: 0.8;
   color: var(--fuel-color-error);
-  ${defaultButtonBottomMargin}
+  margin-bottom: ${defaultVerticalMargin};
   `;
 
 const butonBase = css`
@@ -60,7 +55,7 @@ const butonBase = css`
   align-items: center;
   margin: 0.4rem 0;
   font-size: var(--fuel-font-size);
-  ${defaultButtonBottomMargin}
+  margin-bottom: 0;
 
   &:disabled {
     cursor: not-allowed;
@@ -71,7 +66,7 @@ export const Button = styled.input`
   ${butonBase}
   background-color: var(--fuel-green-11);
   color: var(--fuel-black-color);
-
+  margin-bottom: ${defaultVerticalMargin};
 
   &:disabled {
     background-color: var(--fuel-border-color);
@@ -86,7 +81,7 @@ export const ButtonDisconnect = styled.input`
   ${butonBase}
   color: var(--fuel-color-bold);
   background-color: var(--fuel-button-background);
-
+  margin-top: ${defaultVerticalMargin};
   &:hover {
     background-color: var(--fuel-button-background-hover);
   }
