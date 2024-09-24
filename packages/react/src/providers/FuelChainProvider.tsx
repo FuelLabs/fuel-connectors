@@ -4,7 +4,7 @@ import { createContext, useContext } from 'react';
 const context = createContext<Network['chainId'] | null | undefined>(null);
 
 /**
- * A hook that returns the target chain id for the active provider.
+ * A hook that returns the target chain id to be enforced on the active provider.
  *
  * @examples
  * ```ts
