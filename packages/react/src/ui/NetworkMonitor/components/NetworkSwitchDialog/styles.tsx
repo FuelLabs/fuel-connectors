@@ -21,7 +21,7 @@ export const Title = styled.h2`
 export const Divider = styled.div`
   height: 1px;
   width: 100%;
-  background-color: var(--fuel-color-light-gray);
+  background-color: var(--fuel-separator-color);
   margin: 10px 0;
   box-sizing: border-box;
 `;
