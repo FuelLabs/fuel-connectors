@@ -1,12 +1,11 @@
-import type { FuelConnector } from 'fuels';
-import { handleCopy, shortAddress } from '../../../../utils';
+import type { ConnectorMetadata, FuelConnector } from 'fuels';
+import { shortAddress } from '../../../../utils';
 import { getImageUrl } from '../../../Connect/utils/getImageUrl';
 import { CopyButton } from '../CopyButton';
 import {
   ConnectorLogo,
   HeaderConnected,
   HeaderWalletAddress,
-  HeaderWalletAddressCopy,
   HeaderWalletAddressWrapper,
   HeaderWalletTitle,
   HeaderWrapper,
@@ -18,9 +17,12 @@ export interface HeaderProps {
 }
 
 export const Header = ({ address, currentConnector }: HeaderProps) => {
+  const metadata = currentConnector
+    ? currentConnector.metadata
+    : ({} as ConnectorMetadata);
   return (
     <HeaderWrapper>
-      <ConnectorLogo src={getImageUrl(currentConnector?.metadata ?? '')} />
+      <ConnectorLogo src={getImageUrl(metadata)} />
       <HeaderConnected>
         <HeaderWalletTitle>
           {currentConnector?.name ?? 'Your Wallet'}

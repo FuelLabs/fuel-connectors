@@ -7,4 +7,5 @@ export default defineConfig((options) => ({
   minify: true,
   clean: true,
   entry: ['src/index.ts'],
+  external: ['react', 'react-dom', '@tanstack/react-query', 'fuels'],
 }));

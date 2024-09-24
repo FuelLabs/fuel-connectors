@@ -10,7 +10,6 @@ import { AvatarGenerated } from '../AvatarGenerated';
 import { CopyButton } from '../CopyButton';
 import {
   AssetCard,
-  AssetCardAssetInfoCopy,
   AssetCardAssetInfoName,
   AssetCardAssetInfoSymbol,
   AssetCardAssetInfoSymbolWrapper,

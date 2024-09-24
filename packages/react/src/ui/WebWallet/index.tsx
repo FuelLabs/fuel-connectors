@@ -33,7 +33,6 @@ export const WebWallet = () => {
     currentConnector,
     assetsBalance,
     disconnect,
-    isLoading,
   } = useWebWallet();
   // Fix hydration problem between nextjs render and frontend render
   // UI was not getting updated and theme colors was set wrongly
@@ -43,10 +42,18 @@ export const WebWallet = () => {
 
   useEffect(() => {
     setIsClient(true);
+
+    // Fix for Radix-UI Dialog disabling pointer events for the whole page
+    // see more here: https://github.com/radix-ui/primitives/issues/2122
+    document.styleSheets[0].insertRule(
+      'body { pointer-events: auto !important; }',
+      document.styleSheets[0].cssRules.length,
+    );
   }, []);
 
   const handleOpenChange = (openState: boolean) => {
     // Fix for dialog not opening on mobile
+    // We're debouncing the open state to the next tick
     setTimeout(() => setOpen(openState), 0);
   };
 
@@ -54,7 +61,7 @@ export const WebWallet = () => {
     setHideAmount(!hideAmount);
   };
 
-  if (!isClient || isLoading) return null;
+  if (!isClient) return null;
 
   const style = {
     display: !isConnected ? 'none' : 'block',
