@@ -8,7 +8,6 @@ import { Connectors } from './components/Connectors';
 import {
   BackIcon,
   CloseIcon,
-  DialogContent,
   DialogMain,
   DialogOverlay,
   DialogTitle,
@@ -18,6 +17,7 @@ import {
 
 import type { FuelConnector } from 'fuels';
 import { getThemeVariables } from '../../constants/themes';
+import { DialogContent } from '../Dialog/components/Content';
 import { Bridge } from './components/Bridge/Bridge';
 import { Connecting } from './components/Connector/Connecting';
 import { ExternalDisclaimer } from './components/ExternalDisclaimer/ExternalDisclaimer';

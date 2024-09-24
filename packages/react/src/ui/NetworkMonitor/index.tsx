@@ -1,13 +1,13 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { useEffect, useState } from 'react';
 
-import { DialogContent, DialogMain, DialogOverlay, FuelRoot } from './styles';
-
 import { NATIVE_CONNECTORS } from '../../config';
 import { getThemeVariables } from '../../constants/themes';
 import { useWallet } from '../../hooks';
 import { useFuel, useFuelChain } from '../../providers';
+import { DialogContent } from '../Dialog/components/Content';
 import { NetworkSwitchDialog } from './components/NetworkSwitchDialog';
+import { DialogMain, DialogOverlay, FuelRoot } from './styles';
 
 export function NetworkMonitor({
   theme,
