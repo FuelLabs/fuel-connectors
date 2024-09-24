@@ -9,7 +9,7 @@ import { http, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
 
 import { defaultConnectors } from '@fuels/connectors';
-import { FuelProvider } from '@fuels/react';
+import { FuelChainProvider, FuelProvider } from '@fuels/react';
 
 import * as Toast from '@radix-ui/react-toast';
 
@@ -55,25 +55,28 @@ const wagmiConfig = createConfig({
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <FuelProvider
-        theme="dark"
-        fuelConfig={{
-          connectors: defaultConnectors({
-            devMode: true,
-            wcProjectId: WC_PROJECT_ID,
-            ethWagmiConfig: wagmiConfig,
-          }),
-        }}
-      >
-        <Toast.Provider>
-          <App />
-          <Toast.Viewport
-            id="toast-viewport"
-            className="fixed bottom-0 right-0 z-[100] m-0 flex w-[420px] max-w-[100vw] list-none flex-col gap-[10px] p-[var(--viewport-padding)] outline-none [--viewport-padding:_25px]"
-          />
-        </Toast.Provider>
-        <ScreenSizeIndicator />
-      </FuelProvider>
+      <FuelChainProvider value={0}>
+        <FuelProvider
+          theme="dark"
+          monitorNetwork
+          fuelConfig={{
+            connectors: defaultConnectors({
+              devMode: true,
+              wcProjectId: WC_PROJECT_ID,
+              ethWagmiConfig: wagmiConfig,
+            }),
+          }}
+        >
+          <Toast.Provider>
+            <App />
+            <Toast.Viewport
+              id="toast-viewport"
+              className="fixed bottom-0 right-0 z-[100] m-0 flex w-[420px] max-w-[100vw] list-none flex-col gap-[10px] p-[var(--viewport-padding)] outline-none [--viewport-padding:_25px]"
+            />
+          </Toast.Provider>
+          <ScreenSizeIndicator />
+        </FuelProvider>
+      </FuelChainProvider>
 
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
