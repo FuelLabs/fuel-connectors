@@ -47,9 +47,12 @@ export function NetworkMonitor({
   }, []);
 
   useEffect(() => {
-    if (validConnector && walletChainId != null && walletChainId !== chainId) {
-      setIsOpen(true);
-    }
+    setIsOpen((prev) => {
+      if (!validConnector || walletChainId == null) {
+        return prev;
+      }
+      return walletChainId !== chainId;
+    });
   }, [chainId, walletChainId, validConnector]);
 
   if (!currentConnector?.connected && isOpen) {
