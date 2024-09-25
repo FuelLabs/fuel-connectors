@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import type { FuelConnector } from 'fuels';
+import type { FuelConnector, SelectNetworkArguments } from 'fuels';
 
 /**
  * A hook to select a network in the connector.
@@ -27,7 +27,8 @@ export const useSelectConnectorNetwork = (
   connector: FuelConnector | undefined | null,
 ) => {
   const { mutate, mutateAsync, ...queryProps } = useMutation({
-    mutationFn: connector?.selectNetwork,
+    mutationFn: (network: SelectNetworkArguments) =>
+      connector ? connector?.selectNetwork(network) : Promise.reject(undefined),
   });
 
   return {
