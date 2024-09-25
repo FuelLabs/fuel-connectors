@@ -57,6 +57,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <QueryClientProvider client={queryClient}>
       <FuelProvider
         theme="dark"
+        chainId={0}
         fuelConfig={{
           connectors: defaultConnectors({
             devMode: true,

@@ -38,6 +38,8 @@ const lightTheme = {
   '--fuel-blue-11': '#0D74CE',
   '--fuel-red-3': '#3B1219',
   '--fuel-red-11': '#FF9592',
+  '--fuel-color-light-gray': 'rgb(83 79 79 / 84%)',
+  '--fuel-separator-color': 'rgb(83 79 79 / 13%)',
 };
 
 const darkTheme = {
@@ -61,6 +63,8 @@ const darkTheme = {
   '--fuel-blue-11': '#70B9FF',
   '--fuel-red-3': '#B54548',
   '--fuel-red-11': '#FF9592',
+  '--fuel-color-light-gray': 'rgb(165 165 165 / 84%)',
+  '--fuel-separator-color': 'rgb(165 165 165 / 13%)',
 };
 
 type CustomTheme = Partial<typeof commonTheme & typeof lightTheme>;

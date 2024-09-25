@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { BRIDGE_URL } from '../../../../config';
+import { NoFundIcon } from '../../../../icons/NoFundIcon';
 import { useConnectUI } from '../../../../providers/FuelUIProvider';
-import { NoFundIcon } from '../../icons/NoFundIcon';
 import {
   ConnectorButton,
   ConnectorButtonPrimary,
