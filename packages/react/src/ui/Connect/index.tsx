@@ -15,7 +15,6 @@ import {
   FuelRoot,
 } from './styles';
 
-import type { FuelConnector } from 'fuels';
 import { getThemeVariables } from '../../constants/themes';
 import { DialogContent } from '../Dialog/components/Content';
 import { Bridge } from './components/Bridge/Bridge';
@@ -24,25 +23,22 @@ import { ExternalDisclaimer } from './components/ExternalDisclaimer/ExternalDisc
 
 const ConnectRoutes = ({
   state,
-  connector,
   theme,
   bridgeURL,
 }: {
   theme: string;
   state: Routes;
   bridgeURL?: string;
-  connector?: FuelConnector | null;
 }) => {
   switch (state) {
+    case Routes.LIST:
+      return <Connectors />;
     case Routes.INSTALL:
-      if (!connector) return <Connectors />;
-      return <Connector connector={connector} theme={theme} />;
+      return <Connector />;
     case Routes.CONNECTING:
-      if (!connector) return <Connectors />;
-      return <Connecting connector={connector} theme={theme} />;
+      return <Connecting />;
     case Routes.EXTERNAL_DISCLAIMER:
-      if (!connector) return <Connectors />;
-      return <ExternalDisclaimer connector={connector} />;
+      return <ExternalDisclaimer />;
     case Routes.BRIDGE:
       return <Bridge theme={theme} bridgeURL={bridgeURL} />;
     default:
@@ -94,7 +90,6 @@ export function Connect() {
               <DialogMain>
                 <ConnectRoutes
                   state={state}
-                  connector={connector}
                   bridgeURL={bridgeURL}
                   theme={theme}
                 />

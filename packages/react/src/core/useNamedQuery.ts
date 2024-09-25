@@ -43,7 +43,7 @@ export interface UseNamedQueryParams<
   TQueryKey extends QueryKey = QueryKey,
 > extends Pick<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'select'
+    'select' | 'refetchInterval' | 'refetchOnWindowFocus' | 'staleTime'
   > {
   name?: TName;
 }

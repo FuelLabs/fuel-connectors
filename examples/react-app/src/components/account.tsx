@@ -9,14 +9,13 @@ interface Props {
 }
 
 export default function ConnectedAccount({ isSigning }: Props) {
-  const { address } = useWallet();
-
+  const { account } = useWallet();
   const { disconnect } = useDisconnect();
-
+  if (!account) return null;
   return (
     <Feature title="Your Fuel Address">
-      <code className="block md:hidden">{truncAddressMiddle(address, 4)}</code>
-      <code className="hidden md:block">{truncAddressMiddle(address, 8)}</code>
+      <code className="block md:hidden">{truncAddressMiddle(account, 4)}</code>
+      <code className="hidden md:block">{truncAddressMiddle(account, 8)}</code>
       <Button
         onClick={() => disconnect()}
         loadingText="Disconnecting..."

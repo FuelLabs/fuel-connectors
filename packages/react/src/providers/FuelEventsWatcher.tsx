@@ -18,10 +18,12 @@ export function FuelEventsWatcher({ fuelConfig }: { fuelConfig?: FuelConfig }) {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.provider() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.nodeInfo() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.accounts() });
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.currentConnector() });
   }
 
   function onConnectorsChange() {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.connectorList() });
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.currentConnector() });
   }
 
   function onCurrentAccountChange() {
@@ -39,6 +41,7 @@ export function FuelEventsWatcher({ fuelConfig }: { fuelConfig?: FuelConfig }) {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.nodeInfo() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.accounts() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.connectorList() });
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.currentConnector() });
   }
 
   function onNetworkChange() {

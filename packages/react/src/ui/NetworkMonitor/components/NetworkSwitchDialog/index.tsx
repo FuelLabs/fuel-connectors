@@ -1,9 +1,12 @@
 import type { FuelConnector } from 'fuels';
 import { useMemo } from 'react';
 import { NATIVE_CONNECTORS } from '../../../../config';
+import { useCurrentConnector } from '../../../../hooks/useCurrentConnector';
+import { useDisconnect } from '../../../../hooks/useDisconnect';
 import { useSelectNetwork } from '../../../../hooks/useSelectNetwork';
 import { Spinner } from '../../../../icons/Spinner';
 import { useFuelChain } from '../../../../providers';
+import { isNativeConnector } from '../../../../utils';
 import {
   Button,
   ButtonDisconnect,
@@ -17,16 +20,13 @@ import {
   Title,
 } from './styles';
 
-export function NetworkSwitchDialog({
-  currentConnector,
-  close,
-}: { currentConnector: FuelConnector | undefined | null; close: () => void }) {
+export function NetworkSwitchDialog({ close }: { close: () => void }) {
+  const { connector: currentConnector } = useCurrentConnector();
+  const { disconnect } = useDisconnect();
   const { chainId } = useFuelChain();
   const { selectNetwork, isError, error, isPending } = useSelectNetwork();
   const canSwitch = useMemo(
-    () =>
-      currentConnector?.name &&
-      NATIVE_CONNECTORS.includes(currentConnector?.name),
+    () => currentConnector?.name && isNativeConnector(currentConnector),
     [currentConnector],
   );
 
@@ -53,7 +53,7 @@ export function NetworkSwitchDialog({
   }
 
   function handleDisconnect() {
-    currentConnector?.disconnect();
+    disconnect();
     close();
   }
 

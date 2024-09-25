@@ -44,7 +44,7 @@ export function Bridge({ className, bridgeURL, theme }: BridgeProps) {
       <ConnectorButtonPrimary href={bridgeHref} target="_blank">
         Bridge now
       </ConnectorButtonPrimary>
-      <ConnectorButton onClick={() => cancel(true)}>
+      <ConnectorButton onClick={() => cancel({ clean: true })}>
         Continue to application
       </ConnectorButton>
     </div>

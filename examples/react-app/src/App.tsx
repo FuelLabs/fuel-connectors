@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import Account from './components/account';
-import Balance from './components/balance';
 import Button from './components/button';
-import Counter from './components/counter';
+
 import Notification, {
   type Props as NotificationProps,
 } from './components/notification';
+
+import Account from './components/account';
+import Balance from './components/balance';
+import Counter from './components/counter';
 import Transfer from './components/transfer';
+
 import { useWallet } from './hooks/useWallet';
 
 export default function App() {
@@ -19,7 +22,6 @@ export default function App() {
     isFetching,
     connect,
   } = useWallet();
-
   const [isSigning, setIsSigning] = useState(false);
   const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
     open: false,
@@ -54,13 +56,13 @@ export default function App() {
                   {currentConnector.logo && (
                     <img
                       src={currentConnector.logo}
-                      alt={currentConnector.title}
+                      alt={currentConnector.name}
                       className="w-20 h-20"
                     />
                   )}
                 </div>
                 <h1 className="pb-1 pt-6 text-3xl font-medium">
-                  {currentConnector.title}
+                  {currentConnector?.name ?? 'Wallet Demo'}
                 </h1>
                 <p>
                   Fuel enables developers to build integrations with any wallet.

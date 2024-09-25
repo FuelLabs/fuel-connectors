@@ -1,8 +1,9 @@
 import type { FuelConnector } from 'fuels';
 
-import { useConnectUI } from '../../../../providers/FuelUIProvider';
+import { Routes, useConnectUI } from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../ConnectorIcon';
 
+import { useEffect } from 'react';
 import { Spinner } from '../../../../icons/Spinner';
 import {
   ConnectorButton,
@@ -15,17 +16,18 @@ import {
 } from './styles';
 
 type ConnectorProps = {
-  theme?: string;
   className?: string;
-  connector: FuelConnector;
 };
 
-export function Connecting({ className, connector, theme }: ConnectorProps) {
+export function Connecting({ className }: ConnectorProps) {
   const {
     error,
     isConnecting,
-    dialog: { retryConnect },
+    theme,
+    dialog: { connector, retryConnect },
   } = useConnectUI();
+
+  if (!connector) return null;
 
   return (
     <div className={className}>
@@ -56,7 +58,7 @@ export function Connecting({ className, connector, theme }: ConnectorProps) {
           <Spinner size={26} color="var(--fuel-loader-background)" />
         </ConnectorButton>
       ) : (
-        <ConnectorButtonPrimary onClick={retryConnect}>
+        <ConnectorButtonPrimary onClick={() => retryConnect(connector)}>
           Connect
         </ConnectorButtonPrimary>
       )}
