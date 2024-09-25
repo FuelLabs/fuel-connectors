@@ -53,7 +53,9 @@ export function NetworkSwitchDialog({
   }`;
 
   function handleSwitch() {
-    chainId != null && selectNetwork({ chainId }, { onSuccess: close });
+    chainId != null &&
+      !!currentConnector?.connected &&
+      selectNetwork({ chainId });
   }
 
   function handleDisconnect() {
