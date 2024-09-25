@@ -31,14 +31,14 @@ export const useWallet = () => {
     isLoading: isLoadingBalance,
     isFetching: isFetchingBalance,
     refetch: refetchBalance,
-  } = useBalance(
-    { account },
-    {
+  } = useBalance({
+    account,
+    query: {
       refetchInterval: 5000,
       refetchOnWindowFocus: true,
     },
-  );
-  const { wallet } = useFuelWallet(account);
+  });
+  const { wallet } = useFuelWallet({ account });
   const isLoading = [isLoadingAccount, isLoadingBalance].some(Boolean);
   const isFetching = [isFetchingAccount, isFetchingBalance].some(Boolean);
 

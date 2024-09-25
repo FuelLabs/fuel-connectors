@@ -20,6 +20,10 @@ type UseBalanceParams = {
    * The asset ID to fetch the balance for.
    */
   assetId?: BytesLike;
+  /**
+   * Additional query parameters to customize the behavior of `useNamedQuery`.
+   */
+  query?: UseNamedQueryParams<'balance', BN | null, Error, BN | null>;
 };
 
 // @TODO: Add a link to fuel connector's documentation.
@@ -40,10 +44,12 @@ type UseBalanceParams = {
  * console.log(balance.format());
  * ```
  */
-export const useBalance = (
-  { address, account, assetId }: UseBalanceParams,
-  options?: UseNamedQueryParams<'balance', BN | null, Error, BN>,
-) => {
+export const useBalance = ({
+  address,
+  account,
+  assetId,
+  query,
+}: UseBalanceParams) => {
   const { provider } = useProvider();
   const _address = account ?? address ?? undefined;
 
@@ -65,7 +71,7 @@ export const useBalance = (
     },
     initialData: null,
     enabled: !!provider && !!account,
-    ...options,
+    ...query,
   });
 
   return result;
