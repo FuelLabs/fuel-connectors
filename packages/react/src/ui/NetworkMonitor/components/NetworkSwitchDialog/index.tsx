@@ -1,7 +1,8 @@
 import type { FuelConnector } from 'fuels';
 import { useMemo } from 'react';
 import { NATIVE_CONNECTORS } from '../../../../config';
-import { useSelectNetwork } from '../../../../hooks/useSelectNetwork';
+
+import { useSelectConnectorNetwork } from '../../../../hooks/useSelectConnectorNetwork';
 import { Spinner } from '../../../../icons/Spinner';
 import { useFuelChain } from '../../../../providers';
 import {
@@ -22,7 +23,10 @@ export function NetworkSwitchDialog({
   close,
 }: { currentConnector: FuelConnector | undefined | null; close: () => void }) {
   const { chainId } = useFuelChain();
-  const { selectNetwork, isError, error, isPending } = useSelectNetwork();
+
+  const { selectNetwork, isError, error, isPending } =
+    useSelectConnectorNetwork(currentConnector);
+
   const canSwitch = useMemo(
     () =>
       currentConnector?.name &&
