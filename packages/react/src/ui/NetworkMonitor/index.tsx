@@ -1,16 +1,9 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { isNativeConnector } from 'src/utils';
-import { NATIVE_CONNECTORS } from '../../config';
 import { getThemeVariables } from '../../constants/themes';
-import {
-  useCurrentConnector,
-  useIsConnected,
-  useProvider,
-  useWallet,
-} from '../../hooks';
-import { useFuel, useFuelChain } from '../../providers';
+import { useCurrentConnector, useIsConnected, useProvider } from '../../hooks';
+import { useFuelChain } from '../../providers';
 import { DialogContent } from '../Dialog/components/Content';
 import { NetworkSwitchDialog } from './components/NetworkSwitchDialog';
 import { DialogMain, DialogOverlay, FuelRoot } from './styles';
