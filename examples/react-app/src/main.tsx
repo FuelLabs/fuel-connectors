@@ -16,6 +16,7 @@ import * as Toast from '@radix-ui/react-toast';
 import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import './index.css';
+import { CHAIN_IDS } from 'fuels';
 
 const queryClient = new QueryClient();
 
@@ -57,7 +58,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <QueryClientProvider client={queryClient}>
       <FuelProvider
         theme="dark"
-        chainId={0}
+        chainId={CHAIN_IDS.fuel.testnet}
         fuelConfig={{
           connectors: defaultConnectors({
             devMode: true,
