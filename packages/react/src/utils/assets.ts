@@ -22,7 +22,7 @@ export const UnknownAsset: IAssetsBalance = {
   symbol: 'UNK',
   icon: '',
   amount: bn(0),
-  decimals: 1,
+  decimals: 0,
   precision: 0,
 };
 

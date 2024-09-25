@@ -1,32 +1,30 @@
-import { type FormatConfig, format } from 'fuels';
+import { DEFAULT_DECIMAL_UNITS, DEFAULT_MIN_PRECISION, format } from 'fuels';
 import { useMemo } from 'react';
-import type { IAssetsBalance } from '../../../utils';
-
-export const DEFAULT_MIN_PRECISION = 3;
-export const DECIMAL_UNITS = 9;
-export const formatOpts: FormatConfig = {
-  units: DECIMAL_UNITS,
-  precision: DECIMAL_UNITS,
-};
+import { type IAssetsBalance, isUnknownAsset } from '../../../utils';
 
 export interface BalanceFormat {
   formattedBalance: string;
   formattedBalanceFull: string;
 }
-export const useBalanceFormat = (asset: IAssetsBalance) =>
-  useMemo<BalanceFormat>(
+export const useBalanceFormat = (asset: IAssetsBalance) => {
+  const amount = isUnknownAsset(asset) ? asset.amount?.mul(10) : asset.amount;
+  const formatOpts = isUnknownAsset(asset) && { precision: 0, units: 1 };
+
+  return useMemo<BalanceFormat>(
     () => ({
-      formattedBalance: asset.amount?.format({
-        ...formatOpts,
+      formattedBalance: amount?.format({
         precision: asset.precision ?? DEFAULT_MIN_PRECISION,
         units: asset.decimals,
+        ...formatOpts,
       }),
       formattedBalanceFull:
         asset.amount &&
-        format(asset.amount, {
-          ...formatOpts,
+        format(amount, {
+          precision: DEFAULT_DECIMAL_UNITS,
           units: asset.decimals,
+          ...formatOpts,
         }),
     }),
-    [asset],
+    [asset, amount, formatOpts],
   );
+};

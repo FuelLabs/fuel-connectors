@@ -5,41 +5,35 @@ import {
   useDisconnect,
   useIsConnected,
 } from '../../../hooks';
-import { EmptyEthAsset, type IAssetsBalance, isEthAsset } from '../../../utils';
+import { EmptyEthAsset, isEthAsset } from '../../../utils';
 import { useAssetsBalance } from './useAssetsBalance';
 
-export const useWebWallet = () => {
+export type WebWalletProps = {
+  account: string;
+};
+export const useWebWallet = ({ account }: WebWalletProps) => {
   const [isOpen, setOpen] = useState(false);
-  const [address, setAddress] = useState('');
-  const [mainAsset, setMainAsset] = useState({} as IAssetsBalance);
+  const [mainAsset, setMainAsset] = useState(EmptyEthAsset);
   const [hideAmount, setHideAmount] = useState(false);
   const [isFetchedBalance, setFetchedBalance] = useState(false);
 
   const { isConnected } = useIsConnected();
   const { disconnect } = useDisconnect();
-  const {
-    account,
-    isFetched: isFetchedAccount,
-    refetch: refetchAccount,
-  } = useAccount();
-
-  const { assetsBalance, refetch: refetchAssetsBalance } = useAssetsBalance();
-
+  const { assetsBalance, refetch: refetchAssetsBalance } =
+    useAssetsBalance(account);
   const { currentConnector, refetch } = useCurrentConnector();
 
   useEffect(() => {
     if (!isConnected) {
-      setAddress('');
       setMainAsset(EmptyEthAsset);
       setFetchedBalance(false);
       setOpen(false);
     } else {
       refetch();
-      refetchAccount();
       refetchAssetsBalance();
       setFetchedBalance(false);
     }
-  }, [isConnected, refetch, refetchAccount, refetchAssetsBalance]);
+  }, [isConnected, refetch, refetchAssetsBalance]);
 
   useEffect(() => {
     if (assetsBalance.length > 0 && !isFetchedBalance) {
@@ -49,16 +43,9 @@ export const useWebWallet = () => {
     }
   }, [assetsBalance, isFetchedBalance]);
 
-  useEffect(() => {
-    if (isFetchedAccount && account && address === '') {
-      setAddress(account);
-    }
-  }, [account, isFetchedAccount, address]);
-
   return {
     isOpen,
     setOpen,
-    address,
     mainAsset,
     hideAmount,
     setHideAmount,
@@ -66,6 +53,6 @@ export const useWebWallet = () => {
     currentConnector,
     assetsBalance,
     disconnect,
-    isLoading: !isFetchedBalance || !isFetchedAccount || !currentConnector,
+    isLoading: !isFetchedBalance || !currentConnector,
   };
 };

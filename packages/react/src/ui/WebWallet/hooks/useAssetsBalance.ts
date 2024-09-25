@@ -14,16 +14,16 @@ import {
   sortingFn,
 } from '../../../utils';
 
-export const useAssetsBalance = () => {
+export const useAssetsBalance = (account: string) => {
   const { fuel } = useFuel();
 
   return useNamedQuery('assetsBalance', {
-    queryKey: QUERY_KEYS.assetsBalance(),
+    queryKey: QUERY_KEYS.assetsBalance(account),
     queryFn: async () => {
       try {
         const [assets, wallet] = await Promise.all([
           fuel.assets(),
-          fuel.getWallet((await fuel.currentAccount()) ?? ''),
+          fuel.getWallet(account),
         ]);
         const provider = wallet.provider;
 
@@ -48,7 +48,7 @@ export const useAssetsBalance = () => {
               ...(isUnknownAsset(asset) && {
                 ...UnknownAsset,
                 id: balance.assetId,
-                amount: balance.amount.mul(10),
+                amount: balance.amount,
               }),
             } as IAssetsBalance;
           })

@@ -128,11 +128,12 @@ export const VisuallyHidden = styled.span`
 export type ContainerProps = {
   $align?: 'center' | 'flex-start' | 'flex-end';
   $gap?: string;
+  $direction?: 'row' | 'column';
 };
 
 export const Container = styled.div<ContainerProps>`
   display: flex;
-  flex-direction: row;
+  flex-direction: ${(props) => props.$direction || 'row'};
   justify-content: space-between;
   gap: ${(props) => props.$gap || '0'};
   align-items: ${(props) => props.$align || 'initial'};

@@ -18,14 +18,18 @@ import {
 import './index.css';
 import { IconWallet } from '@tabler/icons-react';
 import { getThemeVariables } from '../../constants/themes';
+import { useAccount } from '../../hooks';
 import { useConnectUI } from '../../providers/FuelUIProvider';
 import { shortAddress } from '../../utils';
 
 export const WebWallet = () => {
+  const { account } = useAccount();
+
+  const address = account ?? '';
+
   const {
     isOpen,
     setOpen,
-    address,
     mainAsset,
     hideAmount,
     setHideAmount,
@@ -33,7 +37,7 @@ export const WebWallet = () => {
     currentConnector,
     assetsBalance,
     disconnect,
-  } = useWebWallet();
+  } = useWebWallet({ account: address });
   // Fix hydration problem between nextjs render and frontend render
   // UI was not getting updated and theme colors was set wrongly
   // see more here https://nextjs.org/docs/messages/react-hydration-error
@@ -85,10 +89,6 @@ export const WebWallet = () => {
           }}
         >
           <DialogMain>
-            <VisuallyHidden>
-              <Dialog.DialogTitle />
-              <Dialog.Description />
-            </VisuallyHidden>
             <Container>
               <Header address={address} currentConnector={currentConnector} />
               <DialogClose asChild>
@@ -105,6 +105,10 @@ export const WebWallet = () => {
             <Divider />
             <Footer address={address} disconnect={disconnect} />
           </DialogMain>
+          <VisuallyHidden>
+            <Dialog.DialogTitle />
+            <Dialog.Description>some description</Dialog.Description>
+          </VisuallyHidden>
         </DialogContent>
       </Dialog.Root>
     </FuelRoot>
