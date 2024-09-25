@@ -29,7 +29,6 @@ export const ConnectorList = styled.div`
   align-items: center;
   gap: var(--fuel-items-gap);
   padding: 0px 14px;
-  margin-top: 23px;
 `;
 
 export const ConnectorName = styled.div`

@@ -4,7 +4,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { isNativeConnector } from 'src/utils';
 import { NATIVE_CONNECTORS } from '../../config';
 import { getThemeVariables } from '../../constants/themes';
-import { useCurrentConnector, useProvider, useWallet } from '../../hooks';
+import {
+  useCurrentConnector,
+  useIsConnected,
+  useProvider,
+  useWallet,
+} from '../../hooks';
 import { useFuel, useFuelChain } from '../../providers';
 import { DialogContent } from '../Dialog/components/Content';
 import { NetworkSwitchDialog } from './components/NetworkSwitchDialog';
@@ -19,12 +24,14 @@ export function NetworkMonitor({
   const { chainId } = useFuelChain();
   const { provider } = useProvider();
   const { connector: currentConnector } = useCurrentConnector();
+  const { isConnected } = useIsConnected();
 
   useEffect(() => {
+    if (!isConnected) return;
     if (chainId === undefined) return;
     if (!provider) return;
     setIsOpen(provider.getChainId() !== chainId);
-  }, [provider, chainId]);
+  }, [provider, chainId, isConnected]);
 
   // const currentConnector = fuel.currentConnector();
   // Fix hydration problem between nextjs render and frontend render

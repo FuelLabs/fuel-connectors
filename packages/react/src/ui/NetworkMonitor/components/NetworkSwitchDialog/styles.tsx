@@ -26,7 +26,7 @@ export const Divider = styled.div`
 `;
 
 export const Header = styled.div`
-  margin: 0 51px;
+  margin: 20px 20px 0 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -39,6 +39,8 @@ export const Description = styled.p`
   text-align: center;
   line-height: 1.2em;
   color: var(--fuel-color-light-gray);
+  margin-bottom: 10px;
+  margin-top: 10px;
 `;
 
 export const ErrorMessage = styled.div`
@@ -72,7 +74,6 @@ export const Button = styled.input`
   ${butonBase}
   background-color: var(--fuel-green-11);
   color: var(--fuel-black-color);
-  margin-bottom: ${defaultVerticalMargin};
 
   &:disabled {
     background-color: var(--fuel-border-color);
@@ -87,7 +88,6 @@ export const ButtonDisconnect = styled.input`
   ${butonBase}
   color: var(--fuel-color-bold);
   background-color: var(--fuel-button-background);
-  margin-top: ${defaultVerticalMargin};
   &:hover {
     background-color: var(--fuel-button-background-hover);
   }

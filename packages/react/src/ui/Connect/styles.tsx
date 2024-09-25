@@ -49,8 +49,8 @@ export const Divider = styled.div`
 `;
 
 export const DialogMain = styled.div`
-  margin-top: 20px;
   position: relative;
+  overflow-y: auto;
 `;
 
 export const BackIcon = styled(CBackIcon)`

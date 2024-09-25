@@ -1,12 +1,8 @@
-import type { FuelConnector } from 'fuels';
-import { useMemo } from 'react';
-import { NATIVE_CONNECTORS } from '../../../../config';
 import { useCurrentConnector } from '../../../../hooks/useCurrentConnector';
 import { useDisconnect } from '../../../../hooks/useDisconnect';
 import { useSelectNetwork } from '../../../../hooks/useSelectNetwork';
 import { Spinner } from '../../../../icons/Spinner';
 import { useFuelChain } from '../../../../providers';
-import { isNativeConnector } from '../../../../utils';
 import {
   Button,
   ButtonDisconnect,
@@ -25,28 +21,20 @@ export function NetworkSwitchDialog({ close }: { close: () => void }) {
   const { disconnect } = useDisconnect();
   const { chainId } = useFuelChain();
   const { selectNetwork, isError, error, isPending } = useSelectNetwork();
-  const canSwitch = useMemo(
-    () => currentConnector?.name && isNativeConnector(currentConnector),
-    [currentConnector],
-  );
 
   if (!currentConnector) {
     return null;
   }
 
   function getErrorMessage() {
+    if (isError && error?.message === 'Method not implemented.') {
+      return 'The selected Wallet does not support switching networks, please switch manually in your wallet.';
+    }
     if (isError) {
       return error?.message || 'Failed to switch network';
     }
-    if (!canSwitch) {
-      return 'This connector does not support switching networks.';
-    }
     return '';
   }
-
-  const description = `This app does not support the current connected network.${
-    canSwitch ? ' Switch or disconnect to continue.' : ''
-  }`;
 
   function handleSwitch() {
     chainId != null && selectNetwork({ chainId }, { onSuccess: close });
@@ -61,17 +49,18 @@ export function NetworkSwitchDialog({ close }: { close: () => void }) {
     <Container>
       <Header>
         <Title>Network Switch Required</Title>
-        <Description>{description}</Description>
-        {(!!isError || !canSwitch) && (
-          <ErrorMessage>{getErrorMessage()}</ErrorMessage>
-        )}
+        <Description>
+          This app does not support the current connected network. Switch or
+          disconnect to continue.
+        </Description>
+        {!!isError && <ErrorMessage>{getErrorMessage()}</ErrorMessage>}
       </Header>
       {!isPending && (
         <Button
           type="button"
-          disabled={isPending || chainId == null || !canSwitch}
+          disabled={isPending || chainId == null}
           onClick={handleSwitch}
-          value="Switch"
+          value="Switch Network"
         />
       )}
       {isPending && (
@@ -84,7 +73,7 @@ export function NetworkSwitchDialog({ close }: { close: () => void }) {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          gap: '10px',
+          gap: '6px',
           width: '100%',
         }}
       >

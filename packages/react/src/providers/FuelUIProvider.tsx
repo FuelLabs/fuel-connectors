@@ -133,15 +133,17 @@ export function FuelUIProvider({
 
   useEffect(() => {
     if (isConnected && connector && provider) {
-      hasBalance(connector, provider, chain?.chainId).then(() => {
-        setOpen(true);
-        setDialogRoute(Routes.BRIDGE);
+      hasBalance(connector, provider, chain?.chainId).then((hasBalance) => {
+        if (!hasBalance) {
+          setOpen(true);
+          setDialogRoute(Routes.BRIDGE);
+          return;
+        }
+        setOpen(false);
+        setError(null);
+        setConnector(null);
+        setDialogRoute(Routes.LIST);
       });
-    } else if (isConnected) {
-      setOpen(false);
-      setError(null);
-      setConnector(null);
-      setDialogRoute(Routes.LIST);
     }
   }, [isConnected, connector, provider, chain]);
 
