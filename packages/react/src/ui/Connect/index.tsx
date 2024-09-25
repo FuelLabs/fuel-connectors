@@ -17,6 +17,8 @@ import {
 
 import type { FuelConnector } from 'fuels';
 import { getThemeVariables } from '../../constants/themes';
+import { useNetworkPaired } from '../../hooks/useNetworkPaired';
+import { useFuel } from '../../providers';
 import { DialogContent } from '../Dialog/components/Content';
 import { Bridge } from './components/Bridge/Bridge';
 import { Connecting } from './components/Connector/Connecting';
@@ -61,6 +63,15 @@ export function Connect() {
     bridgeURL,
     dialog: { isOpen, route: state, connector, back },
   } = useConnectUI();
+  const { fuel } = useFuel();
+  const currentConnector = fuel.currentConnector();
+  const networkPaired = useNetworkPaired();
+
+  useEffect(() => {
+    if (currentConnector?.connected === false) {
+      cancel();
+    }
+  }, [currentConnector?.connected, cancel]);
 
   useEffect(() => {
     setIsClient(true);
@@ -71,7 +82,10 @@ export function Connect() {
   };
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog.Root
+      open={isOpen && networkPaired !== false}
+      onOpenChange={handleOpenChange}
+    >
       <Dialog.Portal>
         <DialogOverlay asChild>
           <FuelRoot
