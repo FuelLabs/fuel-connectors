@@ -17,9 +17,9 @@ import {
 
 import './index.css';
 import { IconWallet } from '@tabler/icons-react';
+import { getThemeVariables } from '../../constants/themes';
 import { useConnectUI } from '../../providers/FuelUIProvider';
 import { shortAddress } from '../../utils';
-import { getThemeVariables } from '../Connect/themes';
 
 export const WebWallet = () => {
   const {
