@@ -15,4 +15,11 @@ export type Connector = {
   installed: boolean;
 };
 
+export type SvgIconProps = {
+  theme?: string;
+  className?: string;
+  onClick?: () => void;
+  size: number;
+};
+
 export type ConnectorList = Array<Connector>;
