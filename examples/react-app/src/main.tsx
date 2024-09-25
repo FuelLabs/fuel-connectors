@@ -58,7 +58,14 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <QueryClientProvider client={queryClient}>
       <FuelProvider
         theme="dark"
-        chainId={CHAIN_IDS.fuel.mainnet}
+        uiConfig={{
+          suggestBridge: true, // default true
+        }}
+        networks={[
+          {
+            chainId: CHAIN_IDS.fuel.testnet,
+          },
+        ]}
         fuelConfig={{
           connectors: defaultConnectors({
             devMode: true,

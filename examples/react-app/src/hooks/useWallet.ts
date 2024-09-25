@@ -4,13 +4,13 @@ import {
   useConnectUI,
   useCurrentConnector,
   useWallet as useFuelWallet,
-  useIsConnected,
 } from '@fuels/react';
 import { getConnectorLogo } from '../utils/getConnectorInfo';
 
 export const useWallet = () => {
   const {
     connect,
+    isConnected,
     isConnecting,
     isLoading: isLoadingConnectors,
   } = useConnectUI();
@@ -20,7 +20,6 @@ export const useWallet = () => {
     logo: connectImage,
     name: connector?.name ?? 'Wallet Demo',
   };
-  const { isConnected } = useIsConnected();
   const {
     account,
     isLoading: isLoadingAccount,

@@ -2,6 +2,11 @@ import { css, styled } from 'styled-components';
 
 const defaultVerticalMargin = '0.8em';
 
+export const DialogMain = styled.div`
+  position: relative;
+  padding: calc(0.8em + 4px) 16px 0.8em 16px;
+`;
+
 export const Container = styled.div`
   display: flex;
   flex-direction: column;

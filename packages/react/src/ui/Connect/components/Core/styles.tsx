@@ -1,5 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { keyframes, styled } from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 const overlayShow = keyframes`
   from {
@@ -15,11 +15,6 @@ export const DialogOverlay = styled(Dialog.Overlay)`
   position: fixed;
   inset: 0;
   animation: ${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
-`;
-
-export const DialogMain = styled.div`
-  position: relative;
-  padding: calc(0.8em + 4px) 16px 0.8em 16px;
 `;
 
 export const FuelRoot = styled.div`

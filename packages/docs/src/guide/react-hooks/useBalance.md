@@ -23,6 +23,6 @@ console.log(balance.format());
 ```
 
 #### Defined in
-[packages/react/src/hooks/useBalance.ts:44](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useBalance.ts#L44)
+[packages/react/src/hooks/useBalance.ts:43](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useBalance.ts#L43)
 
 ___

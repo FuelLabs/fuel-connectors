@@ -35,11 +35,14 @@ export const useCurrentConnector = <
   query,
 }: UseCurrentConnectorParams<TName, TData> = {}) => {
   const { fuel } = useFuel();
-
   return useNamedQuery('connector', {
     queryKey: QUERY_KEYS.currentConnector(),
     queryFn: async () => {
-      return fuel.currentConnector() ?? null;
+      const isConnected = await fuel.isConnected();
+      if (!isConnected) return null;
+      console.log('currentConnector', fuel.currentConnector());
+      const connector = fuel.currentConnector() ?? null;
+      return connector;
     },
     ...query,
   });
