@@ -54,7 +54,7 @@ export const useBalance = ({
   const _address = account ?? address ?? undefined;
 
   const result = useNamedQuery('balance', {
-    queryKey: QUERY_KEYS.balance(_address, assetId),
+    queryKey: QUERY_KEYS.balance(_address, assetId, provider),
     queryFn: async () => {
       try {
         if (!provider) throw new Error('Provider is needed');
