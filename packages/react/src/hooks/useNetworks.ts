@@ -1,6 +1,19 @@
-import { useNamedQuery } from '../core';
+import type { Network } from 'fuels';
+import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
+
+type UseNetworkParams = {
+  /**
+   * Additional query parameters to customize the behavior of `useNamedQuery`.
+   */
+  query?: UseNamedQueryParams<
+    'networks',
+    Array<Network>,
+    Error,
+    Array<Network>
+  >;
+};
 
 // @TODO: Add a link to fuel connector's documentation.
 /**
@@ -17,11 +30,12 @@ import { QUERY_KEYS } from '../utils';
  * console.log(networks);
  * ```
  */
-export const useNetworks = () => {
+export const useNetworks = (params?: UseNetworkParams) => {
   const { fuel } = useFuel();
 
   return useNamedQuery('networks', {
     queryKey: QUERY_KEYS.networks(),
     queryFn: fuel.networks,
+    ...params?.query,
   });
 };

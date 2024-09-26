@@ -17,6 +17,6 @@ console.log(chain);
 ```
 
 #### Defined in
-[packages/react/src/hooks/useChain.ts:24](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useChain.ts#L24)
+[packages/react/src/hooks/useChain.ts:32](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useChain.ts#L32)
 
 ___
