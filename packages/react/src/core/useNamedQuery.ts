@@ -21,7 +21,7 @@ type NamedUseQueryResult<
   [key in TName]: UseQueryResult<TQueryFnData, TError>['data'];
 };
 
-type DefinedNamedUseQueryResult<
+export type DefinedNamedUseQueryResult<
   TName extends string,
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -41,9 +41,9 @@ export interface UseNamedQueryParams<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends Pick<
+> extends Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'select' | 'refetchInterval' | 'refetchOnWindowFocus' | 'staleTime'
+    'queryKey' | 'queryFn' | 'enabled' | 'initialData'
   > {
   name?: TName;
 }

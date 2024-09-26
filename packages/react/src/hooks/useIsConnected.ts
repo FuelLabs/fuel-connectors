@@ -1,6 +1,13 @@
-import { useNamedQuery } from '../core';
+import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
+
+type UseIsConnected = {
+  /**
+   * Additional query parameters to customize the behavior of `useNamedQuery`.
+   */
+  query?: UseNamedQueryParams<'network', boolean, Error, boolean>;
+};
 
 // @TODO: Add a link to fuel connector's documentation.
 /**
@@ -16,7 +23,7 @@ import { QUERY_KEYS } from '../utils';
  * const { isConnected } = useIsConnected();
  * ```
  */
-export const useIsConnected = () => {
+export const useIsConnected = (params?: UseIsConnected) => {
   const { fuel } = useFuel();
   const query = useNamedQuery('isConnected', {
     queryKey: QUERY_KEYS.isConnected(),
@@ -29,6 +36,7 @@ export const useIsConnected = () => {
       }
     },
     initialData: false,
+    ...params?.query,
     // This is required for now as Fuelet is not triggering the connection event
     refetchInterval: 1000,
   });

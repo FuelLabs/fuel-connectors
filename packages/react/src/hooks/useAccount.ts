@@ -1,6 +1,13 @@
-import { useNamedQuery } from '../core';
+import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
+
+type UseAccountParams<TName extends string, TData> = {
+  /**
+   * Additional query parameters to customize the behavior of `useNamedQuery`.
+   */
+  query?: UseNamedQueryParams<TName, TData, Error, TData>;
+};
 
 // @TODO: Add a link to fuel connector's documentation.
 /**
@@ -16,7 +23,9 @@ import { QUERY_KEYS } from '../utils';
  * console.log(account);
  * ```
  */
-export const useAccount = () => {
+export const useAccount = (
+  params?: UseAccountParams<'account', string | null>,
+) => {
   const { fuel } = useFuel();
 
   return useNamedQuery('account', {
@@ -30,5 +39,6 @@ export const useAccount = () => {
       }
     },
     initialData: null,
+    ...params?.query,
   });
 };
