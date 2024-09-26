@@ -35,7 +35,7 @@ export function Connecting({ className }: ConnectorProps) {
       if (isConnected && route === Routes.CONNECTING && !isConnecting) {
         cancel();
       }
-      return;
+      return null;
     },
   });
 
