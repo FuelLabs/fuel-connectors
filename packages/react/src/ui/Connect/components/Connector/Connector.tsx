@@ -1,6 +1,6 @@
 import type { FuelConnector } from 'fuels';
 
-import { ConnectorIcon } from '../ConnectorIcon';
+import { ConnectorIcon } from '../Core/ConnectorIcon';
 
 import { useQuery } from '@tanstack/react-query';
 import { useConnectUI } from '../../../../providers';

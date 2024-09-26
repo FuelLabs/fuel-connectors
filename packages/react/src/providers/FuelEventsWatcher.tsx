@@ -33,6 +33,7 @@ export function FuelEventsWatcher({ fuelConfig }: { fuelConfig?: FuelConfig }) {
   }
 
   function onConnectionChange() {
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.currentConnector() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.isConnected() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.account() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.wallet() });
@@ -41,7 +42,6 @@ export function FuelEventsWatcher({ fuelConfig }: { fuelConfig?: FuelConfig }) {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.nodeInfo() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.accounts() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.connectorList() });
-    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.currentConnector() });
   }
 
   function onNetworkChange() {
@@ -88,6 +88,7 @@ export function FuelEventsWatcher({ fuelConfig }: { fuelConfig?: FuelConfig }) {
   // biome-ignore lint/correctness/useExhaustiveDependencies: We don't need to add all the dependencies here
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.connectorList() });
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.currentConnector() });
   }, [fuelConfig?.connectors, queryClient]);
 
   return null;

@@ -1,9 +1,7 @@
-import type { FuelConnector } from 'fuels';
-
 import { Routes, useConnectUI } from '../../../../providers/FuelUIProvider';
-import { ConnectorIcon } from '../ConnectorIcon';
+import { ConnectorIcon } from '../Core/ConnectorIcon';
 
-import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '../../../../icons/Spinner';
 import {
   ConnectorButton,
@@ -24,10 +22,22 @@ export function Connecting({ className }: ConnectorProps) {
     error,
     isConnecting,
     theme,
-    dialog: { connector, retryConnect },
+    cancel,
+    dialog: { route, connector, retryConnect },
+    isConnected,
   } = useConnectUI();
 
   if (!connector) return null;
+
+  useQuery({
+    queryKey: ['CONNECTING', connector.name, route, isConnected, isConnecting],
+    queryFn: async () => {
+      if (isConnected && route === Routes.CONNECTING && !isConnecting) {
+        cancel();
+      }
+      return;
+    },
+  });
 
   return (
     <div className={className}>

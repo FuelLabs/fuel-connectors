@@ -1,4 +1,4 @@
-import type { FuelConfig, FuelConnector } from 'fuels';
+import type { FuelConfig, FuelConnector, Network } from 'fuels';
 import {
   type ReactNode,
   createContext,
@@ -13,28 +13,27 @@ import { useConnect } from '../hooks/useConnect';
 import { useConnectors } from '../hooks/useConnectors';
 
 import { NATIVE_CONNECTORS } from '../config';
-import { useProvider } from '../hooks';
+import { useIsConnected } from '../hooks';
+import type { UIConfig } from '../types';
 import { isNativeConnector } from '../utils';
-import { hasBalance } from '../utils/hasBalance';
-import { useFuelChain } from './FuelChainProvider';
 
 export type FuelUIProviderProps = {
   children?: ReactNode;
+  uiConfig: UIConfig;
   fuelConfig: FuelConfig;
   theme?: string;
-  bridgeURL?: string;
 };
 
 export enum Routes {
   LIST = 'list',
   INSTALL = 'install',
   CONNECTING = 'connecting',
-  BRIDGE = 'bridge',
   EXTERNAL_DISCLAIMER = 'disclaimer',
 }
 
 export type FuelUIContextType = {
-  bridgeURL?: string;
+  isConnected: boolean;
+  uiConfig: UIConfig;
   fuelConfig: FuelConfig;
   theme: string;
   connectors: Array<FuelConnector>;
@@ -100,23 +99,17 @@ export function FuelUIProvider({
   fuelConfig,
   children,
   theme,
-  bridgeURL,
+  uiConfig,
 }: FuelUIProviderProps) {
-  const {
-    isPending: isConnecting,
-    data: isConnected,
-    isError,
-    connectAsync,
-  } = useConnect();
+  const { isPending: isConnecting, isError, connectAsync } = useConnect();
   const { connectors, isLoading: isLoadingConnectors } = useConnectors({
     query: { select: sortConnectors },
   });
+  const { isConnected } = useIsConnected();
   const [connector, setConnector] = useState<FuelConnector | null>(null);
   const [dialogRoute, setDialogRoute] = useState<Routes>(Routes.LIST);
   const [isOpen, setOpen] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const chain = useFuelChain();
-  const { provider } = useProvider();
 
   useEffect(() => {
     if (!connector) return;
@@ -130,22 +123,6 @@ export function FuelUIProvider({
       setConnector(currentConnector);
     }
   }, [connectors, connector]);
-
-  useEffect(() => {
-    if (isConnected && connector && provider) {
-      hasBalance(connector, provider, chain?.chainId).then((hasBalance) => {
-        if (!hasBalance) {
-          setOpen(true);
-          setDialogRoute(Routes.BRIDGE);
-          return;
-        }
-        setOpen(false);
-        setError(null);
-        setConnector(null);
-        setDialogRoute(Routes.LIST);
-      });
-    }
-  }, [isConnected, connector, provider, chain]);
 
   const handleBack = () => {
     setError(null);
@@ -168,7 +145,7 @@ export function FuelUIProvider({
   const handleStartConnection = useCallback(
     async (connector: FuelConnector) => {
       setDialogRoute(Routes.CONNECTING);
-      handleRetryConnect(connector);
+      await handleRetryConnect(connector);
     },
     [handleRetryConnect],
   );
@@ -216,17 +193,23 @@ export function FuelUIProvider({
   return (
     <FuelConnectContext.Provider
       value={{
-        bridgeURL,
-        fuelConfig,
+        // General
         theme: theme || 'light',
-        isLoading,
-        isConnecting,
-        isError,
-        connectors,
+        fuelConfig,
+        uiConfig,
         error,
         setError,
+        // Connection
+        isConnected: !!isConnected,
+        isConnecting,
+        // UI States
+        isLoading,
+        isError,
+        connectors,
+        // Actions
         connect: handleConnect,
         cancel: handleCancel,
+        // Dialog only
         dialog: {
           route: dialogRoute,
           setRoute,

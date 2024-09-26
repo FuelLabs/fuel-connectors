@@ -3,7 +3,7 @@ import {
   type FuelUIContextType,
   useConnectUI,
 } from '../../../../providers/FuelUIProvider';
-import { ConnectorIcon } from '../ConnectorIcon';
+import { ConnectorIcon } from '../Core/ConnectorIcon';
 import { ConnectorBadge } from './ConnectorBadge';
 
 import type { FuelConnector } from 'fuels';

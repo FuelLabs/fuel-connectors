@@ -25,7 +25,6 @@ type UseIsConnected = {
  */
 export const useIsConnected = (params?: UseIsConnected) => {
   const { fuel } = useFuel();
-
   const query = useNamedQuery('isConnected', {
     queryKey: QUERY_KEYS.isConnected(),
     queryFn: async () => {
@@ -38,6 +37,8 @@ export const useIsConnected = (params?: UseIsConnected) => {
     },
     initialData: false,
     ...params?.query,
+    // This is required for now as Fuelet is not triggering the connection event
+    refetchInterval: 1000,
   });
 
   return query;
