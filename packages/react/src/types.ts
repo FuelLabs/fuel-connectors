@@ -1,3 +1,5 @@
+import type { Network } from 'fuels';
+
 export type Connector = {
   name: string;
   image:
@@ -13,6 +15,12 @@ export type Connector = {
     description: string;
   };
   installed: boolean;
+};
+
+export type NetworkConfig = Partial<Network & { bridgeURL?: string }>;
+
+export type UIConfig = {
+  suggestBridge?: boolean;
 };
 
 export type SvgIconProps = {

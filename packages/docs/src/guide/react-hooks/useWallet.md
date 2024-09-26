@@ -8,22 +8,20 @@ A hook to fetch and manage a wallet by its address in the connected app.
 The parameters to fetch a wallet.
 - `address`: The wallet address to fetch. If not provided, the current account's address will be used.
 
-#### Returns
-
-An object containing:
-- `wallet`: The wallet or `null` if the wallet could not be fetched or the address is invalid.
-- [`...queryProps`](https://tanstack.com/query/latest/docs/framework/react/reference/useQuery): Destructured properties from `useQuery` result.
-
 #### Examples
 
 To get a wallet by address:
 ```ts
-const { wallet } = useWallet('0x...');
+const { wallet } = useWallet({ account: '0x...' });
 ```
 To get the current account's wallet:
 ```ts
 const { wallet } = useWallet();
 ```
 
+#### Deprecated
+
+Use `useWallet({ account })` instead.
+
 #### Defined in
-[packages/react/src/hooks/useWallet.ts:28](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useWallet.ts#L28)
+[packages/react/src/hooks/useWallet.ts:52](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useWallet.ts#L52)

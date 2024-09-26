@@ -1,6 +1,6 @@
 import type { FuelConnector } from 'fuels';
 
-import { ConnectorIcon } from '../ConnectorIcon';
+import { ConnectorIcon } from '../Core/ConnectorIcon';
 
 import { useQuery } from '@tanstack/react-query';
 import { useConnectUI } from '../../../../providers';
@@ -15,15 +15,15 @@ import {
 } from './styles';
 
 type ConnectorProps = {
-  theme?: string;
   className?: string;
-  connector: FuelConnector;
 };
 
-export function Connector({ className, connector, theme }: ConnectorProps) {
+export function Connector({ className }: ConnectorProps) {
   const {
-    dialog: { setRoute },
+    theme,
+    dialog: { connector, setRoute },
   } = useConnectUI();
+  if (!connector) return null;
   const {
     install: { action, link, description },
   } = connector.metadata;

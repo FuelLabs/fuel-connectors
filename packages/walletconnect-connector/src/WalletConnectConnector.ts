@@ -60,6 +60,7 @@ export class WalletConnectConnector extends PredicateConnector {
   };
 
   private fuelProvider!: FuelProvider;
+  private ethProvider!: EIP1193Provider;
   private web3Modal!: Web3Modal;
   private storage: StorageAbstract;
   private config: WalletConnectConfig = {} as WalletConnectConfig;
@@ -201,6 +202,12 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   protected async getProviders(): Promise<ProviderDictionary> {
+    if (this.fuelProvider && this.ethProvider) {
+      return {
+        fuelProvider: this.fuelProvider,
+        ethProvider: this.ethProvider,
+      };
+    }
     if (!this.fuelProvider) {
       this.fuelProvider = getOrThrow(
         await this.config.fuelProvider,

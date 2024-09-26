@@ -9,7 +9,10 @@ import { FuelProvider } from '@fuels/react';
 const queryClient = new QueryClient();
 
 const fuelConfig = {
-  connectors: defaultConnectors({ devMode: true }),
+  connectors: defaultConnectors({
+    devMode: true,
+    wcProjectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID,
+  }),
 };
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {

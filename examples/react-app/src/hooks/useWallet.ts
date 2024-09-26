@@ -2,78 +2,48 @@ import {
   useAccount,
   useBalance,
   useConnectUI,
-  useFuel,
+  useCurrentConnector,
   useWallet as useFuelWallet,
-  useIsConnected,
 } from '@fuels/react';
-import { useEffect, useState } from 'react';
-
-interface ICurrentConnector {
-  logo: string;
-  title: string;
-}
-
-const DEFAULT_CONNECTOR: ICurrentConnector = {
-  logo: '',
-  title: 'Wallet Demo',
-};
+import { getConnectorLogo } from '../utils/getConnectorInfo';
 
 export const useWallet = () => {
-  const { fuel } = useFuel();
   const {
     connect,
+    isConnected,
     isConnecting,
     isLoading: isLoadingConnectors,
   } = useConnectUI();
-  const { isConnected, refetch: refetchConnected } = useIsConnected();
+  const { currentConnector: _currentConnector } = useCurrentConnector();
+  const connectImage = _currentConnector
+    ? getConnectorLogo(_currentConnector)
+    : '';
+  const currentConnector = {
+    logo: connectImage,
+    name: _currentConnector?.name ?? 'Wallet Demo',
+  };
   const {
     account,
     isLoading: isLoadingAccount,
     isFetching: isFetchingAccount,
   } = useAccount();
-
-  const address = account ?? '';
-
-  const { wallet } = useFuelWallet(address);
-
   const {
     balance,
     isLoading: isLoadingBalance,
     isFetching: isFetchingBalance,
     refetch: refetchBalance,
-  } = useBalance({ address });
-
-  const [currentConnector, setCurrentConnector] =
-    useState<ICurrentConnector>(DEFAULT_CONNECTOR);
-
-  useEffect(() => {
-    refetchConnected();
-  }, [refetchConnected]);
-
-  useEffect(() => {
-    if (!isConnected) {
-      setCurrentConnector(DEFAULT_CONNECTOR);
-      return;
-    }
-
-    const currentConnector = fuel.currentConnector();
-
-    const title = currentConnector?.name ?? DEFAULT_CONNECTOR.title;
-
-    const logo =
-      currentConnector && typeof currentConnector.metadata?.image === 'object'
-        ? currentConnector.metadata.image.dark ?? ''
-        : (currentConnector?.metadata?.image as string) ?? '';
-
-    setCurrentConnector({ logo, title });
-  }, [fuel.currentConnector, isConnected]);
-
+  } = useBalance({
+    account,
+    query: {
+      refetchInterval: 5000,
+      refetchOnWindowFocus: true,
+    },
+  });
+  const { wallet } = useFuelWallet({ account });
   const isLoading = [isLoadingAccount, isLoadingBalance].some(Boolean);
-
   const isFetching = [isFetchingAccount, isFetchingBalance].some(Boolean);
 
   return {
-    address,
     account,
     balance,
     currentConnector,
@@ -84,7 +54,6 @@ export const useWallet = () => {
     isLoadingConnectors,
     wallet,
     connect,
-    refetchConnected,
     refetchBalance,
   };
 };

@@ -1,5 +1,4 @@
 import { bn } from 'fuels';
-import { useEffect } from 'react';
 import { useWallet } from '../hooks/useWallet';
 import { Faucet } from './faucet';
 import Feature from './feature';
@@ -16,17 +15,22 @@ const BalanceSkeleton = () => (
 );
 
 export default function Balance({ isSigning }: Props) {
-  const { refetchBalance, balance, address } = useWallet();
+  const { balance, account, isConnected } = useWallet();
 
-  useEffect(() => {
-    const interval = setInterval(() => refetchBalance(), 5000);
-    return () => clearInterval(interval);
-  }, [refetchBalance]);
+  if (!account && isConnected) {
+    return (
+      <Feature title="Balance">
+        <code>{bn(0).format()} ETH</code>
+        <Faucet isSigning={isSigning} address={account || ''} disabled={true} />
+      </Feature>
+    );
+  }
+  if (!account) return null;
 
   return (
     <Feature title="Balance">
       <code>{balance ? `${balance?.format()} ETH` : <BalanceSkeleton />}</code>
-      <Faucet isSigning={isSigning} address={address} />
+      <Faucet isSigning={isSigning} address={account} />
     </Feature>
   );
 }

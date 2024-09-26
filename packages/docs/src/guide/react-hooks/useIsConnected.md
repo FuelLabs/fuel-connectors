@@ -17,6 +17,6 @@ const { isConnected } = useIsConnected();
 ```
 
 #### Defined in
-[packages/react/src/hooks/useIsConnected.ts:19](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useIsConnected.ts#L19)
+[packages/react/src/hooks/useIsConnected.ts:26](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useIsConnected.ts#L26)
 
 ___
