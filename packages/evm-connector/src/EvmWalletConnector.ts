@@ -132,7 +132,9 @@ export class EVMWalletConnector extends PredicateConnector {
 
   protected async configProviders(config: EVMWalletConnectorConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || Provider.create(TESTNET_URL),
+      fuelProvider:
+        config.fuelProvider ||
+        Provider.create(config.providerUrl ?? TESTNET_URL),
       ethProvider: config.ethProvider || WINDOW?.ethereum,
     });
   }

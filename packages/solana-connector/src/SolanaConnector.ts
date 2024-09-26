@@ -76,7 +76,10 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   private providerFactory(config?: SolanaConfig) {
-    return config?.fuelProvider || FuelProvider.create(TESTNET_URL);
+    return (
+      config?.fuelProvider ||
+      FuelProvider.create(config?.providerUrl ?? TESTNET_URL)
+    );
   }
 
   // Solana Web3Modal is Canary and not yet stable
@@ -146,7 +149,9 @@ export class SolanaConnector extends PredicateConnector {
 
   protected async configProviders(config: SolanaConfig = {}) {
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
+      fuelProvider:
+        config.fuelProvider ||
+        FuelProvider.create(config.providerUrl ?? TESTNET_URL),
     });
   }
 

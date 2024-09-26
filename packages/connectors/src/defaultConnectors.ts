@@ -10,7 +10,8 @@ import { SolanaConnector } from '@fuel-connectors/solana-connector';
 import { WalletConnectConnector } from '@fuel-connectors/walletconnect-connector';
 import type { Config } from '@wagmi/core';
 import type { ProviderType } from '@web3modal/solana/dist/types/src/utils/scaffold';
-import type { FuelConnector } from 'fuels';
+import { type FuelConnector, Provider } from 'fuels';
+import { TESTNET_URL } from './constants';
 
 type DefaultConnectors = {
   devMode?: boolean;
@@ -18,6 +19,7 @@ type DefaultConnectors = {
   burnerWalletConfig?: BurnerWalletConfig;
   ethWagmiConfig?: Config;
   solanaConfig?: ProviderType;
+  providerUrl?: string;
 };
 
 export function defaultConnectors({
@@ -26,6 +28,7 @@ export function defaultConnectors({
   burnerWalletConfig,
   ethWagmiConfig,
   solanaConfig: _solanaConfig,
+  providerUrl,
 }: DefaultConnectors = {}): Array<FuelConnector> {
   const connectors: Array<FuelConnector> = [
     new FuelWalletConnector(),
@@ -34,16 +37,18 @@ export function defaultConnectors({
     new WalletConnectConnector({
       projectId: wcProjectId,
       wagmiConfig: ethWagmiConfig,
+      providerUrl,
     }),
     new SolanaConnector({
       projectId: wcProjectId,
+      providerUrl,
     }),
   ];
 
   if (devMode) {
     connectors.push(
       new FuelWalletDevelopmentConnector(),
-      new BurnerWalletConnector(burnerWalletConfig),
+      new BurnerWalletConnector({ ...burnerWalletConfig, providerUrl }),
     );
   }
 
