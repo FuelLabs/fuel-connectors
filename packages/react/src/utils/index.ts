@@ -1,5 +1,5 @@
 export * from './address';
 export * from './copy';
 export * from './queryKeys';
-export * from './selectCurrentConnector';
 export * from './assets';
+export * from './isNativeConnector';

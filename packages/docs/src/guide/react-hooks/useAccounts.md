@@ -17,6 +17,6 @@ console.log(accounts);
 ```
 
 #### Defined in
-[packages/react/src/hooks/useAccounts.ts:19](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useAccounts.ts#L19)
+[packages/react/src/hooks/useAccounts.ts:26](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useAccounts.ts#L26)
 
 ___

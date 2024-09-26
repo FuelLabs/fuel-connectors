@@ -50,38 +50,34 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
 
       // after 3 seconds we'll check if transaction is done
       const TIME_TO_WAIT = 3000;
-      setTimeout(() => {
-        // execute this inside timeout to avoid block the user flow
-        async function checkResult() {
-          if (wallet) {
-            const result = await resp?.waitForResult();
-
-            setToast({
-              open: true,
-              type: 'success',
-              children: (
-                <p>
-                  Transferred successfully! View it on the{' '}
-                  <a
-                    href={`https://app.fuel.network/tx/${result?.id}`}
-                    className="underline"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    block explorer
-                  </a>
-                </p>
-              ),
-            });
-
-            refetchBalance();
-            setLoading(false);
-            setIsSigning(false);
-          }
-        }
-
+      const checkTimeout = setTimeout(() => {
         checkResult();
       }, TIME_TO_WAIT);
+
+      async function checkResult() {
+        const result = await resp?.waitForResult();
+        refetchBalance();
+        setLoading(false);
+        setIsSigning(false);
+        setToast({
+          open: true,
+          type: 'success',
+          children: (
+            <p>
+              Transferred successfully! View it on the{' '}
+              <a
+                href={`https://app.fuel.network/tx/${result?.id}`}
+                className="underline"
+                target="_blank"
+                rel="noreferrer"
+              >
+                block explorer
+              </a>
+            </p>
+          ),
+        });
+        clearInterval(checkTimeout);
+      }
     } catch (err) {
       const error = err as CustomError;
       console.error(error.message);

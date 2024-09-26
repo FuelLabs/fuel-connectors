@@ -1,5 +1,5 @@
 import type { QueryKey } from '@tanstack/react-query';
-import type { Asset, BytesLike } from 'fuels';
+import type { BytesLike, Provider } from 'fuels';
 
 export const QUERY_KEYS = {
   base: ['fuel'] as QueryKey,
@@ -38,10 +38,15 @@ export const QUERY_KEYS = {
   provider: (): QueryKey => {
     return QUERY_KEYS.base.concat('provider');
   },
-  balance: (address?: string, assetId?: BytesLike): QueryKey => {
+  balance: (
+    address?: string,
+    assetId?: BytesLike,
+    provider?: Provider | null,
+  ): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('balance');
     if (address) queryKey.push(address);
     if (assetId) queryKey.push(assetId);
+    if (provider) queryKey.push(provider.getChainId());
     return queryKey;
   },
   wallet: (address?: string | null): QueryKey => {
@@ -71,7 +76,7 @@ export const QUERY_KEYS = {
     return QUERY_KEYS.base.concat('connectorList');
   },
   currentConnector: (): QueryKey => {
-    return QUERY_KEYS.base.concat('currentConnector');
+    return QUERY_KEYS.base.concat(['currentConnector']);
   },
   currentNetwork: (): QueryKey => {
     return QUERY_KEYS.base.concat('currentNetwork');

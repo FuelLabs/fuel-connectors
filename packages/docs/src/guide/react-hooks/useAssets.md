@@ -17,6 +17,6 @@ console.log(assets);
 ```
 
 #### Defined in
-[packages/react/src/hooks/useAssets.ts:20](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useAssets.ts#L20)
+[packages/react/src/hooks/useAssets.ts:27](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useAssets.ts#L27)
 
 ___
