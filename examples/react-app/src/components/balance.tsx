@@ -15,8 +15,18 @@ const BalanceSkeleton = () => (
 );
 
 export default function Balance({ isSigning }: Props) {
-  const { balance, account } = useWallet();
+  const { balance, account, isConnected } = useWallet();
+
+  if (!account && isConnected) {
+    return (
+      <Feature title="Balance">
+        <code>{bn(0).format()} ETH</code>
+        <Faucet isSigning={isSigning} address={account || ''} disabled={true} />
+      </Feature>
+    );
+  }
   if (!account) return null;
+
   return (
     <Feature title="Balance">
       <code>{balance ? `${balance?.format()} ETH` : <BalanceSkeleton />}</code>
