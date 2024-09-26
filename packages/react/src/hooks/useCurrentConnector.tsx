@@ -40,9 +40,7 @@ export const useCurrentConnector = <
     queryFn: async () => {
       const isConnected = await fuel.isConnected();
       if (!isConnected) return null;
-      console.log('currentConnector', fuel.currentConnector());
-      const connector = fuel.currentConnector() ?? null;
-      return connector;
+      return fuel.currentConnector() ?? null;
     },
     ...query,
   });
