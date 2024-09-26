@@ -12,7 +12,6 @@ import {
 } from './styles';
 
 import { Connecting } from './components/Connector/Connecting';
-// import { Bridge } from './components/Bridge/BridgeDialog';
 import { DialogContent } from './components/Core/DialogContent';
 import { DialogFuel } from './components/Core/DialogFuel';
 import { ExternalDisclaimer } from './components/ExternalDisclaimer/ExternalDisclaimer';
