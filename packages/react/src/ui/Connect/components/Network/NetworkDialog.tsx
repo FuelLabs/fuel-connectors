@@ -30,7 +30,7 @@ export function NetworkDialog({
   const { networks } = useFuel();
   const { disconnect } = useDisconnect();
   const { currentConnector } = useCurrentConnector();
-  const isSupportedNetwork = useIsSupportedNetwork();
+  const { isSupportedNetwork } = useIsSupportedNetwork();
   const { selectNetwork, isError, error, isPending } = useSelectNetwork();
 
   function handleSwitch() {

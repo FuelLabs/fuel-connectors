@@ -42,7 +42,7 @@ export function BridgeDialog({ className, theme }: BridgeProps) {
     uiConfig,
     dialog: { isOpen: isConnectOpen },
   } = useConnectUI();
-  const isSupportedNetwork = useIsSupportedNetwork();
+  const { isSupportedNetwork } = useIsSupportedNetwork();
   const { account } = useAccount();
   const { balance } = useBalance({ account });
   const [tempClose, setTempClose] = useState(false);

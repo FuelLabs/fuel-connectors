@@ -13,11 +13,12 @@ export function useIsSupportedNetwork() {
   const { provider } = useProvider();
   const { isConnected } = useIsConnected();
   const { currentConnector } = useCurrentConnector();
-  return useMemo(() => {
+  const isSupportedNetwork = useMemo(() => {
     if (!currentConnector) return true;
     if (!isConnected) return true;
     if (!provider) return true;
     const chainId = provider.getChainId();
     return !!networks.find((n) => n.chainId === chainId);
   }, [provider, networks, isConnected, currentConnector]);
+  return { isSupportedNetwork };
 }
