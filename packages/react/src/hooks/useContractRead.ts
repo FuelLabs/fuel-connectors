@@ -1,5 +1,5 @@
 import { type Address, Contract, type JsonAbi, type Provider } from 'fuels';
-import { useNamedQuery } from '../core/useNamedQuery';
+import { type UseNamedQueryParams, useNamedQuery } from '../core/useNamedQuery';
 import { QUERY_KEYS } from '../utils';
 
 type ContractReadWithInstanceProps<

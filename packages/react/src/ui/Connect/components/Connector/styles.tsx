@@ -5,7 +5,7 @@ export const ConnectorTitle = styled.h2`
   font-size: 1.2em;
   font-weight: 500;
   color: var(--fuel-color-bold);
-  margin: 0 0 0.8em 0;
+  margin: 0 0 0.4em 0;
   padding: 0 1.8em;
 `;
 
@@ -67,7 +67,7 @@ export const ConnectorButton = styled.a`
 export const ConnectorContent = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 1em;
+  margin-bottom: 24px;
 `;
 
 export const ConnectorButtonPrimary = styled(ConnectorButton)`

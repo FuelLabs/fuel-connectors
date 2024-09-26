@@ -57,6 +57,11 @@
     "items": []
   },
   {
+    "text": "useIsSupportedNetwork",
+    "link": "/guide/react-hooks/useIsSupportedNetwork",
+    "items": []
+  },
+  {
     "text": "useNetwork",
     "link": "/guide/react-hooks/useNetwork",
     "items": []

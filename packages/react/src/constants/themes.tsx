@@ -23,7 +23,7 @@ const lightTheme = {
   '--fuel-connector-hover': 'rgb(241 243 244)',
   '--fuel-border-color': 'hsl(210deg 9.52% 83.53%)',
   '--fuel-border-hover': 'hsla(0, 0%, 78.04%, 1)',
-  '--fuel-button-background': 'rgb(250 250 250)',
+  '--fuel-button-background': 'rgb(220 220 220)',
   '--fuel-button-background-hover': 'rgb(203 205 207)',
   '--fuel-loader-background':
     'linear-gradient(to right, hsl(0, 0%, 92%) 8%, hsl(0, 0%, 85%) 18%, hsl(0, 0%, 92%) 33%)',
@@ -33,6 +33,7 @@ const lightTheme = {
   '--fuel-blue-11': '#0D74CE',
   '--fuel-color-light-gray': 'rgb(83 79 79 / 84%)',
   '--fuel-separator-color': 'rgb(83 79 79 / 13%)',
+  '--fuel-black-color': '#FFFFFF',
 };
 
 const darkTheme = {

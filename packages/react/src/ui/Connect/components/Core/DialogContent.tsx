@@ -13,6 +13,8 @@ const contentShow = keyframes`
 `;
 
 export const DialogContent = styled(Dialog.Content)`
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   color: var(--fuel-color);
   user-select: none;
@@ -24,7 +26,7 @@ export const DialogContent = styled(Dialog.Content)`
   transform: translate(-50%, -50%);
   border-radius: 36px;
   padding: 14px 0px;
-  padding-bottom: 18px;
+  padding-bottom: 36px;
   animation: ${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
   top: 50%;
   width: 360px;

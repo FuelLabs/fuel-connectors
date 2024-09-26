@@ -1,11 +1,19 @@
 // should import ChainInfo because of this error: https://github.com/FuelLabs/fuels-ts/issues/1054
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ChainInfo } from 'fuels';
+import type { UseNamedQueryParams } from '../core';
 
 import { useNamedQuery } from '../core';
 import { QUERY_KEYS } from '../utils';
 
 import { useProvider } from './useProvider';
+
+type UseChainParams<TName extends string, TData> = {
+  /**
+   * Additional query parameters to customize the behavior of `useNamedQuery`.
+   */
+  query?: UseNamedQueryParams<TName, TData, Error, TData>;
+};
 
 // @TODO: Add a link to fuel connector's documentation.
 /**
@@ -21,7 +29,9 @@ import { useProvider } from './useProvider';
  * console.log(chain);
  * ```
  */
-export const useChain = () => {
+export const useChain = (
+  params?: UseChainParams<'chain', ChainInfo | null>,
+) => {
   const { provider } = useProvider();
 
   return useNamedQuery('chain', {
@@ -36,5 +46,6 @@ export const useChain = () => {
     },
     initialData: null,
     enabled: !!provider,
+    ...params?.query,
   });
 };

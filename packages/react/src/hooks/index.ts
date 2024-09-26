@@ -21,3 +21,5 @@ export * from './useTransaction';
 export * from './useTransactionReceipts';
 export * from './useTransactionResult';
 export * from './useWallet';
+export * from './useCurrentConnector';
+export * from './useIsSupportedNetwork';

@@ -1,8 +1,7 @@
-import type { FuelConnector } from 'fuels';
+import { Routes, useConnectUI } from '../../../../providers/FuelUIProvider';
+import { ConnectorIcon } from '../Core/ConnectorIcon';
 
-import { useConnectUI } from '../../../../providers/FuelUIProvider';
-import { ConnectorIcon } from '../ConnectorIcon';
-
+import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '../../../../icons/Spinner';
 import {
   ConnectorButton,
@@ -15,17 +14,30 @@ import {
 } from './styles';
 
 type ConnectorProps = {
-  theme?: string;
   className?: string;
-  connector: FuelConnector;
 };
 
-export function Connecting({ className, connector, theme }: ConnectorProps) {
+export function Connecting({ className }: ConnectorProps) {
   const {
     error,
     isConnecting,
-    dialog: { retryConnect },
+    theme,
+    cancel,
+    dialog: { route, connector, retryConnect },
+    isConnected,
   } = useConnectUI();
+
+  if (!connector) return null;
+
+  useQuery({
+    queryKey: ['CONNECTING', connector.name, route, isConnected, isConnecting],
+    queryFn: async () => {
+      if (isConnected && route === Routes.CONNECTING && !isConnecting) {
+        cancel();
+      }
+      return null;
+    },
+  });
 
   return (
     <div className={className}>
@@ -56,7 +68,7 @@ export function Connecting({ className, connector, theme }: ConnectorProps) {
           <Spinner size={26} color="var(--fuel-loader-background)" />
         </ConnectorButton>
       ) : (
-        <ConnectorButtonPrimary onClick={retryConnect}>
+        <ConnectorButtonPrimary onClick={() => retryConnect(connector)}>
           Connect
         </ConnectorButtonPrimary>
       )}

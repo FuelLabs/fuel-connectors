@@ -1,7 +1,14 @@
-import { Asset } from 'fuels';
-import { useNamedQuery } from '../core';
+import type { Asset } from 'fuels';
+import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
+
+type UseAssetsParams<TName extends string, TData> = {
+  /**
+   * Additional query parameters to customize the behavior of `useNamedQuery`.
+   */
+  query?: UseNamedQueryParams<TName, TData, Error, TData>;
+};
 
 // @TODO: Add a link to fuel connector's documentation.
 /**
@@ -17,7 +24,7 @@ import { QUERY_KEYS } from '../utils';
  * console.log(assets);
  * ```
  */
-export const useAssets = () => {
+export const useAssets = (params?: UseAssetsParams<'assets', Asset[]>) => {
   const { fuel } = useFuel();
 
   return useNamedQuery('assets', {
@@ -31,5 +38,6 @@ export const useAssets = () => {
       }
     },
     initialData: [],
+    ...params?.query,
   });
 };
