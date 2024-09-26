@@ -42,6 +42,11 @@
     "items": []
   },
   {
+    "text": "useCurrentConnector",
+    "link": "/guide/react-hooks/useCurrentConnector",
+    "items": []
+  },
+  {
     "text": "useDisconnect",
     "link": "/guide/react-hooks/useDisconnect",
     "items": []
@@ -49,6 +54,11 @@
   {
     "text": "useIsConnected",
     "link": "/guide/react-hooks/useIsConnected",
+    "items": []
+  },
+  {
+    "text": "useIsSupportedNetwork",
+    "link": "/guide/react-hooks/useIsSupportedNetwork",
     "items": []
   },
   {

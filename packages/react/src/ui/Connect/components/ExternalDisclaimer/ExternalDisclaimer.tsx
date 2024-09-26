@@ -11,13 +11,15 @@ import { DisclaimerContainer, DisclaimerList } from './styles';
 type BridgeProps = {
   bridgeURL?: string;
   className?: string;
-  connector: FuelConnector;
 };
 
-export function ExternalDisclaimer({ className, connector }: BridgeProps) {
+export function ExternalDisclaimer({ className }: BridgeProps) {
   const {
-    dialog: { _startConnection, back },
+    dialog: { connector, _startConnection, back },
   } = useConnectUI();
+
+  if (!connector) return null;
+
   return (
     <div className={className}>
       <DisclaimerContainer>

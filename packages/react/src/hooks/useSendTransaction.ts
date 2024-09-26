@@ -7,7 +7,7 @@ import {
 
 import { useFuel } from '../providers';
 
-type UseSendTransactionParams = {
+type MutationParams = {
   /**
    * The address to send the transaction to. Can be a string or an AbstractAddress.
    */
@@ -48,7 +48,7 @@ export const useSendTransaction = () => {
   const { fuel } = useFuel();
 
   const { mutate, mutateAsync, ...queryProps } = useMutation({
-    mutationFn: ({ address, transaction }: UseSendTransactionParams) => {
+    mutationFn: ({ address, transaction }: MutationParams) => {
       const destination = Address.fromDynamicInput(address).toString();
       return fuel.sendTransaction(destination, transaction);
     },

@@ -1,8 +1,25 @@
-import { Address } from 'fuels';
+import { type Account, Address } from 'fuels';
 
-import { useNamedQuery } from '../core';
+import {
+  type DefinedNamedUseQueryResult,
+  type UseNamedQueryParams,
+  useNamedQuery,
+} from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
+
+type UseWalletParamsDeprecated = string | null;
+
+type UseWalletParams = {
+  /**
+   * The wallet address to fetch. If not provided, the current account's address will be used.
+   */
+  account?: string | null;
+  /**
+   * Additional query parameters to customize the behavior of `useNamedQuery`.
+   */
+  query?: UseNamedQueryParams<'wallet', Account | null, Error, Account | null>;
+};
 
 // @TODO: Add a link to fuel connector's documentation.
 /**
@@ -18,21 +35,37 @@ import { QUERY_KEYS } from '../utils';
  * @examples
  * To get a wallet by address:
  * ```ts
- * const { wallet } = useWallet('0x...');
+ * const { wallet } = useWallet({ account: '0x...' });
  * ```
  * To get the current account's wallet:
  * ```ts
  * const { wallet } = useWallet();
  * ```
  */
-export const useWallet = (address?: string | null) => {
+export function useWallet(
+  params?: UseWalletParams,
+): DefinedNamedUseQueryResult<'wallet', Account | null, Error>;
+
+/**
+ * @deprecated Use `useWallet({ account })` instead.
+ */
+export function useWallet(
+  params?: UseWalletParamsDeprecated,
+): DefinedNamedUseQueryResult<'wallet', Account | null, Error>;
+
+export function useWallet(
+  params?: UseWalletParamsDeprecated | UseWalletParams,
+): DefinedNamedUseQueryResult<'wallet', Account | null, Error> {
   const { fuel } = useFuel();
+  const _params: UseWalletParams =
+    typeof params === 'string' ? { account: params } : params ?? {};
 
   return useNamedQuery('wallet', {
-    queryKey: QUERY_KEYS.wallet(address),
+    queryKey: QUERY_KEYS.wallet(_params.account),
     queryFn: async () => {
       try {
-        const accountAddress = address || (await fuel.currentAccount()) || '';
+        const accountAddress =
+          _params.account || (await fuel.currentAccount()) || '';
         // Check if the address is valid
         await Address.fromString(accountAddress);
         const wallet = await fuel.getWallet(accountAddress);
@@ -42,5 +75,6 @@ export const useWallet = (address?: string | null) => {
       }
     },
     initialData: null,
+    ..._params.query,
   });
-};
+}

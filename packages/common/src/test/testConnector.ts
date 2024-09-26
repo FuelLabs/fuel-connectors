@@ -39,7 +39,7 @@ export class TestPredicatedConnector extends PredicateConnector {
     return Promise.resolve(null);
   }
 
-  protected getProviders(): MaybeAsync<ProviderDictionary> {
+  protected getProviders(): Promise<ProviderDictionary> {
     throw new Error('Method not implemented.');
   }
 
