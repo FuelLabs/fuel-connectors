@@ -13,7 +13,7 @@ import {
 
 export interface HeaderProps {
   address: string;
-  currentConnector: FuelConnector | null;
+  currentConnector: FuelConnector | null | undefined;
 }
 
 export const Header = ({ address, currentConnector }: HeaderProps) => {

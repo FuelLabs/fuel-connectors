@@ -1,12 +1,12 @@
 import { IconCoins } from '@tabler/icons-react';
 import { useMemo } from 'react';
-import { BRIDGE_URL } from '../../../../config';
-import { useConnectUI } from '../../../../providers';
+import { useProvider } from '../../../../hooks';
 import {
   type IAssetsBalance,
   isUnknownAsset,
   shortAddress,
 } from '../../../../utils';
+import { useNetworkConfigs } from '../../../Connect/hooks/useNetworkConfigs';
 import { useBalanceFormat } from '../../hooks/useBalanceFormat';
 import { Container } from '../../styles';
 import { AvatarGenerated } from '../AvatarGenerated';
@@ -75,15 +75,16 @@ export const AssetsList = ({ assets, hideAmount }: AssetsProps) => {
 };
 
 export const NoAssets = () => {
-  const { bridgeURL } = useConnectUI();
-
+  const networks = useNetworkConfigs();
+  const { provider } = useProvider();
   const bridgeHref = useMemo(() => {
-    const url = new URL(bridgeURL || BRIDGE_URL);
-    url.searchParams.set('from', 'eth');
-    url.searchParams.set('to', 'fuel');
-    url.searchParams.set('auto_close', 'true');
+    const network = networks.find((n) => n.chainId === provider?.getChainId());
+    if (!network) return;
+    if (!network.bridgeURL) return;
+    const url = new URL(network.bridgeURL);
+    url.searchParams.set('', 'true');
     return url.toString();
-  }, [bridgeURL]);
+  }, [networks, provider]);
 
   return (
     <Container $direction="column" $gap="16px">
