@@ -12,7 +12,7 @@ export function useIsSupportedNetwork() {
   const { networks } = useFuel();
   const { provider } = useProvider();
   const { isConnected } = useIsConnected();
-  const { connector: currentConnector } = useCurrentConnector();
+  const { currentConnector } = useCurrentConnector();
   return useMemo(() => {
     if (!currentConnector) return true;
     if (!isConnected) return true;

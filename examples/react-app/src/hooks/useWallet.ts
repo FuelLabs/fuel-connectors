@@ -14,11 +14,13 @@ export const useWallet = () => {
     isConnecting,
     isLoading: isLoadingConnectors,
   } = useConnectUI();
-  const { connector } = useCurrentConnector();
-  const connectImage = connector ? getConnectorLogo(connector) : '';
+  const { currentConnector: _currentConnector } = useCurrentConnector();
+  const connectImage = _currentConnector
+    ? getConnectorLogo(_currentConnector)
+    : '';
   const currentConnector = {
     logo: connectImage,
-    name: connector?.name ?? 'Wallet Demo',
+    name: _currentConnector?.name ?? 'Wallet Demo',
   };
   const {
     account,

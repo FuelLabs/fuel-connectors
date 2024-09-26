@@ -39,7 +39,7 @@ export abstract class PredicateConnector extends FuelConnector {
   protected customPredicate: Maybe<PredicateConfig>;
   protected predicateAccount: Maybe<PredicateFactory> = null;
   protected subscriptions: Array<() => void> = [];
-  protected hasProviderSuccessed = true;
+  protected hasProviderSucceeded = true;
 
   private _predicateVersions!: Array<PredicateFactory>;
 
@@ -252,12 +252,12 @@ export abstract class PredicateConnector extends FuelConnector {
   public async ping(): Promise<boolean> {
     this.getProviders()
       .catch(() => {
-        this.hasProviderSuccessed = false;
+        this.hasProviderSucceeded = false;
       })
       .then(() => {
-        this.hasProviderSuccessed = true;
+        this.hasProviderSucceeded = true;
       });
-    return this.hasProviderSuccessed;
+    return this.hasProviderSucceeded;
   }
 
   public async version(): Promise<Version> {
