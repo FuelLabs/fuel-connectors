@@ -18,7 +18,7 @@ type DefaultConnectors = {
   burnerWalletConfig?: BurnerWalletConfig;
   ethWagmiConfig?: Config;
   solanaConfig?: ProviderType;
-  providerUrl?: string;
+  chainId?: number;
 };
 
 export function defaultConnectors({
@@ -27,7 +27,7 @@ export function defaultConnectors({
   burnerWalletConfig,
   ethWagmiConfig,
   solanaConfig: _solanaConfig,
-  providerUrl,
+  chainId,
 }: DefaultConnectors = {}): Array<FuelConnector> {
   const connectors: Array<FuelConnector> = [
     new FuelWalletConnector(),
@@ -36,18 +36,18 @@ export function defaultConnectors({
     new WalletConnectConnector({
       projectId: wcProjectId,
       wagmiConfig: ethWagmiConfig,
-      providerUrl,
+      chainId,
     }),
     new SolanaConnector({
       projectId: wcProjectId,
-      providerUrl,
+      chainId,
     }),
   ];
 
   if (devMode) {
     connectors.push(
       new FuelWalletDevelopmentConnector(),
-      new BurnerWalletConnector({ ...burnerWalletConfig, providerUrl }),
+      new BurnerWalletConnector({ ...burnerWalletConfig, chainId }),
     );
   }
 

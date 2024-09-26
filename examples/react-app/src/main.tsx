@@ -25,7 +25,6 @@ const queryClient = new QueryClient();
 // https://docs.walletconnect.com/web3modal/javascript/about
 // ============================================================
 const WC_PROJECT_ID = import.meta.env.VITE_APP_WC_PROJECT_ID;
-const PROVIDER_URL = import.meta.env.VITE_APP_PROVIDER_URL;
 const METADATA = {
   name: 'Wallet Demo',
   description: 'Fuel Wallets Demo',
@@ -72,7 +71,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
             devMode: true,
             wcProjectId: WC_PROJECT_ID,
             ethWagmiConfig: wagmiConfig,
-            providerUrl: PROVIDER_URL,
+            chainId: CHAIN_IDS.fuel.testnet,
           }),
         }}
       >

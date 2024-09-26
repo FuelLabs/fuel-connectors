@@ -180,6 +180,9 @@ importers:
 
   packages/burner-wallet-connector:
     devDependencies:
+      '@fuel-connectors/common':
+        specifier: workspace:*
+        version: link:../common
       fuels:
         specifier: 0.94.6
         version: 0.94.6

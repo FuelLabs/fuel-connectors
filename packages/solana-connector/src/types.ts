@@ -7,7 +7,7 @@ export type SolanaConfig = {
   projectId?: string;
   predicateConfig?: PredicateConfig;
   solanaConfig?: ProviderType;
-  providerUrl?: string;
+  chainId?: number;
 };
 
 export interface GetAccounts {

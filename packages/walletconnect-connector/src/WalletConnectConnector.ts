@@ -16,6 +16,7 @@ import {
 } from '@wagmi/core';
 import type { Web3Modal } from '@web3modal/wagmi';
 import {
+  CHAIN_IDS,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
@@ -34,13 +35,13 @@ import {
   type ProviderDictionary,
   getMockedSignatureIndex,
   getOrThrow,
+  getProviderUrl,
 } from '@fuel-connectors/common';
 import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
 import { ApiController } from '@web3modal/core';
 import {
   ETHEREUM_ICON,
   SINGATURE_VALIDATION_TIMEOUT,
-  TESTNET_URL,
   WINDOW,
 } from './constants';
 import type { WalletConnectConfig } from './types';
@@ -158,10 +159,9 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   protected async configProviders(config: WalletConnectConfig = {}) {
+    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.testnet);
     this.config = Object.assign(config, {
-      fuelProvider:
-        config.fuelProvider ||
-        FuelProvider.create(config.providerUrl ?? TESTNET_URL),
+      fuelProvider: config.fuelProvider || FuelProvider.create(network),
     });
   }
 
