@@ -10,8 +10,7 @@ import { SolanaConnector } from '@fuel-connectors/solana-connector';
 import { WalletConnectConnector } from '@fuel-connectors/walletconnect-connector';
 import type { Config } from '@wagmi/core';
 import type { ProviderType } from '@web3modal/solana/dist/types/src/utils/scaffold';
-import { type FuelConnector, Provider } from 'fuels';
-import { TESTNET_URL } from './constants';
+import type { FuelConnector } from 'fuels';
 
 type DefaultConnectors = {
   devMode?: boolean;
