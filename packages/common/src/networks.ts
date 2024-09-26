@@ -11,6 +11,7 @@ export const DEFAULT_NETWORKS: Array<Partial<Network>> = [
   },
   {
     chainId: CHAIN_IDS.fuel.mainnet,
+    url: 'https://mainnet.fuel.network/v1/graphql',
   },
 ];
 
