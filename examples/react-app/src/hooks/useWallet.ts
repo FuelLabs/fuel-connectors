@@ -55,6 +55,5 @@ export const useWallet = () => {
     wallet,
     connect,
     refetchBalance,
-    refetchWallet,
   };
 };

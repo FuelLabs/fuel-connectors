@@ -2,12 +2,10 @@ import type { FuelConfig } from 'fuels';
 
 import { Connect } from '../ui/Connect';
 
-import { FuelChainProvider } from '../providers/FuelChainProvider';
 import type { NetworkConfig, UIConfig } from '../types';
 import { BridgeDialog } from '../ui/Connect/components/Bridge/BridgeDialog';
 import { NetworkDialog } from '../ui/Connect/components/Network/NetworkDialog';
 import { useNetworkConfigs } from '../ui/Connect/hooks/useNetworkConfigs';
-import { NetworkMonitor } from '../ui/NetworkMonitor';
 import { WebWallet } from '../ui/WebWallet';
 import { FuelHooksProvider } from './FuelHooksProvider';
 import { FuelUIProvider, type FuelUIProviderProps } from './FuelUIProvider';

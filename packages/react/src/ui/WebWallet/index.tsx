@@ -35,7 +35,7 @@ export const WebWallet = () => {
   } = useAssetsBalance();
 
   const {
-    connector,
+    currentConnector: connector,
     isFetched: isFetchedConnector,
     refetch,
   } = useCurrentConnector();
