@@ -1,7 +1,7 @@
 # useCurrentConnector
 ---
 
-A hook to fetch a list of connectors in the connected app.
+A hook to fetch a current Wallet Connector.
 
 #### Params
 
@@ -16,10 +16,10 @@ An object containing:
 
 #### Examples
 
-To fetch connectors:
+To fetch current connector:
 ```ts
-const { connectors } = useConnectors();
-console.log(connectors);
+const { currentConnector } = useCurrentConnector();
+console.log(currentConnector);
 ```
 
 #### Defined in

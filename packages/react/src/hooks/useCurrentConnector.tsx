@@ -12,7 +12,7 @@ type UseCurrentConnectorParams<TName extends string, TData> = {
 
 // @TODO: Add a link to fuel connector's documentation.
 /**
- * A hook to fetch a list of connectors in the connected app.
+ * A hook to fetch a current Wallet Connector.
  *
  * @params {UseCurrentConnectorParams<TName, TData>} Parameters to configure the hook.
  * - `query`: Additional query parameters to customize the behavior of `useNamedQuery`.
@@ -22,10 +22,10 @@ type UseCurrentConnectorParams<TName extends string, TData> = {
  * - {@link https://tanstack.com/query/latest/docs/framework/react/reference/useQuery | `...queryProps`}: Destructured properties from `useQuery` result.
  *
  * @examples
- * To fetch connectors:
+ * To fetch current connector:
  * ```ts
- * const { connectors } = useConnectors();
- * console.log(connectors);
+ * const { currentConnector } = useCurrentConnector();
+ * console.log(currentConnector);
  * ```
  */
 export const useCurrentConnector = <
