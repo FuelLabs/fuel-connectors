@@ -3,10 +3,7 @@ import { createGlobalStyle } from 'styled-components';
 export const GlobalStyles = createGlobalStyle` 
   @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap');
 
-  .fuel-connectors {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    
+  .fuel-connectors {    
     /* Fonts */
     --fuel-font-family: "Inter", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
     --fuel-font-size: 16px;
@@ -21,6 +18,11 @@ export const GlobalStyles = createGlobalStyle`
     --fuel-border: 1px solid var(--fuel-border-color);
     --fuel-color-error: #f25a68;
     --fuel-black-color: #141414;
+  }
+
+  .fuel-connectors * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   .fuel-connectors.light {
