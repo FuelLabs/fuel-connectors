@@ -8,4 +8,5 @@ export type WalletConnectConfig = {
   wagmiConfig?: WagmiConfig;
   predicateConfig?: PredicateConfig;
   storage?: StorageAbstract;
+  chainId?: number;
 };

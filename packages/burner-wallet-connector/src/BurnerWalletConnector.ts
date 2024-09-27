@@ -1,6 +1,8 @@
+import { getProviderUrl } from '@fuel-connectors/common';
 import {
   type AbiMap,
   type Asset,
+  CHAIN_IDS,
   type ConnectorMetadata,
   FuelConnector,
   FuelConnectorEventTypes,
@@ -20,7 +22,6 @@ import {
   BURNER_WALLET_ICON,
   BURNER_WALLET_PRIVATE_KEY,
   BURNER_WALLET_STATUS,
-  TESTNET_URL,
 } from './constants';
 import type { BurnerWalletConfig } from './types';
 
@@ -55,8 +56,9 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   private configProvider(config: BurnerWalletConfig = {}) {
+    const network = getProviderUrl(config.chainId ?? CHAIN_IDS.fuel.testnet);
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || Provider.create(TESTNET_URL),
+      fuelProvider: config.fuelProvider || Provider.create(network),
     });
   }
 

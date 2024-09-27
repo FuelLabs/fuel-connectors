@@ -7,11 +7,13 @@ import {
   SolanaWalletAdapter,
   getMockedSignatureIndex,
   getOrThrow,
+  getProviderUrl,
 } from '@fuel-connectors/common';
 import { ApiController } from '@web3modal/core';
 import type { Web3Modal } from '@web3modal/solana';
 import type { Provider } from '@web3modal/solana/dist/types/src/utils/scaffold';
 import {
+  CHAIN_IDS,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
@@ -76,7 +78,8 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   private providerFactory(config?: SolanaConfig) {
-    return config?.fuelProvider || FuelProvider.create(TESTNET_URL);
+    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.testnet);
+    return config?.fuelProvider || FuelProvider.create(network);
   }
 
   // Solana Web3Modal is Canary and not yet stable
@@ -145,8 +148,9 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   protected async configProviders(config: SolanaConfig = {}) {
+    const network = getProviderUrl(config.chainId ?? CHAIN_IDS.fuel.testnet);
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(TESTNET_URL),
+      fuelProvider: config.fuelProvider || FuelProvider.create(network),
     });
   }
 

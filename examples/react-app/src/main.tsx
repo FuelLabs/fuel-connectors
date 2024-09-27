@@ -71,6 +71,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
             devMode: true,
             wcProjectId: WC_PROJECT_ID,
             ethWagmiConfig: wagmiConfig,
+            chainId: CHAIN_IDS.fuel.testnet,
           }),
         }}
       >

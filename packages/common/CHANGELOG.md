@@ -1,5 +1,13 @@
 # @fuel-connectors/common
 
+## 0.29.1
+
+## 0.29.0
+
+### Minor Changes
+
+- [#289](https://github.com/FuelLabs/fuel-connectors/pull/289) [`3c55d25`](https://github.com/FuelLabs/fuel-connectors/commit/3c55d250946fa920e371d914f7733217cf47ea16) Thanks [@luizstacio](https://github.com/luizstacio)! - Improve predicates setupProviders to remove delays by adding a new controlled flag `hasProviderSuccessed`.
+
 ## 0.28.1
 
 ## 0.28.0
