@@ -23,10 +23,14 @@ export function ExternalDisclaimer({ className }: BridgeProps) {
   return (
     <div className={className}>
       <DisclaimerContainer>
-        <ConnectorTitle style={{ textAlign: 'left' }}>
+        <ConnectorTitle
+          style={{ textAlign: 'left', margin: '0 0 14px 0', padding: 0 }}
+        >
           Non-Native Wallet
         </ConnectorTitle>
-        <ConnectorDescription style={{ textAlign: 'left', margin: 0 }}>
+        <ConnectorDescription
+          style={{ textAlign: 'left', margin: 0, padding: 0 }}
+        >
           Fuel supports any wallet from Ethereum to Solana, but these wallets
           have limited functionality for now.
         </ConnectorDescription>

@@ -5,6 +5,7 @@ export const DisclaimerContainer = styled(ConnectorContent)`
   border-left: 2px solid;
   border-color: #F5CC00;
   margin-left: 1rem;
+  padding: 0 2em;
   box-sizing: border-box;
   font-size: 1em;
 `;
@@ -12,9 +13,9 @@ export const DisclaimerContainer = styled(ConnectorContent)`
 export const DisclaimerList = styled.ul`
   font-weight: 400;
   text-align: left;
-  margin: 0 1.2em;
+  margin: 0;
+  padding-inline-start: 16px;
   line-height: 1.4em;
-  padding: 0 2em;
   opacity: 0.8;
   list-style: disc;
 

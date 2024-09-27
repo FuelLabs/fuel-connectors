@@ -1,12 +1,12 @@
 import * as DialogRadix from '@radix-ui/react-dialog';
 import { useEffect, useState } from 'react';
-import { getThemeVariables } from '../../../../constants/themes';
 import { DialogOverlay, FuelRoot } from './styles';
 
 export function DialogFuel({
   children,
   theme,
-  ...props
+  open,
+  onOpenChange,
 }: DialogRadix.DialogProps & { theme: string }) {
   // const currentConnector = fuel.currentConnector();
   // Fix hydration problem between nextjs render and frontend render
@@ -22,21 +22,14 @@ export function DialogFuel({
   if (!isClient) return null;
 
   return (
-    <DialogRadix.Root {...props} key={String(isClient)}>
+    <DialogRadix.Root
+      open={open}
+      onOpenChange={onOpenChange}
+      key={String(isClient)}
+    >
       <DialogRadix.Portal>
-        <DialogOverlay asChild>
-          <FuelRoot
-            style={
-              isClient
-                ? {
-                    display: props.open ? 'block' : 'none',
-                    ...getThemeVariables(theme),
-                  }
-                : undefined
-            }
-          >
-            {children}
-          </FuelRoot>
+        <DialogOverlay className="fuel-connectors" asChild>
+          <FuelRoot className={theme}>{children}</FuelRoot>
         </DialogOverlay>
       </DialogRadix.Portal>
     </DialogRadix.Root>
