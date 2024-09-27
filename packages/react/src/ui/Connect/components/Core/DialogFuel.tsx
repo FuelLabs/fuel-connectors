@@ -18,8 +18,11 @@ export function DialogFuel({
     setIsClient(true);
   }, []);
 
+  // Ensure that the dialog is only rendered on the client
+  if (!isClient) return null;
+
   return (
-    <DialogRadix.Root {...props}>
+    <DialogRadix.Root {...props} key={String(isClient)}>
       <DialogRadix.Portal>
         <DialogOverlay asChild>
           <FuelRoot
