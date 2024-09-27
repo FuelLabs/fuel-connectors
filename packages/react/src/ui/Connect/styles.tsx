@@ -25,8 +25,7 @@ export const DialogTitle = styled(Dialog.Title)`
   padding: 8px 14px 12px;
   margin: 0;
   text-align: center;
-  font-size: 16px;
-  letter-spacing: var(--fuel-letter-spacing);
+  font-size: var(--fuel-font-size);
   font-weight: 500;
 `;
 

@@ -4,9 +4,12 @@ export const GlobalStyles = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap');
 
   .fuel-connectors {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    
     /* Fonts */
     --fuel-font-family: "Inter", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-    --fuel-font-size: 14px;
+    --fuel-font-size: 16px;
     --fuel-font-size-xs: 12px;
     --fuel-letter-spacing: normal;
 

@@ -11,7 +11,6 @@ export const ConnectorItem = styled.div`
   gap: var(--fuel-items-gap);
   padding: 0.8em;
   border-radius: 16px;
-  letter-spacing: var(--fuel-letter-spacing);
   font-weight: 400;
   transition: background-color opacity 50ms cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -32,7 +31,7 @@ export const ConnectorList = styled.div`
 `;
 
 export const ConnectorName = styled.div`
-  font-size: var(--fuel-font-size);
+  font-size: 0.875em;
 `;
 
 export const ConnectorImg = styled.img`

@@ -67,7 +67,7 @@ const butonBase = css`
   justify-content: center;
   align-items: center;
   margin: 0.4rem 0;
-  font-size: var(--fuel-font-size);
+  font-size: 0.875em;
   margin-bottom: 0;
 
   &:disabled {

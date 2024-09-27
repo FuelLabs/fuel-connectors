@@ -50,7 +50,7 @@ export const ConnectorButton = styled.a`
   align-items: center;
   margin: 0.4rem 1rem 0;
   padding: 0.6rem 0;
-  font-size: var(--fuel-font-size);
+  font-size: 0.875em;
   color: var(--fuel-color-bold);
   border-radius: var(--fuel-border-radius);
   background-color: var(--fuel-button-background);
@@ -67,7 +67,6 @@ export const ConnectorButton = styled.a`
 export const ConnectorContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap-row: 16px;
   margin-bottom: 24px;
 `;
 

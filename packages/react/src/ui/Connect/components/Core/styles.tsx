@@ -28,10 +28,10 @@ export const FuelRoot = styled.div`
   margin: 0;
   padding: 0;
   z-index: 99;
+  font-family: var(--fuel-font-family);
   font-size: var(--fuel-font-size);
-
+  
   & * {
     box-sizing: border-box;
-    font-family: var(--fuel-font-family);
   }
 `;
