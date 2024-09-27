@@ -1,4 +1,4 @@
-import type { FuelConfig, FuelConnector, Network } from 'fuels';
+import type { FuelConfig, FuelConnector } from 'fuels';
 import {
   type ReactNode,
   createContext,
