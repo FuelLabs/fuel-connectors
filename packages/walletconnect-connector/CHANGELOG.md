@@ -1,5 +1,15 @@
 # @fuel-connectors/walletconnect-connector
 
+## 0.29.0
+
+### Minor Changes
+
+- [#296](https://github.com/FuelLabs/fuel-connectors/pull/296) [`3c29c36`](https://github.com/FuelLabs/fuel-connectors/commit/3c29c368ced7dd17a7768b048c576ec1c6392472) Thanks [@LeoCourbassier](https://github.com/LeoCourbassier)! - Allows predicated connectors to receive a providerUrl to configure their providers
+
+- [#289](https://github.com/FuelLabs/fuel-connectors/pull/289) [`3c55d25`](https://github.com/FuelLabs/fuel-connectors/commit/3c55d250946fa920e371d914f7733217cf47ea16) Thanks [@luizstacio](https://github.com/luizstacio)! - Improve predicates setupProviders to remove delays by adding a new controlled flag `hasProviderSuccessed`.
+
+- [#275](https://github.com/FuelLabs/fuel-connectors/pull/275) [`17838cf`](https://github.com/FuelLabs/fuel-connectors/commit/17838cfb4e649cabc20b78f1d60c3a9bc041a626) Thanks [@luizstacio](https://github.com/luizstacio)! - Request message signature to validate access before connecting to applications
+
 ## 0.28.1
 
 ## 0.28.0
