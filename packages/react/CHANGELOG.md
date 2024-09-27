@@ -1,5 +1,11 @@
 # @fuels/react
 
+## 0.29.1
+
+### Patch Changes
+
+- [#298](https://github.com/FuelLabs/fuel-connectors/pull/298) [`dea65a0`](https://github.com/FuelLabs/fuel-connectors/commit/dea65a09822ae1aca4577e415d9bf78d53b0657f) Thanks [@luizstacio](https://github.com/luizstacio)! - fix hydration on next.js
+
 ## 0.29.0
 
 ### Minor Changes
