@@ -1,5 +1,15 @@
 # @fuels/connectors
 
+## 0.29.0
+
+### Minor Changes
+
+- [#296](https://github.com/FuelLabs/fuel-connectors/pull/296) [`3c29c36`](https://github.com/FuelLabs/fuel-connectors/commit/3c29c368ced7dd17a7768b048c576ec1c6392472) Thanks [@LeoCourbassier](https://github.com/LeoCourbassier)! - Allows predicated connectors to receive a providerUrl to configure their providers
+
+### Patch Changes
+
+- [#282](https://github.com/FuelLabs/fuel-connectors/pull/282) [`50488ae`](https://github.com/FuelLabs/fuel-connectors/commit/50488ae7ab7c41202fa48234ef977978a752d992) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Burner is now only included in default connectors on dev mode.
+
 ## 0.28.1
 
 ## 0.28.0
