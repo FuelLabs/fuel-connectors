@@ -67,6 +67,7 @@ export const ConnectorButton = styled.a`
 export const ConnectorContent = styled.div`
   display: flex;
   flex-direction: column;
+  gap-row: 16px;
   margin-bottom: 24px;
 `;
 

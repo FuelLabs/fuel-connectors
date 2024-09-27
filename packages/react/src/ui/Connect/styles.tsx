@@ -13,6 +13,14 @@ const placeholderLoader = keyframes`
   }
 `;
 
+export const DialogHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 16px;
+  padding-right: 16px; 
+`;
+
 export const DialogTitle = styled(Dialog.Title)`
   padding: 8px 14px 12px;
   margin: 0;
@@ -43,13 +51,10 @@ export const BackIcon = styled(CBackIcon)`
   display: flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  top: 20px;
-  left: 28px;
   cursor: pointer;
 
   &[data-connector='false'] {
-    display: none;
+    visibility: hidden;
   }
 
   &:hover,
@@ -66,11 +71,7 @@ export const CloseIcon = styled(CCloseIcon)`
   display: flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  top: 18px;
-  right: 28px;
   cursor: pointer;
-  font-weight: 500;
 
   &:hover,
   &:active {

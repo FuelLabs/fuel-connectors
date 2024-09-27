@@ -9,7 +9,14 @@ import {
 import { NoFundIcon } from '../../../../icons/NoFundIcon';
 import { useConnectUI } from '../../../../providers/FuelUIProvider';
 import { useNetworkConfigs } from '../../hooks/useNetworkConfigs';
-import { CloseIcon, DialogMain, DialogTitle, Divider } from '../../styles';
+import {
+  BackIcon,
+  CloseIcon,
+  DialogHeader,
+  DialogMain,
+  DialogTitle,
+  Divider,
+} from '../../styles';
 import {
   ConnectorButton,
   ConnectorButtonPrimary,
@@ -76,11 +83,14 @@ export function BridgeDialog({ className, theme }: BridgeProps) {
       }}
     >
       <DialogContent data-connector={true}>
-        <DialogTitle>Bridge Funds</DialogTitle>
+        <DialogHeader>
+          <BackIcon size={32} data-connector={false} />
+          <DialogTitle>Bridge Funds</DialogTitle>
+          <Dialog.Close asChild>
+            <CloseIcon size={32} />
+          </Dialog.Close>
+        </DialogHeader>
         <Divider />
-        <Dialog.Close asChild>
-          <CloseIcon size={32} />
-        </Dialog.Close>
         <DialogMain>
           <div className={className}>
             <ConnectorImage>
