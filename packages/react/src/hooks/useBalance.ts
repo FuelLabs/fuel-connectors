@@ -70,7 +70,7 @@ export const useBalance = ({
       }
     },
     initialData: null,
-    enabled: !!provider && !!account,
+    enabled: !!provider && !!_address,
     ...query,
   });
 

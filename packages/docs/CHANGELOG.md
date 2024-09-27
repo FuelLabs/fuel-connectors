@@ -1,5 +1,11 @@
 # docs
 
+## 0.27.1
+
+### Patch Changes
+
+- [#287](https://github.com/FuelLabs/fuel-connectors/pull/287) [`eb16e1a`](https://github.com/FuelLabs/fuel-connectors/commit/eb16e1a1b11d0131550d97aded4c5b441c9ff8c0) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Fix wrong import paths in docs
+
 ## 0.27.0
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # @fuel-connectors/solana-connector
 
+## 0.29.1
+
+## 0.29.0
+
+### Minor Changes
+
+- [#296](https://github.com/FuelLabs/fuel-connectors/pull/296) [`3c29c36`](https://github.com/FuelLabs/fuel-connectors/commit/3c29c368ced7dd17a7768b048c576ec1c6392472) Thanks [@LeoCourbassier](https://github.com/LeoCourbassier)! - Allows predicated connectors to receive a providerUrl to configure their providers
+
 ## 0.28.1
 
 ## 0.28.0

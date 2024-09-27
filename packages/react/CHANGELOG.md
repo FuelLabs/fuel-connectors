@@ -1,5 +1,35 @@
 # @fuels/react
 
+## 0.29.1
+
+### Patch Changes
+
+- [#298](https://github.com/FuelLabs/fuel-connectors/pull/298) [`dea65a0`](https://github.com/FuelLabs/fuel-connectors/commit/dea65a09822ae1aca4577e415d9bf78d53b0657f) Thanks [@luizstacio](https://github.com/luizstacio)! - fix hydration on next.js
+
+## 0.29.0
+
+### Minor Changes
+
+- [#289](https://github.com/FuelLabs/fuel-connectors/pull/289) [`3c55d25`](https://github.com/FuelLabs/fuel-connectors/commit/3c55d250946fa920e371d914f7733217cf47ea16) Thanks [@luizstacio](https://github.com/luizstacio)! - Add `suggestBridge` option to `FuelUIProvider` to enable/disable the bridge dialog for users flows.
+
+- [#289](https://github.com/FuelLabs/fuel-connectors/pull/289) [`3c55d25`](https://github.com/FuelLabs/fuel-connectors/commit/3c55d250946fa920e371d914f7733217cf47ea16) Thanks [@luizstacio](https://github.com/luizstacio)! - Add Networks configuration to `FuelUIProvider` to allow users to provide a list of supported networks with their repesctive bridges.
+
+- [#289](https://github.com/FuelLabs/fuel-connectors/pull/289) [`3c55d25`](https://github.com/FuelLabs/fuel-connectors/commit/3c55d250946fa920e371d914f7733217cf47ea16) Thanks [@luizstacio](https://github.com/luizstacio)! - Add `query` options for customization of `useNamedQuery` on hooks. This can help to improve number of requests in cases of multiple checks like balances.
+
+- [#285](https://github.com/FuelLabs/fuel-connectors/pull/285) [`65924f3`](https://github.com/FuelLabs/fuel-connectors/commit/65924f35f2e76dc0f334bc68914806205ec10bfc) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Add FuelChainProvider
+
+- [#289](https://github.com/FuelLabs/fuel-connectors/pull/289) [`3c55d25`](https://github.com/FuelLabs/fuel-connectors/commit/3c55d250946fa920e371d914f7733217cf47ea16) Thanks [@luizstacio](https://github.com/luizstacio)! - Add `useIsSupportedNetwork` hook to check if the current network is supported by the user.
+
+### Patch Changes
+
+- [#270](https://github.com/FuelLabs/fuel-connectors/pull/270) [`e2c5149`](https://github.com/FuelLabs/fuel-connectors/commit/e2c514959a54918a7a99f2730b68e83fc68daa2b) Thanks [@helciofranco](https://github.com/helciofranco)! - Render `Connect` modal using React.Portal in order to have a consistent modal stacking in external projects.
+
+- [#268](https://github.com/FuelLabs/fuel-connectors/pull/268) [`ca76a50`](https://github.com/FuelLabs/fuel-connectors/commit/ca76a505967340f5085a271073710097d538b9d6) Thanks [@helciofranco](https://github.com/helciofranco)! - Remove `@types/react` from the bundle.
+
+- [#285](https://github.com/FuelLabs/fuel-connectors/pull/285) [`65924f3`](https://github.com/FuelLabs/fuel-connectors/commit/65924f35f2e76dc0f334bc68914806205ec10bfc) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Moved icons and global stylings to HOC
+
+- [#271](https://github.com/FuelLabs/fuel-connectors/pull/271) [`366ffa9`](https://github.com/FuelLabs/fuel-connectors/commit/366ffa92a1958894c5b4ec060a5008a4ef380c45) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Group connectors between native and external
+
 ## 0.28.1
 
 ### Patch Changes
