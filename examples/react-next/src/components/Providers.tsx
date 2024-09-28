@@ -17,7 +17,7 @@ const fuelConfig = {
 };
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   return (
     <QueryClientProvider client={queryClient}>
