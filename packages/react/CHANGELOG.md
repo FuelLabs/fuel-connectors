@@ -1,5 +1,11 @@
 # @fuels/react
 
+## 0.29.2
+
+### Patch Changes
+
+- [#302](https://github.com/FuelLabs/fuel-connectors/pull/302) [`56f3a60`](https://github.com/FuelLabs/fuel-connectors/commit/56f3a600cc96aa6fa675af3e41dc192e97f01461) Thanks [@helciofranco](https://github.com/helciofranco)! - Apply global styles (css variables) for the Connectors UI correctly.
+
 ## 0.29.1
 
 ### Patch Changes
