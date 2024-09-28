@@ -21,7 +21,7 @@ export type FuelUIProviderProps = {
   children?: ReactNode;
   uiConfig: UIConfig;
   fuelConfig: FuelConfig;
-  theme?: string;
+  theme?: 'dark' | 'light';
 };
 
 export enum Routes {
@@ -35,7 +35,7 @@ export type FuelUIContextType = {
   isConnected: boolean;
   uiConfig: UIConfig;
   fuelConfig: FuelConfig;
-  theme: string;
+  theme: 'dark' | 'light';
   connectors: Array<FuelConnector>;
   isLoading: boolean;
   isConnecting: boolean;
@@ -188,6 +188,19 @@ export function FuelUIProvider({
       setConnector(null);
       setDialogRoute(Routes.LIST);
     }
+  }, []);
+
+  useEffect(() => {
+    const css = document.createElement('style');
+    css.appendChild(
+      document.createTextNode(
+        `@import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap"); .fuel-connectors * { box-sizing: border-box; } .fuel-connectors .fuel-connectors-dialog-content:focus { outline: none; } @media (max-width: 430px) { .fuel-connectors .fuel-connectors-dialog-content { top: 50%; width: 100%; border-radius: 36px; } } .fuel-connectors .fuel-connectors-connector-item { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-connector-background); } .fuel-connectors .fuel-connectors-connector-item:active { opacity: 0.8; } .fuel-connectors .fuel-connectors-connector-item:hover { background-color: var(--fuel-connector-hover); } .fuel-connectors .fuel-connectors-disclaimer-list > li { margin: 0.6em 0; } .fuel-connectors .fuel-connectors-connector-button { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-button-background); color: var(--fuel-color-bold); } .fuel-connectors .fuel-connectors-connector-button:visited { color: var(--fuel-color-bold); } .fuel-connectors .fuel-connectors-connector-button:hover { background-color: var(--fuel-button-background-hover); } .fuel-connectors .fuel-connectors-connector-button-primary { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-green-11); color: var(--fuel-black-color); } .fuel-connectors .fuel-connectors-connector-button-primary:visited { color: var(--fuel-black-color); } .fuel-connectors .fuel-connectors-connector-button-primary:hover { background-color: var(--fuel-green-11); } .fuel-connectors .fuel-connectors-back-icon { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); } .fuel-connectors .fuel-connectors-back-icon[data-connector='false'] { visibility: hidden; } .fuel-connectors .fuel-connectors-back-icon:hover, .fuel-connectors .fuel-connectors-back-icon:active { opacity: 1; background-color: var(--fuel-connector-hover); } .fuel-connectors .fuel-connectors-close-icon { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); } .fuel-connectors .fuel-connectors-close-icon:hover, .fuel-connectors .fuel-connectors-close-icon:active { opacity: 1; background-color: var(--fuel-connector-hover); } .fuel-connectors .fuel-connectors-button-base { cursor: pointer; } .fuel-connectors .fuel-connectors-button:disabled { cursor: not-allowed; } .fuel-connectors .fuel-connectors-button { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-green-11); } .fuel-connectors .fuel-connectors-button:disabled { background-color: var(--fuel-border-color); } .fuel-connectors .fuel-connectors-button-disconnect { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-button-background); } .fuel-connectors .fuel-connectors-button-disconnect:hover { background-color: var(--fuel-button-background-hover); } @keyframes fuelOverlayShow { from { opacity: 0; } to { opacity: 1; } } @keyframes fuelSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes fuelContentShow { from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } } @keyframes fuelLoader { 0% { background-position: -468px 0 } 100% { background-position: 468px 0 } }`,
+      ),
+    );
+    document.head.appendChild(css);
+    return () => {
+      document.head.removeChild(css);
+    };
   }, []);
 
   return (

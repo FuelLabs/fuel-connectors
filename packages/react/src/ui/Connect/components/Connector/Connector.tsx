@@ -14,11 +14,7 @@ import {
   ConnectorTitle,
 } from './styles';
 
-type ConnectorProps = {
-  className?: string;
-};
-
-export function Connector({ className }: ConnectorProps) {
+export function Connector() {
   const {
     theme,
     dialog: { connector, setRoute },
@@ -28,7 +24,7 @@ export function Connector({ className }: ConnectorProps) {
     install: { action, link, description },
   } = connector.metadata;
 
-  // Ping exetensin if it's installed it will trigger connector
+  // Ping extension: if it's installed, it will trigger connector
   useQuery({
     queryKey: ['CONNECTOR_PING', connector.name, connector.installed],
     queryFn: async () => {
@@ -42,7 +38,7 @@ export function Connector({ className }: ConnectorProps) {
   const actionText = action || 'Install';
 
   return (
-    <div className={className}>
+    <div>
       <ConnectorImage>
         <ConnectorIcon
           connectorMetadata={connector.metadata}

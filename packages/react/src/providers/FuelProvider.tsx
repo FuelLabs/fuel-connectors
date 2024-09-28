@@ -2,7 +2,6 @@ import type { FuelConfig } from 'fuels';
 
 import { Connect } from '../ui/Connect';
 
-import { GlobalStyles } from '../constants/GlobalStyles';
 import type { NetworkConfig, UIConfig } from '../types';
 import { BridgeDialog } from '../ui/Connect/components/Bridge/BridgeDialog';
 import { NetworkDialog } from '../ui/Connect/components/Network/NetworkDialog';
@@ -40,8 +39,6 @@ export function FuelProvider({
   if (ui) {
     return (
       <FuelHooksProvider fuelConfig={fuelConfig} networks={networksConfig}>
-        <GlobalStyles />
-
         <FuelUIProvider
           theme={theme}
           fuelConfig={fuelConfig}

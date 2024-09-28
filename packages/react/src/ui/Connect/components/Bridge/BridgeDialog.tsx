@@ -29,11 +29,10 @@ import { DialogContent } from '../Core/DialogContent';
 import { DialogFuel } from '../Core/DialogFuel';
 
 type BridgeProps = {
-  theme: string;
-  className?: string;
+  theme: 'dark' | 'light';
 };
 
-export function BridgeDialog({ className, theme }: BridgeProps) {
+export function BridgeDialog({ theme }: BridgeProps) {
   const networks = useNetworkConfigs();
   const { provider } = useProvider();
   const bridgeHref = useMemo(() => {
@@ -92,7 +91,7 @@ export function BridgeDialog({ className, theme }: BridgeProps) {
         </DialogHeader>
         <Divider />
         <DialogMain>
-          <div className={className}>
+          <div>
             <ConnectorImage>
               <NoFundIcon size={100} theme={theme} />
             </ConnectorImage>
