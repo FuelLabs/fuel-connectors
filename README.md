@@ -8,13 +8,13 @@ This package enables users to use their **wallets** to sign transactions on Fuel
 
 ## 🧑‍💻 Getting Started
 
-### Install
+### Install:
 
 ```sh
 npm install fuels @fuels/connectors
 ```
 
-### Usage
+### Usage:
 
 ```ts
 import { Fuel } from "fuels";
@@ -33,7 +33,7 @@ console.log(connection);
 
 ## 🚧 Development
 
-### Building the project
+### Building the project:
 
 ```sh
 pnpm build
