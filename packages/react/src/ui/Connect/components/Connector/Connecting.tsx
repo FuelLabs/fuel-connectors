@@ -59,7 +59,7 @@ export function Connecting({ className }: ConnectorProps) {
           </ConnectorDescription>
         ) : (
           <ConnectorDescription>
-            Click on the button bellow to connect to {location.origin}.
+            Click on the button below to connect to {location.origin}.
           </ConnectorDescription>
         )}
       </ConnectorContent>

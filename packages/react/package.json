@@ -40,7 +40,6 @@
     "compare-versions": "6.1.0",
     "fuels": "0.94.6",
     "react": "18.3.1",
-    "styled-components": "6.1.12",
     "tsup": "7.3.0",
     "tsx": "4.9.3",
     "typescript": "5.4.5"
