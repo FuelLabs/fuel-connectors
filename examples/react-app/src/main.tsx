@@ -17,6 +17,7 @@ import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import './index.css';
 import { CHAIN_IDS } from 'fuels';
+import { WagmiProvider } from 'wagmi';
 
 const queryClient = new QueryClient();
 
@@ -55,37 +56,39 @@ const wagmiConfig = createConfig({
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <FuelProvider
-        theme="dark"
-        uiConfig={{
-          suggestBridge: true, // default true
-        }}
-        networks={[
-          {
-            chainId: CHAIN_IDS.fuel.testnet,
-          },
-        ]}
-        fuelConfig={{
-          connectors: defaultConnectors({
-            devMode: true,
-            wcProjectId: WC_PROJECT_ID,
-            ethWagmiConfig: wagmiConfig,
-            chainId: CHAIN_IDS.fuel.testnet,
-          }),
-        }}
-      >
-        <Toast.Provider>
-          <App />
-          <Toast.Viewport
-            id="toast-viewport"
-            className="fixed bottom-0 right-0 z-[100] m-0 flex w-[420px] max-w-[100vw] list-none flex-col gap-[10px] p-[var(--viewport-padding)] outline-none [--viewport-padding:_25px]"
-          />
-        </Toast.Provider>
-        <ScreenSizeIndicator />
-      </FuelProvider>
+    <WagmiProvider config={wagmiConfig} reconnectOnMount={false}>
+      <QueryClientProvider client={queryClient}>
+        <FuelProvider
+          theme="dark"
+          uiConfig={{
+            suggestBridge: true, // default true
+          }}
+          networks={[
+            {
+              chainId: CHAIN_IDS.fuel.testnet,
+            },
+          ]}
+          fuelConfig={{
+            connectors: defaultConnectors({
+              devMode: true,
+              wcProjectId: WC_PROJECT_ID,
+              ethWagmiConfig: wagmiConfig,
+              chainId: CHAIN_IDS.fuel.testnet,
+            }),
+          }}
+        >
+          <Toast.Provider>
+            <App />
+            <Toast.Viewport
+              id="toast-viewport"
+              className="fixed bottom-0 right-0 z-[100] m-0 flex w-[420px] max-w-[100vw] list-none flex-col gap-[10px] p-[var(--viewport-padding)] outline-none [--viewport-padding:_25px]"
+            />
+          </Toast.Provider>
+          <ScreenSizeIndicator />
+        </FuelProvider>
 
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </WagmiProvider>
   </React.StrictMode>,
 );

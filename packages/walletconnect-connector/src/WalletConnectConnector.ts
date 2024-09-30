@@ -72,7 +72,10 @@ export class WalletConnectConnector extends PredicateConnector {
       config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
     const wagmiConfig = config?.wagmiConfig ?? createWagmiConfig();
     this.customPredicate = config.predicateConfig || null;
-    this.configProviders({ ...config, wagmiConfig });
+    this.configProviders({
+      ...config,
+      wagmiConfig,
+    });
     this.loadPersistedConnection();
   }
 
@@ -160,9 +163,11 @@ export class WalletConnectConnector extends PredicateConnector {
 
   protected async configProviders(config: WalletConnectConfig = {}) {
     const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.testnet);
+    console.log('config', config);
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || FuelProvider.create(network),
     });
+    console.log('this.config', this.config);
   }
 
   protected async walletAccounts(): Promise<Array<string>> {
@@ -233,6 +238,7 @@ export class WalletConnectConnector extends PredicateConnector {
     const result = await new Promise<boolean>((resolve, reject) => {
       this.web3Modal.open();
       const wagmiConfig = this.getWagmiConfig();
+      console.log('wagmiConfig', wagmiConfig);
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
         const requestValidations = () => {
           this.requestValidations()

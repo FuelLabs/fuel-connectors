@@ -3,36 +3,60 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
+import { getConfig } from '@/app/config';
 import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
+import { CHAIN_IDS } from 'fuels';
 import { useState } from 'react';
+import { type State, WagmiProvider } from 'wagmi';
 
 const queryClient = new QueryClient();
+const WC_PROJECT_ID =
+  process.env.NEXT_PUBLIC_WC_PROJECT_ID ?? '00000000000000000000000000000000';
 
-const fuelConfig = {
-  connectors: defaultConnectors({
-    devMode: true,
-    wcProjectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID,
-  }),
+export type ProvidersProps = {
+  children: React.ReactNode;
+  initialState?: State;
 };
 
-export const Providers = ({ children }: { children: React.ReactNode }) => {
+export const Providers = ({ children, initialState }: ProvidersProps) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [config] = useState(() => getConfig());
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <button
-        type="submit"
-        onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-      >
-        Switch theme {theme}
-      </button>
+    <WagmiProvider config={config} initialState={initialState}>
+      <QueryClientProvider client={queryClient}>
+        <button
+          type="submit"
+          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+        >
+          Switch theme {theme}
+        </button>
 
-      <FuelProvider theme={theme} fuelConfig={fuelConfig}>
-        {children}
-      </FuelProvider>
+        <FuelProvider
+          theme="dark"
+          uiConfig={{
+            suggestBridge: true, // default true
+          }}
+          networks={[
+            {
+              chainId: CHAIN_IDS.fuel.testnet,
+            },
+          ]}
+          fuelConfig={{
+            connectors: defaultConnectors({
+              devMode: true,
+              wcProjectId: WC_PROJECT_ID,
+              ethWagmiConfig: config,
+              chainId: CHAIN_IDS.fuel.testnet,
+            }),
+          }}
+        >
+          {children}
+        </FuelProvider>
 
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 };
