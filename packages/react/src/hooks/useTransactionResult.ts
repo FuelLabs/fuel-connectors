@@ -7,6 +7,7 @@ import {
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
+import { useProvider } from './useProvider';
 
 type UseTransactionResultParams<
   TTransactionType extends TransactionType,
@@ -57,13 +58,12 @@ export const useTransactionResult = <
   txId = '',
   query = {},
 }: UseTransactionResultParams<TTransactionType, TName, TData>) => {
-  const { fuel } = useFuel();
+  const { provider } = useProvider();
   const { name = 'transactionResult', ...options } = query;
 
   return useNamedQuery(name, {
-    queryKey: QUERY_KEYS.transactionResult(txId),
+    queryKey: QUERY_KEYS.transactionResult(txId, provider),
     queryFn: async () => {
-      const provider = await fuel.getProvider();
       if (!provider) return null;
 
       const txResult = new TransactionResponse(txId, provider);

@@ -25,10 +25,10 @@ export function FuelProvider({
   fuelConfig,
   uiConfig: _uiConfig,
   ui = true,
-  networks,
+  networks: _networks,
 }: FuelProviderProps) {
   const theme = _theme || 'light';
-  const networksConfig = useNetworkConfigs(networks);
+  const { networks } = useNetworkConfigs(_networks);
   const uiConfig = Object.assign(
     {
       suggestBridge: true,
@@ -38,7 +38,7 @@ export function FuelProvider({
 
   if (ui) {
     return (
-      <FuelHooksProvider fuelConfig={fuelConfig} networks={networksConfig}>
+      <FuelHooksProvider fuelConfig={fuelConfig} networks={networks}>
         <FuelUIProvider
           theme={theme}
           fuelConfig={fuelConfig}
@@ -53,7 +53,7 @@ export function FuelProvider({
     );
   }
   return (
-    <FuelHooksProvider fuelConfig={fuelConfig} networks={networksConfig}>
+    <FuelHooksProvider fuelConfig={fuelConfig} networks={networks}>
       {children}
     </FuelHooksProvider>
   );

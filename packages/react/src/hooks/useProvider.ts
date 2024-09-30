@@ -1,4 +1,4 @@
-import type { Provider } from 'fuels';
+import { Provider } from 'fuels';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
@@ -30,13 +30,30 @@ type UseProviderParams = {
  * ```
  */
 export const useProvider = (params?: UseProviderParams) => {
-  const { fuel } = useFuel();
-
+  const { fuel, networks } = useFuel();
   return useNamedQuery('provider', {
     queryKey: QUERY_KEYS.provider(),
     queryFn: async () => {
-      const provider = await fuel.getProvider();
-      return provider || null;
+      const currentNetwork = await fuel.currentNetwork();
+      const network = networks.find(
+        (n) => n.chainId === currentNetwork.chainId,
+      );
+      if (!network?.url) {
+        const provider = await fuel.getProvider();
+        console.warn(
+          'Please provide a networks with a RPC url configuration to your FuelProvider getProvider will be removed.',
+        );
+        return provider || null;
+      }
+      const provider = await Provider.create(network.url);
+      if (provider.getChainId() !== currentNetwork.chainId) {
+        throw new Error(
+          `The provider's chainId (${provider.getChainId()}) does not match the current network's chainId (${
+            currentNetwork.chainId
+          })`,
+        );
+      }
+      return provider;
     },
     initialData: null,
     ...params?.query,

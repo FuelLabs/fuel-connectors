@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useFuel } from '../providers';
 import { useCurrentConnector } from './useCurrentConnector';
 import { useIsConnected } from './useIsConnected';
-import { useProvider } from './useProvider';
+import { useNetwork } from './useNetwork';
 
 /*
  * @TODO Fuel provider.getChainId() uses a cached value, because of that, is expected that if user was in a different connector
@@ -24,15 +24,15 @@ import { useProvider } from './useProvider';
  */
 export function useIsSupportedNetwork() {
   const { networks } = useFuel();
-  const { provider } = useProvider();
+  const { network } = useNetwork();
   const { isConnected } = useIsConnected();
   const { currentConnector } = useCurrentConnector();
   const isSupportedNetwork = useMemo(() => {
     if (!currentConnector) return true;
     if (!isConnected) return true;
-    if (!provider) return true;
-    const chainId = provider.getChainId();
+    if (!network) return true;
+    const chainId = network.chainId;
     return !!networks.find((n) => n.chainId === chainId);
-  }, [provider, networks, isConnected, currentConnector]);
+  }, [network, networks, isConnected, currentConnector]);
   return { isSupportedNetwork };
 }

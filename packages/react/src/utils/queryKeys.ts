@@ -45,9 +45,10 @@ export const QUERY_KEYS = {
     if (provider) queryKey.push(provider.getChainId());
     return queryKey;
   },
-  wallet: (address?: string | null): QueryKey => {
+  wallet: (address?: string | null, provider?: Provider | null): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('wallet');
     if (address) queryKey.push(address);
+    if (provider) queryKey.push(provider.getChainId());
     return queryKey;
   },
   transaction: (id?: string): QueryKey => {
@@ -55,12 +56,14 @@ export const QUERY_KEYS = {
     if (id) queryKey.push(id);
     return queryKey;
   },
-  transactionReceipts: (id?: string): QueryKey => {
+  transactionReceipts: (id?: string, provider?: Provider | null): QueryKey => {
     const queryKey = QUERY_KEYS.transaction(id).concat('receipts');
+    if (provider) queryKey.push(provider.getChainId());
     return queryKey;
   },
-  transactionResult: (id?: string): QueryKey => {
+  transactionResult: (id?: string, provider?: Provider | null): QueryKey => {
     const queryKey = QUERY_KEYS.transaction(id).concat('result');
+    if (provider) queryKey.push(provider.getChainId());
     return queryKey;
   },
   nodeInfo: (url?: string): QueryKey => {

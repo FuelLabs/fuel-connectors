@@ -64,6 +64,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         networks={[
           {
             chainId: CHAIN_IDS.fuel.testnet,
+            url: 'https://testnet.fuel.network/v1/graphql',
           },
         ]}
         fuelConfig={{
