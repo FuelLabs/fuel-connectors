@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
+import { useState } from 'react';
 
 const queryClient = new QueryClient();
 
@@ -16,9 +17,18 @@ const fuelConfig = {
 };
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
   return (
     <QueryClientProvider client={queryClient}>
-      <FuelProvider theme="dark" fuelConfig={fuelConfig}>
+      <button
+        type="submit"
+        onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+      >
+        Switch theme {theme}
+      </button>
+
+      <FuelProvider theme={theme} fuelConfig={fuelConfig}>
         {children}
       </FuelProvider>
 

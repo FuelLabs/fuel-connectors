@@ -1,88 +1,106 @@
-import { styled } from 'styled-components';
+const connectorItemStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  boxSizing: 'border-box',
+  cursor: 'pointer',
+  width: '100%',
+  gap: 'var(--fuel-items-gap)',
+  padding: '0.8em',
+  borderRadius: '16px',
+  fontWeight: 400,
+};
 
-export const ConnectorItem = styled.div`
-  display: flex;
-  align-items: center;
-  background-color: var(--fuel-connector-background);
-  box-sizing: border-box;
-  cursor: pointer;
-  width: 100%;
-  color: var(--fuel-font-color);
-  gap: var(--fuel-items-gap);
-  padding: 0.8em;
-  border-radius: 16px;
-  letter-spacing: var(--fuel-letter-spacing);
-  font-weight: 500;
-  transition: background-color opacity 50ms cubic-bezier(0.16, 1, 0.3, 1);
+export const ConnectorItem = ({
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  return (
+    <div
+      style={connectorItemStyle}
+      {...props}
+      className="fuel-connectors-connector-item"
+    >
+      {children}
+    </div>
+  );
+};
 
-  &:active {
-    opacity: 0.8;
-  }
-  &:hover {
-    background-color: var(--fuel-connector-hover);
-  }
-`;
+const connectorListStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 'var(--fuel-items-gap)',
+  padding: '0px 14px',
+};
 
-export const ConnectorList = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--fuel-items-gap);
-  padding: 0px 14px;
-`;
+export const ConnectorList = ({ children }: React.PropsWithChildren) => {
+  return <div style={connectorListStyle}>{children}</div>;
+};
 
-export const ConnectorName = styled.div`
-  font-size: var(--fuel-font-size);
-`;
+const connectorNameStyle: React.CSSProperties = {
+  fontSize: '0.875em',
+};
 
-export const ConnectorImg = styled.img`
-  object-fit: cover;
-`;
+export const ConnectorName = ({ children }: React.PropsWithChildren) => {
+  return <div style={connectorNameStyle}>{children}</div>;
+};
 
-const Badge = styled.div`
-  border-radius: var(--fuel-border-radius);
-  font-size: var(--fuel-font-size-xs);
-  padding: 2px 8px;
-  text-transform: uppercase;
-  margin-left: auto;
-`;
+const connectorImgStyle: React.CSSProperties = {
+  objectFit: 'cover',
+};
 
-export const BadgeInfo = styled(Badge)`;
-  background-color: var(--fuel-blue-3);
-  color: var(--fuel-blue-11);
-`;
+export const ConnectorImg = (
+  props: React.ImgHTMLAttributes<HTMLImageElement>,
+) => {
+  return <img {...props} alt={props.alt} style={connectorImgStyle} />;
+};
 
-export const BadgeSuccess = styled(Badge)`;
-  background-color: var(--fuel-green-3);
-  color: var(--fuel-green-11);
-`;
+const badgeStyle: React.CSSProperties = {
+  borderRadius: 'var(--fuel-border-radius)',
+  fontSize: 'var(--fuel-font-size-xs)',
+  padding: '2px 8px',
+  textTransform: 'uppercase',
+  marginLeft: 'auto',
+};
 
-export const GroupLastTitle = styled.p`
-  color: #797979;
-  font-family: Inter;
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 20px;
-  letter-spacing: -0.13px;
-`;
+export const BadgeInfo = ({ children }: React.PropsWithChildren) => {
+  const style: React.CSSProperties = {
+    ...badgeStyle,
+    backgroundColor: 'var(--fuel-blue-3)',
+    color: 'var(--fuel-blue-11)',
+  };
 
-export const GroupFirstTitleContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  justify-content: flex-start;
-  width: 100%;
-  padding-left: 3px;
-  margin-bottom: 7px;
-`;
+  return <div style={style}>{children}</div>;
+};
 
-export const GroupLastTitleContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  justify-content: flex-start;
-  width: 100%;
-  padding-left: 3px;
-  margin: 14px 0px 7px 0px;
-`;
+export const BadgeSuccess = ({ children }: React.PropsWithChildren) => {
+  const style: React.CSSProperties = {
+    ...badgeStyle,
+    backgroundColor: 'var(--fuel-green-3)',
+    color: 'var(--fuel-green-11)',
+  };
+
+  return <div style={style}>{children}</div>;
+};
+
+const groupTitleStyle: React.CSSProperties = {
+  width: '100%',
+  color: '#797979',
+  fontSize: 'var(--fuel-font-size-xs)',
+  fontStyle: 'normal',
+  fontWeight: 400,
+  margin: 0,
+};
+
+export const GroupTitle = ({ children }: React.PropsWithChildren) => {
+  return <p style={groupTitleStyle}>{children}</p>;
+};
+
+export const GroupLastTitle = ({ children }: React.PropsWithChildren) => {
+  const style: React.CSSProperties = {
+    ...groupTitleStyle,
+    marginTop: '14px',
+  };
+
+  return <p style={style}>{children}</p>;
+};

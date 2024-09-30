@@ -1,24 +1,40 @@
-import styled from 'styled-components';
-import { ConnectorContent } from '../Connector/styles';
+import { connectorContentStyle } from '../Connector/styles';
 
-export const DisclaimerContainer = styled(ConnectorContent)`
-  border-left: 2px solid;
-  border-color: #F5CC00;
-  margin-left: 1rem;
-  box-sizing: border-box;
-  font-size: 1em;
-`;
+export const disclaimerContainerStyle: React.CSSProperties = {
+  ...connectorContentStyle,
+  gap: '12px',
+  borderLeft: '2px solid',
+  borderColor: '#F5CC00',
+  marginLeft: '1rem',
+  padding: '0 2em',
+  fontSize: '1em',
+};
 
-export const DisclaimerList = styled.ul`
-  font-weight: 400;
-  text-align: left;
-  margin: 0 1.2em;
-  line-height: 1.4em;
-  padding: 0 2em;
-  opacity: 0.8;
-  list-style: disc;
+export const DisclaimerContainer = ({ children }: React.PropsWithChildren) => {
+  return <div style={disclaimerContainerStyle}>{children}</div>;
+};
 
-  & > li {
-    margin: 0.6em 0;
-  }
-`;
+const disclaimerListStyle: React.CSSProperties = {
+  fontWeight: 400,
+  textAlign: 'left',
+  margin: 0,
+  paddingInlineStart: '16px',
+  lineHeight: '1.4em',
+  opacity: 0.8,
+  listStyleType: 'disc',
+};
+
+export const DisclaimerList = ({
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLUListElement>) => {
+  return (
+    <ul
+      style={disclaimerListStyle}
+      {...props}
+      className="fuel-connectors-disclaimer-list"
+    >
+      {children}
+    </ul>
+  );
+};

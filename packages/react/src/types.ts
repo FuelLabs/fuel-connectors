@@ -25,6 +25,7 @@ export type UIConfig = {
 
 export type SvgIconProps = {
   theme?: string;
+  style?: React.CSSProperties;
   className?: string;
   onClick?: () => void;
   size: number;

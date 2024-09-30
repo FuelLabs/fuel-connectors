@@ -1,7 +1,7 @@
-const commonTheme = {
+const shared = {
   /* Fonts */
   '--fuel-font-family':
-    '"Inter", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;',
+    '"Inter", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
   '--fuel-font-size': '16px',
   '--fuel-font-size-xs': '12px',
   '--fuel-letter-spacing': '-0.64px',
@@ -11,10 +11,9 @@ const commonTheme = {
   /* Border */
   '--fuel-border': '1px solid var(--fuel-border-color)',
   '--fuel-color-error': '#f25a68',
-  '--fuel-black-color': '#141414',
-};
+} as React.CSSProperties;
 
-const lightTheme = {
+const light = {
   '--fuel-color': '#141414',
   '--fuel-color-bold': '#000000',
   '--fuel-dialog-background': 'white',
@@ -34,9 +33,9 @@ const lightTheme = {
   '--fuel-color-light-gray': 'rgb(83 79 79 / 84%)',
   '--fuel-separator-color': 'rgb(83 79 79 / 13%)',
   '--fuel-black-color': '#FFFFFF',
-};
+} as React.CSSProperties;
 
-const darkTheme = {
+const dark = {
   '--fuel-color': '#e4e7e7',
   '--fuel-color-bold': '#ffffff',
   '--fuel-dialog-background': 'rgb(25 26 26)',
@@ -55,18 +54,20 @@ const darkTheme = {
   '--fuel-blue-11': '#70B9FF',
   '--fuel-color-light-gray': 'rgb(165 165 165 / 84%)',
   '--fuel-separator-color': 'rgb(165 165 165 / 13%)',
+  '--fuel-black-color': '#141414',
+} as React.CSSProperties;
+
+const themes: Record<'light' | 'dark', React.CSSProperties> = {
+  light,
+  dark,
 };
 
-type CustomTheme = Partial<typeof commonTheme & typeof lightTheme>;
-
 export const getThemeVariables = (
-  theme: 'light' | 'dark' | string,
-  customTheme?: CustomTheme,
-) => {
-  const colorTheme = theme === 'dark' ? darkTheme : lightTheme;
+  theme: 'light' | 'dark',
+): React.CSSProperties => {
+  const colors = themes[theme];
   return {
-    ...commonTheme,
-    ...colorTheme,
-    ...customTheme,
+    ...shared,
+    ...colors,
   };
 };

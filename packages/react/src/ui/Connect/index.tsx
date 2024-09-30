@@ -6,6 +6,7 @@ import { Connectors } from './components/Connectors';
 import {
   BackIcon,
   CloseIcon,
+  DialogHeader,
   DialogMain,
   DialogTitle,
   Divider,
@@ -45,12 +46,14 @@ export function Connect() {
   return (
     <DialogFuel open={isOpen} theme={theme} onOpenChange={handleOpenChange}>
       <DialogContent data-connector={!!connector}>
-        <DialogTitle>Connect Wallet</DialogTitle>
+        <DialogHeader>
+          <BackIcon size={32} onClick={back} data-connector={!!connector} />
+          <DialogTitle>Connect Wallet</DialogTitle>
+          <Dialog.Close asChild>
+            <CloseIcon size={32} onClick={() => cancel()} />
+          </Dialog.Close>
+        </DialogHeader>
         <Divider />
-        <Dialog.Close asChild>
-          <CloseIcon size={32} onClick={() => cancel()} />
-        </Dialog.Close>
-        <BackIcon size={32} onClick={back} data-connector={!!connector} />
         <DialogMain>
           <ConnectRoutes state={state} />
         </DialogMain>

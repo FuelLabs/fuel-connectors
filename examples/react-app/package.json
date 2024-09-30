@@ -7,6 +7,7 @@
     "fuels:build": "fuels build",
     "fuels:typegen": "fuels typegen --output=./src/types/contracts --inputs=./contracts/out/debug/counter-abi.json",
     "dev": "vite",
+    "preview": "vite preview",
     "build": "vite build"
   },
   "dependencies": {
