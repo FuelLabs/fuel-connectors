@@ -52,30 +52,26 @@ const wagmiConfig = createConfig({
     }),
   ],
 });
+const NETWORKS = [
+  {
+    chainId: CHAIN_IDS.fuel.testnet,
+    url: 'https://testnet.fuel.network/v1/graphql',
+  },
+];
+
+const FUEL_CONFIG = {
+  connectors: defaultConnectors({
+    devMode: true,
+    wcProjectId: WC_PROJECT_ID,
+    ethWagmiConfig: wagmiConfig,
+    chainId: CHAIN_IDS.fuel.testnet,
+  }),
+};
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <FuelProvider
-        theme="dark"
-        uiConfig={{
-          suggestBridge: true, // default true
-        }}
-        networks={[
-          {
-            chainId: CHAIN_IDS.fuel.testnet,
-            url: 'https://testnet.fuel.network/v1/graphql',
-          },
-        ]}
-        fuelConfig={{
-          connectors: defaultConnectors({
-            devMode: true,
-            wcProjectId: WC_PROJECT_ID,
-            ethWagmiConfig: wagmiConfig,
-            chainId: CHAIN_IDS.fuel.testnet,
-          }),
-        }}
-      >
+      <FuelProvider theme="dark" networks={NETWORKS} fuelConfig={FUEL_CONFIG}>
         <Toast.Provider>
           <App />
           <Toast.Viewport
