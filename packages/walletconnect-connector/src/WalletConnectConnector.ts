@@ -14,7 +14,7 @@ import {
   reconnect,
   watchAccount,
 } from '@wagmi/core';
-import type { Web3Modal } from '@web3modal/wagmi';
+import type { createWeb3Modal } from '@web3modal/wagmi';
 import {
   CHAIN_IDS,
   type ConnectorMetadata,
@@ -46,6 +46,8 @@ import {
 } from './constants';
 import type { WalletConnectConfig } from './types';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
+
+type Web3Modal = ReturnType<typeof createWeb3Modal>;
 
 export class WalletConnectConnector extends PredicateConnector {
   name = 'Ethereum Wallets';
@@ -90,6 +92,9 @@ export class WalletConnectConnector extends PredicateConnector {
 
   // createModal re-instanciates the modal to update singletons from web3modal
   private createModal() {
+    if (this.web3Modal) {
+      return;
+    }
     this.clearSubscriptions();
     this.web3Modal = this.modalFactory(this.config);
     ApiController.prefetch();
@@ -192,7 +197,7 @@ export class WalletConnectConnector extends PredicateConnector {
 
   protected async requireConnection() {
     const wagmiConfig = this.getWagmiConfig();
-    if (!this.web3Modal) this.createModal();
+    this.createModal();
     if (!wagmiConfig) return;
 
     const { state } = wagmiConfig;
