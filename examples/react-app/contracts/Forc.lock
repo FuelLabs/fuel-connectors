@@ -1,6 +1,6 @@
 [[package]]
 name = "core"
-source = "path+from-root-4BB20845430AF9CF"
+source = "path+from-root-4BA3A18A2D620E67"
 
 [[package]]
 name = "counter"
@@ -9,5 +9,5 @@ dependencies = ["std"]
 
 [[package]]
 name = "std"
-source = "git+https://github.com/fuellabs/sway?tag=v0.63.5#31a1d6f98395f571cd3674b492d9bf4773c55f65"
+source = "git+https://github.com/fuellabs/sway?tag=v0.64.0#2156bfbbee01ffb85bfca2aae8f185f8e7c715a4"
 dependencies = ["core"]
