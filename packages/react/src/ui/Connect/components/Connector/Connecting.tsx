@@ -1,7 +1,7 @@
 import { Routes, useConnectUI } from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../Core/ConnectorIcon';
 
-import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { Spinner } from '../../../../icons/Spinner';
 import {
   ConnectorButton,
@@ -27,17 +27,13 @@ export function Connecting({ className }: ConnectorProps) {
     isConnected,
   } = useConnectUI();
 
-  if (!connector) return null;
+  useEffect(() => {
+    if (isConnected && route === Routes.CONNECTING && !isConnecting) {
+      cancel();
+    }
+  }, [isConnected, route, isConnecting, cancel]);
 
-  useQuery({
-    queryKey: ['CONNECTING', connector.name, route, isConnected, isConnecting],
-    queryFn: async () => {
-      if (isConnected && route === Routes.CONNECTING && !isConnecting) {
-        cancel();
-      }
-      return null;
-    },
-  });
+  if (!connector) return null;
 
   return (
     <div className={className}>
