@@ -32,7 +32,7 @@ importers:
         version: 0.20.0(tsup@8.0.2(@microsoft/api-extractor@7.43.0(@types/node@20.12.11))(postcss@8.4.41)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(typescript@5.4.5))
       '@vitest/coverage-v8':
         specifier: 2.0.2
-        version: 2.0.2(vitest@2.0.2(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.31.0))
+        version: 2.0.2(vitest@2.0.2(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.31.0))
       compare-versions:
         specifier: 6.1.0
         version: 6.1.0
@@ -50,7 +50,7 @@ importers:
         version: 2.0.11
       vitest:
         specifier: 2.0.2
-        version: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.31.0)
+        version: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.31.0)
 
   examples/react-app:
     dependencies:
@@ -203,7 +203,7 @@ importers:
         version: 3.9.1(@types/node@20.12.11)(rollup@4.20.0)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.11)(terser@5.31.0))
       vitest:
         specifier: 2.0.2
-        version: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.31.0)
+        version: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.31.0)
 
   packages/common:
     dependencies:
@@ -243,7 +243,7 @@ importers:
         version: 5.4.5
       vitest:
         specifier: 2.0.2
-        version: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.31.0)
+        version: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.31.0)
 
   packages/connectors:
     dependencies:
@@ -423,7 +423,7 @@ importers:
         version: 4.3.2(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.11)(terser@5.31.0))
       vitest:
         specifier: 2.0.2
-        version: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.31.0)
+        version: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.31.0)
 
   packages/evm-predicates:
     devDependencies:
@@ -606,7 +606,7 @@ importers:
         version: 3.9.1(@types/node@20.12.11)(rollup@4.20.0)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.11)(terser@5.31.0))
       vitest:
         specifier: 2.0.2
-        version: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.31.0)
+        version: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.31.0)
 
   packages/walletconnect-connector:
     dependencies:
@@ -673,7 +673,7 @@ importers:
         version: 3.9.1(@types/node@20.12.11)(rollup@4.20.0)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.11)(terser@5.31.0))
       vitest:
         specifier: 2.0.2
-        version: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.31.0)
+        version: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.31.0)
 
 packages:
 
@@ -12214,7 +12214,7 @@ snapshots:
       vite: 5.4.0(@types/node@20.12.11)(terser@5.31.0)
       vue: 3.4.37(typescript@5.4.5)
 
-  '@vitest/coverage-v8@2.0.2(vitest@2.0.2(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.31.0))':
+  '@vitest/coverage-v8@2.0.2(vitest@2.0.2(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.31.0))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -12229,7 +12229,7 @@ snapshots:
       strip-literal: 2.1.0
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.31.0)
+      vitest: 2.0.2(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.31.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -18313,7 +18313,7 @@ snapshots:
       - typescript
       - universal-cookie
 
-  vitest@2.0.2(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.31.0):
+  vitest@2.0.2(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.31.0):
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@vitest/expect': 2.0.2
