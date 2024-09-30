@@ -1,8 +1,6 @@
-import type { FuelConnector } from 'fuels';
-
 import { ConnectorIcon } from '../Core/ConnectorIcon';
 
-import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { useConnectUI } from '../../../../providers';
 import { Routes } from '../../../../providers/FuelUIProvider';
 import {
@@ -25,15 +23,14 @@ export function Connector() {
   } = connector.metadata;
 
   // Ping extension: if it's installed, it will trigger connector
-  useQuery({
-    queryKey: ['CONNECTOR_PING', connector.name, connector.installed],
-    queryFn: async () => {
-      const isInstall = await connector.ping();
-      if (isInstall) setRoute(Routes.CONNECTING);
-      return isInstall;
-    },
-    staleTime: Number.POSITIVE_INFINITY,
-  });
+  useEffect(() => {
+    const ping = async () => {
+      const isInstalled = await connector.ping();
+      if (isInstalled) setRoute(Routes.CONNECTING);
+    };
+
+    ping();
+  }, [connector, setRoute]);
 
   const actionText = action || 'Install';
 
