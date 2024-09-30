@@ -38,7 +38,7 @@
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",
     "@types/memoizee": "0.4.11",
-    "@web3modal/core": "5.1.10",
+    "@web3modal/core": "5.0.0",
     "fuels": "0.94.8",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",

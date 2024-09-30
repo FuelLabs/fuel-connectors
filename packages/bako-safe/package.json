@@ -16,7 +16,7 @@
     "socket.io-client": "4.7.2"
   },
   "peerDependencies": {
-    "fuels": ">=0.94.98",
+    "fuels": ">=0.94.8",
     "socket.io-client": "4.7.2"
   },
   "devDependencies": {

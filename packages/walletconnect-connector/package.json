@@ -22,7 +22,7 @@
   "peerDependencies": {
     "@web3modal/core": ">=5.0.0",
     "@web3modal/scaffold": ">=5.0.0",
-    "fuels": ">=0.94.98"
+    "fuels": ">=0.94.8"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -36,7 +36,7 @@
     "@fuel-connectors/common": "workspace:*",
     "@fuel-connectors/evm-predicates": "workspace:*",
     "@types/memoizee": "0.4.11",
-    "@web3modal/core": "5.1.10",
+    "@web3modal/core": "5.0.0",
     "fuels": "0.94.8",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",

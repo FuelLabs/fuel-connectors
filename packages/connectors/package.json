@@ -18,12 +18,11 @@
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "fuels": ">=0.94.98"
+    "fuels": ">=0.94.8"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
-    "@fuels/connectors": "0.29.2",
     "@solana/web3.js": "1.93.1",
     "@wagmi/core": "2.13.4",
     "@web3modal/core": "5.0.0",

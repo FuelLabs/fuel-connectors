@@ -253,9 +253,6 @@ importers:
       '@ethersproject/bytes':
         specifier: 5.7.0
         version: 5.7.0
-      '@fuels/connectors':
-        specifier: 0.29.2
-        version: 0.29.2(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(@wagmi/connectors@5.1.7(@types/react@18.3.1)(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-native@0.75.0(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(@types/react@18.3.1)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.20.0)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(bufferutil@4.0.8)(fuels@0.94.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(vue@3.4.37(typescript@5.4.5))(zod@3.22.4)
       '@solana/web3.js':
         specifier: 1.93.1
         version: 1.93.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -578,8 +575,8 @@ importers:
         specifier: 0.4.11
         version: 0.4.11
       '@web3modal/core':
-        specifier: 5.1.10
-        version: 5.1.10(@types/react@18.3.1)(react@18.3.1)
+        specifier: 5.0.0
+        version: 5.0.0(@types/react@18.3.1)(react@18.3.1)
       fuels:
         specifier: 0.94.8
         version: 0.94.8
@@ -645,8 +642,8 @@ importers:
         specifier: 0.4.11
         version: 0.4.11
       '@web3modal/core':
-        specifier: 5.1.10
-        version: 5.1.10(@types/react@18.3.1)(react@18.3.1)
+        specifier: 5.0.0
+        version: 5.0.0(@types/react@18.3.1)(react@18.3.1)
       fuels:
         specifier: 0.94.8
         version: 0.94.8
@@ -2416,11 +2413,6 @@ packages:
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
     hasBin: true
 
-  '@fuels/connectors@0.29.2':
-    resolution: {integrity: sha512-0zT5vuat5cB9lD79gdHLaO+XKihDwHl2ZAvnyArS67tPrtt2udiQi/t9amWatHgJlNzokAuYZ8tA+yaOwtpsJw==}
-    peerDependencies:
-      fuels: '>=0.94.6'
-
   '@fuels/ts-config@0.20.0':
     resolution: {integrity: sha512-wFPifVVz2z/YXuYJ/qLFRKIAVq98ZtrrX9TlcKuL5E4ar32VGLRFTtoujEwFVcWRWmdkxA9ulcCiV3fEojdqlQ==}
     peerDependencies:
@@ -4052,20 +4044,11 @@ packages:
   '@web3modal/common@5.0.0':
     resolution: {integrity: sha512-qH/89H0bpmY6i8qNey2W/U8SZik9LGcHj8KuKWIOvkfLzf1rqrvJQRURVAcEY/YK3A47RD26vZmmRC55YS9/Jg==}
 
-  '@web3modal/common@5.1.10':
-    resolution: {integrity: sha512-C4KWgZv2xelHlY6BbiOK+Mp5bjfnw6/zM3wkkPKrOF/Pnn6fyN34mR0BOTgZyq6V6qhKfqLepLBpRO7cOuOZtw==}
-
   '@web3modal/core@5.0.0':
     resolution: {integrity: sha512-6pBWgwTn0B+YYpoe9ajrOKcvrdGtJuptLUIVOf/0b/01YFyAd3R7cqrAQE098AXZOEVhVZnpuFKuAWrZDo/z+g==}
 
-  '@web3modal/core@5.1.10':
-    resolution: {integrity: sha512-+LX1QwFIcp8/IDzS77mJ6Ge5ZSYiAZr3EBSEOZLjrn22jMLyILUtEb1Tjoyrivjsanc2tElodtwf6rlfOZ0qPA==}
-
   '@web3modal/polyfills@5.0.0':
     resolution: {integrity: sha512-amEhs+xrsBRaj9MZ7Smycu+4TaggC+L3LARYZjGv1X8+HL5qlNIr1IBxc48+MtcW0SNu+lND2e//tO1GA9Drow==}
-
-  '@web3modal/polyfills@5.1.10':
-    resolution: {integrity: sha512-SozAs8xv0IsR1r8ELBJPs4TReS0jXxV6gDcFAO5xZzElYWtcLfXezI2u1tVXvaHobS4uaUJOss4cRemhh9XCmA==}
 
   '@web3modal/scaffold-react@5.0.0':
     resolution: {integrity: sha512-TdjX1C8F/tnyryM7GQb3YQEEpMfFjabnUlzSeEcr47HaeMANZ2WZleKrAKrAj3/VZn0fGKrSePrAHp4M2CdR8w==}
@@ -4131,9 +4114,6 @@ packages:
 
   '@web3modal/wallet@5.0.0':
     resolution: {integrity: sha512-3oyUquzLq9vairNM4ba8wEtJm/Sn+qT1yh7MIoVltxfMtoX8teDrmj83/jSBXv0/iqKf2DGo4MQJ124KQKeTLA==}
-
-  '@web3modal/wallet@5.1.10':
-    resolution: {integrity: sha512-C9q84ftHZHSft0sTVplFE3Y8NvQ4/icEpIS/7f6B0y2Lnu4Fa7u8IGlkTHSnhQBGrrUF4ahCZBiaAnZQm3RDMQ==}
 
   '@webassemblyjs/ast@1.12.1':
     resolution: {integrity: sha512-EKfMUOPRRUTy5UII4qJDGPpqfwjOmZ5jeGFwid9mnoqIFK+e0vqoi1qH56JpmZSzEL53jKnNzScdmftJyG5xWg==}
@@ -8242,7 +8222,7 @@ packages:
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@types/react': '>=16.8'
-      react: '>=16.8'
+      react: '*'
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -10546,49 +10526,6 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       cli-table: 0.3.11
-
-  '@fuels/connectors@0.29.2(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(@wagmi/connectors@5.1.7(@types/react@18.3.1)(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-native@0.75.0(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(@types/react@18.3.1)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.20.0)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(bufferutil@4.0.8)(fuels@0.94.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(vue@3.4.37(typescript@5.4.5))(zod@3.22.4)':
-    dependencies:
-      '@ethereumjs/util': 9.0.3
-      '@ethersproject/bytes': 5.7.0
-      '@solana/web3.js': 1.93.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@wagmi/core': 2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))
-      '@web3modal/core': 5.0.0(@types/react@18.3.1)(react@18.3.1)
-      '@web3modal/scaffold': 5.0.0(@types/react@18.3.1)(react@18.3.1)
-      '@web3modal/solana': 5.0.0(@types/react@18.3.1)(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@5.0.10)(vue@3.4.37(typescript@5.4.5))
-      '@web3modal/wagmi': 5.0.0(iofrudng23ohf4rhkqrzui3v3u)
-      fuels: 0.94.8
-      rpc-websockets: 7.11.0
-      socket.io-client: 4.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      viem: 2.20.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@tanstack/query-core'
-      - '@types/react'
-      - '@upstash/redis'
-      - '@vercel/kv'
-      - '@wagmi/connectors'
-      - bufferutil
-      - encoding
-      - immer
-      - ioredis
-      - react
-      - react-dom
-      - supports-color
-      - typescript
-      - uWebSockets.js
-      - utf-8-validate
-      - vue
-      - zod
 
   '@fuels/ts-config@0.20.0(typescript@5.4.5)':
     dependencies:
@@ -13420,11 +13357,6 @@ snapshots:
       bignumber.js: 9.1.2
       dayjs: 1.11.10
 
-  '@web3modal/common@5.1.10':
-    dependencies:
-      bignumber.js: 9.1.2
-      dayjs: 1.11.10
-
   '@web3modal/core@5.0.0(@types/react@18.3.1)(react@18.3.1)':
     dependencies:
       '@web3modal/common': 5.0.0
@@ -13434,20 +13366,7 @@ snapshots:
       - '@types/react'
       - react
 
-  '@web3modal/core@5.1.10(@types/react@18.3.1)(react@18.3.1)':
-    dependencies:
-      '@web3modal/common': 5.1.10
-      '@web3modal/wallet': 5.1.10
-      valtio: 1.11.2(@types/react@18.3.1)(react@18.3.1)
-    transitivePeerDependencies:
-      - '@types/react'
-      - react
-
   '@web3modal/polyfills@5.0.0':
-    dependencies:
-      buffer: 6.0.3
-
-  '@web3modal/polyfills@5.1.10':
     dependencies:
       buffer: 6.0.3
 
@@ -13644,13 +13563,6 @@ snapshots:
   '@web3modal/wallet@5.0.0':
     dependencies:
       '@web3modal/polyfills': 5.0.0
-      zod: 3.22.4
-
-  '@web3modal/wallet@5.1.10':
-    dependencies:
-      '@walletconnect/logger': 2.1.2
-      '@web3modal/common': 5.1.10
-      '@web3modal/polyfills': 5.1.10
       zod: 3.22.4
 
   '@webassemblyjs/ast@1.12.1':
