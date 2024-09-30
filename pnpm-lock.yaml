@@ -8222,7 +8222,7 @@ packages:
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@types/react': '>=16.8'
-      react: '*'
+      react: '>=16.8'
     peerDependenciesMeta:
       '@types/react':
         optional: true
