@@ -18,11 +18,12 @@
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "fuels": ">=0.94.6"
+    "fuels": ">=0.94.98"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
+    "@fuels/connectors": "0.29.2",
     "@solana/web3.js": "1.93.1",
     "@wagmi/core": "2.13.4",
     "@web3modal/core": "5.0.0",
@@ -42,7 +43,7 @@
     "@fuel-connectors/fuelet-wallet": "workspace:*",
     "@fuel-connectors/solana-connector": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
-    "fuels": "0.94.6",
+    "fuels": "0.94.8",
     "terser": "5.31.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5"
