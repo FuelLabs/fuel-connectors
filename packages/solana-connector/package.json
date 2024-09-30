@@ -24,7 +24,7 @@
   "peerDependencies": {
     "@web3modal/core": ">=5.0.0",
     "@web3modal/scaffold": ">=5.0.0",
-    "fuels": ">=0.94.98"
+    "fuels": ">=0.94.8"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
