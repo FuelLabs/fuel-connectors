@@ -25,7 +25,7 @@ import {
 export function NetworkDialog({
   theme,
 }: {
-  theme: string;
+  theme: 'dark' | 'light';
 }) {
   const { networks } = useFuel();
   const { disconnect } = useDisconnect();
@@ -97,9 +97,9 @@ export function NetworkDialog({
                 width: '100%',
               }}
             >
-              <Divider style={{ flex: 1 }} />
+              <Divider />
               <OrLabel>or</OrLabel>
-              <Divider style={{ flex: 1 }} />
+              <Divider />
             </div>
             <ButtonDisconnect
               type="button"

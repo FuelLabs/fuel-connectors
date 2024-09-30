@@ -1,19 +1,13 @@
-import type { FuelConnector } from 'fuels';
 import { useConnectUI } from '../../../../providers/FuelUIProvider';
 import {
   ConnectorButton,
   ConnectorButtonPrimary,
-  ConnectorDescription,
-  ConnectorTitle,
+  connectorDescriptionStyle,
+  connectorTitleStyle,
 } from '../Connector/styles';
 import { DisclaimerContainer, DisclaimerList } from './styles';
 
-type BridgeProps = {
-  bridgeURL?: string;
-  className?: string;
-};
-
-export function ExternalDisclaimer({ className }: BridgeProps) {
+export function ExternalDisclaimer() {
   const {
     dialog: { connector, _startConnection, back },
   } = useConnectUI();
@@ -21,15 +15,29 @@ export function ExternalDisclaimer({ className }: BridgeProps) {
   if (!connector) return null;
 
   return (
-    <div className={className}>
+    <div>
       <DisclaimerContainer>
-        <ConnectorTitle style={{ textAlign: 'left' }}>
+        <h2
+          style={{
+            ...connectorTitleStyle,
+            textAlign: 'left',
+            margin: 0,
+            padding: 0,
+          }}
+        >
           Non-Native Wallet
-        </ConnectorTitle>
-        <ConnectorDescription style={{ textAlign: 'left', margin: 0 }}>
+        </h2>
+        <p
+          style={{
+            ...connectorDescriptionStyle,
+            textAlign: 'left',
+            margin: 0,
+            padding: 0,
+          }}
+        >
           Fuel supports any wallet from Ethereum to Solana, but these wallets
           have limited functionality for now.
-        </ConnectorDescription>
+        </p>
         <DisclaimerList>
           <li>
             Only support blind signature. Make sure you only visit trusted
