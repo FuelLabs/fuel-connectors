@@ -11,17 +11,17 @@ import {
 } from '@fuel-connectors/common';
 import { ApiController } from '@web3modal/core';
 import type { Web3Modal } from '@web3modal/solana';
-import type { Provider } from '@web3modal/solana/dist/types/src/utils/scaffold';
 import {
   CHAIN_IDS,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
+  Provider,
   type TransactionRequestLike,
 } from 'fuels';
 import { SOLANA_ICON, TESTNET_URL } from './constants';
 import { PREDICATE_VERSIONS } from './generated/predicates';
-import type { SolanaConfig } from './types';
+import type { SolanaConfig, SolanaWalletProvider } from './types';
 import { type SolanaPredicateRoot, txIdEncoders } from './utils';
 import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
 
@@ -90,7 +90,7 @@ export class SolanaConnector extends PredicateConnector {
         switch (event.data.event) {
           case 'MODAL_OPEN':
             // Ensures that the Solana Web3Modal config is applied over pre-existing states (e.g. WC Connect Web3Modal)
-            this.createModal();
+            if (!this.web3Modal) this.createModal();
             break;
           case 'CONNECT_SUCCESS': {
             const address = this.web3Modal.getAddress() || '';
@@ -100,10 +100,9 @@ export class SolanaConnector extends PredicateConnector {
             this._emitConnected(true);
             break;
           }
-          case 'DISCONNECT_SUCCESS': {
+          case 'DISCONNECT_SUCCESS':
             this._emitConnected(false);
             break;
-          }
         }
       }),
     );
@@ -136,7 +135,7 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   protected async requireConnection() {
-    if (!this.web3Modal) this.createModal();
+    // if (!this.web3Modal) this.createModal();
   }
 
   protected getWalletAdapter(): PredicateWalletAdapter {
@@ -190,7 +189,7 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   public async connect(): Promise<boolean> {
-    this.createModal();
+    if (!this.web3Modal) this.createModal();
 
     return new Promise((resolve) => {
       this.web3Modal.open();
@@ -245,15 +244,18 @@ export class SolanaConnector extends PredicateConnector {
     );
 
     const txId = await this.encodeTxId(transactionId);
-    const provider: Maybe<Provider> =
-      this.web3Modal.getWalletProvider() as Provider;
+    const provider: Maybe<SolanaWalletProvider> =
+      this.web3Modal.getWalletProvider();
     if (!provider) {
       throw new Error('No provider found');
     }
 
-    const signedMessage: Uint8Array = (await provider.signMessage(
-      txId,
-    )) as Uint8Array;
+    const signedMessage: Uint8Array = (await provider.request({
+      method: 'signMessage',
+      params: {
+        message: txId,
+      },
+    })) as Uint8Array;
     transactionRequest.witnesses[predicateSignatureIndex] = signedMessage;
 
     // Send transaction

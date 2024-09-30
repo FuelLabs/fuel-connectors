@@ -1,6 +1,6 @@
 import { http, type Config, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
-import { type Web3Modal, createWeb3Modal } from '@web3modal/wagmi';
+import { createWeb3Modal } from '@web3modal/wagmi';
 import { DEFAULT_PROJECT_ID } from './constants';
 
 interface CreateWeb3ModalProps {
@@ -21,7 +21,7 @@ export const createWagmiConfig = (): Config =>
 export function createWeb3ModalInstance({
   wagmiConfig,
   projectId = DEFAULT_PROJECT_ID,
-}: CreateWeb3ModalProps): Web3Modal {
+}: CreateWeb3ModalProps): ReturnType<typeof createWeb3Modal> {
   if (!projectId) {
     console.warn(
       '[WalletConnect Connector]: Get a project ID on https://cloud.walletconnect.com to use WalletConnect features.',

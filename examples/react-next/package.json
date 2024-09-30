@@ -12,7 +12,7 @@
     "@fuels/react": "workspace:*",
     "@tanstack/react-query": "5.35.1",
     "@wagmi/connectors": "5.1.7",
-    "fuels": "0.94.6",
+    "fuels": "0.94.8",
     "next": "14.2.3",
     "react": "18.3.1",
     "react-dom": "18.3.1",

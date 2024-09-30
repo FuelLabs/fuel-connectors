@@ -1,4 +1,5 @@
 import type { PredicateConfig } from '@fuel-connectors/common';
+import type { Web3Modal } from '@web3modal/solana';
 import type { ProviderType } from '@web3modal/solana/dist/types/src/utils/scaffold';
 import type { Provider as FuelProvider } from 'fuels';
 
@@ -38,3 +39,5 @@ export enum SolanaEvents {
   SESSION_UPDATE = 'session_update',
   SESSION_DELETE = 'session_delete',
 }
+
+export type SolanaWalletProvider = ReturnType<Web3Modal['getWalletProvider']>;
