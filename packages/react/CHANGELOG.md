@@ -1,5 +1,11 @@
 # @fuels/react
 
+## 0.29.4
+
+### Patch Changes
+
+- [#313](https://github.com/FuelLabs/fuel-connectors/pull/313) [`9fc7a98`](https://github.com/FuelLabs/fuel-connectors/commit/9fc7a98ba855f449b65819417247881dab336598) Thanks [@luizstacio](https://github.com/luizstacio)! - User url from networks configuration on hooks.
+
 ## 0.29.3
 
 ### Patch Changes

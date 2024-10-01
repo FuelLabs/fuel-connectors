@@ -1,5 +1,7 @@
 # @fuel-connectors/burner-wallet-connector
 
+## 0.29.4
+
 ## 0.29.3
 
 ### Patch Changes

@@ -1,5 +1,7 @@
 # @fuel-connectors/solana-connector
 
+## 0.29.4
+
 ## 0.29.3
 
 ### Patch Changes
