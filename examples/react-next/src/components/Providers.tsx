@@ -13,6 +13,12 @@ import { type State, WagmiProvider } from 'wagmi';
 const queryClient = new QueryClient();
 const WC_PROJECT_ID =
   process.env.NEXT_PUBLIC_WC_PROJECT_ID ?? '00000000000000000000000000000000';
+const NETWORKS = [
+  {
+    chainId: CHAIN_IDS.fuel.testnet,
+    url: 'https://testnet.fuel.network/v1/graphql',
+  },
+];
 
 export type ProvidersProps = {
   children: React.ReactNode;
@@ -21,10 +27,18 @@ export type ProvidersProps = {
 
 export const Providers = ({ children, wagmiInitialState }: ProvidersProps) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const [config] = useState(() => getConfig());
+  const [wagmiConfig] = useState(() => getConfig());
+  const fuelConfig = {
+    connectors: defaultConnectors({
+      devMode: true,
+      wcProjectId: WC_PROJECT_ID,
+      ethWagmiConfig: wagmiConfig,
+      chainId: CHAIN_IDS.fuel.testnet,
+    }),
+  };
 
   return (
-    <WagmiProvider config={config} initialState={wagmiInitialState}>
+    <WagmiProvider config={wagmiConfig} initialState={wagmiInitialState}>
       <QueryClientProvider client={queryClient}>
         <button
           type="submit"
@@ -33,25 +47,7 @@ export const Providers = ({ children, wagmiInitialState }: ProvidersProps) => {
           Switch theme {theme}
         </button>
 
-        <FuelProvider
-          theme="dark"
-          uiConfig={{
-            suggestBridge: true, // default true
-          }}
-          networks={[
-            {
-              chainId: CHAIN_IDS.fuel.testnet,
-            },
-          ]}
-          fuelConfig={{
-            connectors: defaultConnectors({
-              devMode: true,
-              wcProjectId: WC_PROJECT_ID,
-              ethWagmiConfig: config,
-              chainId: CHAIN_IDS.fuel.testnet,
-            }),
-          }}
-        >
+        <FuelProvider theme="dark" networks={NETWORKS} fuelConfig={fuelConfig}>
           {children}
         </FuelProvider>
 
