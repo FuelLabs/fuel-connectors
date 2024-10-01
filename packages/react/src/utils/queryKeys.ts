@@ -1,5 +1,11 @@
 import type { QueryKey } from '@tanstack/react-query';
-import type { BytesLike, Provider } from 'fuels';
+import type {
+  BytesLike,
+  FuelConnector,
+  Network,
+  Provider,
+  SelectNetworkArguments,
+} from 'fuels';
 
 export const QUERY_KEYS = {
   base: ['fuel'] as QueryKey,
@@ -79,6 +85,17 @@ export const QUERY_KEYS = {
   },
   currentNetwork: (): QueryKey => {
     return QUERY_KEYS.base.concat('currentNetwork');
+  },
+  isSupportedNetwork: (
+    connectorName: string | null | undefined,
+    network: Partial<Network> | null,
+    isConnected: boolean,
+  ): QueryKey => {
+    const queryKey = QUERY_KEYS.base.concat('isSupportedNetwork');
+    if (connectorName) queryKey.push(connectorName);
+    if (network) queryKey.push(network);
+    if (isConnected) queryKey.push(isConnected);
+    return queryKey;
   },
 };
 

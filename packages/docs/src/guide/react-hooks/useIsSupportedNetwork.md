@@ -8,10 +8,6 @@ A hook to check if the current network, matches with provided networks config on
 An object containing:
 - `isSupportedNetwork`: The value if the current network is supported.
 
-| Name | Type |
-| :------ | :------ |
-| `isSupportedNetwork` | `boolean` |
-
 #### Examples
 
 To check if network is supported:
@@ -21,6 +17,6 @@ console.log(isSupportedNetwork);
 ```
 
 #### Defined in
-[packages/react/src/hooks/useIsSupportedNetwork.tsx:25](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useIsSupportedNetwork.tsx#L25)
+[packages/react/src/hooks/useIsSupportedNetwork.tsx:29](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useIsSupportedNetwork.tsx#L29)
 
 ___
