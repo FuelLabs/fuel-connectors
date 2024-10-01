@@ -14,14 +14,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const initialState = cookieToInitialState(
+  const wagmiInitialState = cookieToInitialState(
     getConfig(),
     headers().get('cookie'),
   );
   return (
     <html lang="en">
       <body>
-        <Providers initialState={initialState}>{children}</Providers>
+        <Providers wagmiInitialState={wagmiInitialState}>{children}</Providers>
       </body>
     </html>
   );

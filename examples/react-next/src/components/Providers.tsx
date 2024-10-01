@@ -16,15 +16,15 @@ const WC_PROJECT_ID =
 
 export type ProvidersProps = {
   children: React.ReactNode;
-  initialState?: State;
+  wagmiInitialState?: State;
 };
 
-export const Providers = ({ children, initialState }: ProvidersProps) => {
+export const Providers = ({ children, wagmiInitialState }: ProvidersProps) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [config] = useState(() => getConfig());
 
   return (
-    <WagmiProvider config={config} initialState={initialState}>
+    <WagmiProvider config={config} initialState={wagmiInitialState}>
       <QueryClientProvider client={queryClient}>
         <button
           type="submit"
