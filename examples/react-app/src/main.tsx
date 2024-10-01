@@ -55,6 +55,7 @@ const wagmiConfig = createConfig({
 const NETWORKS = [
   {
     chainId: CHAIN_IDS.fuel.testnet,
+    url: 'https://testnet.fuel.network/v1/graphql',
   },
 ];
 
