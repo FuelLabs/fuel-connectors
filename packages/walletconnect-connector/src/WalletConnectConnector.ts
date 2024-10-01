@@ -41,6 +41,7 @@ import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
 import { ApiController } from '@web3modal/core';
 import {
   ETHEREUM_ICON,
+  HAS_WINDOW,
   SINGATURE_VALIDATION_TIMEOUT,
   WINDOW,
 } from './constants';
@@ -72,7 +73,9 @@ export class WalletConnectConnector extends PredicateConnector {
       config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
     const wagmiConfig = config?.wagmiConfig ?? createWagmiConfig();
     this.customPredicate = config.predicateConfig || null;
-    this.configProviders({ ...config, wagmiConfig });
+    if (HAS_WINDOW) {
+      this.configProviders({ ...config, wagmiConfig });
+    }
     this.loadPersistedConnection();
   }
 
