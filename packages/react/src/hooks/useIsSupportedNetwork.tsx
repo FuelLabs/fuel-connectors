@@ -1,13 +1,17 @@
-import { useMemo } from 'react';
+import { Provider } from 'fuels';
+import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
+import { QUERY_KEYS } from '../utils';
 import { useCurrentConnector } from './useCurrentConnector';
 import { useIsConnected } from './useIsConnected';
-import { useProvider } from './useProvider';
+import { useNetwork } from './useNetwork';
 
-/*
- * @TODO Fuel provider.getChainId() uses a cached value, because of that, is expected that if user was in a different connector
- * with a different network, and than diconnects and try to reconnec the screen blinks for a short time.
- */
+type UseIsSupportedNetwork = {
+  /**
+   * Additional query parameters to customize the behavior of `useNamedQuery`.
+   */
+  query?: UseNamedQueryParams<'isSupportedNetwork', boolean, Error, boolean>;
+};
 
 /**
  * A hook to check if the current network, matches with provided networks config on FuelProvider.
@@ -22,17 +26,28 @@ import { useProvider } from './useProvider';
  * console.log(isSupportedNetwork);
  * ```
  */
-export function useIsSupportedNetwork() {
+export function useIsSupportedNetwork(params?: UseIsSupportedNetwork) {
   const { networks } = useFuel();
-  const { provider } = useProvider();
+  const { network } = useNetwork();
   const { isConnected } = useIsConnected();
   const { currentConnector } = useCurrentConnector();
-  const isSupportedNetwork = useMemo(() => {
-    if (!currentConnector) return true;
-    if (!isConnected) return true;
-    if (!provider) return true;
-    const chainId = provider.getChainId();
-    return !!networks.find((n) => n.chainId === chainId);
-  }, [provider, networks, isConnected, currentConnector]);
-  return { isSupportedNetwork };
+  return useNamedQuery('isSupportedNetwork', {
+    queryKey: QUERY_KEYS.isSupportedNetwork(
+      currentConnector?.name,
+      network,
+      isConnected,
+    ),
+    queryFn: async () => {
+      if (!currentConnector) return true;
+      if (!isConnected) return true;
+      if (!network) return true;
+      let chainId = network.chainId;
+      if (chainId == null) {
+        chainId = (await Provider.create(network.url)).getChainId();
+      }
+      return !!networks.find((n) => n.chainId === chainId);
+    },
+    initialData: true,
+    ...params,
+  });
 }

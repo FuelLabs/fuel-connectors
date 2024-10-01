@@ -33,7 +33,7 @@ type BridgeProps = {
 };
 
 export function BridgeDialog({ theme }: BridgeProps) {
-  const networks = useNetworkConfigs();
+  const { networks } = useNetworkConfigs();
   const { provider } = useProvider();
   const bridgeHref = useMemo(() => {
     const network = networks.find((n) => n.chainId === provider?.getChainId());
