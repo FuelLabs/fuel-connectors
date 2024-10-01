@@ -7,6 +7,7 @@ import {
 } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
+import { useProvider } from './useProvider';
 
 type UseWalletParamsDeprecated = string | null;
 
@@ -57,18 +58,21 @@ export function useWallet(
   params?: UseWalletParamsDeprecated | UseWalletParams,
 ): DefinedNamedUseQueryResult<'wallet', Account | null, Error> {
   const { fuel } = useFuel();
+  const { provider } = useProvider();
   const _params: UseWalletParams =
     typeof params === 'string' ? { account: params } : params ?? {};
 
   return useNamedQuery('wallet', {
-    queryKey: QUERY_KEYS.wallet(_params.account),
+    queryKey: QUERY_KEYS.wallet(_params.account, provider),
     queryFn: async () => {
       try {
+        if (!provider) return null;
         const accountAddress =
           _params.account || (await fuel.currentAccount()) || '';
         // Check if the address is valid
         await Address.fromString(accountAddress);
         const wallet = await fuel.getWallet(accountAddress);
+        wallet.connect(provider);
         return wallet || null;
       } catch (_error: unknown) {
         return null;

@@ -5,9 +5,9 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 
 /*
-  Fuels version: 0.94.4
-  Forc version: 0.63.3
-  Fuel-Core version: 0.35.0
+  Fuels version: 0.94.8
+  Forc version: 0.64.0
+  Fuel-Core version: 0.36.0
 */
 
 export { Counter } from './Counter';

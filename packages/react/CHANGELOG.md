@@ -1,5 +1,21 @@
 # @fuels/react
 
+## 0.29.4
+
+### Patch Changes
+
+- [#313](https://github.com/FuelLabs/fuel-connectors/pull/313) [`9fc7a98`](https://github.com/FuelLabs/fuel-connectors/commit/9fc7a98ba855f449b65819417247881dab336598) Thanks [@luizstacio](https://github.com/luizstacio)! - User url from networks configuration on hooks.
+
+## 0.29.3
+
+### Patch Changes
+
+- [#316](https://github.com/FuelLabs/fuel-connectors/pull/316) [`f1a0a23`](https://github.com/FuelLabs/fuel-connectors/commit/f1a0a237a204aee555e5a2fb166b8f143377cc21) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Fixed FuelProvider triggering unnecessary render events
+
+- [#311](https://github.com/FuelLabs/fuel-connectors/pull/311) [`a7c78f4`](https://github.com/FuelLabs/fuel-connectors/commit/a7c78f4eab3641a2221552543b73150a3fcdc388) Thanks [@helciofranco](https://github.com/helciofranco)! - Ensure the `Connect popup` is displayed only if the user is not already connected.
+
+- [#312](https://github.com/FuelLabs/fuel-connectors/pull/312) [`681785b`](https://github.com/FuelLabs/fuel-connectors/commit/681785bdd135ba9a205130bbbc381d32919cf7e3) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Upgrade Fuel SDK to 0.94.8
+
 ## 0.29.2
 
 ### Patch Changes

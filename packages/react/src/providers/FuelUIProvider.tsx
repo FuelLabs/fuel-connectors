@@ -124,11 +124,11 @@ export function FuelUIProvider({
     }
   }, [connectors, connector]);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     setError(null);
     setConnector(null);
     setDialogRoute(Routes.LIST);
-  };
+  }, []);
 
   const handleRetryConnect = useCallback(
     async (connector: FuelConnector) => {
@@ -174,7 +174,7 @@ export function FuelUIProvider({
     return isLoadingConnectors || hasLoadedConnectors;
   }, [connectors, isLoadingConnectors, fuelConfig]);
 
-  const dsTheme: ThemeProps = {
+  const _dsTheme: ThemeProps = {
     hasBackground: false,
     appearance: theme === 'dark' ? 'dark' : 'light',
   };
@@ -207,39 +207,62 @@ export function FuelUIProvider({
     };
   }, []);
 
+  const contextValue = useMemo(
+    () => ({
+      // General
+      theme: theme || 'light',
+      fuelConfig,
+      uiConfig,
+      error,
+      setError,
+      // Connection
+      isConnected: !!isConnected,
+      isConnecting,
+      // UI States
+      isLoading,
+      isError,
+      connectors,
+      // Actions
+      connect: handleConnect,
+      cancel: handleCancel,
+      // Dialog only
+      dialog: {
+        route: dialogRoute,
+        setRoute,
+        connector,
+        isOpen,
+        connect: handleSelectConnector,
+        retryConnect: handleRetryConnect,
+        back: handleBack,
+        _startConnection: handleStartConnection,
+      },
+    }),
+    [
+      theme,
+      fuelConfig,
+      uiConfig,
+      error,
+      isConnected,
+      isConnecting,
+      isLoading,
+      isError,
+      connectors,
+      connector,
+      dialogRoute,
+      isOpen,
+      handleCancel,
+      handleStartConnection,
+      setRoute,
+      handleSelectConnector,
+      handleConnect,
+      handleRetryConnect,
+      handleBack,
+    ],
+  );
+
   return (
-    <FuelConnectContext.Provider
-      value={{
-        // General
-        theme: theme || 'light',
-        fuelConfig,
-        uiConfig,
-        error,
-        setError,
-        // Connection
-        isConnected: !!isConnected,
-        isConnecting,
-        // UI States
-        isLoading,
-        isError,
-        connectors,
-        // Actions
-        connect: handleConnect,
-        cancel: handleCancel,
-        // Dialog only
-        dialog: {
-          route: dialogRoute,
-          setRoute,
-          connector,
-          isOpen,
-          connect: handleSelectConnector,
-          retryConnect: handleRetryConnect,
-          back: handleBack,
-          _startConnection: handleStartConnection,
-        },
-      }}
-    >
-      <Theme {...dsTheme}>{children}</Theme>
+    <FuelConnectContext.Provider value={contextValue}>
+      {children}
     </FuelConnectContext.Provider>
   );
 }
