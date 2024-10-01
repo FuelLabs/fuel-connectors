@@ -1,5 +1,5 @@
 import type { FuelConfig } from 'fuels';
-
+import { useMemo } from 'react';
 import type { NetworkConfig, UIConfig } from '../types';
 import { Connect } from '../ui/Connect';
 import { BridgeDialog } from '../ui/Connect/components/Bridge/BridgeDialog';
@@ -27,20 +27,23 @@ export function FuelProvider({
   uiConfig: _uiConfig,
   ui = true,
   hideWebWallet,
-  networks,
+  networks: _networks,
 }: FuelProviderProps) {
   const theme = _theme || 'light';
-  const networksConfig = useNetworkConfigs(networks);
-  const uiConfig = Object.assign(
-    {
-      suggestBridge: true,
-    },
-    _uiConfig ?? {},
+  const { networks } = useNetworkConfigs(_networks);
+  const uiConfig = useMemo(
+    () =>
+      Object.assign(
+        {
+          suggestBridge: true,
+        },
+        _uiConfig ?? {},
+      ),
+    [_uiConfig],
   );
-
   if (ui) {
     return (
-      <FuelHooksProvider fuelConfig={fuelConfig} networks={networksConfig}>
+      <FuelHooksProvider fuelConfig={fuelConfig} networks={networks}>
         <FuelUIProvider
           theme={theme}
           fuelConfig={fuelConfig}
@@ -56,7 +59,7 @@ export function FuelProvider({
     );
   }
   return (
-    <FuelHooksProvider fuelConfig={fuelConfig} networks={networksConfig}>
+    <FuelHooksProvider fuelConfig={fuelConfig} networks={networks}>
       {children}
     </FuelHooksProvider>
   );

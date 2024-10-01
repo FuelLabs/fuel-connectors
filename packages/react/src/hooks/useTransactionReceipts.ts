@@ -1,11 +1,11 @@
 import { TransactionResponse } from 'fuels';
 // should import BN because of this TS error: https://github.com/microsoft/TypeScript/issues/47663
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { TransactionResult, TransactionResultReceipt } from 'fuels';
+import type { TransactionResult } from 'fuels';
 
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
-import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
+import { useProvider } from './useProvider';
 
 type UseTransactionReceiptsParams<TTransactionType = void> = {
   /**
@@ -35,13 +35,12 @@ export const useTransactionReceipts = <TTransactionType = void>({
   txId,
   query,
 }: UseTransactionReceiptsParams<TTransactionType>) => {
-  const { fuel } = useFuel();
+  const { provider } = useProvider();
 
   return useNamedQuery('transactionReceipts', {
-    queryKey: QUERY_KEYS.transactionReceipts(txId),
+    queryKey: QUERY_KEYS.transactionReceipts(txId, provider),
     queryFn: async () => {
       try {
-        const provider = await fuel.getProvider();
         if (!provider) return null;
 
         const response = new TransactionResponse(txId || '', provider);
