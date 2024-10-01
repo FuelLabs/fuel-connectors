@@ -39,7 +39,6 @@ export function useIsSupportedNetwork(params?: UseIsSupportedNetwork) {
     ),
     queryFn: async () => {
       if (!currentConnector) return true;
-      if (!currentConnector) return true;
       if (!isConnected) return true;
       if (!network) return true;
       let chainId = network.chainId;
