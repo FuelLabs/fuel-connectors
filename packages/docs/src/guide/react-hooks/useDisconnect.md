@@ -25,6 +25,6 @@ await disconnectAsync();
 ```
 
 #### Defined in
-[packages/react/src/hooks/useDisconnect.ts:27](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useDisconnect.ts#L27)
+[packages/react/src/hooks/useDisconnect.ts:28](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useDisconnect.ts#L28)
 
 ___
