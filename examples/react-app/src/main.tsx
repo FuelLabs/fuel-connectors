@@ -71,7 +71,12 @@ const FUEL_CONFIG = {
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <FuelProvider theme="dark" networks={NETWORKS} fuelConfig={FUEL_CONFIG}>
+      <FuelProvider
+        theme="dark"
+        networks={NETWORKS}
+        fuelConfig={FUEL_CONFIG}
+        showWebWallet
+      >
         <Toast.Provider>
           <App />
           <Toast.Viewport
@@ -82,7 +87,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <ScreenSizeIndicator />
       </FuelProvider>
 
-      <ReactQueryDevtools initialIsOpen={false} />
+      <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
     </QueryClientProvider>
   </React.StrictMode>,
 );

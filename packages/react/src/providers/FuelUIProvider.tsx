@@ -9,11 +9,11 @@ import {
   useState,
 } from 'react';
 
-import { useConnect } from '../hooks/useConnect';
-import { useConnectors } from '../hooks/useConnectors';
-
+import { Theme, type ThemeProps } from '@fuels/ui';
 import { NATIVE_CONNECTORS } from '../config';
 import { useIsConnected } from '../hooks';
+import { useConnect } from '../hooks/useConnect';
+import { useConnectors } from '../hooks/useConnectors';
 import type { UIConfig } from '../types';
 import { isNativeConnector } from '../utils';
 
@@ -174,6 +174,10 @@ export function FuelUIProvider({
     return isLoadingConnectors || hasLoadedConnectors;
   }, [connectors, isLoadingConnectors, fuelConfig]);
 
+  const _dsTheme: ThemeProps = {
+    hasBackground: false,
+    appearance: theme === 'dark' ? 'dark' : 'light',
+  };
   const handleConnect = useCallback(() => {
     setConnector(null);
     setError(null);

@@ -1,11 +1,5 @@
 import type { QueryKey } from '@tanstack/react-query';
-import type {
-  BytesLike,
-  FuelConnector,
-  Network,
-  Provider,
-  SelectNetworkArguments,
-} from 'fuels';
+import type { Asset, BytesLike, Network, Provider } from 'fuels';
 
 export const QUERY_KEYS = {
   base: ['fuel'] as QueryKey,
@@ -17,6 +11,11 @@ export const QUERY_KEYS = {
   },
   assets: (): QueryKey => {
     return QUERY_KEYS.base.concat('assets');
+  },
+  assetsBalance: (assets?: Asset[]): QueryKey => {
+    const queryKey = QUERY_KEYS.base.concat('assetsBalance');
+    if (assets) queryKey.push(assets);
+    return queryKey;
   },
   contract: (
     address: string,
