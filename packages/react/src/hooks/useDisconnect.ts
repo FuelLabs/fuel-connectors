@@ -1,5 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { QUERY_KEYS } from 'src/utils';
 import { useFuel } from '../providers';
 
 // @TODO: Add a link to fuel connector's documentation.
@@ -26,10 +27,15 @@ import { useFuel } from '../providers';
  */
 export const useDisconnect = () => {
   const { fuel } = useFuel();
-
+  const queryClient = useQueryClient();
   const { mutate, mutateAsync, ...mutateProps } = useMutation({
     mutationFn: async () => {
       return fuel?.disconnect();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.account() });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.wallet() });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.isConnected() });
     },
   });
 
