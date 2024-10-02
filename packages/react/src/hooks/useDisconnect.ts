@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { QUERY_KEYS } from 'src/utils';
 import { useFuel } from '../providers';
+import { QUERY_KEYS } from '../utils';
 
 // @TODO: Add a link to fuel connector's documentation.
 /**
