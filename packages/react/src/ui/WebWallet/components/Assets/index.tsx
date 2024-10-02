@@ -1,4 +1,5 @@
 import { IconCoins } from '@tabler/icons-react';
+import type { Network } from 'fuels';
 import { useMemo } from 'react';
 import { useProvider } from '../../../../hooks';
 import {
@@ -75,7 +76,7 @@ export const AssetsList = ({ assets, hideAmount }: AssetsProps) => {
 };
 
 export const NoAssets = () => {
-  const networks = useNetworkConfigs();
+  const { networks } = useNetworkConfigs();
   const { provider } = useProvider();
   const bridgeHref = useMemo(() => {
     const network = networks.find((n) => n.chainId === provider?.getChainId());
@@ -92,7 +93,7 @@ export const NoAssets = () => {
         Looks like you don't have ETH balance, bridge funds to Fuel Ignition and
         use the application without stopping.
       </NoAssetDescription>
-      <NoAssetButton href={bridgeHref} target="_blank">
+      <NoAssetButton href={bridgeHref ?? ''} target="_blank">
         Bridge now
       </NoAssetButton>
     </Container>

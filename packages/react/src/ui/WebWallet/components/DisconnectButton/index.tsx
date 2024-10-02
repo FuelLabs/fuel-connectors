@@ -1,5 +1,5 @@
 import { IconLogout } from '@tabler/icons-react';
-import { Button } from './stylex';
+import { Button } from './styles';
 
 export interface DisconnectButtonProps {
   disconnect: () => void;

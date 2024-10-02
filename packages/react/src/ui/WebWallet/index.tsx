@@ -15,7 +15,6 @@ import {
   VisuallyHidden,
 } from './styles';
 
-import './index.css';
 import { IconWallet } from '@tabler/icons-react';
 import { getThemeVariables } from '../../constants/themes';
 import { useAccount } from '../../hooks';
@@ -76,18 +75,13 @@ export const WebWallet = () => {
     <FuelRoot style={style}>
       <Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
         <DialogTrigger>
-          <Container $align="center" $gap="4px">
+          <Container alignItems="center" gap="4px">
             <IconWallet size={20} />
             <span>{!!(isConnected && address) && shortAddress(address)}</span>
           </Container>
         </DialogTrigger>
 
-        <DialogContent
-          forceMount
-          style={{
-            visibility: isOpen ? 'visible' : 'hidden',
-          }}
-        >
+        <DialogContent forceMount show={isOpen}>
           <DialogMain>
             <Container>
               <Header address={address} currentConnector={currentConnector} />

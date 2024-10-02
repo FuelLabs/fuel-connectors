@@ -1,104 +1,155 @@
-import { styled } from 'styled-components';
+const AssetsWrapperStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px',
+};
 
-export const AssetsWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-`;
+export const AssetsWrapper = ({ children }: React.PropsWithChildren) => (
+  <div style={AssetsWrapperStyle}>{children}</div>
+);
 
-export const AssetsTitleWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
+const AssetsTitleWrapperStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+};
+export const AssetsTitleWrapper = ({ children }: React.PropsWithChildren) => (
+  <div style={AssetsTitleWrapperStyle}>{children}</div>
+);
 
-export const AssetsTitle = styled.div``;
+export const AssetsTitle = ({ children }: React.PropsWithChildren) => (
+  <h2>{children}</h2>
+);
 
-export const AssetsCardList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-`;
+const AssetsCardListStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px',
+};
+export const AssetsCardList = ({ children }: React.PropsWithChildren) => (
+  <div style={AssetsCardListStyle}>{children}</div>
+);
 
-export const AssetCard = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 12px;
-  background-color: var(--fuel-card-background);
-  border: var(--fuel-border);
-`;
+const AssetCardStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  padding: '12px',
+  borderRadius: '12px',
+  backgroundColor: 'var(--fuel-card-background)',
+  border: 'var(--fuel-border)',
+};
+export const AssetCard = ({ children }: React.PropsWithChildren) => (
+  <div style={AssetCardStyle}>{children}</div>
+);
 
-export const AssetCardLeft = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
+const AssetCardLeftStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+};
+export const AssetCardLeft = ({ children }: React.PropsWithChildren) => (
+  <div style={AssetCardLeftStyle}>{children}</div>
+);
 
-export const AssetCardAssetInfoWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-`;
+const AssetCardAssetInfoWrapperStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px',
+};
+export const AssetCardAssetInfoWrapper = ({
+  children,
+}: React.PropsWithChildren) => (
+  <div style={AssetCardAssetInfoWrapperStyle}>{children}</div>
+);
 
-export const AssetCardAssetInfoName = styled.div`
-  font-size: var(--fuel-font-size-sm);
-`;
-export const AssetCardAssetInfoSymbolWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--fuel-color-muted);
-  font-size: var(--fuel-font-size-sm);
-`;
-export const AssetCardAssetInfoSymbol = styled.div``;
+const AssetCardAssetInfoNameStyle: React.CSSProperties = {
+  fontSize: 'var(--fuel-font-size-sm)',
+};
+export const AssetCardAssetInfoName = ({
+  children,
+}: React.PropsWithChildren) => (
+  <div style={AssetCardAssetInfoNameStyle}>{children}</div>
+);
 
-export const AssetCardValue = styled.div`
-  font-size: var(--fuel-font-size-sm);
-`;
+const AssetCardAssetInfoSymbolWrapperStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  color: 'var(--fuel-color-muted)',
+  fontSize: 'var(--fuel-font-size-sm)',
+};
+export const AssetCardAssetInfoSymbolWrapper = ({
+  children,
+}: React.PropsWithChildren) => (
+  <div style={AssetCardAssetInfoSymbolWrapperStyle}>{children}</div>
+);
 
-export const NoAssetDescription = styled.p`
-  font-weight: 400;
-  color: var(--fuel-color-muted);
-  font-size: var(--fuel-font-size-sm);
-  text-align: center;
-  line-height: 1.2em;
-`;
+export const AssetCardAssetInfoSymbol = ({
+  children,
+}: React.PropsWithChildren) => <div>{children}</div>;
 
-export const Button = styled.a`
-  display: flex;
-  box-sizing: border-box;
-  text-decoration: none;
-  cursor: pointer;
-  justify-content: center;
-  align-items: center;
-  margin: 0.4rem 1rem 0;
-  padding: 0.6rem 0;
-  font-size: var(--fuel-font-size);
-  color: var(--fuel-color-bold);
-  border-radius: var(--fuel-border-radius);
-  background-color: var(--fuel-button-background);
+const AssetCardValueStyle: React.CSSProperties = {
+  fontSize: 'var(--fuel-font-size-sm)',
+};
+export const AssetCardValue = ({ children }: React.PropsWithChildren) => (
+  <div style={AssetCardValueStyle}>{children}</div>
+);
 
-  &:visited {
-    color: var(--fuel-color-bold);
-  }
+const NoAssetDescriptionStyle: React.CSSProperties = {
+  fontWeight: 400,
+  color: 'var(--fuel-color-muted)',
+  fontSize: 'var(--fuel-font-size-sm)',
+  textAlign: 'center',
+  lineHeight: '1.2em',
+};
+export const NoAssetDescription = ({ children }: React.PropsWithChildren) => (
+  <p style={NoAssetDescriptionStyle}>{children}</p>
+);
 
-  &:hover {
-    background-color: var(--fuel-button-background-hover);
-  }
-`;
+const ButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  boxSizing: 'border-box',
+  textDecoration: 'none',
+  cursor: 'pointer',
+  justifyContent: 'center',
+  alignItems: 'center',
+  margin: '0.4rem 1rem 0',
+  padding: '0.6rem 0',
+  fontSize: 'var(--fuel-font-size)',
+  color: 'var(--fuel-color-bold)',
+  borderRadius: 'var(--fuel-border-radius)',
+  backgroundColor: 'var(--fuel-button-background)',
+};
+export const Button = ({
+  children,
+  href,
+}: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+  <a
+    style={ButtonStyle}
+    href={href}
+    className="fuel-connectors-connector-button"
+  >
+    {children}
+  </a>
+);
 
-export const NoAssetButton = styled(Button)`
-  background-color: var(--fuel-green-11);
-  color: var(--fuel-black-color);
-
-  &:visited {
-    color: var(--fuel-black-color);
-  }
-
-  &:hover {
-    background-color: var(--fuel-green-11);
-  }
-`;
+const NoAssetButtonStyle: React.CSSProperties = {
+  ...ButtonStyle,
+  backgroundColor: 'var(--fuel-green-11)',
+  color: 'var(--fuel-black-color)',
+};
+export const NoAssetButton = ({
+  children,
+  href,
+  ...props
+}: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+  <a
+    style={NoAssetButtonStyle}
+    href={href}
+    className="fuel-connectors-connector-button-primary"
+    {...props}
+  >
+    {children}
+  </a>
+);

@@ -1,156 +1,178 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { IconX } from '@tabler/icons-react';
-import { keyframes, styled } from 'styled-components';
+import { IconX, type TablerIconsProps } from '@tabler/icons-react';
+import type React from 'react';
 
-export const Overlay = styled.div`
-  position: fixed;
-  bottom: 1rem;
-  right: 0.5rem;
-`;
+const OverlayStyle: React.CSSProperties = {
+  position: 'fixed',
+  bottom: '1rem',
+  right: '0.5rem',
+};
+export const Overlay = ({ children }: React.PropsWithChildren) => (
+  <div style={OverlayStyle}>{children}</div>
+);
 
-const overlayShow = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
+const DialogOverlayStyle: React.CSSProperties = {
+  position: 'fixed',
+  inset: 0,
+  animation: 'fuelOverlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
+};
+export const DialogOverlay = ({ children }: React.PropsWithChildren) => (
+  <Dialog.Overlay style={DialogOverlayStyle}>{children}</Dialog.Overlay>
+);
 
-const contentShow = keyframes`
-  from {
-    opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-`;
+const DialogContentStyle: React.CSSProperties = {
+  position: 'fixed',
+  height: '700px',
+  border: '1px solid var(--fuel-border-color)',
+  overflow: 'hidden',
+  color: 'var(--fuel-color)',
+  userSelect: 'none',
+  boxSizing: 'border-box',
+  backgroundColor: 'var(--fuel-dialog-background)',
+  animation: 'fuelContentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
+  boxShadow:
+    'hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px',
+};
+export type DialogContentProps = {
+  show: boolean;
+} & Dialog.DialogContentProps;
+export const DialogContent = ({
+  show,
+  children,
+  ...props
+}: React.PropsWithChildren<DialogContentProps>) => (
+  <Dialog.Content
+    style={{
+      ...DialogContentStyle,
+      visibility: show ? 'visible' : 'hidden',
+    }}
+    className="fuel-connectors-wallet-dialog-content"
+    {...props}
+  >
+    {children}
+  </Dialog.Content>
+);
 
-export const DialogOverlay = styled(Dialog.Overlay)`
-  position: fixed;
-  inset: 0;
-  animation: ${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
-`;
+const DialogTitleStyle: React.CSSProperties = {
+  padding: '8px 14px 12px',
+  margin: 0,
+  textAlign: 'center',
+  fontSize: '16px',
+  letterSpacing: 'var(--fuel-letter-spacing)',
+  fontWeight: 700,
+};
+export const DialogTitle = ({ children }: React.PropsWithChildren) => (
+  <Dialog.Title style={DialogTitleStyle}>{children}</Dialog.Title>
+);
 
-export const DialogContent = styled(Dialog.Content)`
-  position: fixed;
-  right: 25px;
-  bottom: 72px;
-  max-width: 370px;
-  width: 370px;
-  height: 700px;
-  border: var(--fuel-border);
+const DividerStyle: React.CSSProperties = {
+  height: '1px',
+  width: '100%',
+  backgroundColor: 'var(--fuel-border-color)',
+  padding: 0,
+  boxSizing: 'border-box',
+};
+export const Divider = () => <div style={DividerStyle} />;
 
-  overflow: hidden;
-  color: var(--fuel-color);
-  user-select: none;
-  box-sizing: border-box;
-  background-color: var(--fuel-dialog-background);
-  border-radius: 36px;
-  animation: ${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow:
-    hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
-    hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+const DialogMainStyle: React.CSSProperties = {
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
+  height: '100%',
+  padding: '24px 16px',
+};
+export const DialogMain = ({ children }: React.PropsWithChildren) => (
+  <div style={DialogMainStyle}>{children}</div>
+);
 
-  &:focus {
-    outline: none;
-  }
+const FuelRootStyle: React.CSSProperties = {
+  position: 'absolute',
+  zIndex: 9999,
+  fontSize: 'var(--fuel-font-size)',
+};
+export const FuelRoot = ({
+  style,
+  children,
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    style={{ ...FuelRootStyle, ...style }}
+    className="fuel-connectors-wallet-root"
+  >
+    {children}
+  </div>
+);
 
-  @media (max-width: 1024px) {
-    bottom: 0px;
-    right: 0px;
-    width: 100vw;
-    max-height: 100vh;
-    max-width: 100%;
-    border-radius: 36px 36px 0 0;
-  }
-` as unknown as typeof Dialog.Content;
+const DialogTriggerStyle: React.CSSProperties = {
+  position: 'fixed',
+  bottom: '30px',
+  right: '25px',
+  backgroundColor: 'var(--fuel-color)',
+  color: 'var(--fuel-dialog-background)',
+  padding: '6px 8px',
+  borderRadius: '16px',
+};
+export const DialogTrigger = ({ children }: React.PropsWithChildren) => (
+  <Dialog.Trigger
+    style={DialogTriggerStyle}
+    className="fuel-connectors-dialog-trigger"
+  >
+    {children}
+  </Dialog.Trigger>
+);
 
-export const DialogTitle = styled(Dialog.Title)`
-  padding: 8px 14px 12px;
-  margin: 0;
-  font-weight: normal;
-  text-align: center;
-  font-size: 16px;
-  letter-spacing: var(--fuel-letter-spacing);
-  font-weight: 700;
-`;
+export const DialogClose = ({
+  children,
+  ...props
+}: React.PropsWithChildren<Dialog.DialogCloseProps>) => (
+  <Dialog.Close {...props}>{children}</Dialog.Close>
+);
 
-export const Divider = styled.div`
-  height: 1px;
-  width: 100%;
-  background-color: var(--fuel-border-color);
-  padding: 0;
-  box-sizing: border-box;
-`;
-
-export const DialogMain = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  height: 100%;
-  padding: 24px 16px;
-`;
-
-export const FuelRoot = styled.div`
-  position: absolute;
-  z-index: 9999;
-  font-size: var(--fuel-font-size);
-
-  & * {
-    font-family: var(--fuel-font-family);
-  }
-`;
-
-export const DialogTrigger = styled(Dialog.Trigger)`
-  position: fixed;
-  bottom: 30px;
-  right: 25px;
-  background-color: var(--fuel-color);
-  color: var(--fuel-dialog-background);
-  padding: 6px 8px;
-  border-radius: 16px;
-
-  &[data-state="open"] {
-    pointer-events: none;
-  }
-`;
-
-export const DialogClose = styled(Dialog.Close)``;
-
-export const VisuallyHidden = styled.span`
-  visibility: hidden;
-`;
+export const VisuallyHidden = ({ children }: React.PropsWithChildren) => (
+  <span style={{ visibility: 'hidden' }}>{children}</span>
+);
 
 export type ContainerProps = {
-  $align?: 'center' | 'flex-start' | 'flex-end';
-  $gap?: string;
-  $direction?: 'row' | 'column';
+  alignItems?: 'center' | 'flex-start' | 'flex-end';
+  gap?: string;
+  flexDirection?: 'row' | 'column';
 };
 
-export const Container = styled.div<ContainerProps>`
-  display: flex;
-  flex-direction: ${(props) => props.$direction || 'row'};
-  justify-content: space-between;
-  gap: ${(props) => props.$gap || '0'};
-  align-items: ${(props) => props.$align || 'initial'};
-`;
+const ContainerStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  gap: '0',
+  alignItems: 'center',
+};
+export const Container = ({
+  alignItems,
+  gap,
+  flexDirection,
+  children,
+}: React.PropsWithChildren<ContainerProps>) => (
+  <div
+    style={{
+      ...ContainerStyle,
+      ...(flexDirection && { flexDirection }),
+      ...(alignItems && { alignItems }),
+      ...(gap && { gap }),
+    }}
+  >
+    {children}
+  </div>
+);
 
-export const CloseIcon = styled(IconX)`
-  fill: var(--fuel-color);
-  padding: 6px;
-  font-family: inherit;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 700;
-  margin-top: -3px;
-
-  &:hover,
-  &:active {
-    background-color: var(--fuel-connector-hover);
-    opacity: 1;
-  }
-`;
+const CloseIconStyle: React.CSSProperties = {
+  fill: 'var(--fuel-color)',
+  padding: '6px',
+  fontFamily: 'inherit',
+  borderRadius: '12px',
+  cursor: 'pointer',
+  fontWeight: 700,
+  marginTop: '-3px',
+  alignSelf: 'flex-start',
+};
+export const CloseIcon = ({ onClick, ...props }: TablerIconsProps) => (
+  <IconX style={CloseIconStyle} onClick={onClick} {...props} />
+);

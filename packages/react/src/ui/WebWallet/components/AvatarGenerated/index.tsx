@@ -8,13 +8,7 @@ interface AvatarProps {
 }
 
 const GeneratedFallback = ({ hash }: { hash: string }) => {
-  return (
-    <AvatarFallback
-      style={{
-        background: useGenerateBackground(hash),
-      }}
-    />
-  );
+  return <AvatarFallback background={useGenerateBackground(hash)} />;
 };
 
 export const AvatarGenerated = ({ hash, src }: AvatarProps) => {

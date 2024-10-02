@@ -11,13 +11,14 @@ const ButtonStyle: React.CSSProperties = {
 };
 export const Button = ({
   children,
-  ...props
-}: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
-  <a
+  onClick,
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+  <button
     style={ButtonStyle}
-    className="fuel-connectors-wallet-button-primary"
-    {...props}
+    type="button"
+    onClick={onClick}
+    className="fuel-connectors-wallet-button-danger"
   >
     {children}
-  </a>
+  </button>
 );

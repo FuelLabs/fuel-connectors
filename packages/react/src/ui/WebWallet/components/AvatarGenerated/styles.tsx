@@ -1,12 +1,32 @@
-import styled from 'styled-components';
+const AvatarStyle: React.CSSProperties = {
+  width: '36px',
+  height: '36px',
+};
+export const Avatar = ({
+  ...props
+}: React.ImgHTMLAttributes<HTMLImageElement>) => (
+  <img
+    style={AvatarStyle}
+    {...props}
+    aria-label={props['aria-label'] ?? 'avatar'}
+  />
+);
 
-export const Avatar = styled.img`
-  width: 36px;
-  height: 36px;
-`;
-
-export const AvatarFallback = styled.div`
-  width: 36px;
-  height: 36px;
-  border-radius: 100%;
-`;
+const AvatarFallbackStyle: React.CSSProperties = {
+  width: '36px',
+  height: '36px',
+  borderRadius: '100%',
+};
+export const AvatarFallback = ({
+  children,
+  background,
+}: React.PropsWithChildren<{ background?: string }>) => (
+  <div
+    style={{
+      ...AvatarFallbackStyle,
+      background: background,
+    }}
+  >
+    {children}
+  </div>
+);

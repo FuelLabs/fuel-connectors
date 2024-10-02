@@ -1,35 +1,54 @@
-import { IconCopy } from '@tabler/icons-react';
-import { styled } from 'styled-components';
+const HeaderWrapperStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '16px',
+  flexShrink: 0,
+};
+export const HeaderWrapper = ({ children }: React.PropsWithChildren) => (
+  <div style={HeaderWrapperStyle}>{children}</div>
+);
 
-export const HeaderWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-shrink: 0;
-`;
+const HeaderConnectedStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px',
+};
+export const HeaderConnected = ({ children }: React.PropsWithChildren) => (
+  <div style={HeaderConnectedStyle}>{children}</div>
+);
 
-export const HeaderConnected = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-`;
+const ConnectorLogoStyle: React.CSSProperties = {
+  width: '42px',
+  height: '42px',
+};
+export const ConnectorLogo = ({
+  src,
+}: React.ImgHTMLAttributes<HTMLImageElement>) => (
+  <img src={src} style={ConnectorLogoStyle} aria-label="connector logo" />
+);
 
-export const ConnectorLogo = styled.img`
-  width: 42px;
-  height: 42px;
-`;
+const HeaderWalletTitleStyle: React.CSSProperties = {
+  fontWeight: 600,
+};
+export const HeaderWalletTitle = ({ children }: React.PropsWithChildren) => (
+  <div style={HeaderWalletTitleStyle}>{children}</div>
+);
 
-export const HeaderWalletTitle = styled.div`
-  font-weight: 600;
-`;
+const HeaderWalletAddressWrapperStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+};
+export const HeaderWalletAddressWrapper = ({
+  children,
+}: React.PropsWithChildren) => (
+  <div style={HeaderWalletAddressWrapperStyle}>{children}</div>
+);
 
-export const HeaderWalletAddressWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-export const HeaderWalletAddress = styled.div`
-  color: var(--fuel-color-muted);
-  font-size: var(--fuel-font-size-sm);
-`;
+const HeaderWalletAddressStyle: React.CSSProperties = {
+  color: 'var(--fuel-color-muted)',
+  fontSize: 'var(--fuel-font-size-sm)',
+};
+export const HeaderWalletAddress = ({ children }: React.PropsWithChildren) => (
+  <div style={HeaderWalletAddressStyle}>{children}</div>
+);
