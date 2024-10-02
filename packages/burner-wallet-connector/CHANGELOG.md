@@ -1,5 +1,11 @@
 # @fuel-connectors/burner-wallet-connector
 
+## 0.29.5
+
+### Patch Changes
+
+- [#318](https://github.com/FuelLabs/fuel-connectors/pull/318) [`01f20fb`](https://github.com/FuelLabs/fuel-connectors/commit/01f20fb80e221b5d0daa78743583424c683b382c) Thanks [@luizstacio](https://github.com/luizstacio)! - Call setup provider only on client side
+
 ## 0.29.4
 
 ## 0.29.3
