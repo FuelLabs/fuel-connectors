@@ -19,7 +19,7 @@ import {
   Provider as FuelProvider,
   type TransactionRequestLike,
 } from 'fuels';
-import { SOLANA_ICON, TESTNET_URL } from './constants';
+import { HAS_WINDOW, SOLANA_ICON, TESTNET_URL } from './constants';
 import { PREDICATE_VERSIONS } from './generated/predicates';
 import type { SolanaConfig } from './types';
 import { type SolanaPredicateRoot, txIdEncoders } from './utils';
@@ -46,7 +46,9 @@ export class SolanaConnector extends PredicateConnector {
   constructor(config: SolanaConfig) {
     super();
     this.customPredicate = config.predicateConfig || null;
-    this.configProviders(config);
+    if (HAS_WINDOW) {
+      this.configProviders(config);
+    }
   }
 
   private async _emitConnected(connected: boolean) {
