@@ -1,5 +1,7 @@
 # @fuels/react
 
+## 0.29.5
+
 ## 0.29.4
 
 ### Patch Changes

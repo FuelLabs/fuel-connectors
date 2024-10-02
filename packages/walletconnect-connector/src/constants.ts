@@ -6,5 +6,5 @@ export const TESTNET_URL = 'https://testnet.fuel.network/v1/graphql';
 // 1 minute timeout for request signature
 export const SINGATURE_VALIDATION_TIMEOUT = 1000 * 60;
 
-const HAS_WINDOW = typeof window !== 'undefined';
+export const HAS_WINDOW = typeof window !== 'undefined';
 export const WINDOW = HAS_WINDOW ? window : null;
