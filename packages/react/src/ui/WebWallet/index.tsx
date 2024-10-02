@@ -45,13 +45,6 @@ export const WebWallet = () => {
 
   useEffect(() => {
     setIsClient(true);
-
-    // Fix for Radix-UI Dialog disabling pointer events for the whole page
-    // see more here: https://github.com/radix-ui/primitives/issues/2122
-    document.styleSheets[0].insertRule(
-      'body { pointer-events: auto !important; }',
-      document.styleSheets[0].cssRules.length,
-    );
   }, []);
 
   const handleOpenChange = (openState: boolean) => {
