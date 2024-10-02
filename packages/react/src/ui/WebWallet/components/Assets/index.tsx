@@ -88,7 +88,7 @@ export const NoAssets = () => {
   }, [networks, provider]);
 
   return (
-    <Container $direction="column" $gap="16px">
+    <Container flexDirection="column" gap="16px">
       <NoAssetDescription>
         Looks like you don't have ETH balance, bridge funds to Fuel Ignition and
         use the application without stopping.
