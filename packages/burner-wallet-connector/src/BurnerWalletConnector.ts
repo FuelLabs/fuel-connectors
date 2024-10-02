@@ -22,6 +22,7 @@ import {
   BURNER_WALLET_ICON,
   BURNER_WALLET_PRIVATE_KEY,
   BURNER_WALLET_STATUS,
+  HAS_WINDOW,
 } from './constants';
 import type { BurnerWalletConfig } from './types';
 
@@ -52,7 +53,9 @@ export class BurnerWalletConnector extends FuelConnector {
     super();
 
     this.storage = this.getStorage(config.storage);
-    this.configProvider(config);
+    if (HAS_WINDOW) {
+      this.configProvider(config);
+    }
   }
 
   private configProvider(config: BurnerWalletConfig = {}) {
