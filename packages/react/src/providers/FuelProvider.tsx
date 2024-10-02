@@ -1,12 +1,11 @@
 import type { FuelConfig } from 'fuels';
-
-import { Connect } from '../ui/Connect';
-
 import { useMemo } from 'react';
 import type { NetworkConfig, UIConfig } from '../types';
+import { Connect } from '../ui/Connect';
 import { BridgeDialog } from '../ui/Connect/components/Bridge/BridgeDialog';
 import { NetworkDialog } from '../ui/Connect/components/Network/NetworkDialog';
 import { useNetworkConfigs } from '../ui/Connect/hooks/useNetworkConfigs';
+import { WebWallet } from '../ui/WebWallet';
 import { FuelHooksProvider } from './FuelHooksProvider';
 import { FuelUIProvider, type FuelUIProviderProps } from './FuelUIProvider';
 
@@ -15,6 +14,7 @@ export { useConnectUI } from './FuelUIProvider';
 
 type FuelProviderProps = {
   ui?: boolean;
+  hideWebWallet?: boolean;
   uiConfig?: UIConfig;
   fuelConfig?: FuelConfig;
   networks?: Array<NetworkConfig>;
@@ -26,6 +26,7 @@ export function FuelProvider({
   fuelConfig,
   uiConfig: _uiConfig,
   ui = true,
+  hideWebWallet,
   networks: _networks,
 }: FuelProviderProps) {
   const theme = _theme || 'light';
@@ -49,6 +50,7 @@ export function FuelProvider({
           uiConfig={uiConfig}
         >
           <Connect />
+          {!hideWebWallet && <WebWallet />}
           {networks != null && <NetworkDialog theme={theme} />}
           {uiConfig.suggestBridge && <BridgeDialog theme={theme} />}
           {children}

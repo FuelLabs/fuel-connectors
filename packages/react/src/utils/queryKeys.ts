@@ -18,6 +18,10 @@ export const QUERY_KEYS = {
   assets: (): QueryKey => {
     return QUERY_KEYS.base.concat('assets');
   },
+  assetsBalance: (account: string): QueryKey => {
+    const queryKey = QUERY_KEYS.base.concat('assetsBalance').concat(account);
+    return queryKey;
+  },
   contract: (
     address: string,
     chainId: number | undefined,

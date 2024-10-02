@@ -14,14 +14,14 @@
     "@wagmi/connectors": "5.1.7",
     "fuels": "0.94.8",
     "next": "14.2.3",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "wagmi": "2.12.7"
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "5.35.1",
     "@types/node": "20.12.11",
-    "@types/react": "18.3.1",
+    "@types/react": "18.2.54",
     "@types/react-dom": "18.3.0",
     "typescript": "5.4.5"
   }
