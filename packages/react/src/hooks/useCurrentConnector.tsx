@@ -42,6 +42,7 @@ export const useCurrentConnector = <
       if (!isConnected) return null;
       return fuel.currentConnector() ?? null;
     },
+    placeholderData: null,
     ...query,
   });
 };
