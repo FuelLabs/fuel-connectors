@@ -6,7 +6,7 @@ export const disclaimerContainerStyle: React.CSSProperties = {
   borderLeft: '2px solid',
   borderColor: '#F5CC00',
   marginLeft: '1rem',
-  padding: '0 2em',
+  padding: '0.5em 2em',
   fontSize: '1em',
 };
 

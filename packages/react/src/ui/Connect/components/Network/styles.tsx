@@ -61,7 +61,7 @@ const descriptionStyle: React.CSSProperties = {
   fontWeight: 400,
   textAlign: 'center',
   lineHeight: '1.2em',
-  color: 'var(--fuel-color-light-gray)',
+  color: 'var(--fuel-gray-11)',
   marginBottom: '10px',
   marginTop: '10px',
 };
@@ -128,7 +128,7 @@ const orLabelStyle: React.CSSProperties = {
   fontWeight: 400,
   textAlign: 'center',
   lineHeight: 1,
-  color: 'var(--fuel-color-light-gray)',
+  color: 'var(--fuel-gray-11)',
 };
 
 export const OrLabel = ({ children }: React.PropsWithChildren) => {

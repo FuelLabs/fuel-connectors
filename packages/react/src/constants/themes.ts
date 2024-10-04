@@ -30,7 +30,9 @@ const light = {
   '--fuel-green-11': '#008347',
   '--fuel-blue-3': '#E6F4FE',
   '--fuel-blue-11': '#0D74CE',
-  '--fuel-color-light-gray': 'rgb(83 79 79 / 84%)',
+  '--fuel-gray-10': '#838383',
+  '--fuel-gray-11': '#646464',
+  '--fuel-gray-12': '#202020',
   '--fuel-separator-color': 'rgb(83 79 79 / 13%)',
   '--fuel-black-color': '#FFFFFF',
 } as React.CSSProperties;
@@ -52,7 +54,9 @@ const dark = {
   '--fuel-green-11': '#00DD75',
   '--fuel-blue-3': '#0D2847',
   '--fuel-blue-11': '#70B9FF',
-  '--fuel-color-light-gray': 'rgb(165 165 165 / 84%)',
+  '--fuel-gray-10': '#7b7b7b',
+  '--fuel-gray-11': '#b4b4b4',
+  '--fuel-gray-12': '#eee',
   '--fuel-separator-color': 'rgb(165 165 165 / 13%)',
   '--fuel-black-color': '#141414',
 } as React.CSSProperties;
