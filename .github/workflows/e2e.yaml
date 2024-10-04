@@ -1,0 +1,47 @@
+name: E2E Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  e2e-tests:
+    name: 'Run E2E Tests'
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: FuelLabs/github-actions/setups/node@master
+        with:
+          node-version: 20.11.0
+          pnpm-version: 9.5.0
+
+      - name: Start Test project
+        run: pnpm dev:examples:react
+    
+      - name: Generate .env
+        run: cp .env.example .env
+        working-directory: e2e-tests
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+        working-directory: e2e-tests
+
+      - name: Run Playwright tests
+        env:
+          PORT: 5173
+          VITE_FUEL_PROVIDER_URL: 'https://testnet.fuel.network/v1/graphql'
+          VITE_WALLET_SECRET: ''
+          VITE_MASTER_WALLET_MNEMONIC: ${{ secrets.VITE_MASTER_WALLET_MNEMONIC }}
+        run: xvfb-run --auto-servernum -- npx playwright test e2e-tests/react-app --project=react-app
+        working-directory: e2e-tests
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: e2e-tests/playwright-report/
+          retention-days: 30
