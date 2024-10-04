@@ -31,8 +31,12 @@ export const useAccount = (
   return useNamedQuery('account', {
     queryKey: QUERY_KEYS.account(),
     queryFn: async () => {
-      const currentFuelAccount = await fuel?.currentAccount();
-      return currentFuelAccount;
+      try {
+        const currentFuelAccount = await fuel?.currentAccount();
+        return currentFuelAccount;
+      } catch (_error: unknown) {
+        return null;
+      }
     },
     placeholderData: null,
     ...params?.query,
