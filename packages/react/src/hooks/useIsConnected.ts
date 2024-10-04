@@ -35,7 +35,7 @@ export const useIsConnected = (params?: UseIsConnected) => {
         return false;
       }
     },
-    initialData: false,
+    placeholderData: false,
     ...params?.query,
     // This is required for now as Fuelet is not triggering the connection event
     refetchInterval: 1000,

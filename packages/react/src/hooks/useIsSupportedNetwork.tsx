@@ -47,7 +47,7 @@ export function useIsSupportedNetwork(params?: UseIsSupportedNetwork) {
       }
       return !!networks.find((n) => n.chainId === chainId);
     },
-    initialData: true,
+    placeholderData: true,
     ...params,
   });
 }

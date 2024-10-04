@@ -78,7 +78,7 @@ export function useWallet(
         return null;
       }
     },
-    initialData: null,
+    placeholderData: null,
     ..._params.query,
   });
 }

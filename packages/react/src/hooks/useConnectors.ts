@@ -41,7 +41,7 @@ export const useConnectors = <
     queryFn: async () => {
       return fuel.connectors();
     },
-    initialData: [],
+    placeholderData: [],
     ...query,
   });
 };
