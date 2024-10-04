@@ -38,7 +38,7 @@ export const useTransaction = (txId?: string) => {
         return null;
       }
     },
-    initialData: null,
+    placeholderData: null,
     enabled: !!txId,
   });
 };

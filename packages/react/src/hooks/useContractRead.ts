@@ -116,5 +116,6 @@ export const useContractRead = <
         ? contract.functions[functionName](args)
         : contract.functions[functionName]();
     },
+    placeholderData: undefined,
   });
 };

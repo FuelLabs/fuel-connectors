@@ -37,7 +37,7 @@ export const useAssets = (params?: UseAssetsParams<'assets', Asset[]>) => {
         return [];
       }
     },
-    initialData: [],
+    placeholderData: [],
     ...params?.query,
   });
 };

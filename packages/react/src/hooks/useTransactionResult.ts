@@ -71,7 +71,7 @@ export const useTransactionResult = <
 
       return data || null;
     },
-    initialData: null,
+    placeholderData: null,
     enabled: !!txId,
     ...options,
   });

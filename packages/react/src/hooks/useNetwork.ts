@@ -33,7 +33,7 @@ export const useNetwork = (params?: UseNetwork) => {
     queryFn: async () => {
       return fuel.currentNetwork();
     },
-    initialData: null,
+    placeholderData: null,
     ...params?.query,
   });
 };

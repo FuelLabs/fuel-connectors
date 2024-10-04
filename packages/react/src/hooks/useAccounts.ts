@@ -38,7 +38,7 @@ export const useAccounts = (
         return [];
       }
     },
-    initialData: [],
+    placeholderData: [],
     ...params?.query,
   });
 };

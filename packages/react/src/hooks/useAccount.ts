@@ -38,7 +38,7 @@ export const useAccount = (
         return null;
       }
     },
-    initialData: null,
+    placeholderData: null,
     ...params?.query,
   });
 };

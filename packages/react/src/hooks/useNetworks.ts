@@ -36,6 +36,7 @@ export const useNetworks = (params?: UseNetworkParams) => {
   return useNamedQuery('networks', {
     queryKey: QUERY_KEYS.networks(),
     queryFn: fuel.networks,
+    placeholderData: [],
     ...params?.query,
   });
 };
