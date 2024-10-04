@@ -2,4 +2,4 @@
 "@fuels/react": patch
 ---
 
-Update non-EVM disclaimer popup
+Update non-native wallets disclaimer popup
