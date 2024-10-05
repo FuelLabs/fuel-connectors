@@ -1,5 +1,11 @@
 # @fuels/react
 
+## 0.30.0
+
+### Patch Changes
+
+- [#328](https://github.com/FuelLabs/fuel-connectors/pull/328) [`a9bf3c4`](https://github.com/FuelLabs/fuel-connectors/commit/a9bf3c474e20ececa386cddb6e861bcb52651f3f) Thanks [@helciofranco](https://github.com/helciofranco)! - Update non-native wallets disclaimer popup
+
 ## 0.29.6
 
 ### Patch Changes
