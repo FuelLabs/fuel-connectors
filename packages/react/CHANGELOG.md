@@ -1,5 +1,11 @@
 # @fuels/react
 
+## 0.30.1
+
+### Patch Changes
+
+- [#335](https://github.com/FuelLabs/fuel-connectors/pull/335) [`5ef95c3`](https://github.com/FuelLabs/fuel-connectors/commit/5ef95c3c34b43792bdfc4f30382bf723e0c63aa1) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Fixed not detecting wrong network on initial render
+
 ## 0.30.0
 
 ### Patch Changes
