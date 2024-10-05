@@ -52,7 +52,9 @@ export function Connector() {
         {actionText}
       </ConnectorButtonPrimary>
       <ConnectorFooterHelper>
-        If you have install and is not detected <br /> try to refresh the page.
+        If you have installed it and it is not detected,
+        <br />
+        try refreshing the page.
       </ConnectorFooterHelper>
     </div>
   );
