@@ -29,11 +29,14 @@ type UseNetwork = {
 export const useNetwork = (params?: UseNetwork) => {
   const { fuel } = useFuel();
   const { isConnected } = useIsConnected();
-
   return useNamedQuery('network', {
     queryKey: QUERY_KEYS.currentNetwork(),
     queryFn: async () => {
-      return fuel.currentNetwork();
+      const current = await fuel.currentNetwork();
+      if (!current && isConnected) {
+        throw new Error('Network not found');
+      }
+      return current;
     },
     placeholderData: null,
     refetchOnMount: true,
