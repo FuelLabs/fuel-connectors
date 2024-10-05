@@ -1,5 +1,7 @@
 # @fuel-connectors/bako-safe
 
+## 0.30.0
+
 ## 0.29.6
 
 ## 0.29.5

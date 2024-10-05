@@ -1,5 +1,11 @@
 # @fuel-connectors/burner-wallet-connector
 
+## 0.30.0
+
+### Minor Changes
+
+- [#333](https://github.com/FuelLabs/fuel-connectors/pull/333) [`ac45fc9`](https://github.com/FuelLabs/fuel-connectors/commit/ac45fc9c2ac3d2ddb2374cb6ea642e58635f6650) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: defaultConnetors accept providerUrl
+
 ## 0.29.6
 
 ## 0.29.5
