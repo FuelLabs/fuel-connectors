@@ -2,6 +2,7 @@ import type { Network } from 'fuels';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
+import { useIsConnected } from './useIsConnected';
 
 type UseNetwork = {
   /**
@@ -27,6 +28,7 @@ type UseNetwork = {
  */
 export const useNetwork = (params?: UseNetwork) => {
   const { fuel } = useFuel();
+  const { isConnected } = useIsConnected();
 
   return useNamedQuery('network', {
     queryKey: QUERY_KEYS.currentNetwork(),
@@ -35,7 +37,13 @@ export const useNetwork = (params?: UseNetwork) => {
     },
     placeholderData: null,
     refetchOnMount: true,
-    refetchInterval: 4000,
+    refetchInterval: (e) => {
+      if (!e.state.data || e.state.error) {
+        return 4000;
+      }
+      return false;
+    },
+    enabled: isConnected,
     ...params?.query,
   });
 };
