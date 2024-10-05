@@ -34,6 +34,8 @@ export const useNetwork = (params?: UseNetwork) => {
       return fuel.currentNetwork();
     },
     placeholderData: null,
+    refetchOnMount: true,
+    refetchInterval: 4000,
     ...params?.query,
   });
 };
