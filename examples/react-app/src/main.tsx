@@ -16,7 +16,7 @@ import * as Toast from '@radix-ui/react-toast';
 import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import './index.css';
-import { CHAIN_IDS } from 'fuels';
+import { CHAIN_IDS, Provider } from 'fuels';
 
 const queryClient = new QueryClient();
 
@@ -65,6 +65,7 @@ const FUEL_CONFIG = {
     wcProjectId: WC_PROJECT_ID,
     ethWagmiConfig: wagmiConfig,
     chainId: CHAIN_IDS.fuel.testnet,
+    fuelProvider: Provider.create('https://testnet.fuel.network/v1/graphql'),
   }),
 };
 
