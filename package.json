@@ -7,6 +7,7 @@
   "homepage": "https://github.com/FuelLabs/fuel-connectors",
   "scripts": {
     "build": "turbo build",
+    "build:connectors": "turbo run build --filter @fuels/connectors",
     "build:docs": "turbo run build --filter=docs",
     "fuels:build": "turbo run fuels:build && pnpm format",
     "dev:examples:react": "turbo run dev --filter=react-app",

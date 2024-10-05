@@ -1,5 +1,17 @@
 # @fuels/react
 
+## 0.30.0
+
+### Patch Changes
+
+- [#328](https://github.com/FuelLabs/fuel-connectors/pull/328) [`a9bf3c4`](https://github.com/FuelLabs/fuel-connectors/commit/a9bf3c474e20ececa386cddb6e861bcb52651f3f) Thanks [@helciofranco](https://github.com/helciofranco)! - Update non-native wallets disclaimer popup
+
+## 0.29.6
+
+### Patch Changes
+
+- [#325](https://github.com/FuelLabs/fuel-connectors/pull/325) [`165ca68`](https://github.com/FuelLabs/fuel-connectors/commit/165ca68518c3581666b6e33c8d5aab63525fa55b) Thanks [@helciofranco](https://github.com/helciofranco)! - Replace `initialData` with `placeholderData` to avoid conflicts with `useQuery` cache engine.
+
 ## 0.29.5
 
 ## 0.29.4

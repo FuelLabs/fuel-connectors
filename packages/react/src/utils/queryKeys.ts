@@ -48,13 +48,13 @@ export const QUERY_KEYS = {
     const queryKey = QUERY_KEYS.base.concat('balance');
     if (address) queryKey.push(address);
     if (assetId) queryKey.push(assetId);
-    if (provider) queryKey.push(provider.getChainId());
+    if (provider?.getChainId?.()) queryKey.push(provider.getChainId());
     return queryKey;
   },
   wallet: (address?: string | null, provider?: Provider | null): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('wallet');
     if (address) queryKey.push(address);
-    if (provider) queryKey.push(provider.getChainId());
+    if (provider?.getChainId?.()) queryKey.push(provider.getChainId());
     return queryKey;
   },
   transaction: (id?: string): QueryKey => {
@@ -64,12 +64,12 @@ export const QUERY_KEYS = {
   },
   transactionReceipts: (id?: string, provider?: Provider | null): QueryKey => {
     const queryKey = QUERY_KEYS.transaction(id).concat('receipts');
-    if (provider) queryKey.push(provider.getChainId());
+    if (provider?.getChainId?.()) queryKey.push(provider.getChainId());
     return queryKey;
   },
   transactionResult: (id?: string, provider?: Provider | null): QueryKey => {
     const queryKey = QUERY_KEYS.transaction(id).concat('result');
-    if (provider) queryKey.push(provider.getChainId());
+    if (provider?.getChainId?.()) queryKey.push(provider.getChainId());
     return queryKey;
   },
   nodeInfo: (url?: string): QueryKey => {

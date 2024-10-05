@@ -2,6 +2,7 @@ import type { Network } from 'fuels';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
+import { useIsConnected } from './useIsConnected';
 
 type UseNetwork = {
   /**
@@ -27,13 +28,25 @@ type UseNetwork = {
  */
 export const useNetwork = (params?: UseNetwork) => {
   const { fuel } = useFuel();
-
+  const { isConnected } = useIsConnected();
   return useNamedQuery('network', {
     queryKey: QUERY_KEYS.currentNetwork(),
     queryFn: async () => {
-      return fuel.currentNetwork();
+      const current = await fuel.currentNetwork();
+      if (!current && isConnected) {
+        throw new Error('Network not found');
+      }
+      return current;
     },
-    initialData: null,
+    placeholderData: null,
+    refetchOnMount: true,
+    refetchInterval: (e) => {
+      if (!e.state.data || e.state.error) {
+        return 4000;
+      }
+      return false;
+    },
+    enabled: isConnected,
     ...params?.query,
   });
 };

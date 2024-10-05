@@ -44,7 +44,7 @@ export const useChain = (
         return null;
       }
     },
-    initialData: null,
+    placeholderData: null,
     enabled: !!provider,
     ...params?.query,
   });

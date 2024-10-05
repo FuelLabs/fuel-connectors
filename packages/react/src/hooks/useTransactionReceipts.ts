@@ -52,7 +52,7 @@ export const useTransactionReceipts = <TTransactionType = void>({
         return null;
       }
     },
-    initialData: null,
+    placeholderData: null,
     enabled: !!txId,
     ...query,
   });

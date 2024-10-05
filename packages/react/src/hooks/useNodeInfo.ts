@@ -56,7 +56,7 @@ export const useNodeInfo = ({
         return null;
       }
     },
-    initialData: null,
+    placeholderData: null,
     enabled: !!provider,
     ...queryParams,
   });
