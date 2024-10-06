@@ -54,8 +54,8 @@ const wagmiConfig = createConfig({
 });
 const NETWORKS = [
   {
-    chainId: CHAIN_IDS.fuel.testnet,
-    url: 'https://testnet.fuel.network/v1/graphql',
+    chainId: CHAIN_IDS.fuel.devnet,
+    url: 'https://devnet.fuel.network/v1/graphql',
   },
 ];
 
@@ -64,8 +64,8 @@ const FUEL_CONFIG = {
     devMode: true,
     wcProjectId: WC_PROJECT_ID,
     ethWagmiConfig: wagmiConfig,
-    chainId: CHAIN_IDS.fuel.testnet,
-    fuelProvider: Provider.create('https://testnet.fuel.network/v1/graphql'),
+    chainId: CHAIN_IDS.fuel.devnet,
+    fuelProvider: Provider.create('https://devnet.fuel.network/v1/graphql'),
   }),
 };
 

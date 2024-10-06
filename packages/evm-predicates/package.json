@@ -7,8 +7,6 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "fuels:build": "pnpm fuels build",
-    "postfuels:build": "tsx ./scripts/versions.ts",
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {

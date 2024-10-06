@@ -9,10 +9,10 @@ export const DEFAULT_NETWORKS: Array<Partial<Network>> = [
     chainId: CHAIN_IDS.fuel.devnet,
     url: 'https://devnet.fuel.network/v1/graphql',
   },
-  {
-    chainId: CHAIN_IDS.fuel.mainnet,
-    url: 'https://mainnet.fuel.network/v1/graphql',
-  },
+  // {
+  //   chainId: CHAIN_IDS.fuel.mainnet,
+  //   url: 'https://mainnet.fuel.network/v1/graphql',
+  // },
 ];
 
 export const getProviderUrl = (chainId: number): string => {
