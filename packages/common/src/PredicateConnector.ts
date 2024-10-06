@@ -140,7 +140,6 @@ export abstract class PredicateConnector extends FuelConnector {
 
     const predicate =
       (await this.getCurrentUserPredicate()) ?? this.getNewestPredicate();
-    console.log('asd predicate', predicate);
     if (!predicate) throw new Error('No predicate found');
 
     this.predicateAddress = predicate.getRoot();
