@@ -1,6 +1,7 @@
 import {
   useCurrentConnector,
   useDisconnect,
+  useIsConnected,
   useSelectNetwork,
 } from '../../../../hooks';
 import { useIsSupportedNetwork } from '../../../../hooks/useIsSupportedNetwork';
@@ -32,6 +33,7 @@ export function NetworkDialog({
   const { currentConnector } = useCurrentConnector();
   const { isSupportedNetwork } = useIsSupportedNetwork();
   const { selectNetwork, isError, error, isPending } = useSelectNetwork();
+  const { isConnected } = useIsConnected();
 
   function handleSwitch() {
     if (networks[0].chainId == null) return;
@@ -50,6 +52,10 @@ export function NetworkDialog({
       return error?.message || 'Failed to switch network';
     }
     return '';
+  }
+
+  if (networks == null || !isConnected) {
+    return null;
   }
 
   return (
