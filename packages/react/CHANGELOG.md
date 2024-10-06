@@ -1,5 +1,15 @@
 # @fuels/react
 
+## 0.31.0
+
+### Minor Changes
+
+- [#343](https://github.com/FuelLabs/fuel-connectors/pull/343) [`4303a90`](https://github.com/FuelLabs/fuel-connectors/commit/4303a90c73fcdd86d3f8df8c96307c40984dd4f9) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - Add support for predicates deployed with blob-style
+
+### Patch Changes
+
+- [#339](https://github.com/FuelLabs/fuel-connectors/pull/339) [`296748c`](https://github.com/FuelLabs/fuel-connectors/commit/296748c975f50eef3fdb65590b8aa7a663cdc5d4) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Fixed network switch dialog not disappearing after wallet disconnection.
+
 ## 0.30.1
 
 ### Patch Changes
