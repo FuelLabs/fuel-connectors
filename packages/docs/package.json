@@ -16,7 +16,7 @@
   "dependencies": {
     "@fuel-ts/errors": "0.93.0",
     "@fuel-ts/versions": "0.93.0",
-    "fuels": "0.94.8",
+    "fuels": "0.0.0-pr-3251-20241006182919",
     "typedoc-plugin-markdown": "^3.15.3"
   },
   "devDependencies": {
