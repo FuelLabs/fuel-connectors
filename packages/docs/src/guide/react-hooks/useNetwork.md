@@ -18,6 +18,6 @@ console.log(network);
 ```
 
 #### Defined in
-[packages/react/src/hooks/useNetwork.ts:28](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useNetwork.ts#L28)
+[packages/react/src/hooks/useNetwork.ts:29](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useNetwork.ts#L29)
 
 ___

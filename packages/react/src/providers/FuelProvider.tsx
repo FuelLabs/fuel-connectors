@@ -49,7 +49,7 @@ export function FuelProvider({
           uiConfig={uiConfig}
         >
           <Connect />
-          {networks != null && <NetworkDialog theme={theme} />}
+          <NetworkDialog theme={theme} />
           {uiConfig.suggestBridge && <BridgeDialog theme={theme} />}
           {children}
         </FuelUIProvider>
