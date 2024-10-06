@@ -37,8 +37,6 @@ export function Connectors() {
 
   const shouldTitleGroups = !!native.length && !!external.length;
 
-  console.log(connectors.map((c) => `${c.name} ${c.installed} ${c.connected}`));
-
   if (isLoading) {
     return (
       <ConnectorList>
