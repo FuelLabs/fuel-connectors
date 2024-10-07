@@ -45,7 +45,11 @@ export function NetworkDialog({
   }
 
   function getErrorMessage() {
-    if (isError && error?.message === 'Method not implemented.') {
+    if (
+      isError &&
+      (error?.message === 'Method not implemented.' ||
+        error?.message === 'Method not found')
+    ) {
       return 'The selected Wallet does not support switching networks, please switch manually in your wallet.';
     }
     if (isError) {
