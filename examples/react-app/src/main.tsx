@@ -52,10 +52,24 @@ const wagmiConfig = createConfig({
     }),
   ],
 });
+
+const CHAIN_ID =
+  CHAIN_IDS.fuel[
+    import.meta.env.VITE_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel
+  ];
+
+if (!CHAIN_ID) {
+  throw new Error('VITE_CHAIN_ID_NAME is not set');
+}
+
+if (!import.meta.env.VITE_PROVIDER_URL) {
+  throw new Error('VITE_PROVIDER_URL is not set');
+}
+
 const NETWORKS = [
   {
-    chainId: CHAIN_IDS.fuel.testnet,
-    url: 'https://testnet.fuel.network/v1/graphql',
+    chainId: CHAIN_ID,
+    url: import.meta.env.VITE_PROVIDER_URL,
   },
 ];
 
@@ -64,8 +78,8 @@ const FUEL_CONFIG = {
     devMode: true,
     wcProjectId: WC_PROJECT_ID,
     ethWagmiConfig: wagmiConfig,
-    chainId: CHAIN_IDS.fuel.testnet,
-    fuelProvider: Provider.create('https://testnet.fuel.network/v1/graphql'),
+    chainId: CHAIN_ID,
+    fuelProvider: Provider.create(import.meta.env.VITE_PROVIDER_URL),
   }),
 };
 
