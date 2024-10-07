@@ -1,7 +1,11 @@
+import { CHAIN_IDS, Provider } from 'fuels';
+import { useState } from 'react';
 import {
+  useChain,
   useCurrentConnector,
   useDisconnect,
   useIsConnected,
+  useNodeInfo,
   useSelectNetwork,
 } from '../../../../hooks';
 import { useIsSupportedNetwork } from '../../../../hooks/useIsSupportedNetwork';
@@ -34,6 +38,7 @@ export function NetworkDialog({
   const { isSupportedNetwork } = useIsSupportedNetwork();
   const { selectNetwork, isError, error, isPending } = useSelectNetwork();
   const { isConnected } = useIsConnected();
+  const [chainName, setChainName] = useState('');
 
   function handleSwitch() {
     if (networks[0].chainId == null) return;
@@ -62,8 +67,14 @@ export function NetworkDialog({
     return null;
   }
 
+  if (networks[0].url) {
+    Provider.create(networks[0].url).then((provider) => {
+      const chainName = provider.getChain().name;
+      setChainName(chainName);
+    });
+  }
   return (
-    <DialogFuel open={!isSupportedNetwork} theme={theme}>
+    <DialogFuel open={!isSupportedNetwork && !!chainName} theme={theme}>
       <DialogContent
         data-connector={!!currentConnector}
         // Disable closing when clicking outside the dialog
@@ -80,9 +91,17 @@ export function NetworkDialog({
             <Header>
               <Title>Network Switch Required</Title>
               <Description>
-                This app does not support the current connected network. Switch
-                or disconnect to continue.
+                This app does not support the current connected network.
               </Description>
+              {chainName && (
+                <>
+                  <Description>Switch to:</Description>
+                  <Description>
+                    <span style={{ fontWeight: 'bold' }}>{chainName}</span>
+                  </Description>
+                  <Description>or disconnect to continue.</Description>
+                </>
+              )}
               {!!isError && <ErrorMessage>{getErrorMessage()}</ErrorMessage>}
             </Header>
             {!isPending && (
