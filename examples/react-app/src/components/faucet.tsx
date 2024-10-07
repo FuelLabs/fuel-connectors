@@ -14,6 +14,7 @@ export function Faucet({ address, isSigning, disabled }: FaucetProps) {
           ? 'cursor-not-allowed border border-zinc-400/25 bg-zinc-950 text-zinc-400'
           : 'btn-primary'
       }`}
+      aria-disabled={disabled}
       rel="noreferrer"
       onClick={(e) => {
         if (isSigning) {
