@@ -1,7 +1,7 @@
 {
   "name": "@fuel-connectors/walletconnect-connector",
   "private": true,
-  "version": "0.31.0",
+  "version": "0.31.1",
   "type": "module",
   "files": ["dist"],
   "main": "./dist/wallet-connector-walletconnect.umd.cjs",
