@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/fuelet-wallet",
-  "version": "0.31.2",
+  "version": "0.31.3",
   "private": true,
   "types": "./dist/index.d.ts",
   "exports": {
