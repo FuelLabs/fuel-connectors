@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { useLogEvents } from '../hooks/use-log-events';
 import { useWallet } from '../hooks/useWallet';
 import { Counter } from '../types';
-import { counter as COUNTER_CONTRACT_ID } from '../types/contract-ids.json';
+
 import type { CustomError } from '../utils/customError';
-import { DEFAULT_AMOUNT } from './balance';
+
+import { COUNTER_CONTRACT_ID, DEFAULT_AMOUNT } from '../config';
 import Button from './button';
 import ContractLink from './contract-link';
 import Feature from './feature';
