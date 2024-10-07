@@ -20,7 +20,6 @@ import { CHAIN_IDS, Provider } from 'fuels';
 import { CHAIN_ID_NAME, PROVIDER_URL } from './config.ts';
 
 const queryClient = new QueryClient();
-const isDev = process.env.NODE_ENV === 'development';
 
 // ============================================================
 // WalletConnect Connector configurations
@@ -74,7 +73,7 @@ const NETWORKS = [
 
 const FUEL_CONFIG = {
   connectors: defaultConnectors({
-    devMode: isDev,
+    devMode: true,
     wcProjectId: WC_PROJECT_ID,
     ethWagmiConfig: wagmiConfig,
     chainId: CHAIN_ID,
