@@ -100,6 +100,7 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   private modalFactory(config: WalletConnectConfig) {
+    console.log('fsk config', config);
     return createWeb3ModalInstance({
       projectId: config.projectId,
       wagmiConfig: config.wagmiConfig,
