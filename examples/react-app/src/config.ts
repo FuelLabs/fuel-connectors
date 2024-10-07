@@ -22,3 +22,14 @@ function getContractId() {
 }
 
 export const COUNTER_CONTRACT_ID = getContractId();
+
+export const EXPLORER_URL_MAP: Record<keyof typeof CHAIN_IDS.fuel, string> = {
+  testnet: 'https://app-testnet.fuel.network',
+  devnet: 'https://app-testnet.fuel.network',
+  mainnet: 'https://app-mainnet.fuel.network',
+};
+
+export const EXPLORER_LOCAL_URL = 'http://localhost:3001';
+
+export const EXPLORER_URL =
+  EXPLORER_URL_MAP[CHAIN_ID_NAME] || EXPLORER_LOCAL_URL;
