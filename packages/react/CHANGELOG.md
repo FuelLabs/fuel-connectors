@@ -1,5 +1,11 @@
 # @fuels/react
 
+## 0.31.3
+
+### Patch Changes
+
+- [#348](https://github.com/FuelLabs/fuel-connectors/pull/348) [`1ffb4b5`](https://github.com/FuelLabs/fuel-connectors/commit/1ffb4b52191c04a3f94481928382522448518933) Thanks [@luizstacio](https://github.com/luizstacio)! - Fix queryKey to consider 0 as a value for changing cache
+
 ## 0.31.2
 
 ### Patch Changes
