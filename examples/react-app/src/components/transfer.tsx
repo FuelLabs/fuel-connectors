@@ -2,7 +2,8 @@ import { Address } from 'fuels';
 import { useState } from 'react';
 import { useWallet } from '../hooks/useWallet';
 import type { CustomError } from '../utils/customError';
-import { DEFAULT_AMOUNT } from './balance';
+
+import { DEFAULT_AMOUNT } from '../config';
 import Button from './button';
 import Feature from './feature';
 import Notification, { type Props as NotificationProps } from './notification';
