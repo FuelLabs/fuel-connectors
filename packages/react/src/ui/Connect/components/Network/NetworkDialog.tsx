@@ -100,7 +100,6 @@ export function NetworkDialog({
                   <MiddleDescription>
                     <span style={{ fontWeight: 'bold' }}>{chainName}</span>
                   </MiddleDescription>
-                  <Description>or disconnect to continue.</Description>
                 </>
               )}
               {!!isError && <ErrorMessage>{getErrorMessage()}</ErrorMessage>}

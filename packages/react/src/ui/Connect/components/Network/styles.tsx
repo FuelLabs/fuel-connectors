@@ -72,8 +72,8 @@ export const Description = ({ children }: React.PropsWithChildren) => {
 
 const middleDescriptionStyle: React.CSSProperties = {
   ...descriptionStyle,
-  marginBottom: '6px',
-  marginTop: '6px',
+  marginBottom: '4px',
+  marginTop: '4px',
 };
 
 export const MiddleDescription = ({ children }: React.PropsWithChildren) => {
