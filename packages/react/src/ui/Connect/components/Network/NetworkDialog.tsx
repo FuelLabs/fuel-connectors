@@ -23,6 +23,7 @@ import {
   Divider,
   ErrorMessage,
   Header,
+  MiddleDescription,
   OrLabel,
   Title,
 } from './styles';
@@ -95,10 +96,10 @@ export function NetworkDialog({
               </Description>
               {chainName && (
                 <>
-                  <Description>Switch to:</Description>
-                  <Description>
+                  <MiddleDescription>Switch to:</MiddleDescription>
+                  <MiddleDescription>
                     <span style={{ fontWeight: 'bold' }}>{chainName}</span>
-                  </Description>
+                  </MiddleDescription>
                   <Description>or disconnect to continue.</Description>
                 </>
               )}
