@@ -1,5 +1,11 @@
 # @fuels/react
 
+## 0.31.2
+
+### Patch Changes
+
+- [#341](https://github.com/FuelLabs/fuel-connectors/pull/341) [`d40b0b7`](https://github.com/FuelLabs/fuel-connectors/commit/d40b0b74fccf99b12f9be1e6f71b9316b4b78787) Thanks [@helciofranco](https://github.com/helciofranco)! - Fix the display of the `installed` status when a connector is `installed` while the page is open.
+
 ## 0.31.1
 
 ### Patch Changes
