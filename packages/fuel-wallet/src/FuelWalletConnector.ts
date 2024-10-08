@@ -70,13 +70,16 @@ export class FuelWalletConnector extends FuelConnector {
       forceRetryWithTimeout({
         fn: () => this.ping(),
         compareFn: (isConnected) => isConnected,
+        maxTimeout: 0,
+        retryDelay: 100,
+        retryCount: 50,
       })
-        .then(() => {
+        .catch(() => {})
+        .finally(() =>
           window.dispatchEvent(
             new CustomEvent(FuelConnectorEventType, { detail: this }),
-          );
-        })
-        .catch(() => {});
+          ),
+        );
     }
   }
 

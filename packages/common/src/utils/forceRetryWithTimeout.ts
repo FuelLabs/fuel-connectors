@@ -13,7 +13,9 @@ export async function forceRetryWithTimeout<T>({
 }): Promise<T> {
   for (let attempt = 0; attempt < retryCount; attempt++) {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), maxTimeout);
+    const timeout = maxTimeout
+      ? setTimeout(() => controller.abort(), maxTimeout)
+      : undefined;
 
     try {
       const result = await fn(controller.signal);
@@ -25,6 +27,7 @@ export async function forceRetryWithTimeout<T>({
       return result;
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
+      console.error(error);
       if (error.name === 'AbortError') {
         console.warn('Timeout occurred, will retry');
       }
@@ -36,7 +39,7 @@ export async function forceRetryWithTimeout<T>({
       retryDelay &&
         (await new Promise((resolve) => setTimeout(resolve, retryDelay)));
     } finally {
-      clearTimeout(timeout);
+      timeout && clearTimeout(timeout);
     }
   }
   throw new Error('Max retries reached without success.');
