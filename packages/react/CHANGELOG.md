@@ -1,5 +1,45 @@
 # @fuels/react
 
+## 0.31.3
+
+### Patch Changes
+
+- [#348](https://github.com/FuelLabs/fuel-connectors/pull/348) [`1ffb4b5`](https://github.com/FuelLabs/fuel-connectors/commit/1ffb4b52191c04a3f94481928382522448518933) Thanks [@luizstacio](https://github.com/luizstacio)! - Fix queryKey to consider 0 as a value for changing cache
+
+## 0.31.2
+
+### Patch Changes
+
+- [#341](https://github.com/FuelLabs/fuel-connectors/pull/341) [`d40b0b7`](https://github.com/FuelLabs/fuel-connectors/commit/d40b0b74fccf99b12f9be1e6f71b9316b4b78787) Thanks [@helciofranco](https://github.com/helciofranco)! - Fix the display of the `installed` status when a connector is `installed` while the page is open.
+
+## 0.31.1
+
+### Patch Changes
+
+- [#345](https://github.com/FuelLabs/fuel-connectors/pull/345) [`fa88dca`](https://github.com/FuelLabs/fuel-connectors/commit/fa88dcabb862c9f407904765a0e6089a0f124b98) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - chore: update ts-sdk
+
+## 0.31.0
+
+### Minor Changes
+
+- [#343](https://github.com/FuelLabs/fuel-connectors/pull/343) [`4303a90`](https://github.com/FuelLabs/fuel-connectors/commit/4303a90c73fcdd86d3f8df8c96307c40984dd4f9) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - Add support for predicates deployed with blob-style
+
+### Patch Changes
+
+- [#339](https://github.com/FuelLabs/fuel-connectors/pull/339) [`296748c`](https://github.com/FuelLabs/fuel-connectors/commit/296748c975f50eef3fdb65590b8aa7a663cdc5d4) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Fixed network switch dialog not disappearing after wallet disconnection.
+
+## 0.30.1
+
+### Patch Changes
+
+- [#335](https://github.com/FuelLabs/fuel-connectors/pull/335) [`5ef95c3`](https://github.com/FuelLabs/fuel-connectors/commit/5ef95c3c34b43792bdfc4f30382bf723e0c63aa1) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Fixed not detecting wrong network on initial render
+
+## 0.30.0
+
+### Patch Changes
+
+- [#328](https://github.com/FuelLabs/fuel-connectors/pull/328) [`a9bf3c4`](https://github.com/FuelLabs/fuel-connectors/commit/a9bf3c474e20ececa386cddb6e861bcb52651f3f) Thanks [@helciofranco](https://github.com/helciofranco)! - Update non-native wallets disclaimer popup
+
 ## 0.29.6
 
 ### Patch Changes

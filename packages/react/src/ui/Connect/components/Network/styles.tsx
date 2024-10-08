@@ -70,6 +70,16 @@ export const Description = ({ children }: React.PropsWithChildren) => {
   return <p style={descriptionStyle}>{children}</p>;
 };
 
+const middleDescriptionStyle: React.CSSProperties = {
+  ...descriptionStyle,
+  marginBottom: '4px',
+  marginTop: '4px',
+};
+
+export const MiddleDescription = ({ children }: React.PropsWithChildren) => {
+  return <p style={middleDescriptionStyle}>{children}</p>;
+};
+
 const errorMessageStyle: React.CSSProperties = {
   fontWeight: 400,
   textAlign: 'center',
