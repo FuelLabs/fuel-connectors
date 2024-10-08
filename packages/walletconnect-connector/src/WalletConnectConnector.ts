@@ -200,7 +200,6 @@ export class WalletConnectConnector extends PredicateConnector {
 
     const { state } = wagmiConfig;
     if (state.status === 'disconnected' && state.connections.size > 0) {
-      console.log('fsk reconnecting');
       await reconnect(wagmiConfig);
     }
   }
@@ -316,7 +315,6 @@ export class WalletConnectConnector extends PredicateConnector {
           this.handleConnect(account);
         })
         .catch((err) => {
-          console.log('fsk disconnecting 2', err);
           this.disconnect();
           throw err;
         });
@@ -327,7 +325,6 @@ export class WalletConnectConnector extends PredicateConnector {
     return new Promise(async (resolve, reject) => {
       // Disconnect if user dosen't provide signature in time
       const validationTimeout = setTimeout(() => {
-        console.log('fsk rejecting 3');
         reject(
           new Error("User didn't provide signature in less than 1 minute"),
         );
@@ -351,7 +348,6 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   public async disconnect(): Promise<boolean> {
-    console.log('fsk disconnect called');
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
 
@@ -446,7 +442,6 @@ export class WalletConnectConnector extends PredicateConnector {
 
       return true;
     } catch (error) {
-      console.log('fsk disconnecting 4', error);
       this.disconnect();
       throw error;
     }
