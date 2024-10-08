@@ -1,10 +1,8 @@
 import { useConnect, useDisconnect } from '@fuels/react';
-import { type SyntheticEvent, useState } from 'react';
-import { CopyIcon } from '../../../../packages/react/src/icons/CopyIcon';
 import { useWallet } from '../hooks/useWallet';
+import { Copyable } from './Copyable';
 import Button from './button';
 import Feature from './feature';
-import Notification, { type Props as NotificationProps } from './notification';
 
 interface Props {
   isSigning: boolean;
@@ -32,19 +30,6 @@ export default function ConnectedAccount({ isSigning }: Props) {
   }
   if (!account) return null;
 
-  const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
-    open: false,
-  });
-
-  async function handleCopy() {
-    await navigator.clipboard.writeText(account || '');
-    setToast({
-      open: true,
-      type: 'success',
-      children: 'Copied to clipboard',
-    });
-  }
-
   return (
     <Feature title="Your Fuel Address">
       <div className="flex items-center space-between" style={{ gap: '10px' }}>
@@ -54,18 +39,8 @@ export default function ConnectedAccount({ isSigning }: Props) {
         <code className="hidden md:block">
           {truncAddressMiddle(account, 8)}
         </code>
-        <CopyIcon
-          size={16}
-          style={{ cursor: 'pointer' }}
-          onClick={() => {
-            handleCopy();
-          }}
-        />
+        <Copyable value={account} />
       </div>
-      <Notification
-        setOpen={() => setToast({ ...toast, open: false })}
-        {...toast}
-      />
       <Button
         onClick={() => disconnect()}
         loadingText="Disconnecting..."
