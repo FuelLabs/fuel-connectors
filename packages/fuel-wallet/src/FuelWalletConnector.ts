@@ -17,6 +17,7 @@ import {
 import type { JSONRPCRequest } from 'json-rpc-2.0';
 import { JSONRPCClient } from 'json-rpc-2.0';
 
+import { forceRetryWithTimeout } from '@fuel-connectors/common';
 import {
   CONNECTOR_SCRIPT,
   CONTENT_SCRIPT_NAME,
@@ -66,7 +67,10 @@ export class FuelWalletConnector extends FuelConnector {
    */
   private async setupConnector() {
     if (typeof window !== 'undefined') {
-      this.ping()
+      forceRetryWithTimeout({
+        fn: () => this.ping(),
+        compareFn: (isConnected) => isConnected,
+      })
         .then(() => {
           window.dispatchEvent(
             new CustomEvent(FuelConnectorEventType, { detail: this }),
