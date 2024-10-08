@@ -1,5 +1,3 @@
-import { FuelConnectorMethods } from 'fuels';
-
 export async function forceRetryWithTimeout<T>({
   fn,
   maxTimeout = 5000,
@@ -24,6 +22,7 @@ export async function forceRetryWithTimeout<T>({
         throw new Error('Result does not pass the compare function');
       }
 
+      return result;
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error: any) {
       if (error.name === 'AbortError') {
