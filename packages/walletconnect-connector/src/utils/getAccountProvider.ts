@@ -1,6 +1,9 @@
-import type { EIP1193Provider, Maybe } from '@fuel-connectors/common';
+import {
+  type EIP1193Provider,
+  type Maybe,
+  forceRetryWithTimeout,
+} from '@fuel-connectors/common';
 import { type Config, getAccount } from '@wagmi/core';
-import { forceRetryWithTimeout } from './forceRetryWithTimeout';
 
 export function getAccountProvider(
   wagmiConfig: Maybe<Config>,
