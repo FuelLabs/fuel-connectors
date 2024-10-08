@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/solana-connector",
-  "version": "0.29.6",
+  "version": "0.31.3",
   "private": true,
   "type": "module",
   "files": ["dist"],
@@ -14,12 +14,11 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "fuels:build": "pnpm fuels build",
-    "postfuels:build": "tsx ./scripts/versions.ts",
     "build": "tsup --dts-only",
     "build:watch": "tsup --watch --dts-only",
     "ts:check": "tsc --noEmit",
-    "test": "vitest"
+    "test": "vitest",
+    "versions:generate": "pnpm fuels build && pnpm fuels deploy && tsx ./scripts/versions.ts"
   },
   "peerDependencies": {
     "@web3modal/core": ">=5.0.0",
@@ -39,7 +38,7 @@
     "@fuel-connectors/common": "workspace:*",
     "@types/memoizee": "0.4.11",
     "@web3modal/core": "5.0.0",
-    "fuels": "0.94.8",
+    "fuels": "0.94.9",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",

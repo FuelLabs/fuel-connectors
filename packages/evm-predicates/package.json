@@ -1,22 +1,21 @@
 {
   "name": "@fuel-connectors/evm-predicates",
-  "version": "0.29.6",
+  "version": "0.31.3",
   "private": true,
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },
   "scripts": {
-    "fuels:build": "pnpm fuels build",
-    "postfuels:build": "tsx ./scripts/versions.ts",
-    "ts:check": "tsc --noEmit"
+    "ts:check": "tsc --noEmit",
+    "versions:generate": "pnpm fuels build && pnpm fuels deploy && tsx ./scripts/versions.ts"
   },
   "peerDependencies": {
     "fuels": ">=0.94.0"
   },
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",
-    "fuels": "0.94.8",
+    "fuels": "0.94.9",
     "tsx": "4.9.3",
     "typescript": "5.4.5"
   }

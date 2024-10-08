@@ -40,7 +40,7 @@ export const FuelHooksProvider = ({
 
   return (
     <FuelReactContext.Provider value={{ fuel, networks }}>
-      <FuelEventsWatcher fuelConfig={fuelConfig} />
+      <FuelEventsWatcher />
       {children}
     </FuelReactContext.Provider>
   );

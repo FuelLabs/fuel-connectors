@@ -1,5 +1,29 @@
 # @fuel-connectors/burner-wallet-connector
 
+## 0.31.3
+
+## 0.31.2
+
+## 0.31.1
+
+### Patch Changes
+
+- [#345](https://github.com/FuelLabs/fuel-connectors/pull/345) [`fa88dca`](https://github.com/FuelLabs/fuel-connectors/commit/fa88dcabb862c9f407904765a0e6089a0f124b98) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - chore: update ts-sdk
+
+## 0.31.0
+
+### Minor Changes
+
+- [#343](https://github.com/FuelLabs/fuel-connectors/pull/343) [`4303a90`](https://github.com/FuelLabs/fuel-connectors/commit/4303a90c73fcdd86d3f8df8c96307c40984dd4f9) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - Add support for predicates deployed with blob-style
+
+## 0.30.1
+
+## 0.30.0
+
+### Minor Changes
+
+- [#333](https://github.com/FuelLabs/fuel-connectors/pull/333) [`ac45fc9`](https://github.com/FuelLabs/fuel-connectors/commit/ac45fc9c2ac3d2ddb2374cb6ea642e58635f6650) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: defaultConnetors accept providerUrl
+
 ## 0.29.6
 
 ## 0.29.5

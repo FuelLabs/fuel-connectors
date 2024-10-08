@@ -1,9 +1,8 @@
 import { bn } from 'fuels';
+import { CHAIN_ID_NAME } from '../config';
 import { useWallet } from '../hooks/useWallet';
 import { Faucet } from './faucet';
 import Feature from './feature';
-
-export const DEFAULT_AMOUNT = bn.parseUnits('0.0001');
 
 interface Props {
   isSigning: boolean;
@@ -30,7 +29,11 @@ export default function Balance({ isSigning }: Props) {
   return (
     <Feature title="Balance">
       <code>{balance ? `${balance?.format()} ETH` : <BalanceSkeleton />}</code>
-      <Faucet isSigning={isSigning} address={account} />
+      <Faucet
+        isSigning={isSigning}
+        address={account}
+        disabled={CHAIN_ID_NAME === 'mainnet'}
+      />
     </Feature>
   );
 }
