@@ -1,5 +1,6 @@
 import { useConnect, useDisconnect } from '@fuels/react';
 import { useWallet } from '../hooks/useWallet';
+import { Copyable } from './Copyable';
 import Button from './button';
 import Feature from './feature';
 
@@ -31,8 +32,15 @@ export default function ConnectedAccount({ isSigning }: Props) {
 
   return (
     <Feature title="Your Fuel Address">
-      <code className="block md:hidden">{truncAddressMiddle(account, 4)}</code>
-      <code className="hidden md:block">{truncAddressMiddle(account, 8)}</code>
+      <div className="flex items-center space-between" style={{ gap: '10px' }}>
+        <code className="block md:hidden">
+          {truncAddressMiddle(account, 4)}
+        </code>
+        <code className="hidden md:block">
+          {truncAddressMiddle(account, 8)}
+        </code>
+        <Copyable value={account} />
+      </div>
       <Button
         onClick={() => disconnect()}
         loadingText="Disconnecting..."
