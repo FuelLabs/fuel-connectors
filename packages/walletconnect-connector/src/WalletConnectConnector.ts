@@ -46,6 +46,7 @@ import {
   WINDOW,
 } from './constants';
 import type { WalletConnectConfig } from './types';
+import { getAccountProvider } from './utils/getAccountProvider';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
 export class WalletConnectConnector extends PredicateConnector {
@@ -219,11 +220,7 @@ export class WalletConnectConnector extends PredicateConnector {
     }
 
     const wagmiConfig = this.getWagmiConfig();
-    const ethProvider = wagmiConfig
-      ? ((await getAccount(
-          wagmiConfig,
-        ).connector?.getProvider?.()) as EIP1193Provider)
-      : undefined;
+    const ethProvider = await getAccountProvider(wagmiConfig);
 
     return {
       fuelProvider: this.fuelProvider,
