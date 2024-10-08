@@ -11,6 +11,9 @@ export const APP_IMAGE_LIGHT =
 export const APP_URL = 'https://safe.bako.global';
 export const HOST_URL = 'https://api.bako.global';
 export const SOCKET_URL = 'https://api.bako.global';
+export const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(
+  navigator.userAgent,
+);
 
 // Window object
 export const HAS_WINDOW = typeof window !== 'undefined';

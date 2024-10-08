@@ -23,6 +23,7 @@ import {
   APP_VERSION,
   HAS_WINDOW,
   HOST_URL,
+  IS_SAFARI,
   SESSION_ID,
   WINDOW,
 } from './constants';
@@ -47,7 +48,7 @@ export class BakoSafeConnector extends FuelConnector {
       description: APP_DESCRIPTION,
     },
   };
-  installed = true;
+  installed = !IS_SAFARI;
   connected = false;
   external = false;
 
@@ -239,6 +240,9 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   async ping() {
+    if (IS_SAFARI) {
+      return false;
+    }
     await this.setup();
     return this.setupReady ?? false;
   }
