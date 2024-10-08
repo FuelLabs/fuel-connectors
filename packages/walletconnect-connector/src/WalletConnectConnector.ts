@@ -222,7 +222,7 @@ export class WalletConnectConnector extends PredicateConnector {
     const ethProvider = wagmiConfig
       ? ((await getAccount(
           wagmiConfig,
-        ).connector?.getProvider()) as EIP1193Provider)
+        ).connector?.getProvider?.()) as EIP1193Provider)
       : undefined;
 
     return {
@@ -333,6 +333,7 @@ export class WalletConnectConnector extends PredicateConnector {
 
       if (!ethProvider) return;
 
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       this.signAndValidate(ethProvider, address)
         .then(() => {
           clearTimeout(validationTimeout);
