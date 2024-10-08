@@ -1,5 +1,8 @@
 import { Providers } from '@/components/Providers';
+import { DEFAULT_WAGMI_CONFIG } from '@/config/config';
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
+import { cookieToInitialState } from 'wagmi';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -11,10 +14,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialState = cookieToInitialState(
+    DEFAULT_WAGMI_CONFIG,
+    headers().get('cookie'),
+  );
   return (
     <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        <Providers initialState={initialState}>{children}</Providers>
       </body>
     </html>
   );
