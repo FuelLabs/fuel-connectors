@@ -3,10 +3,11 @@ import type { NetworkConfig } from './types';
 
 export const CONNECTOR_KEY = 'fuel-current-connector';
 export const NATIVE_CONNECTORS = [
+  'Bako Safe',
+  'Burner Wallet',
   'Fuel Wallet',
   'Fuel Wallet Development',
   'Fuelet Wallet',
-  'Bako Safe',
 ];
 export const DEFAULT_NETWORKS: Array<NetworkConfig> = [
   {
