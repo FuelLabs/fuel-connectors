@@ -222,7 +222,7 @@ export class WalletConnectConnector extends PredicateConnector {
     const ethProvider = wagmiConfig
       ? ((await getAccount(
           wagmiConfig,
-        ).connector?.getProvider()) as EIP1193Provider)
+        ).connector?.getProvider?.()) as EIP1193Provider)
       : undefined;
 
     return {
