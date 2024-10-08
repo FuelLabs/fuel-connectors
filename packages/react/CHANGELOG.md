@@ -1,5 +1,11 @@
 # @fuels/react
 
+## 0.29.6
+
+### Patch Changes
+
+- [#325](https://github.com/FuelLabs/fuel-connectors/pull/325) [`165ca68`](https://github.com/FuelLabs/fuel-connectors/commit/165ca68518c3581666b6e33c8d5aab63525fa55b) Thanks [@helciofranco](https://github.com/helciofranco)! - Replace `initialData` with `placeholderData` to avoid conflicts with `useQuery` cache engine.
+
 ## 0.29.5
 
 ## 0.29.4

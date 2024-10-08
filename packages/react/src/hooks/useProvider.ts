@@ -55,7 +55,7 @@ export const useProvider = (params?: UseProviderParams) => {
       }
       return provider;
     },
-    initialData: null,
+    placeholderData: null,
     ...params?.query,
   });
 };

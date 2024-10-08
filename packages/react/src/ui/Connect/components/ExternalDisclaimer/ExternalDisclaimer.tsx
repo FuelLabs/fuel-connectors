@@ -20,6 +20,8 @@ export function ExternalDisclaimer() {
         <h2
           style={{
             ...connectorTitleStyle,
+            color: 'var(--fuel-color-bold)',
+            fontSize: '1.2em',
             textAlign: 'left',
             margin: 0,
             padding: 0,
@@ -30,25 +32,67 @@ export function ExternalDisclaimer() {
         <p
           style={{
             ...connectorDescriptionStyle,
+            fontSize: '0.9em',
             textAlign: 'left',
             margin: 0,
             padding: 0,
           }}
         >
-          Fuel supports any wallet from Ethereum to Solana, but these wallets
-          have limited functionality for now.
+          Fuel supports any wallet from Ethereum or Solana, but these wallets
+          have limited functionality for now:
         </p>
         <DisclaimerList>
           <li>
-            Only support blind signature. Make sure you only visit trusted
-            applications.
+            <span
+              style={{
+                fontSize: '0.9em',
+                fontWeight: 600,
+                color: 'var(--fuel-gray-12)',
+              }}
+            >
+              Limited Balance Visibility
+            </span>
+            <br />
+            <span
+              style={{
+                fontSize: '0.8em',
+                color: 'var(--fuel-gray-11)',
+              }}
+            >
+              You cannot see balances natively in the wallet (e.g. Metamask).
+              You must visit the Fuel Block Explorer to see balances.
+            </span>
+          </li>
+          <li style={{ marginTop: 5, marginBottom: 5 }}>
+            <span
+              style={{
+                fontSize: '0.9em',
+                fontWeight: 600,
+                color: 'var(--fuel-gray-12)',
+              }}
+            >
+              Signatures are Blind
+            </span>
+            <br />
+            <span style={{ fontSize: '0.8em', color: 'var(--fuel-gray-11)' }}>
+              Ensure you only use trusted applications.
+            </span>
           </li>
           <li>
-            You can't see balances inside wallet your Wallet only on FUEL
-            applications like the explorer.
-          </li>
-          <li>
-            Does not support multi-sigs (Ex: SAFE) or any Smart Contract wallet.
+            <span
+              style={{
+                fontSize: '0.9em',
+                fontWeight: 600,
+                color: 'var(--fuel-gray-12)',
+              }}
+            >
+              No Multi-Sigs
+            </span>
+            <br />
+            <span style={{ fontSize: '0.8em', color: 'var(--fuel-gray-11)' }}>
+              Multi-sigs and smart contract wallets (e.g. SAFE) are not
+              supported.
+            </span>
           </li>
         </DisclaimerList>
       </DisclaimerContainer>

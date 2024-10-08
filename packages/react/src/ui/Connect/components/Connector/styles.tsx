@@ -12,6 +12,8 @@ export const ConnectorTitle = ({ children }: React.PropsWithChildren) => {
 };
 
 export const connectorDescriptionStyle: React.CSSProperties = {
+  color: 'var(--fuel-gray-12)',
+  fontSize: '0.9em',
   fontWeight: 400,
   textAlign: 'center',
   margin: '0 1.2em',
@@ -25,10 +27,11 @@ export const ConnectorDescription = ({ children }: React.PropsWithChildren) => {
 };
 
 const connectorFooterHelperStyle: React.CSSProperties = {
+  color: 'var(--fuel-gray-12)',
   fontSize: '0.8em',
   fontWeight: 400,
   textAlign: 'center',
-  margin: '0.6em 1.2em',
+  margin: '2em auto 0',
   lineHeight: '1.2em',
   padding: '0 2em',
   opacity: 0.5,
