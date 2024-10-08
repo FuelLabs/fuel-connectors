@@ -11,14 +11,14 @@ export const APP_IMAGE_LIGHT =
 export const APP_URL = 'https://safe.bako.global';
 export const HOST_URL = 'https://api.bako.global';
 export const SOCKET_URL = 'https://api.bako.global';
-export const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(
-  navigator.userAgent,
-);
 
 // Window object
 export const HAS_WINDOW = typeof window !== 'undefined';
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export const WINDOW: any = HAS_WINDOW ? window : {};
+export const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(
+  WINDOW.navigator?.userAgent,
+);
 
 //storage
 export const SESSION_ID = 'sessionId';
