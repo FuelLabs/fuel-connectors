@@ -1,5 +1,13 @@
 # @fuel-connectors/walletconnect-connector
 
+## 0.31.4
+
+### Patch Changes
+
+- [#360](https://github.com/FuelLabs/fuel-connectors/pull/360) [`9c1db2e`](https://github.com/FuelLabs/fuel-connectors/commit/9c1db2e590affcb78a5019280471f65d4ddb0f61) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Fixed getProvider is not a function error in Wallet Connect Connector
+
+- [#360](https://github.com/FuelLabs/fuel-connectors/pull/360) [`9c1db2e`](https://github.com/FuelLabs/fuel-connectors/commit/9c1db2e590affcb78a5019280471f65d4ddb0f61) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Fixed some EVM wallets rejecting sign message right after connection
+
 ## 0.31.3
 
 ## 0.31.2
