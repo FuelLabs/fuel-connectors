@@ -27,15 +27,10 @@ export const useIsConnected = (params?: UseIsConnected) => {
   const { fuel } = useFuel();
   const query = useNamedQuery('isConnected', {
     queryKey: QUERY_KEYS.isConnected(),
-    queryFn: async () => {
-      try {
-        const isConnected = await fuel.isConnected();
-        return isConnected || false;
-      } catch {
-        return false;
-      }
-    },
+    queryFn: async () => await fuel.isConnected(),
     placeholderData: false,
+    retry: 10,
+    retryDelay: 100,
     ...params?.query,
     // This is required for now as Fuelet is not triggering the connection event
     refetchInterval: 1000,
