@@ -9,10 +9,8 @@ import {
 import { type Chain, sepolia } from 'wagmi/chains';
 
 export const APP = {
-  name: 'Fuel Bridge',
-  description: 'Bridge assets between Fuel and Other Chains',
-  url: 'https://fuels-portal.vercel.app',
-  icons: ['https://fuels-portal.vercel.app/fuel-logo.svg'],
+  name: 'Fuel Connectors Example APP',
+  description: 'SSR Example app of Fuel Connectors',
 };
 export const CHAINS_TO_CONNECT = [sepolia] as [Chain, ...Chain[]];
 
