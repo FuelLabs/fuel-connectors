@@ -210,7 +210,7 @@ export class BakoSafeConnector extends FuelConnector {
         BakoSafeConnectorEvents.CLIENT_DISCONNECTED,
         () => {
           this.dAppWindow?.close();
-          reject();
+          reject(new Error('Client disconnected'));
         },
       );
 
