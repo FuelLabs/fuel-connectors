@@ -2,6 +2,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 
 import { BackIcon as CBackIcon } from '../../icons/BackIcon';
 import { CloseIcon as CCloseIcon } from '../../icons/CloseIcon';
+import { CopyIcon as CCopyIcon } from '../../icons/CopyIcon';
 import type { SvgIconProps } from '../../types';
 
 const dialogHeaderStyle: React.CSSProperties = {
@@ -99,6 +100,27 @@ export const CloseIcon = ({ size, ...props }: SvgIconProps) => {
     <CCloseIcon
       size={size}
       style={closeIconStyle}
+      {...props}
+      className="fuel-connectors-close-icon"
+    />
+  );
+};
+
+const copyIconStyle: React.CSSProperties = {
+  fill: 'var(--fuel-color)',
+  padding: '7px',
+  borderRadius: '12px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+};
+
+export const CopyIcon = ({ size, ...props }: SvgIconProps) => {
+  return (
+    <CCopyIcon
+      size={size}
+      style={copyIconStyle}
       {...props}
       className="fuel-connectors-close-icon"
     />
