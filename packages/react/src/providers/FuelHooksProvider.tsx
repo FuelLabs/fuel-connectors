@@ -1,9 +1,10 @@
 import type { FuelConfig } from 'fuels';
 import { Fuel } from 'fuels';
 import type { ReactNode } from 'react';
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useContext, useMemo, useRef } from 'react';
 
 import type { NetworkConfig } from '../types';
+import { useWindowConnectorEvent } from '../utils/useWindowConnectorEvent';
 import { FuelEventsWatcher } from './FuelEventsWatcher';
 
 type FuelProviderProps = {
@@ -34,9 +35,16 @@ export const FuelHooksProvider = ({
   fuelConfig,
   networks,
 }: FuelProviderProps) => {
+  const fuelRef = useRef<Fuel | null>(null);
   const fuel = useMemo(() => {
-    return new Fuel(fuelConfig);
+    if (fuelRef.current) {
+      fuelRef.current?.destroy();
+    }
+    fuelRef.current = new Fuel(fuelConfig);
+    return fuelRef.current;
   }, [fuelConfig]);
+
+  useWindowConnectorEvent(fuel);
 
   return (
     <FuelReactContext.Provider value={{ fuel, networks }}>
