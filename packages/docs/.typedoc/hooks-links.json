@@ -19,21 +19,13 @@
     "link": "/guide/react-hooks/useAddNetwork",
     "items": []
   },
-  {
-    "text": "useAssets",
-    "link": "/guide/react-hooks/useAssets",
-    "items": []
-  },
+  { "text": "useAssets", "link": "/guide/react-hooks/useAssets", "items": [] },
   {
     "text": "useBalance",
     "link": "/guide/react-hooks/useBalance",
     "items": []
   },
-  {
-    "text": "useChain",
-    "link": "/guide/react-hooks/useChain",
-    "items": []
-  },
+  { "text": "useChain", "link": "/guide/react-hooks/useChain", "items": [] },
   {
     "text": "useConnect",
     "link": "/guide/react-hooks/useConnect",
@@ -114,9 +106,5 @@
     "link": "/guide/react-hooks/useTransactionResult",
     "items": []
   },
-  {
-    "text": "useWallet",
-    "link": "/guide/react-hooks/useWallet",
-    "items": []
-  }
+  { "text": "useWallet", "link": "/guide/react-hooks/useWallet", "items": [] }
 ]

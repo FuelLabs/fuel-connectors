@@ -1,11 +1,9 @@
-import { CHAIN_IDS, Provider } from 'fuels';
-import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Provider } from 'fuels';
 import {
-  useChain,
   useCurrentConnector,
   useDisconnect,
   useIsConnected,
-  useNodeInfo,
   useSelectNetwork,
 } from '../../../../hooks';
 import { useIsSupportedNetwork } from '../../../../hooks/useIsSupportedNetwork';
@@ -39,7 +37,17 @@ export function NetworkDialog({
   const { isSupportedNetwork } = useIsSupportedNetwork();
   const { selectNetwork, isError, error, isPending } = useSelectNetwork();
   const { isConnected } = useIsConnected();
-  const [chainName, setChainName] = useState('');
+  const { data: chainName } = useQuery({
+    queryKey: ['chainName', networks[0]],
+    queryFn: async () => {
+      if (networks[0].url) {
+        const provider = await Provider.create(networks[0].url);
+        return provider.getChain().name;
+      }
+      return '';
+    },
+    placeholderData: '',
+  });
 
   function handleSwitch() {
     if (networks[0].chainId == null) return;
@@ -68,12 +76,6 @@ export function NetworkDialog({
     return null;
   }
 
-  if (networks[0].url) {
-    Provider.create(networks[0].url).then((provider) => {
-      const chainName = provider.getChain().name;
-      setChainName(chainName);
-    });
-  }
   return (
     <DialogFuel open={!isSupportedNetwork && !!chainName} theme={theme}>
       <DialogContent
