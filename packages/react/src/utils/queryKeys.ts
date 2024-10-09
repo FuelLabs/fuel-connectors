@@ -1,11 +1,5 @@
 import type { QueryKey } from '@tanstack/react-query';
-import type {
-  BytesLike,
-  FuelConnector,
-  Network,
-  Provider,
-  SelectNetworkArguments,
-} from 'fuels';
+import type { BytesLike, Network, Provider } from 'fuels';
 
 export const QUERY_KEYS = {
   base: ['fuel'] as QueryKey,

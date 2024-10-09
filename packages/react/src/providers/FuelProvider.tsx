@@ -40,6 +40,7 @@ export function FuelProvider({
       ),
     [_uiConfig],
   );
+
   if (ui) {
     return (
       <FuelHooksProvider fuelConfig={fuelConfig} networks={networks}>
