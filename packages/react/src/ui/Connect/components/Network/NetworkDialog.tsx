@@ -46,7 +46,7 @@ export function NetworkDialog({
       }
       return '';
     },
-    initialData: '',
+    placeholderData: '',
   });
 
   function handleSwitch() {
