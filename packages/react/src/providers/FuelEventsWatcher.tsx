@@ -1,5 +1,4 @@
 import { useQueryClient } from '@tanstack/react-query';
-import type { FuelConfig, FuelConnector } from 'fuels';
 import { useEffect } from 'react';
 
 import { QUERY_KEYS } from '../utils';
