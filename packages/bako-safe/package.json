@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/bako-safe",
-  "version": "0.31.4",
+  "version": "0.31.5",
   "private": true,
   "types": "./dist/index.d.ts",
   "exports": {
