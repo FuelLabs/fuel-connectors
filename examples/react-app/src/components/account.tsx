@@ -1,4 +1,5 @@
 import { useConnect, useDisconnect } from '@fuels/react';
+import { EXPLORER_URL } from '../config';
 import { useWallet } from '../hooks/useWallet';
 import { Copyable } from './Copyable';
 import Button from './button';
@@ -13,6 +14,8 @@ export default function ConnectedAccount({ isSigning }: Props) {
   const { account, currentConnector, isConnected } = useWallet();
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
+
+  const explorerAccountUrl = `${EXPLORER_URL}/account/${account}/assets`;
 
   if (!account && isConnected) {
     return (
@@ -31,24 +34,37 @@ export default function ConnectedAccount({ isSigning }: Props) {
   if (!account) return null;
 
   return (
-    <Feature title="Your Fuel Address">
-      <div className="flex items-center space-between" style={{ gap: '10px' }}>
-        <code className="block md:hidden">
-          {truncAddressMiddle(account, 4)}
-        </code>
-        <code className="hidden md:block">
-          {truncAddressMiddle(account, 8)}
-        </code>
-        <Copyable value={account} />
-      </div>
-      <Button
-        onClick={() => disconnect()}
-        loadingText="Disconnecting..."
-        disabled={isSigning}
+    <div>
+      <Feature title="Your Fuel Address">
+        <div
+          className="flex items-center space-between"
+          style={{ gap: '10px' }}
+        >
+          <code className="block md:hidden">
+            {truncAddressMiddle(account, 4)}
+          </code>
+          <code className="hidden md:block">
+            {truncAddressMiddle(account, 8)}
+          </code>
+          <Copyable value={account} />
+        </div>
+        <Button
+          onClick={() => disconnect()}
+          loadingText="Disconnecting..."
+          disabled={isSigning}
+        >
+          Disconnect
+        </Button>
+      </Feature>
+      <a
+        href={explorerAccountUrl}
+        target="_blank"
+        className="underline text-end text-sm text-zinc-300/70"
+        rel="noreferrer"
       >
-        Disconnect
-      </Button>
-    </Feature>
+        View on Explorer
+      </a>
+    </div>
   );
 }
 
