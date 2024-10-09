@@ -1,5 +1,15 @@
 # @fuels/react
 
+## 0.31.5
+
+### Patch Changes
+
+- [#365](https://github.com/FuelLabs/fuel-connectors/pull/365) [`4eecdf3`](https://github.com/FuelLabs/fuel-connectors/commit/4eecdf3676013e21b260ac5c8596c64451bb0073) Thanks [@luizstacio](https://github.com/luizstacio)! - Fix delay start of current connector
+
+- [#359](https://github.com/FuelLabs/fuel-connectors/pull/359) [`64c291f`](https://github.com/FuelLabs/fuel-connectors/commit/64c291ffbe887b3a6b6328ef546a8203b13f7e44) Thanks [@helciofranco](https://github.com/helciofranco)! - Mark Burner Wallet as Fuel Native Wallet.
+
+- [#366](https://github.com/FuelLabs/fuel-connectors/pull/366) [`11f468c`](https://github.com/FuelLabs/fuel-connectors/commit/11f468c6ac4ef8166ea8911c4fb3465e3fe21cf6) Thanks [@luizstacio](https://github.com/luizstacio)! - Fix FUEL duplicated fuel instances
+
 ## 0.31.4
 
 ## 0.31.3

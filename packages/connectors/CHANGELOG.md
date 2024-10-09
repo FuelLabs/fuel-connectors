@@ -1,5 +1,11 @@
 # @fuels/connectors
 
+## 0.31.5
+
+### Patch Changes
+
+- [#366](https://github.com/FuelLabs/fuel-connectors/pull/366) [`11f468c`](https://github.com/FuelLabs/fuel-connectors/commit/11f468c6ac4ef8166ea8911c4fb3465e3fe21cf6) Thanks [@luizstacio](https://github.com/luizstacio)! - Fix FUEL duplicated fuel instances
+
 ## 0.31.4
 
 ## 0.31.3
