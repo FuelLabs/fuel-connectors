@@ -1,6 +1,6 @@
 {
   "name": "@fuels/connectors",
-  "version": "0.31.5",
+  "version": "0.31.6",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
