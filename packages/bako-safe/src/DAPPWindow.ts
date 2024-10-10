@@ -1,4 +1,4 @@
-import { WINDOW } from './constants';
+import { IS_SAFARI, WINDOW } from './constants';
 
 type PopupConfig = {
   appUrl: string;
@@ -10,9 +10,7 @@ type PopupConfig = {
 
 export class DAppWindow {
   isMobile: boolean = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  isSafariBrowser: boolean = /^((?!chrome|android).)*safari/i.test(
-    navigator.userAgent,
-  );
+  isSafariBrowser: boolean = IS_SAFARI;
   request_id: string;
   isOpen = false;
   opned: Window | null = null;
