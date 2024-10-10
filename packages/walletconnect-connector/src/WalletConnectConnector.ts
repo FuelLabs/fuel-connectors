@@ -46,6 +46,7 @@ import {
   WINDOW,
 } from './constants';
 import type { WalletConnectConfig } from './types';
+import { subscribeAndEnforceChain } from './utils';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
 export class WalletConnectConnector extends PredicateConnector {
@@ -72,6 +73,11 @@ export class WalletConnectConnector extends PredicateConnector {
     this.storage =
       config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
     const wagmiConfig = config?.wagmiConfig ?? createWagmiConfig();
+
+    if (wagmiConfig._internal.syncConnectedChain !== false) {
+      subscribeAndEnforceChain(wagmiConfig);
+    }
+
     this.customPredicate = config.predicateConfig || null;
     if (HAS_WINDOW) {
       this.configProviders({ ...config, wagmiConfig });
