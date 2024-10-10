@@ -14,9 +14,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@fuel-ts/errors": "0.93.0",
-    "@fuel-ts/versions": "0.93.0",
-    "fuels": "0.94.9",
+    "@fuel-ts/errors": "next",
+    "@fuel-ts/versions": "next",
+    "fuels": "next",
     "typedoc-plugin-markdown": "^3.15.3"
   },
   "devDependencies": {

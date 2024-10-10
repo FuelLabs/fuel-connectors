@@ -37,7 +37,7 @@
     "@fuel-connectors/evm-predicates": "workspace:*",
     "@types/memoizee": "0.4.11",
     "@web3modal/core": "5.0.0",
-    "fuels": "0.94.9",
+    "fuels": "next",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
