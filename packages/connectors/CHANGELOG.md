@@ -1,5 +1,11 @@
 # @fuels/connectors
 
+## 0.31.6
+
+### Patch Changes
+
+- [#368](https://github.com/FuelLabs/fuel-connectors/pull/368) [`450b612`](https://github.com/FuelLabs/fuel-connectors/commit/450b612cc884039565d8f7c1e769995c0b0010e4) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Fixed EVM wallets being allowed to stay on unsupported networks.
+
 ## 0.31.5
 
 ### Patch Changes
