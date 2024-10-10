@@ -243,7 +243,6 @@ export class WalletConnectConnector extends PredicateConnector {
             .catch((err) => reject(err))
             .finally(() => unsub());
         };
-
         switch (event.data.event) {
           case 'MODAL_OPEN':
             if (wagmiConfig) {
@@ -356,7 +355,7 @@ export class WalletConnectConnector extends PredicateConnector {
       connector,
     });
     addresses?.map((a) => this.storage.removeItem(`SIGNATURE_VALIDATION_${a}`));
-    return isConnected || false;
+    return isConnected ?? false;
   }
 
   public async sendTransaction(
