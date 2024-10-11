@@ -5,9 +5,9 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 
 /*
-  Fuels version: 0.94.8
-  Forc version: 0.64.0
-  Fuel-Core version: 0.36.0
+  Fuels version: 0.94.9
+  Forc version: 0.65.2
+  Fuel-Core version: 0.37.1
 */
 
 import { type Contract, ContractFactory, decompressBytecode } from 'fuels';
@@ -31,7 +31,7 @@ export class CounterFactory extends ContractFactory {
     super(bytecode, Counter.abi, accountOrProvider);
   }
 
-  deploy<TContract extends Contract = Contract>(
+  override deploy<TContract extends Contract = Contract>(
     deployOptions?: DeployContractOptions,
   ): Promise<DeployContractResult<TContract>> {
     return super.deploy({
