@@ -11,7 +11,7 @@ import {
 } from '@fuel-connectors/common';
 import { ApiController } from '@web3modal/core';
 import type { Web3Modal } from '@web3modal/solana';
-import type { Provider } from '@web3modal/solana/dist/types/src/utils/scaffold';
+import type { Provider as SolanaProvider } from '@web3modal/solana/dist/types/src/utils/scaffold';
 import {
   CHAIN_IDS,
   type ConnectorMetadata,
@@ -19,7 +19,7 @@ import {
   Provider as FuelProvider,
   type TransactionRequestLike,
 } from 'fuels';
-import { HAS_WINDOW, SOLANA_ICON, TESTNET_URL } from './constants';
+import { HAS_WINDOW, SOLANA_ICON } from './constants';
 import { PREDICATE_VERSIONS } from './generated/predicates';
 import type { SolanaConfig } from './types';
 import { type SolanaPredicateRoot, txIdEncoders } from './utils';
@@ -51,23 +51,25 @@ export class SolanaConnector extends PredicateConnector {
     }
   }
 
-  private async _emitConnected(connected: boolean) {
-    if (connected) await this.setupPredicate();
-    this.emit(this.events.connection, connected);
+  private async _emitDisconnect() {
+    this.svmAddress = null;
+    await this.setupPredicate();
+    this.emit(this.events.connection, false);
+    this.emit(this.events.accounts, []);
+    this.emit(this.events.currentAccount, null);
+  }
 
+  private async _emitConnected() {
+    await this.setupPredicate();
     const address = this.web3Modal.getAddress();
-    this.emit(
-      this.events.currentAccount,
-      address ? this.predicateAccount?.getPredicateAddress(address) : null,
-    );
+    if (!address || !this.predicateAccount) return;
+    this.svmAddress = address;
+    this.emit(this.events.connection, true);
+    const predicate = this.predicateAccount.getPredicateAddress(address);
+    this.emit(this.events.currentAccount, predicate);
     const accounts = await this.walletAccounts();
-    this.emit(
-      this.events.accounts,
-      accounts.length > 0
-        ? this.predicateAccount?.getPredicateAddresses(accounts)
-        : [],
-    );
-    this.svmAddress = address ?? null;
+    const _accounts = this.predicateAccount?.getPredicateAddresses(accounts);
+    this.emit(this.events.accounts, _accounts);
   }
 
   private modalFactory(config?: SolanaConfig) {
@@ -99,11 +101,11 @@ export class SolanaConnector extends PredicateConnector {
             if (!address || address.startsWith('0x')) {
               return;
             }
-            this._emitConnected(true);
+            this._emitConnected();
             break;
           }
           case 'DISCONNECT_SUCCESS': {
-            this._emitConnected(false);
+            this._emitDisconnect();
             break;
           }
         }
@@ -111,17 +113,16 @@ export class SolanaConnector extends PredicateConnector {
     );
 
     // Poll for account changes due a problem with the event listener not firing on account changes
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       if (!this.web3Modal) {
         return;
       }
       const address = this.web3Modal.getAddress();
       if (address && address !== this.svmAddress) {
-        this._emitConnected(true);
+        this._emitConnected();
       }
-
       if (!address && this.svmAddress) {
-        this._emitConnected(false);
+        this._emitDisconnect();
       }
     }, 300);
 
@@ -160,7 +161,6 @@ export class SolanaConnector extends PredicateConnector {
     if (!this.web3Modal) {
       return Promise.resolve([]);
     }
-
     return new Promise((resolve) => {
       const acc = this.web3Modal.getAddress();
       resolve(acc ? [acc] : []);
@@ -193,7 +193,6 @@ export class SolanaConnector extends PredicateConnector {
 
   public async connect(): Promise<boolean> {
     this.createModal();
-
     return new Promise((resolve) => {
       this.web3Modal.open();
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
@@ -216,7 +215,7 @@ export class SolanaConnector extends PredicateConnector {
 
   public async disconnect(): Promise<boolean> {
     this.web3Modal.disconnect();
-    this._emitConnected(false);
+    this._emitDisconnect();
     return this.isConnected();
   }
 
@@ -247,8 +246,8 @@ export class SolanaConnector extends PredicateConnector {
     );
 
     const txId = await this.encodeTxId(transactionId);
-    const provider: Maybe<Provider> =
-      this.web3Modal.getWalletProvider() as Provider;
+    const provider: Maybe<SolanaProvider> =
+      this.web3Modal.getWalletProvider() as SolanaProvider;
     if (!provider) {
       throw new Error('No provider found');
     }
