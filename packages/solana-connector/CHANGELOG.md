@@ -1,5 +1,15 @@
 # @fuel-connectors/solana-connector
 
+## 0.32.0
+
+### Minor Changes
+
+- [#370](https://github.com/FuelLabs/fuel-connectors/pull/370) [`9a20224`](https://github.com/FuelLabs/fuel-connectors/commit/9a202245ceb8653435e963a98fc3453afd81f52b) Thanks [@petertonysmith94](https://github.com/petertonysmith94)! - Updated Fuel SDK to 0.95.0
+
+### Patch Changes
+
+- [#371](https://github.com/FuelLabs/fuel-connectors/pull/371) [`5a2cfe3`](https://github.com/FuelLabs/fuel-connectors/commit/5a2cfe3642e85dec34a0995d86d1a7874767435e) Thanks [@luizstacio](https://github.com/luizstacio)! - Fix disconnection not dropping the state
+
 ## 0.31.6
 
 ## 0.31.5
