@@ -28,6 +28,7 @@ import type {
   PredicateVersion,
   PreparedTransaction,
   ProviderDictionary,
+  SignedMessageCustomCurve,
 } from './types';
 
 export abstract class PredicateConnector extends FuelConnector {
@@ -60,6 +61,9 @@ export abstract class PredicateConnector extends FuelConnector {
   protected abstract getProviders(): Promise<ProviderDictionary>;
   protected abstract requireConnection(): MaybeAsync<void>;
   protected abstract walletAccounts(): Promise<Array<string>>;
+  abstract signMessageCustomCurve(
+    _message: string,
+  ): Promise<SignedMessageCustomCurve>;
 
   protected async emitAccountChange(
     address: string,

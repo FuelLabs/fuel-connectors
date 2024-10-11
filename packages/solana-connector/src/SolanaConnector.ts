@@ -18,6 +18,8 @@ import {
   FuelConnectorEventTypes,
   Provider as FuelProvider,
   type TransactionRequestLike,
+  hexlify,
+  toUtf8Bytes,
 } from 'fuels';
 import { HAS_WINDOW, SOLANA_ICON } from './constants';
 import { PREDICATE_VERSIONS } from './generated/predicates';
@@ -263,5 +265,20 @@ export class SolanaConnector extends PredicateConnector {
     const response = await predicate.sendTransaction(transactionRequest);
 
     return response.id;
+  }
+
+  async signMessageCustomCurve(message: string) {
+    const provider: Maybe<SolanaProvider> =
+      this.web3Modal.getWalletProvider() as SolanaProvider;
+    if (!provider) {
+      throw new Error('No provider found');
+    }
+    const signedMessage: Uint8Array = (await provider.signMessage(
+      toUtf8Bytes(message),
+    )) as Uint8Array;
+    return {
+      curve: 'edDSA',
+      signature: hexlify(signedMessage),
+    };
   }
 }
