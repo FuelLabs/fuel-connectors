@@ -1,5 +1,15 @@
 # @fuel-connectors/solana-connector
 
+## 0.33.0
+
+### Minor Changes
+
+- [#377](https://github.com/FuelLabs/fuel-connectors/pull/377) [`aa757db`](https://github.com/FuelLabs/fuel-connectors/commit/aa757dbddf0b458be14310251613ba39abd52413) Thanks [@helciofranco](https://github.com/helciofranco)! - Hide `All Wallets` option in the EVM and SVM connectors.
+
+### Patch Changes
+
+- [#374](https://github.com/FuelLabs/fuel-connectors/pull/374) [`58d0388`](https://github.com/FuelLabs/fuel-connectors/commit/58d0388d78e455b5dc420cfca6fdf0c77db47456) Thanks [@luizstacio](https://github.com/luizstacio)! - feat: add sign message with custom curves for predicates
+
 ## 0.32.0
 
 ### Minor Changes
