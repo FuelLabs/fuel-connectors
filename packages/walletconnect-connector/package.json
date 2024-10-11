@@ -20,15 +20,16 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "@web3modal/core": ">=5.1.11",
-    "@web3modal/scaffold": ">=5.1.1",
+    "@reown/appkit": ">=1.1.2",
+    "@reown/appkit-adapter-wagmi": ">=1.1.2",
     "fuels": ">=0.95.0"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
     "@wagmi/core": "2.13.4",
-    "@web3modal/wagmi": "5.1.11",
+    "@reown/appkit": "1.1.2",
+    "@reown/appkit-adapter-wagmi": "1.1.2",
     "memoizee": "0.4.15",
     "viem": "2.20.1"
   },
@@ -36,7 +37,6 @@
     "@fuel-connectors/common": "workspace:*",
     "@fuel-connectors/evm-predicates": "workspace:*",
     "@types/memoizee": "0.4.11",
-    "@web3modal/core": "5.1.11",
     "fuels": "0.95.0",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",

@@ -7,10 +7,13 @@ import { FuelWalletDevelopmentConnector } from '@fuel-connectors/fuel-developmen
 import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
 import { FueletWalletConnector } from '@fuel-connectors/fuelet-wallet';
 import { SolanaConnector } from '@fuel-connectors/solana-connector';
-import { WalletConnectConnector } from '@fuel-connectors/walletconnect-connector';
-import { type Config, connect } from '@wagmi/core';
-import type { ProviderType } from '@web3modal/solana/dist/types/src/utils/scaffold';
-import type { FuelConfig, FuelConnector } from 'fuels';
+import {
+  type AppKitConfig,
+  WalletConnectConnector,
+} from '@fuel-connectors/walletconnect-connector';
+import type { Config } from '@wagmi/core';
+// import type { ProviderType } from '@web3modal/solana/dist/types/src/utils/scaffold';
+import type { FuelConnector } from 'fuels';
 import type { Provider as FuelProvider } from 'fuels';
 
 type DefaultConnectors = {
@@ -18,8 +21,9 @@ type DefaultConnectors = {
   wcProjectId?: string;
   burnerWalletConfig?: BurnerWalletConfig;
   ethWagmiConfig?: Config;
-  solanaConfig?: ProviderType;
+  // solanaConfig?: ProviderType;
   chainId?: number;
+  appKit?: AppKitConfig;
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
 };
 
@@ -27,8 +31,8 @@ export function defaultConnectors({
   devMode,
   wcProjectId,
   burnerWalletConfig,
-  ethWagmiConfig,
-  solanaConfig: _solanaConfig,
+  appKit,
+  // solanaConfig: _solanaConfig,
   chainId,
   fuelProvider,
 }: DefaultConnectors = {}): Array<FuelConnector> {
@@ -38,15 +42,15 @@ export function defaultConnectors({
     new FueletWalletConnector(),
     new WalletConnectConnector({
       projectId: wcProjectId,
-      wagmiConfig: ethWagmiConfig,
+      appKit,
       chainId,
       fuelProvider,
     }),
-    new SolanaConnector({
-      projectId: wcProjectId,
-      chainId,
-      fuelProvider,
-    }),
+    // new SolanaConnector({
+    //   projectId: wcProjectId,
+    //   chainId,
+    //   fuelProvider,
+    // }),
   ];
 
   if (devMode) {

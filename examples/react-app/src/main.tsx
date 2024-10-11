@@ -1,12 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
+import { mainnet, sepolia } from '@reown/appkit/networks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
-import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
-import { http, createConfig, injected } from '@wagmi/core';
-import { mainnet, sepolia } from '@wagmi/core/chains';
 
 import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
@@ -16,16 +13,13 @@ import * as Toast from '@radix-ui/react-toast';
 import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import './index.css';
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { CHAIN_IDS, Provider } from 'fuels';
 import { CHAIN_ID_NAME, PROVIDER_URL } from './config.ts';
 
 const queryClient = new QueryClient();
 const isDev = process.env.NODE_ENV === 'development';
 
-// ============================================================
-// WalletConnect Connector configurations
-// https://docs.walletconnect.com/web3modal/javascript/about
-// ============================================================
 const WC_PROJECT_ID = import.meta.env.VITE_APP_WC_PROJECT_ID;
 const METADATA = {
   name: 'Wallet Demo',
@@ -33,27 +27,10 @@ const METADATA = {
   url: location.href,
   icons: ['https://connectors.fuel.network/logo_white.png'],
 };
-const wagmiConfig = createConfig({
-  chains: [mainnet, sepolia],
-  transports: {
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
-  },
+const wagmiAdapter = new WagmiAdapter({
+  networks: [mainnet, sepolia],
+  projectId: WC_PROJECT_ID,
   syncConnectedChain: true,
-  connectors: [
-    injected({ shimDisconnect: false }),
-    walletConnect({
-      projectId: WC_PROJECT_ID,
-      metadata: METADATA,
-      showQrModal: false,
-    }),
-    coinbaseWallet({
-      appName: METADATA.name,
-      appLogoUrl: METADATA.icons[0],
-      darkMode: true,
-      reloadOnDisconnect: true,
-    }),
-  ],
 });
 
 const CHAIN_ID = CHAIN_IDS.fuel[CHAIN_ID_NAME];
@@ -75,9 +52,13 @@ const NETWORKS = [
 
 const FUEL_CONFIG = {
   connectors: defaultConnectors({
+    appKit: {
+      metadata: METADATA,
+      wagmiAdapter,
+    },
     devMode: true,
     wcProjectId: WC_PROJECT_ID,
-    ethWagmiConfig: wagmiConfig,
+    ethWagmiConfig: wagmiAdapter.wagmiConfig,
     chainId: CHAIN_ID,
     fuelProvider: Provider.create(PROVIDER_URL),
   }),

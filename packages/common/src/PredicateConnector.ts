@@ -53,7 +53,6 @@ export abstract class PredicateConnector extends FuelConnector {
   public abstract connect(): Promise<boolean>;
   public abstract disconnect(): Promise<boolean>;
 
-  protected abstract configProviders(config: ConnectorConfig): MaybeAsync<void>;
   protected abstract getWalletAdapter(): PredicateWalletAdapter;
   protected abstract getPredicateVersions(): Record<string, PredicateVersion>;
   protected abstract getAccountAddress(): MaybeAsync<Maybe<string>>;

@@ -14,7 +14,6 @@ import {
   reconnect,
   watchAccount,
 } from '@wagmi/core';
-import type { Web3Modal } from '@web3modal/wagmi';
 import {
   CHAIN_IDS,
   type ConnectorMetadata,
@@ -38,7 +37,9 @@ import {
   getProviderUrl,
 } from '@fuel-connectors/common';
 import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
-import { ApiController } from '@web3modal/core';
+
+import type { AppKit } from '@reown/appkit';
+import type { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import {
   ETHEREUM_ICON,
   HAS_WINDOW,
@@ -47,7 +48,7 @@ import {
 } from './constants';
 import type { WalletConnectConfig } from './types';
 import { subscribeAndEnforceChain } from './utils';
-import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
+import { createAppKitInstance, createWagmiAdapter } from './utils/createAppKit';
 
 export class WalletConnectConnector extends PredicateConnector {
   name = 'Ethereum Wallets';
@@ -62,9 +63,10 @@ export class WalletConnectConnector extends PredicateConnector {
     },
   };
 
-  private fuelProvider!: FuelProvider;
+  private fuelProvider!: FuelProvider | Promise<FuelProvider>;
   private ethProvider!: EIP1193Provider;
-  private web3Modal!: Web3Modal;
+  private wagmiAdapter: WagmiAdapter;
+  private appKitInstace: AppKit;
   private storage: StorageAbstract;
   private config: WalletConnectConfig = {} as WalletConnectConfig;
 
@@ -72,15 +74,20 @@ export class WalletConnectConnector extends PredicateConnector {
     super();
     this.storage =
       config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
-    const wagmiConfig = config?.wagmiConfig ?? createWagmiConfig();
+    this.wagmiAdapter = config?.appKit?.wagmiAdapter ?? createWagmiAdapter();
 
-    if (wagmiConfig._internal.syncConnectedChain !== false) {
-      subscribeAndEnforceChain(wagmiConfig);
-    }
+    this.appKitInstace = createAppKitInstance({
+      wagmiAdapter: this.wagmiAdapter,
+      projectId: config.projectId,
+      metadata: config.appKit?.metadata,
+    });
+
+    subscribeAndEnforceChain(this.wagmiAdapter.wagmiConfig);
 
     this.customPredicate = config.predicateConfig || null;
     if (HAS_WINDOW) {
-      this.configProviders({ ...config, wagmiConfig });
+      const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.testnet);
+      this.fuelProvider = config.fuelProvider || FuelProvider.create(network);
     }
     this.loadPersistedConnection();
   }
@@ -89,27 +96,12 @@ export class WalletConnectConnector extends PredicateConnector {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) return;
 
-    await this.config?.fuelProvider;
+    await this.fuelProvider;
     await this.requireConnection();
     await this.handleConnect(
       getAccount(wagmiConfig),
       await this.getAccountAddress(),
     );
-  }
-
-  // createModal re-instanciates the modal to update singletons from web3modal
-  private createModal() {
-    this.clearSubscriptions();
-    this.web3Modal = this.modalFactory(this.config);
-    ApiController.prefetch();
-    this.setupWatchers();
-  }
-
-  private modalFactory(config: WalletConnectConfig) {
-    return createWeb3ModalInstance({
-      projectId: config.projectId,
-      wagmiConfig: config.wagmiConfig,
-    });
   }
 
   private async handleConnect(
@@ -156,7 +148,7 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   protected getWagmiConfig(): Maybe<Config> {
-    return this.config?.wagmiConfig;
+    return this.wagmiAdapter?.wagmiConfig;
   }
 
   protected getWalletAdapter(): PredicateWalletAdapter {
@@ -165,13 +157,6 @@ export class WalletConnectConnector extends PredicateConnector {
 
   protected getPredicateVersions(): Record<string, PredicateVersion> {
     return PREDICATE_VERSIONS;
-  }
-
-  protected async configProviders(config: WalletConnectConfig = {}) {
-    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.testnet);
-    this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(network),
-    });
   }
 
   protected async walletAccounts(): Promise<Array<string>> {
@@ -201,7 +186,6 @@ export class WalletConnectConnector extends PredicateConnector {
 
   protected async requireConnection() {
     const wagmiConfig = this.getWagmiConfig();
-    if (!this.web3Modal) this.createModal();
     if (!wagmiConfig) return;
 
     const { state } = wagmiConfig;
@@ -213,7 +197,7 @@ export class WalletConnectConnector extends PredicateConnector {
   protected async getProviders(): Promise<ProviderDictionary> {
     if (this.fuelProvider && this.ethProvider) {
       return {
-        fuelProvider: this.fuelProvider,
+        fuelProvider: await this.fuelProvider,
         ethProvider: this.ethProvider,
       };
     }
@@ -232,17 +216,17 @@ export class WalletConnectConnector extends PredicateConnector {
       : undefined;
 
     return {
-      fuelProvider: this.fuelProvider,
+      fuelProvider: await this.fuelProvider,
       ethProvider,
     };
   }
 
   public async connect(): Promise<boolean> {
-    this.createModal();
+    this.appKitInstace.open();
     const result = await new Promise<boolean>((resolve, reject) => {
-      this.web3Modal.open();
+      this.appKitInstace.open();
       const wagmiConfig = this.getWagmiConfig();
-      const unsub = this.web3Modal.subscribeEvents(async (event) => {
+      const unsub = this.appKitInstace.subscribeEvents(async (event) => {
         const requestValidations = () => {
           this.requestValidations()
             .then(() => resolve(true))
@@ -256,13 +240,11 @@ export class WalletConnectConnector extends PredicateConnector {
               const account = getAccount(wagmiConfig);
               if (account?.isConnected) {
                 unsub();
-                this.web3Modal.close();
+                this.appKitInstace.close();
                 requestValidations();
                 break;
               }
             }
-            // Ensures that the WC Web3Modal config is applied over pre-existing states (e.g. Solan Connect Web3Modal)
-            this.createModal();
             break;
           case 'CONNECT_SUCCESS': {
             requestValidations();
