@@ -1,11 +1,9 @@
 {
   "name": "@fuel-connectors/solana-connector",
-  "version": "0.31.6",
+  "version": "0.32.0",
   "private": true,
   "type": "module",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/wallet-connector-solana.umd.cjs",
   "module": "./dist/wallet-connector-solana.js",
   "exports": {
