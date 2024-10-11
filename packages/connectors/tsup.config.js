@@ -15,7 +15,7 @@ export default defineConfig((options) => ({
     '@fuel-connectors/bako-safe',
     '@fuel-connectors/solana-connector',
   ],
-  minify: false,
+  minify: 'terser',
   dts: {
     resolve: [
       '@fuel-connectors/fuel-development-wallet',
