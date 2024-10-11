@@ -452,4 +452,19 @@ export class WalletConnectConnector extends PredicateConnector {
       throw error;
     }
   }
+
+  async signMessageCustomCurve(message: string) {
+    const { ethProvider } = await this.getProviders();
+    if (!ethProvider) throw new Error('Eth provider not found');
+    const accountAddress = await this.getAccountAddress();
+    if (!accountAddress) throw new Error('No connected accounts');
+    const signature = await ethProvider.request({
+      method: 'personal_sign',
+      params: [accountAddress, message],
+    });
+    return {
+      curve: 'secp256k1',
+      signature: signature as string,
+    };
+  }
 }

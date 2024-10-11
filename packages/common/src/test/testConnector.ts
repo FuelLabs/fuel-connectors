@@ -8,6 +8,7 @@ import {
   type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
+  type SignedMessageCustomCurve,
   SolanaWalletAdapter,
 } from '../index';
 import versions from './mockedPredicate';
@@ -61,6 +62,12 @@ export class TestPredicatedConnector extends PredicateConnector {
   }
 
   public disconnect(): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
+  public signMessageCustomCurve(
+    _message: string,
+  ): Promise<SignedMessageCustomCurve> {
     throw new Error('Method not implemented.');
   }
 }
