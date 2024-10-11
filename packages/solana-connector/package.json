@@ -3,7 +3,9 @@
   "version": "0.31.6",
   "private": true,
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/wallet-connector-solana.umd.cjs",
   "module": "./dist/wallet-connector-solana.js",
   "exports": {
@@ -38,7 +40,7 @@
     "@fuel-connectors/common": "workspace:*",
     "@types/memoizee": "0.4.11",
     "@web3modal/core": "5.0.0",
-    "fuels": "0.94.9",
+    "fuels": "0.95.0",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
