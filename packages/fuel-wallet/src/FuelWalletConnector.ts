@@ -184,7 +184,8 @@ export class FuelWalletConnector extends FuelConnector {
       throw new Error('Message is required');
     }
     return this.client.request('signMessage', {
-      address,
+      // TODO: update wallets to support b256 addresses instead for using bech32address
+      address: Address.fromString(address).bech32Address,
       message,
     });
   }
@@ -209,7 +210,8 @@ export class FuelWalletConnector extends FuelConnector {
     };
 
     return this.client.request('sendTransaction', {
-      address,
+      // TODO: update wallets to support b256 addresses instead for using bech32address
+      address: Address.fromString(address).bech32Address,
       transaction: JSON.stringify(txRequest),
       provider,
     });
