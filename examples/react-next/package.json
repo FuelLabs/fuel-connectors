@@ -11,7 +11,7 @@
     "@fuels/connectors": "workspace:*",
     "@fuels/react": "workspace:*",
     "@tanstack/react-query": "5.35.1",
-    "fuels": "next",
+    "fuels": "0.95.0",
     "next": "14.2.3",
     "react": "18.3.1",
     "react-dom": "18.3.1",

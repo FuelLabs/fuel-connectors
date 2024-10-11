@@ -16,7 +16,7 @@
     "@playwright/test": "1.46.1",
     "@types/node": "20.12.11",
     "dotenv": "16.4.5",
-    "fuels": "next"
+    "fuels": "0.95.0"
   },
   "engines": {
     "node": ">=18",
