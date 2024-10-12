@@ -6,6 +6,13 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "fuels:build": {
+      "dependsOn": []
+    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
@@ -16,9 +23,6 @@
     },
     "test": {
       "dependsOn": ["^build"]
-    },
-    "dev": {
-      "dependsOn": []
     }
   }
 }

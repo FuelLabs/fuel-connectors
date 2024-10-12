@@ -1,12 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
-import type { FuelConfig } from 'fuels';
 import { useEffect } from 'react';
 
 import { QUERY_KEYS } from '../utils';
 
 import { useFuel } from './FuelHooksProvider';
 
-export function FuelEventsWatcher({ fuelConfig }: { fuelConfig?: FuelConfig }) {
+export function FuelEventsWatcher() {
   const { fuel } = useFuel();
   const queryClient = useQueryClient();
 
@@ -18,10 +17,15 @@ export function FuelEventsWatcher({ fuelConfig }: { fuelConfig?: FuelConfig }) {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.provider() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.nodeInfo() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.accounts() });
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.currentConnector() });
   }
 
-  function onConnectorsChange() {
-    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.connectorList() });
+  async function onConnectorsChange() {
+    queryClient.resetQueries({
+      queryKey: QUERY_KEYS.connectorList(),
+      exact: true,
+    });
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.currentConnector() });
   }
 
   function onCurrentAccountChange() {
@@ -31,6 +35,7 @@ export function FuelEventsWatcher({ fuelConfig }: { fuelConfig?: FuelConfig }) {
   }
 
   function onConnectionChange() {
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.currentConnector() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.isConnected() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.account() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.wallet() });
@@ -38,11 +43,15 @@ export function FuelEventsWatcher({ fuelConfig }: { fuelConfig?: FuelConfig }) {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.provider() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.nodeInfo() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.accounts() });
-    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.connectorList() });
+    queryClient.resetQueries({
+      queryKey: QUERY_KEYS.connectorList(),
+      exact: true,
+    });
   }
 
   function onNetworkChange() {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.currentNetwork() });
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.networks() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.provider() });
     queryClient.invalidateQueries({
       queryKey: QUERY_KEYS.transactionReceipts(),
@@ -80,11 +89,6 @@ export function FuelEventsWatcher({ fuelConfig }: { fuelConfig?: FuelConfig }) {
       fuel.off(fuel.events.assets, onAssetsChange);
     };
   }, [fuel, queryClient]);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: We don't need to add all the dependencies here
-  useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.connectorList() });
-  }, [fuelConfig?.connectors, queryClient]);
 
   return null;
 }

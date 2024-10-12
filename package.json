@@ -7,7 +7,11 @@
   "homepage": "https://github.com/FuelLabs/fuel-connectors",
   "scripts": {
     "build": "turbo build",
+    "build:connectors": "turbo run build --filter @fuels/connectors",
     "build:docs": "turbo run build --filter=docs",
+    "fuels:build": "turbo run fuels:build && pnpm format",
+    "dev:examples:react": "turbo run dev --filter=react-app",
+    "dev:examples:next": "turbo run dev --filter=react-next",
     "dev:docs": "turbo run dev --filter=docs",
     "build:watch": "turbo build:watch",
     "ts:check": "turbo run ts:check",
@@ -24,7 +28,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.7.3",
     "@changesets/changelog-github": "0.5.0",
-    "@changesets/cli": "2.27.1",
+    "@changesets/cli": "2.26.2",
     "@fuels/ts-config": "0.20.0",
     "@fuels/tsup-config": "0.20.0",
     "@vitest/coverage-v8": "2.0.2",
@@ -37,7 +41,7 @@
   },
   "engines": {
     "node": ">=18",
-    "pnpm": ">=8"
+    "pnpm": ">=9"
   },
   "pnpm": {
     "overrides": {
@@ -48,5 +52,5 @@
       "fast-xml-parser@<4.4.1": ">=4.4.1"
     }
   },
-  "packageManager": "pnpm@8.15.7"
+  "packageManager": "pnpm@9.5.0"
 }

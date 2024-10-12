@@ -1,3 +1,4 @@
+export * from './createConfig';
 export * from './defaultConnectors';
 export * from '@fuel-connectors/fuel-development-wallet';
 export * from '@fuel-connectors/fuel-wallet';

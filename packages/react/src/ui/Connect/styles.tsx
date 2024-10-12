@@ -1,183 +1,155 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Dialog from '@radix-ui/react-dialog';
-import { keyframes, styled } from 'styled-components';
 
-import { BackIcon as CBackIcon } from './icons/BackIcon';
-import { CloseIcon as CCloseIcon } from './icons/CloseIcon';
+import { BackIcon as CBackIcon } from '../../icons/BackIcon';
+import { CloseIcon as CCloseIcon } from '../../icons/CloseIcon';
+import { CopyIcon as CCopyIcon } from '../../icons/CopyIcon';
+import type { SvgIconProps } from '../../types';
 
-const overlayShow = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
+const dialogHeaderStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  paddingLeft: '16px',
+  paddingRight: '16px',
+};
 
-const contentShow = keyframes`
-  from {
-    opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-`;
+export const DialogHeader = ({
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  return (
+    <div style={dialogHeaderStyle} {...props}>
+      {children}
+    </div>
+  );
+};
 
-const placeholderLoader = keyframes`
-  0%{
-    background-position: -468px 0
-  }
-  100%{
-    background-position: 468px 0
-  }
-`;
+const dialogTitleStyle: React.CSSProperties = {
+  padding: '8px 14px 12px',
+  margin: 0,
+  textAlign: 'center',
+  fontSize: 'var(--fuel-font-size)',
+  fontWeight: 500,
+};
 
-export const DialogOverlay = styled(Dialog.Overlay)`
-  background-color: var(--fuel-overlay-background);
-  position: fixed;
-  inset: 0;
-  animation: ${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
-`;
+export const DialogTitle = ({
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLHeadingElement>) => {
+  return (
+    <Dialog.Title style={dialogTitleStyle} {...props}>
+      {children}
+    </Dialog.Title>
+  );
+};
 
-export const DialogContent = styled(Dialog.Content)`
-  overflow: hidden;
-  color: var(--fuel-color);
-  user-select: none;
-  max-height: calc(100% - 20px);
-  box-sizing: border-box;
-  background-color: var(--fuel-dialog-background);
-  position: fixed;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 36px;
-  padding: 14px 0px;
-  padding-bottom: 18px;
-  animation: ${contentShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow:
-    hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
-    hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+const dividerStyle: React.CSSProperties = {
+  height: '1px',
+  width: '100%',
+  backgroundColor: 'var(--fuel-border-color)',
+  margin: '10px 0',
+  padding: 0,
+};
 
-  &:focus {
-    outline: none;
-  }
+export const Divider = (props: React.HTMLAttributes<HTMLDivElement>) => {
+  return <div style={dividerStyle} {...props} />;
+};
 
-  @media (min-width: 431px) {
-    top: 50%;
-    width: 360px;
-    max-width: calc(100% - 20px);
-  }
+const dialogMainStyle: React.CSSProperties = {
+  position: 'relative',
+  overflowY: 'auto',
+};
 
-  @media (max-width: 430px) {
-    top: auto;
-    bottom: -246px;
-    width: 100vw;
-    max-width: 100%;
-    border-radius: 36px 36px 0 0;
-  }
-` as unknown as typeof Dialog.Content;
+export const DialogMain = (props: React.HTMLAttributes<HTMLDivElement>) => {
+  return <div style={dialogMainStyle} {...props} />;
+};
 
-export const DialogTitle = styled(Dialog.Title)`
-  padding: 8px 14px 12px;
-  margin: 0;
-  font-weight: normal;
-  text-align: center;
-  font-size: 16px;
-  letter-spacing: var(--fuel-letter-spacing);
-  font-weight: 700;
-`;
+const backIconStyle: React.CSSProperties = {
+  fill: 'var(--fuel-color)',
+  padding: '7px',
+  borderRadius: '12px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+};
 
-export const Divider = styled.div`
-  height: 1px;
-  width: 100%;
-  background-color: var(--fuel-border-color);
-  margin: 10px 0;
-  padding: 0;
-  box-sizing: border-box;
-`;
+export const BackIcon = ({ size, ...props }: SvgIconProps) => {
+  return (
+    <CBackIcon
+      size={size}
+      style={backIconStyle}
+      {...props}
+      className="fuel-connectors-back-icon"
+    />
+  );
+};
 
-export const DialogMain = styled.div`
-  margin-top: 20px;
-  position: relative;
-`;
+const closeIconStyle: React.CSSProperties = {
+  fill: 'var(--fuel-color)',
+  padding: '7px',
+  borderRadius: '12px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+};
 
-export const BackIcon = styled(CBackIcon)`
-  fill: var(--fuel-color);
-  padding: 7px;
-  font-family: inherit;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 20px;
-  left: 28px;
-  cursor: pointer;
-  font-weight: 700;
+export const CloseIcon = ({ size, ...props }: SvgIconProps) => {
+  return (
+    <CCloseIcon
+      size={size}
+      style={closeIconStyle}
+      {...props}
+      className="fuel-connectors-close-icon"
+    />
+  );
+};
 
-  &[data-connector='false'] {
-    display: none;
-  }
+const copyIconStyle: React.CSSProperties = {
+  fill: 'var(--fuel-color)',
+  padding: '7px',
+  borderRadius: '12px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+};
 
-  &:hover,
-  &:active {
-    background-color: var(--fuel-connector-hover);
-    opacity: 1;
-  }
-`;
+export const CopyIcon = ({ size, ...props }: SvgIconProps) => {
+  return (
+    <CCopyIcon
+      size={size}
+      style={copyIconStyle}
+      {...props}
+      className="fuel-connectors-close-icon"
+    />
+  );
+};
 
-export const CloseIcon = styled(CCloseIcon)`
-  fill: var(--fuel-color);
-  padding: 7px;
-  font-family: inherit;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 18px;
-  right: 28px;
-  cursor: pointer;
-  font-weight: 700;
+const placeholderLoaderStyle: React.CSSProperties = {
+  animationDuration: '1s',
+  animationFillMode: 'forwards',
+  animationIterationCount: 'infinite',
+  animationName: 'fuelLoader',
+  animationTimingFunction: 'linear',
+  backgroundColor: '#d1d5d9',
+  background: 'var(--fuel-loader-background)',
+  backgroundSize: '1000px 104px',
+  height: 'fit-content',
+  position: 'relative',
+  overflow: 'hidden',
+  color: 'transparent',
+  pointerEvents: 'none',
+};
 
-  &:hover,
-  &:active {
-    background-color: var(--fuel-connector-hover);
-    opacity: 1;
-  }
-`;
-
-export const FuelRoot = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  z-index: 9999;
-  font-size: var(--fuel-font-size);
-
-  & * {
-    font-family: var(--fuel-font-family);
-  }
-`;
-
-export const PlaceholderLoader = styled.div`
-  animation-duration: 1s;
-  animation-fill-mode: forwards;
-  animation-iteration-count: infinite;
-  animation-name: ${placeholderLoader};
-  animation-timing-function: linear;
-  background: #d1d5d9;
-  background: var(--fuel-loader-background);
-  background-size: 1000px 104px;
-  height: fit-content;
-  position: relative;
-  overflow: hidden;
-  color: transparent !important;
-  pointer-events: none !important;
-`;
+export const PlaceholderLoader = ({
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  return (
+    <div style={placeholderLoaderStyle} {...props}>
+      {children}
+    </div>
+  );
+};

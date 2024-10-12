@@ -1,73 +1,63 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { useEffect, useRef, useState } from 'react';
 
-import './index.css';
-
-import { useConnectUI } from '../../providers/FuelUIProvider';
-
+import { Routes, useConnectUI } from '../../providers/FuelUIProvider';
 import { Connector } from './components/Connector/Connector';
 import { Connectors } from './components/Connectors';
 import {
   BackIcon,
   CloseIcon,
-  DialogContent,
+  DialogHeader,
   DialogMain,
-  DialogOverlay,
   DialogTitle,
   Divider,
-  FuelRoot,
 } from './styles';
-import { getThemeVariables } from './themes';
+
+import { Connecting } from './components/Connector/Connecting';
+import { DialogContent } from './components/Core/DialogContent';
+import { DialogFuel } from './components/Core/DialogFuel';
+import { ExternalDisclaimer } from './components/ExternalDisclaimer/ExternalDisclaimer';
+
+const ConnectRoutes = ({ state }: { state: Routes }) => {
+  switch (state) {
+    case Routes.LIST:
+      return <Connectors />;
+    case Routes.INSTALL:
+      return <Connector />;
+    case Routes.EXTERNAL_DISCLAIMER:
+      return <ExternalDisclaimer />;
+    case Routes.CONNECTING:
+      return <Connecting />;
+    default:
+      return null;
+  }
+};
 
 export function Connect() {
-  // Fix hydration problem between nextjs render and frontend render
-  // UI was not getting updated and theme colors was set wrongly
-  // see more here https://nextjs.org/docs/messages/react-hydration-error
-  const [isClient, setIsClient] = useState(false);
-  const containerRef = useRef<HTMLDivElement | null>(null);
   const {
     theme,
     cancel,
-    dialog: { isOpen, connector, back },
+    dialog: { isOpen, route: state, connector, back },
   } = useConnectUI();
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const handleOpenChange = (openState: boolean) => {
     if (!openState) cancel();
   };
 
   return (
-    <>
-      <FuelRoot
-        ref={containerRef}
-        style={
-          isClient
-            ? {
-                display: isOpen ? 'block' : 'none',
-                ...getThemeVariables(theme),
-              }
-            : undefined
-        }
-      />
-      <Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
-        <Dialog.Portal container={containerRef.current}>
-          <DialogOverlay />
-          <DialogContent data-connector={!!connector}>
-            <DialogTitle>Connect Wallet</DialogTitle>
-            <Divider />
-            <Dialog.Close asChild>
-              <CloseIcon size={32} />
-            </Dialog.Close>
-            <BackIcon size={32} onClick={back} data-connector={!!connector} />
-            <DialogMain>
-              {connector ? <Connector connector={connector} /> : <Connectors />}
-            </DialogMain>
-          </DialogContent>
-        </Dialog.Portal>
-      </Dialog.Root>
-    </>
+    <DialogFuel open={isOpen} theme={theme} onOpenChange={handleOpenChange}>
+      <DialogContent data-connector={!!connector}>
+        <DialogHeader>
+          <BackIcon size={32} onClick={back} data-connector={!!connector} />
+          <DialogTitle>Connect Wallet</DialogTitle>
+          <Dialog.Close asChild>
+            <CloseIcon size={32} onClick={() => cancel()} />
+          </Dialog.Close>
+        </DialogHeader>
+        <Divider />
+        <DialogMain>
+          <ConnectRoutes state={state} />
+        </DialogMain>
+      </DialogContent>
+    </DialogFuel>
   );
 }

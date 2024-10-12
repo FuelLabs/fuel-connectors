@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/bako-safe",
-  "version": "0.25.0",
+  "version": "0.34.1",
   "private": true,
   "types": "./dist/index.d.ts",
   "exports": {
@@ -16,12 +16,12 @@
     "socket.io-client": "4.7.2"
   },
   "peerDependencies": {
-    "fuels": ">=0.93.0",
+    "fuels": ">=0.94.8",
     "socket.io-client": "4.7.2"
   },
   "devDependencies": {
+    "fuels": "0.95.0",
     "tsup": "8.0.2",
-    "fuels": "0.93.0",
     "typescript": "5.4.2",
     "undici": "6.9.0"
   }

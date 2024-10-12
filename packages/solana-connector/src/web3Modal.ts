@@ -59,6 +59,7 @@ export function createSolanaWeb3ModalInstance({
 
   return createSolanaWeb3Modal({
     solanaConfig,
+    allWallets: 'ONLY_MOBILE',
     chains: DEFAULT_CHAINS,
     enableAnalytics: false,
     projectId: projectId ?? DEFAULT_PROJECT_ID,

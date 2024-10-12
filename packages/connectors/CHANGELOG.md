@@ -1,5 +1,113 @@
 # @fuels/connectors
 
+## 0.34.1
+
+### Patch Changes
+
+- [#382](https://github.com/FuelLabs/fuel-connectors/pull/382) [`b0708e3`](https://github.com/FuelLabs/fuel-connectors/commit/b0708e324774a6d95fb0c464433d874c598ce8bd) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Fixed node dynamic import error
+
+## 0.34.0
+
+## 0.33.0
+
+### Patch Changes
+
+- [#374](https://github.com/FuelLabs/fuel-connectors/pull/374) [`58d0388`](https://github.com/FuelLabs/fuel-connectors/commit/58d0388d78e455b5dc420cfca6fdf0c77db47456) Thanks [@luizstacio](https://github.com/luizstacio)! - feat: add sign message with custom curves for predicates
+
+## 0.32.0
+
+### Minor Changes
+
+- [#370](https://github.com/FuelLabs/fuel-connectors/pull/370) [`9a20224`](https://github.com/FuelLabs/fuel-connectors/commit/9a202245ceb8653435e963a98fc3453afd81f52b) Thanks [@petertonysmith94](https://github.com/petertonysmith94)! - Updated Fuel SDK to 0.95.0
+
+## 0.31.6
+
+### Patch Changes
+
+- [#368](https://github.com/FuelLabs/fuel-connectors/pull/368) [`450b612`](https://github.com/FuelLabs/fuel-connectors/commit/450b612cc884039565d8f7c1e769995c0b0010e4) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Fixed EVM wallets being allowed to stay on unsupported networks.
+
+## 0.31.5
+
+### Patch Changes
+
+- [#366](https://github.com/FuelLabs/fuel-connectors/pull/366) [`11f468c`](https://github.com/FuelLabs/fuel-connectors/commit/11f468c6ac4ef8166ea8911c4fb3465e3fe21cf6) Thanks [@luizstacio](https://github.com/luizstacio)! - Fix FUEL duplicated fuel instances
+
+## 0.31.4
+
+## 0.31.3
+
+## 0.31.2
+
+## 0.31.1
+
+### Patch Changes
+
+- [#345](https://github.com/FuelLabs/fuel-connectors/pull/345) [`fa88dca`](https://github.com/FuelLabs/fuel-connectors/commit/fa88dcabb862c9f407904765a0e6089a0f124b98) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - chore: update ts-sdk
+
+## 0.31.0
+
+### Minor Changes
+
+- [#343](https://github.com/FuelLabs/fuel-connectors/pull/343) [`4303a90`](https://github.com/FuelLabs/fuel-connectors/commit/4303a90c73fcdd86d3f8df8c96307c40984dd4f9) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - Add support for predicates deployed with blob-style
+
+## 0.30.1
+
+## 0.30.0
+
+### Minor Changes
+
+- [#333](https://github.com/FuelLabs/fuel-connectors/pull/333) [`ac45fc9`](https://github.com/FuelLabs/fuel-connectors/commit/ac45fc9c2ac3d2ddb2374cb6ea642e58635f6650) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: defaultConnetors accept providerUrl
+
+## 0.29.6
+
+## 0.29.5
+
+## 0.29.4
+
+## 0.29.3
+
+### Patch Changes
+
+- [#312](https://github.com/FuelLabs/fuel-connectors/pull/312) [`681785b`](https://github.com/FuelLabs/fuel-connectors/commit/681785bdd135ba9a205130bbbc381d32919cf7e3) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Upgrade Fuel SDK to 0.94.8
+
+## 0.29.2
+
+## 0.29.1
+
+## 0.29.0
+
+### Minor Changes
+
+- [#296](https://github.com/FuelLabs/fuel-connectors/pull/296) [`3c29c36`](https://github.com/FuelLabs/fuel-connectors/commit/3c29c368ced7dd17a7768b048c576ec1c6392472) Thanks [@LeoCourbassier](https://github.com/LeoCourbassier)! - Allows predicated connectors to receive a providerUrl to configure their providers
+
+### Patch Changes
+
+- [#282](https://github.com/FuelLabs/fuel-connectors/pull/282) [`50488ae`](https://github.com/FuelLabs/fuel-connectors/commit/50488ae7ab7c41202fa48234ef977978a752d992) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Burner is now only included in default connectors on dev mode.
+
+## 0.28.1
+
+## 0.28.0
+
+### Minor Changes
+
+- [#252](https://github.com/FuelLabs/fuel-connectors/pull/252) [`eea98c9`](https://github.com/FuelLabs/fuel-connectors/commit/eea98c991ed9aca318f65743f2734d5aa32e2e0e) Thanks [@helciofranco](https://github.com/helciofranco)! - Update SDK to `0.94.6` version. https://github.com/FuelLabs/fuels-ts/releases/tag/v0.94.6
+
+- [#224](https://github.com/FuelLabs/fuel-connectors/pull/224) [`1f6ee86`](https://github.com/FuelLabs/fuel-connectors/commit/1f6ee8679994528ae36faec51535a183d582a58b) Thanks [@helciofranco](https://github.com/helciofranco)! - Bump pnpm version to v9.5.0
+
+## 0.27.1
+
+## 0.27.0
+
+### Minor Changes
+
+- [#231](https://github.com/FuelLabs/fuel-connectors/pull/231) [`083bf92`](https://github.com/FuelLabs/fuel-connectors/commit/083bf92b594c7d1eee9e7225f909e1e140aef809) Thanks [@helciofranco](https://github.com/helciofranco)! - Update to `fuel-core@0.35.0`, `forc@0.63.3` and `fuels@0.94.4`
+
+## 0.26.0
+
+### Minor Changes
+
+- [#208](https://github.com/FuelLabs/fuel-connectors/pull/208) [`2c194a4`](https://github.com/FuelLabs/fuel-connectors/commit/2c194a46f144c82a0f9a3205d79ef58f938eb297) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Updated wagmi to 12.12.7 alongside core and connectors
+
 ## 0.25.0
 
 ## 0.24.0

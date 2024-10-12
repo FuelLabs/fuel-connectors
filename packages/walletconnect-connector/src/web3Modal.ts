@@ -11,6 +11,7 @@ interface CreateWeb3ModalProps {
 export const createWagmiConfig = (): Config =>
   createConfig({
     chains: [sepolia, mainnet],
+    syncConnectedChain: true,
     transports: {
       [mainnet.id]: http(),
       [sepolia.id]: http(),
@@ -34,6 +35,7 @@ export function createWeb3ModalInstance({
       // @ts-ignore
       enableWalletConnect: !!projectId,
     },
+    allWallets: 'ONLY_MOBILE',
     enableAnalytics: false,
     allowUnsupportedChain: true,
     projectId: projectId,

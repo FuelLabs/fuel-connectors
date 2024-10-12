@@ -13,8 +13,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FORC_VERSION: 0.61.2
-  CORE_VERSION: 0.31.0
+  FORC_VERSION: 0.63.3
+  CORE_VERSION: 0.35.0
 
 jobs:
   tests-vitest:
@@ -27,7 +27,7 @@ jobs:
         uses: FuelLabs/github-actions/setups/node@master
         with:
           node-version: 20.11.0
-          pnpm-version: 8.15.7
+          pnpm-version: 9.5.0
       
       - uses: FuelLabs/github-actions/setups/docker@master
         with:
