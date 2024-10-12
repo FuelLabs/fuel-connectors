@@ -90,9 +90,9 @@ jobs:
           pnpm-version: 9.5.0
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install  --with-deps chromium
+        run: npx playwright install --with-deps chromium
         working-directory: ./e2e-tests
-        
+
       - name: Run Playwright tests
         run: xvfb-run --auto-servernum -- pnpm test:e2e
         working-directory: ./e2e-tests
