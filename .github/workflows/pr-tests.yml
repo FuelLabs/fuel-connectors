@@ -89,6 +89,11 @@ jobs:
           node-version: 20.11.0
           pnpm-version: 9.5.0
 
+      - name: Run PNPM install
+        id: pnpm-cache
+        run:
+          pnpm recursive install --frozen-lockfile
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
         working-directory: ./e2e-tests
