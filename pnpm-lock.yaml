@@ -4,13 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  braces@<3.0.3: '>=3.0.3'
-  ws@>=8.0.0 <8.17.1: '>=8.17.1'
-  ws@>=7.0.0 <7.5.10: '>=7.5.10'
-  ws@>=6.0.0 <6.2.3: '>=6.2.3'
-  fast-xml-parser@<4.4.1: '>=4.4.1'
-
 importers:
 
   .:
@@ -51,6 +44,30 @@ importers:
       vitest:
         specifier: 2.0.2
         version: 2.0.2(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.34.1)
+
+  e2e-tests:
+    devDependencies:
+      '@fuels/playwright-utils':
+        specifier: 0.23.0
+        version: 0.23.0(@playwright/test@1.46.1)(fuels@0.95.0)
+      '@fuels/ts-config':
+        specifier: 0.20.0
+        version: 0.20.0(typescript@5.4.5)
+      '@playwright/test':
+        specifier: 1.46.1
+        version: 1.46.1
+      '@types/node':
+        specifier: 20.12.11
+        version: 20.12.11
+      dotenv:
+        specifier: 16.4.5
+        version: 16.4.5
+      fuels:
+        specifier: 0.95.0
+        version: 0.95.0
+      playwright:
+        specifier: 1.46.1
+        version: 1.46.1
 
   examples/react-app:
     dependencies:
@@ -2510,6 +2527,12 @@ packages:
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
     hasBin: true
 
+  '@fuels/playwright-utils@0.23.0':
+    resolution: {integrity: sha512-OG35u211vrjIV4cPsTYOvOfDeY/gU3mazJ/PNWB3PyM9SOv3uHMVULg+/Qodf0Q/sg6o/+hcvHBxUdjzE1cJ5Q==}
+    peerDependencies:
+      '@playwright/test': ^1.39.0
+      fuels: '>=0.86.0'
+
   '@fuels/ts-config@0.20.0':
     resolution: {integrity: sha512-wFPifVVz2z/YXuYJ/qLFRKIAVq98ZtrrX9TlcKuL5E4ar32VGLRFTtoujEwFVcWRWmdkxA9ulcCiV3fEojdqlQ==}
     peerDependencies:
@@ -2526,7 +2549,7 @@ packages:
   '@graphql-typed-document-node/core@3.2.0':
     resolution: {integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==}
     peerDependencies:
-      graphql: '>=16.8.1'
+      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
 
   '@hapi/hoek@9.3.0':
     resolution: {integrity: sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==}
@@ -2927,6 +2950,11 @@ packages:
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
+
+  '@playwright/test@1.46.1':
+    resolution: {integrity: sha512-Fq6SwLujA/DOIvNC2EL/SojJnkKf/rAwJ//APpJJHRyMi1PdKrY3Az+4XNQ51N4RTbItbIByQ0jgd1tayq1aeA==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   '@radix-ui/primitive@1.0.1':
     resolution: {integrity: sha512-yQ8oGX2GVsEYMWGxcovu1uGWPCxV5BFfeeYxqPmuAzUyLT9qmaMXSAhXpb0WrspIeqYzdJpkh2vHModJPgRIaw==}
@@ -4323,6 +4351,10 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  adm-zip@0.5.16:
+    resolution: {integrity: sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==}
+    engines: {node: '>=12.0'}
+
   agent-base@7.1.1:
     resolution: {integrity: sha512-H0TSyFNDMomMNJQBn8wFV5YC/2eJ+VXECwOadZJT554xP6cODZHPX3H9QMQECxvrgiSOP1pHjy1sMWQVYJOUOA==}
     engines: {node: '>= 14'}
@@ -5584,6 +5616,11 @@ packages:
 
   fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
+
+  fsevents@2.3.2:
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
 
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
@@ -7050,6 +7087,16 @@ packages:
 
   pkg-types@1.1.3:
     resolution: {integrity: sha512-+JrgthZG6m3ckicaOB74TwQ+tBWsFl3qVQg7mN8ulwSOElJ7gBhKzj2VkCPnZ4NlF6kEquYU+RIYNVAvzd54UA==}
+
+  playwright-core@1.46.1:
+    resolution: {integrity: sha512-h9LqIQaAv+CYvWzsZ+h3RsrqCStkBHlgo6/TJlFst3cOTlLghBQlJwPOZKQJTKNaD3QIB7aAVQ+gfWbN3NXB7A==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.46.1:
+    resolution: {integrity: sha512-oPcr1yqoXLCkgKtD5eNUPLiN40rYEM39odNpIb6VE6S7/15gJmA1NzVv6zJYusV0e7tzvkU/utBFNa/Kpxmwng==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   pngjs@3.4.0:
     resolution: {integrity: sha512-NCrCHhWmnQklfH4MtJMRjZ2a8c80qXeMlQMv2uVp9ISJMTt562SbGd6n2oq0PaPgKm7Z6pL9E2UlLIhC+SHL3w==}
@@ -11610,6 +11657,12 @@ snapshots:
       chalk: 4.1.2
       cli-table: 0.3.11
 
+  '@fuels/playwright-utils@0.23.0(@playwright/test@1.46.1)(fuels@0.95.0)':
+    dependencies:
+      '@playwright/test': 1.46.1
+      adm-zip: 0.5.16
+      fuels: 0.95.0
+
   '@fuels/ts-config@0.20.0(typescript@5.4.5)':
     dependencies:
       typescript: 5.4.5
@@ -12213,6 +12266,10 @@ snapshots:
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
+
+  '@playwright/test@1.46.1':
+    dependencies:
+      playwright: 1.46.1
 
   '@radix-ui/primitive@1.0.1':
     dependencies:
@@ -14994,6 +15051,8 @@ snapshots:
 
   acorn@8.12.1: {}
 
+  adm-zip@0.5.16: {}
+
   agent-base@7.1.1:
     dependencies:
       debug: 4.3.6(supports-color@5.5.0)
@@ -16477,6 +16536,9 @@ snapshots:
       universalify: 0.1.2
 
   fs.realpath@1.0.0: {}
+
+  fsevents@2.3.2:
+    optional: true
 
   fsevents@2.3.3:
     optional: true
@@ -18152,6 +18214,14 @@ snapshots:
       confbox: 0.1.7
       mlly: 1.7.1
       pathe: 1.1.2
+
+  playwright-core@1.46.1: {}
+
+  playwright@1.46.1:
+    dependencies:
+      playwright-core: 1.46.1
+    optionalDependencies:
+      fsevents: 2.3.2
 
   pngjs@3.4.0: {}
 
