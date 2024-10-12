@@ -83,12 +83,12 @@ jobs:
       - name: Check out the code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: FuelLabs/github-actions/setups/node@master
         with:
           node-version: 20.11.0
-          pnpm-version: 8.9.2
-          
+          pnpm-version: 8.15.7
+
       - name: Install Playwright browsers
         run: pnpm exec playwright install  --with-deps chromium
         working-directory: ./e2e-tests
