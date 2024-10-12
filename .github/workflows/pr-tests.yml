@@ -101,5 +101,5 @@ jobs:
         working-directory: ./e2e-tests
 
       - name: Run Playwright tests
-        run: xvfb-run --auto-servernum -- pnpm test:react-app:ci
+        run: pnpm playwright test e2e-tests/react-app --project=react-app
         working-directory: ./e2e-tests
