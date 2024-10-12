@@ -86,23 +86,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Install dependencies for React app
-        run: pnpm install
-        working-directory: ./examples/react-app
-
-      - name: Install Playwright dependencies
-        run: pnpm install
-        working-directory: ./e2e-tests
-
+          node-version: 20.11.0
+          pnpm-version: 8.9.2
+          
       - name: Install Playwright browsers
-        run: pnpm exec playwright install
+        run: pnpm exec playwright install  --with-deps chromium
         working-directory: ./e2e-tests
-
       - name: Run Playwright tests
-        run: pnpm exec playwright test
+        run: xvfb-run --auto-servernum -- pnpm test:e2e
         working-directory: ./e2e-tests
