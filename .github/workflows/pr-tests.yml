@@ -96,7 +96,7 @@ jobs:
       - name: Run PNPM install
         id: pnpm-cache
         run:
-          pnpm install --frozen-lockfile
+          pnpm install
         working-directory: ./e2e-tests
 
       - name: Run Playwright tests
