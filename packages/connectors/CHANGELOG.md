@@ -1,5 +1,11 @@
 # @fuels/connectors
 
+## 0.34.1
+
+### Patch Changes
+
+- [#382](https://github.com/FuelLabs/fuel-connectors/pull/382) [`b0708e3`](https://github.com/FuelLabs/fuel-connectors/commit/b0708e324774a6d95fb0c464433d874c598ce8bd) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Fixed node dynamic import error
+
 ## 0.34.0
 
 ## 0.33.0
