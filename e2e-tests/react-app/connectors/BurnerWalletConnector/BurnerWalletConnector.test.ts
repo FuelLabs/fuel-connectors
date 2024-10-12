@@ -48,4 +48,26 @@ test.describe('BurnerWalletConnector', () => {
     await page.reload();
     await page.waitForSelector('text=Connect Wallet');
   });
+
+  // test('should increment counter', async ({ page }) => {
+  //   await connectBurner(page);
+
+  //   await page.click('text=Increment');
+
+  //   expect(await page.waitForSelector('text=Success')).toBeTruthy();
+  //   expect(
+  //     await page.waitForSelector('text=Counter Incremented!'),
+  //   ).toBeTruthy();
+  // });
+
+  // test('should execute transfer', async ({ page }) => {
+  //   await connectBurner(page);
+
+  //   await page.click('text=Transfer 0.0001 ETH');
+
+  //   expect(await page.waitForSelector('text=Success')).toBeTruthy();
+  //   expect(
+  //     await page.waitForSelector('text=Transferred successfully!'),
+  //   ).toBeTruthy();
+  // });
 });
