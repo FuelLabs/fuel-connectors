@@ -47,5 +47,9 @@ export type PreparedTransaction = {
   transactionId: string;
   account: string;
   transactionRequest: TransactionRequest;
-  afterTransaction?: (id: string) => MaybeAsync<unknown>;
+};
+
+export type SignedMessageCustomCurve = {
+  curve: string;
+  signature: string;
 };

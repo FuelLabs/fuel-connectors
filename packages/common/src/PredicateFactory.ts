@@ -48,14 +48,14 @@ export class PredicateFactory {
         SIGNER: this.adapter.convertAddress(address),
       },
     );
-    return Address.fromB256(getPredicateRoot(predicateBytes)).toB256();
+    return Address.fromB256(getPredicateRoot(predicateBytes)).toString();
   });
 
   build = memoize(
     <T extends InputValue[]>(
       address: string | B256Address,
       provider: Provider,
-      inputData?: T,
+      data?: T,
     ): Predicate<T> =>
       new Predicate({
         bytecode: arrayify(this.bytecode),
@@ -64,7 +64,7 @@ export class PredicateFactory {
         configurableConstants: {
           SIGNER: this.adapter.convertAddress(address),
         },
-        inputData,
+        data,
       }),
   );
 

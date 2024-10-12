@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useLogEvents } from '../hooks/use-log-events';
 import { useWallet } from '../hooks/useWallet';
-import { CounterAbi__factory } from '../types';
-import { counter as COUNTER_CONTRACT_ID } from '../types/contract-ids.json';
+import { Counter } from '../types';
+
 import type { CustomError } from '../utils/customError';
-import { DEFAULT_AMOUNT } from './balance';
+
+import { COUNTER_CONTRACT_ID, DEFAULT_AMOUNT } from '../config';
+import { EXPLORER_URL } from '../config';
 import Button from './button';
 import ContractLink from './contract-link';
 import Feature from './feature';
@@ -16,7 +18,7 @@ interface Props {
 }
 
 export default function ContractCounter({ isSigning, setIsSigning }: Props) {
-  const { balance, wallet } = useWallet();
+  const { balance, wallet, refetchBalance } = useWallet();
 
   const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
     open: false,
@@ -62,7 +64,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
     if (wallet) {
       setLoading(true);
       setIsSigning(true);
-      const contract = CounterAbi__factory.connect(COUNTER_CONTRACT_ID, wallet);
+      const contract = new Counter(COUNTER_CONTRACT_ID, wallet);
       try {
         const { waitForResult } = await contract.functions
           .increment_counter()
@@ -88,7 +90,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
                 <p>
                   Counter incremented! View it on the{' '}
                   <a
-                    href={`https://app.fuel.network/tx/${tx.transactionId}`}
+                    href={`${EXPLORER_URL}/tx/${tx.transactionId}`}
                     className="underline"
                     target="_blank"
                     rel="noreferrer"
@@ -98,6 +100,10 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
                 </p>
               ),
             });
+
+            refetchBalance();
+            setLoading(false);
+            setIsSigning(false);
           }
 
           checkResult();
@@ -114,7 +120,6 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
             32,
           )}...`,
         });
-      } finally {
         setLoading(false);
         setIsSigning(false);
       }
@@ -124,10 +129,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
   async function getCount() {
     if (!wallet) return;
 
-    const counterContract = CounterAbi__factory.connect(
-      COUNTER_CONTRACT_ID,
-      wallet,
-    );
+    const counterContract = new Counter(COUNTER_CONTRACT_ID, wallet);
 
     try {
       const { value } = await counterContract.functions

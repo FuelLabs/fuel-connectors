@@ -16,8 +16,11 @@ import * as Toast from '@radix-ui/react-toast';
 import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import './index.css';
+import { CHAIN_IDS, Provider } from 'fuels';
+import { CHAIN_ID_NAME, PROVIDER_URL } from './config.ts';
 
 const queryClient = new QueryClient();
+const isDev = process.env.NODE_ENV === 'development';
 
 // ============================================================
 // WalletConnect Connector configurations
@@ -36,6 +39,7 @@ const wagmiConfig = createConfig({
     [mainnet.id]: http(),
     [sepolia.id]: http(),
   },
+  syncConnectedChain: true,
   connectors: [
     injected({ shimDisconnect: false }),
     walletConnect({
@@ -52,19 +56,37 @@ const wagmiConfig = createConfig({
   ],
 });
 
+const CHAIN_ID = CHAIN_IDS.fuel[CHAIN_ID_NAME];
+
+if (CHAIN_ID == null) {
+  throw new Error('VITE_CHAIN_ID_NAME is not set');
+}
+
+if (!PROVIDER_URL) {
+  throw new Error('VITE_PROVIDER_URL is not set');
+}
+
+const NETWORKS = [
+  {
+    chainId: CHAIN_ID,
+    url: PROVIDER_URL,
+  },
+];
+
+const FUEL_CONFIG = {
+  connectors: defaultConnectors({
+    devMode: true,
+    wcProjectId: WC_PROJECT_ID,
+    ethWagmiConfig: wagmiConfig,
+    chainId: CHAIN_ID,
+    fuelProvider: Provider.create(PROVIDER_URL),
+  }),
+};
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <FuelProvider
-        theme="dark"
-        fuelConfig={{
-          connectors: defaultConnectors({
-            devMode: true,
-            wcProjectId: WC_PROJECT_ID,
-            ethWagmiConfig: wagmiConfig,
-          }),
-        }}
-      >
+      <FuelProvider theme="dark" networks={NETWORKS} fuelConfig={FUEL_CONFIG}>
         <Toast.Provider>
           <App />
           <Toast.Viewport
@@ -75,7 +97,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <ScreenSizeIndicator />
       </FuelProvider>
 
-      <ReactQueryDevtools initialIsOpen={false} />
+      {isDev && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   </React.StrictMode>,
 );

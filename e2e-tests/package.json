@@ -16,13 +16,13 @@
     "@playwright/test": "1.46.1",
     "@types/node": "20.12.11",
     "dotenv": "16.4.5",
-    "fuels": "0.93.0"
+    "fuels": "0.95.0"
   },
   "engines": {
     "node": ">=18",
-    "pnpm": ">=8"
+    "pnpm": ">=9"
   },
-  "packageManager": "pnpm@8.15.7",
+  "packageManager": "pnpm@9.5.0",
   "dependencies": {
     "playwright": "1.46.1"
   }

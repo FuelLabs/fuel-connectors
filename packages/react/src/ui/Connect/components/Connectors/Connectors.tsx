@@ -1,8 +1,16 @@
+import { useMemo } from 'react';
 import { useConnectUI } from '../../../../providers/FuelUIProvider';
-import { ConnectorIcon } from '../ConnectorIcon';
 
+import type { FuelConnector } from 'fuels';
+import { NATIVE_CONNECTORS } from '../../../../config';
+import { Connector } from './Connector';
 import { ConnectorsLoader } from './ConnectorsLoader';
-import { ConnectorItem, ConnectorList, ConnectorName } from './styles';
+import { ConnectorList, GroupLastTitle, GroupTitle } from './styles';
+
+interface GroupedConnectors {
+  native: FuelConnector[];
+  external: FuelConnector[];
+}
 
 export function Connectors() {
   const {
@@ -13,32 +21,56 @@ export function Connectors() {
     dialog: { connect },
   } = useConnectUI();
 
+  const { native, external } = useMemo<GroupedConnectors>(() => {
+    const external = connectors.filter((conn) => {
+      return !NATIVE_CONNECTORS.includes(conn.name);
+    });
+    const native = connectors.filter((conn) => {
+      return NATIVE_CONNECTORS.includes(conn.name);
+    });
+
+    return {
+      native,
+      external,
+    };
+  }, [connectors]);
+
+  const shouldTitleGroups = !!native.length && !!external.length;
+
+  if (isLoading) {
+    return (
+      <ConnectorList>
+        <ConnectorsLoader items={fuelConfig.connectors?.length || 2} />
+      </ConnectorList>
+    );
+  }
+
   return (
     <ConnectorList>
-      {connectors.map((connector, index) => (
-        <ConnectorItem
-          tabIndex={index + 1}
-          key={connector.name}
-          aria-label={`Connect to ${connector.name}`}
-          data-installed={connector.installed}
-          data-connected={connector.connected}
-          onClick={(e) => {
-            e.preventDefault();
-            connect(connector);
-          }}
-        >
-          <ConnectorIcon
-            connectorMetadata={connector.metadata}
-            connectorName={connector.name}
-            size={32}
+      {shouldTitleGroups && <GroupTitle>Fuel Native Wallets</GroupTitle>}
+      {native.map((connector, index) => {
+        return (
+          <Connector
+            key={connector.name}
+            connect={connect}
             theme={theme}
+            connector={connector}
+            index={index}
           />
-          <ConnectorName>{connector.name}</ConnectorName>
-        </ConnectorItem>
-      ))}
-      {isLoading && (
-        <ConnectorsLoader items={fuelConfig.connectors?.length || 2} />
-      )}
+        );
+      })}
+      {shouldTitleGroups && <GroupLastTitle>Non-Native Wallets</GroupLastTitle>}
+      {external.map((connector, index) => {
+        return (
+          <Connector
+            key={connector.name}
+            connect={connect}
+            theme={theme}
+            connector={connector}
+            index={index}
+          />
+        );
+      })}
     </ConnectorList>
   );
 }

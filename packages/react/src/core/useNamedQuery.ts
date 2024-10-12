@@ -1,10 +1,8 @@
 import type {
   DefaultError,
-  DefinedInitialDataOptions,
   DefinedUseQueryResult,
   QueryClient,
   QueryKey,
-  UndefinedInitialDataOptions,
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query';
@@ -12,16 +10,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 type ExcludeData<T> = Omit<T, 'data'>;
+type ExcludePlaceholderData<T> = Omit<T, 'placeholderData'>;
 
-type NamedUseQueryResult<
-  TName extends string,
-  TQueryFnData = unknown,
-  TError = DefaultError,
-> = ExcludeData<UseQueryResult<TQueryFnData, TError>> & {
-  [key in TName]: UseQueryResult<TQueryFnData, TError>['data'];
-};
-
-type DefinedNamedUseQueryResult<
+export type DefinedNamedUseQueryResult<
   TName extends string,
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -30,8 +21,8 @@ type DefinedNamedUseQueryResult<
 };
 
 /**
- * TanStack Query parameters, like queryFn and queryKey, are used internally and you cannot override them.
- * Currently we're exporting only "select" function.
+ * TanStack Query parameters for external usage.
+ * Parameters like `queryFn` and `queryKey` are used internally and you cannot override them.
  *
  * See docs for more information: https://tanstack.com/query/latest/docs/framework/react/reference/useQuery
  */
@@ -41,11 +32,33 @@ export interface UseNamedQueryParams<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends Pick<
+> extends Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'select'
+    'queryKey' | 'queryFn' | 'enabled' | 'initialData' | 'placeholderData'
   > {
   name?: TName;
+}
+
+/**
+ * TanStack Query parameters for internal usage (inside @fuels/react).
+ * This is only used for making the `placeholderData` property required.
+ *
+ * See docs for more information: https://tanstack.com/query/latest/docs/framework/react/reference/useQuery
+ */
+interface UseNamedQueryOptions<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> extends ExcludePlaceholderData<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  > {
+  placeholderData: UseQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey
+  >['placeholderData'];
 }
 
 function createProxyHandler<
@@ -56,7 +69,11 @@ function createProxyHandler<
   const handlers: ProxyHandler<UseQueryResult<TData, TError>> = {
     get(target, prop) {
       const shouldReplaceData = prop === name;
-      return Reflect.get(target, shouldReplaceData ? 'data' : prop);
+      if (shouldReplaceData) {
+        return Reflect.get(target, 'data');
+      }
+
+      return Reflect.get(target, prop);
     },
   };
 
@@ -64,42 +81,10 @@ function createProxyHandler<
 }
 
 /**
- * When initialData is not provided "data" will be always TQueryFnData | undefined.
- * It might need some type checking to be sure that the data is not undefined.
- */
-export function useNamedQuery<
-  TName extends string,
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  name: TName,
-  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-  queryClient?: QueryClient,
-): NamedUseQueryResult<TName, TData, TError>;
-
-/**
- * When initialData is provided "data" will be always TQueryFnData.
- * Never undefined.
- */
-export function useNamedQuery<
-  TName extends string,
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  name: TName,
-  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-  queryClient?: QueryClient,
-): DefinedNamedUseQueryResult<TName, TData, TError>;
-
-/**
  * useNamedQuery is a wrapper for useQuery that allows you to override the "data" property with a custom name.
  *
  * @param name a identifier to override "data" property with this name
- * @param options UseQueryOptions
+ * @param options UseNamedQueryOptions
  * @returns useQuery
  */
 export function useNamedQuery<
@@ -110,17 +95,16 @@ export function useNamedQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   name: TName,
-  options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: UseNamedQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): NamedUseQueryResult<TName, TData, TError> {
+): DefinedNamedUseQueryResult<TName, TData, TError> {
   const query = useQuery(options, queryClient);
 
   const proxy = useMemo(() => {
-    return new Proxy(query, createProxyHandler(name)) as NamedUseQueryResult<
-      TName,
-      TData,
-      TError
-    >;
+    return new Proxy(
+      query,
+      createProxyHandler(name),
+    ) as DefinedNamedUseQueryResult<TName, TData, TError>;
   }, [name, query]);
 
   return proxy;

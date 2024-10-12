@@ -6,6 +6,7 @@ export type EVMWalletConnectorConfig = {
   fuelProvider?: Provider | Promise<Provider>;
   ethProvider?: EIP1193Provider;
   predicateConfig?: PredicateConfig;
+  chainId?: number;
 };
 
 export enum EVMWalletConnectorEvents {
@@ -22,4 +23,9 @@ export interface EIP1193Provider extends EventEmitter {
     method: string;
     params?: unknown[];
   }): Promise<unknown | unknown[]>;
+}
+
+export interface SignatureData {
+  message: string;
+  signature: string;
 }

@@ -4,7 +4,6 @@ import {
   type PredicateConfig,
   PredicateFactory,
 } from '@fuel-connectors/common';
-import { launchNodeAndGetWallets } from '@fuel-ts/account/test-utils';
 import {
   Address,
   type Asset,
@@ -18,6 +17,7 @@ import {
   bn,
   hexlify,
 } from 'fuels';
+import { launchTestNode } from 'fuels/test-utils';
 import {
   afterAll,
   afterEach,
@@ -64,7 +64,7 @@ async function createTransaction(
     tx.inputs?.forEach((input) => {
       if (
         input.type === InputType.Coin &&
-        hexlify(input.owner) === predicate.address.toB256()
+        hexlify(input.owner) === predicate.address.toString()
       ) {
         input.predicate = arrayify(predicate.bytes);
       }
@@ -111,8 +111,8 @@ describe('EVM Wallet Connector', () => {
     //Launch test node
     process.env.GENESIS_SECRET =
       '0x6e48a022f9d4ae187bca4e2645abd62198ae294ee484766edbdaadf78160dc68';
-    const { stop, provider } = await launchNodeAndGetWallets({
-      launchNodeOptions: {
+    const { cleanup, provider } = await launchTestNode({
+      nodeOptions: {
         args: ['--snapshot', snapshotPath],
         loggingEnabled: false,
         // use fixed port to don't conflict with other packages,
@@ -123,7 +123,7 @@ describe('EVM Wallet Connector', () => {
     fuelProvider = provider;
     baseAssetId = fuelProvider.getBaseAssetId();
 
-    stopProvider = stop;
+    stopProvider = cleanup;
   });
 
   afterAll(() => {

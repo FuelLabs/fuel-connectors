@@ -1,51 +1,41 @@
-import type { FuelConnector } from 'fuels';
-import { useEffect, useState } from 'react';
+import { ConnectorIcon } from '../Core/ConnectorIcon';
 
-import { useConnectUI } from '../../../../providers/FuelUIProvider';
-import { ConnectorIcon } from '../ConnectorIcon';
-
+import { useEffect } from 'react';
+import { useConnectUI } from '../../../../providers';
+import { Routes } from '../../../../providers/FuelUIProvider';
 import {
-  ConnectorButton,
+  ConnectorButtonPrimary,
   ConnectorContent,
   ConnectorDescription,
+  ConnectorFooterHelper,
   ConnectorImage,
   ConnectorTitle,
 } from './styles';
 
-type ConnectorProps = {
-  theme?: string;
-  className?: string;
-  connector: FuelConnector;
-};
-
-export function Connector({ className, connector, theme }: ConnectorProps) {
+export function Connector() {
+  const {
+    theme,
+    dialog: { connector, setRoute },
+  } = useConnectUI();
+  if (!connector) return null;
   const {
     install: { action, link, description },
   } = connector.metadata;
 
-  const {
-    setError,
-    dialog: { connect },
-  } = useConnectUI();
-  const [isLoading, setLoading] = useState(!connector.installed);
-
+  // Ping extension: if it's installed, it will trigger connector
   useEffect(() => {
     const ping = async () => {
-      try {
-        await connector.ping();
-        connector.installed = true;
-        connect(connector);
-      } catch (error) {
-        setLoading(false);
-        setError(error as Error);
-      }
+      const isInstalled = await connector.ping();
+      if (isInstalled) setRoute(Routes.CONNECTING);
     };
 
     ping();
-  }, [connector, connect, setError]);
+  }, [connector, setRoute]);
+
+  const actionText = action || 'Install';
 
   return (
-    <div className={className}>
+    <div>
       <ConnectorImage>
         <ConnectorIcon
           connectorMetadata={connector.metadata}
@@ -56,15 +46,16 @@ export function Connector({ className, connector, theme }: ConnectorProps) {
       </ConnectorImage>
       <ConnectorContent>
         <ConnectorTitle>{connector.name}</ConnectorTitle>
-        <ConnectorDescription>
-          {isLoading ? 'Loading...' : description}
-        </ConnectorDescription>
+        <ConnectorDescription>{description}</ConnectorDescription>
       </ConnectorContent>
-      {!isLoading && (
-        <ConnectorButton href={link} target="_blank">
-          {action || 'Install'}
-        </ConnectorButton>
-      )}
+      <ConnectorButtonPrimary href={link} target="_blank">
+        {actionText}
+      </ConnectorButtonPrimary>
+      <ConnectorFooterHelper>
+        If you have installed it and it is not detected,
+        <br />
+        try refreshing the page.
+      </ConnectorFooterHelper>
     </div>
   );
 }

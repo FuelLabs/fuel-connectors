@@ -1,10 +1,8 @@
 import { bn } from 'fuels';
-import { useEffect } from 'react';
+import { CHAIN_ID_NAME } from '../config';
 import { useWallet } from '../hooks/useWallet';
 import { Faucet } from './faucet';
 import Feature from './feature';
-
-export const DEFAULT_AMOUNT = bn.parseUnits('0.0001');
 
 interface Props {
   isSigning: boolean;
@@ -16,17 +14,26 @@ const BalanceSkeleton = () => (
 );
 
 export default function Balance({ isSigning }: Props) {
-  const { refetchWallet, balance, address } = useWallet();
+  const { balance, account, isConnected } = useWallet();
 
-  useEffect(() => {
-    const interval = setInterval(() => refetchWallet(), 5000);
-    return () => clearInterval(interval);
-  }, [refetchWallet]);
+  if (!account && isConnected) {
+    return (
+      <Feature title="Balance">
+        <code>{bn(0).format()} ETH</code>
+        <Faucet isSigning={isSigning} address={account || ''} disabled={true} />
+      </Feature>
+    );
+  }
+  if (!account) return null;
 
   return (
     <Feature title="Balance">
       <code>{balance ? `${balance?.format()} ETH` : <BalanceSkeleton />}</code>
-      <Faucet isSigning={isSigning} address={address} />
+      <Faucet
+        isSigning={isSigning}
+        address={account}
+        disabled={CHAIN_ID_NAME === 'mainnet'}
+      />
     </Feature>
   );
 }

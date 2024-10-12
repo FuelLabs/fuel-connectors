@@ -41,3 +41,5 @@ export const DEFAULT_CHAINS = [
   solanaChains.TESTNET,
   solanaChains.DEVNET,
 ];
+
+export const HAS_WINDOW = typeof window !== 'undefined';

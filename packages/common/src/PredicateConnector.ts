@@ -8,9 +8,8 @@ import {
   FuelConnectorEventTypes,
   type JsonAbi,
   type Network,
-  OutputType,
+  type SelectNetworkArguments,
   type TransactionRequestLike,
-  TransactionResponse,
   type Version,
   ZeroBytes32,
   bn,
@@ -29,16 +28,19 @@ import type {
   PredicateVersion,
   PreparedTransaction,
   ProviderDictionary,
+  SignedMessageCustomCurve,
 } from './types';
 
 export abstract class PredicateConnector extends FuelConnector {
   public connected = false;
   public installed = false;
+  external = true;
   public events = FuelConnectorEventTypes;
   protected predicateAddress!: string;
   protected customPredicate: Maybe<PredicateConfig>;
   protected predicateAccount: Maybe<PredicateFactory> = null;
   protected subscriptions: Array<() => void> = [];
+  protected hasProviderSucceeded = true;
 
   private _predicateVersions!: Array<PredicateFactory>;
 
@@ -56,9 +58,12 @@ export abstract class PredicateConnector extends FuelConnector {
   protected abstract getWalletAdapter(): PredicateWalletAdapter;
   protected abstract getPredicateVersions(): Record<string, PredicateVersion>;
   protected abstract getAccountAddress(): MaybeAsync<Maybe<string>>;
-  protected abstract getProviders(): MaybeAsync<ProviderDictionary>;
+  protected abstract getProviders(): Promise<ProviderDictionary>;
   protected abstract requireConnection(): MaybeAsync<void>;
   protected abstract walletAccounts(): Promise<Array<string>>;
+  abstract signMessageCustomCurve(
+    _message: string,
+  ): Promise<SignedMessageCustomCurve>;
 
   protected async emitAccountChange(
     address: string,
@@ -113,7 +118,7 @@ export abstract class PredicateConnector extends FuelConnector {
 
       const balance = await predicate.getBalance();
 
-      if (balance.toString() !== bn(0).toString()) {
+      if (!balance.isZero()) {
         return predicateInstance;
       }
     }
@@ -163,7 +168,7 @@ export abstract class PredicateConnector extends FuelConnector {
       throw Error('No predicate account found');
     }
 
-    const b256Address = Address.fromDynamicInput(address).toB256();
+    const b256Address = Address.fromDynamicInput(address).toString();
     const { fuelProvider } = await this.getProviders();
     const chainId = fuelProvider.getChainId();
     const walletAccount = this.predicateAccount.getAccountAddress(
@@ -175,25 +180,6 @@ export abstract class PredicateConnector extends FuelConnector {
     }
 
     const transactionRequest = transactionRequestify(transaction);
-    const newestPredicate = this.getNewestPredicate();
-    let changedPredicate = false;
-    if (!!newestPredicate && !this.predicateAccount.equals(newestPredicate)) {
-      const predicateAddress =
-        newestPredicate.getPredicateAddress(walletAccount);
-
-      if (transactionRequest.getChangeOutputs().length > 0) {
-        transactionRequest.outputs.forEach((output) => {
-          if (
-            output.type === OutputType.Change &&
-            this.isAddressPredicate(output.to, walletAccount)
-          ) {
-            output.to = Address.fromAddressOrString(predicateAddress).toB256();
-            changedPredicate = true;
-          }
-        });
-      }
-    }
-
     const transactionFee = transactionRequest.maxFee.toNumber();
     const predicateSignatureIndex = getMockedSignatureIndex(
       transactionRequest.witnesses,
@@ -250,24 +236,12 @@ export abstract class PredicateConnector extends FuelConnector {
       requestWithPredicateAttached,
     );
 
-    const afterTransaction = changedPredicate
-      ? (id: string) =>
-          setTimeout(async () => {
-            const response = new TransactionResponse(id, fuelProvider);
-            const result = await response.waitForResult();
-            if (result.isStatusSuccess) {
-              await this.emitAccountChange(walletAccount);
-            }
-          })
-      : undefined;
-
     return {
       predicate,
       request: requestWithPredicateAttached,
       transactionId: requestWithPredicateAttached.getTransactionId(chainId),
       account: walletAccount,
       transactionRequest,
-      afterTransaction,
     };
   }
 
@@ -280,8 +254,14 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   public async ping(): Promise<boolean> {
-    await this.getProviders();
-    return true;
+    this.getProviders()
+      .catch(() => {
+        this.hasProviderSucceeded = false;
+      })
+      .then(() => {
+        this.hasProviderSucceeded = true;
+      });
+    return this.hasProviderSucceeded;
   }
 
   public async version(): Promise<Version> {
@@ -349,7 +329,9 @@ export abstract class PredicateConnector extends FuelConnector {
     throw new Error('Method not implemented.');
   }
 
-  public async selectNetwork(_network: Network): Promise<boolean> {
+  public async selectNetwork(
+    _network: SelectNetworkArguments,
+  ): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
 

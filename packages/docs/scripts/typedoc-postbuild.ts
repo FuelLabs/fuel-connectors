@@ -2,6 +2,7 @@ import {
   copyFileSync,
   existsSync,
   mkdirSync,
+  readFileSync,
   readdirSync,
   renameSync,
   rmSync,
@@ -59,10 +60,11 @@ const removeUnwantedFiles = () =>
   });
 
 const renameInterfaces = () => {
-  renameSync(
-    join(apiDocsDir, 'interfaces'),
-    join(apiDocsDir, 'interfaces_typedoc'),
-  );
+  existsSync(join(apiDocsDir, 'interfaces')) &&
+    renameSync(
+      join(apiDocsDir, 'interfaces'),
+      join(apiDocsDir, 'interfaces_typedoc'),
+    );
 };
 
 /**
@@ -180,6 +182,7 @@ const alterFileStructure = () => {
     // Prepare new module directory to remove 'fuel_connectors_' prefix
     let formattedDirName = newDirPath.split('fuel_connectors_')[1];
     if (!formattedDirName) formattedDirName = newDirPath.split('fuels_')[1];
+    if (!formattedDirName) formattedDirName = newDirName;
     const capitalisedDirName =
       formattedDirName.charAt(0).toUpperCase() + formattedDirName.slice(1);
 
@@ -293,6 +296,108 @@ const recreateInternalLinks = () => {
     });
 };
 
+const generateHooks = () => {
+  const hooks = [] as { text: string; link: string; items: [] }[];
+  const hooksDir = join(apiDocsDir, 'Hooks');
+  const reactHooksDir = join(docsDir, 'guide', 'react-hooks');
+  const writeLines: Record<string, Record<string, string[]>> = {};
+  const sectionsToIgnore = ['Parameters', 'Type parameters'];
+  const githubPrefix = 'https://github.com/fuellabs/fuel-connectors/blob/main';
+
+  const md = readFileSync(`${hooksDir}/index.md`, 'utf-8');
+  const lines = md.split('\n');
+  // Skip whole section
+  let skipSection = true;
+  let currentHook = '';
+  let currentSection = 'index';
+
+  for (let i = 0; i < lines.length; i++) {
+    // If the line starts with '###', it's a hook
+    if (lines[i].startsWith('### ')) {
+      skipSection = false;
+
+      // Add new hook to the list
+      const name = lines[i].split('### ')[1].trim();
+      currentHook = name;
+      currentSection = 'index';
+      writeLines[currentHook] = { index: [] };
+      writeLines[currentHook][currentSection].push(`# ${name}`);
+      writeLines[currentHook][currentSection].push('---');
+
+      i += 3; // Skip the next 3 lines
+    }
+    if (lines[i].startsWith('#### Returns')) {
+      skipSection = false;
+      currentSection = 'Returns';
+      writeLines[currentHook][currentSection] = [];
+      writeLines[currentHook][currentSection].push(lines[i]);
+      i += 3; // Skip the next 3 lines
+    }
+    for (const section of sectionsToIgnore) {
+      if (lines[i].startsWith(`#### ${section}`)) {
+        skipSection = true;
+      }
+    }
+    if (lines[i].startsWith('**`')) {
+      skipSection = false;
+      const name = lines[i].split('**`')[1].split('`')[0];
+      currentSection = `${name}`;
+      writeLines[currentHook][currentSection] = [];
+      writeLines[currentHook][currentSection].push(`#### ${name}`);
+      i += 1; // Skip the next line
+    }
+
+    // Replace repository links if they came from a fork
+    if (lines[i].startsWith('#### Defined in')) {
+      skipSection = false;
+      currentSection = 'Defined in';
+      writeLines[currentHook][currentSection] = [];
+      writeLines[currentHook][currentSection].push(lines[i]);
+      i += 2; // Skip the next lines
+      let definedIn = lines[i].split('[')[1];
+      if (definedIn) {
+        definedIn = definedIn.split(']')[0];
+
+        const newLine = `[${definedIn}](${githubPrefix}/${definedIn.replace(
+          ':',
+          '#L',
+        )})`;
+        writeLines[currentHook][currentSection].push(newLine);
+        i += 1; // Skip the next line
+      }
+    }
+
+    // If there's lines to write, we're in a hook scope
+    if (!skipSection) writeLines[currentHook][currentSection].push(lines[i]);
+  }
+  for (const hook of Object.keys(writeLines)) {
+    const hookLines = [] as string[];
+    hookLines.push(...writeLines[hook].index);
+    const validSections = [
+      'Params',
+      'Returns',
+      'Examples',
+      'Deprecated',
+      'Defined in',
+    ];
+    for (const section of validSections) {
+      if (
+        writeLines[hook][section] &&
+        writeLines[hook][section].filter(Boolean).length > 1
+      )
+        hookLines.push(...writeLines[hook][section]);
+    }
+    writeFileSync(join(reactHooksDir, `${hook}.md`), hookLines.join('\n'));
+    hooks.push({
+      text: hook,
+      link: `/guide/react-hooks/${hook}`,
+      items: [],
+    });
+  }
+
+  writeFileSync('.typedoc/hooks-links.json', JSON.stringify(hooks));
+};
+
 const main = () => {
   log('Cleaning up API docs.');
   renameInterfaces();
@@ -302,6 +407,7 @@ const main = () => {
   removeUnwantedFiles();
   exportLinksJson();
   recreateInternalLinks();
+  generateHooks();
 };
 
 main();
