@@ -1,5 +1,11 @@
 # @fuel-connectors/common
 
+## 0.34.0
+
+### Minor Changes
+
+- [#381](https://github.com/FuelLabs/fuel-connectors/pull/381) [`cdac8d4`](https://github.com/FuelLabs/fuel-connectors/commit/cdac8d441bab8e6c7a4c86d60e02c772bdb2e856) Thanks [@luizstacio](https://github.com/luizstacio)! - feat!: change address return to use toString instead of b256
+
 ## 0.33.0
 
 ### Patch Changes

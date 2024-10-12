@@ -1,5 +1,11 @@
 # @fuels/react
 
+## 0.34.0
+
+### Patch Changes
+
+- [#379](https://github.com/FuelLabs/fuel-connectors/pull/379) [`cd36eda`](https://github.com/FuelLabs/fuel-connectors/commit/cd36edaac17522f2061850a5eea55a5bc38077cb) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - fix: react to change in NETWORKS config passed to FuelProvider
+
 ## 0.33.0
 
 ## 0.32.0
