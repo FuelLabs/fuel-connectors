@@ -76,6 +76,7 @@ jobs:
           working-directory: ./packages/fuelet-wallet
           json-summary-path: ./coverage/coverage-summary.json
           json-final-path: ./coverage/coverage-final.json
+
   tests-e2e-connectors:
     runs-on: ubuntu-latest
 
@@ -88,17 +89,16 @@ jobs:
         with:
           node-version: 20.11.0
           pnpm-version: 9.5.0
-        
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-        working-directory: ./e2e-tests
 
       - name: Run PNPM install
         id: pnpm-cache
-        run:
-          pnpm install
+        run: pnpm install --frozen-lockfile
         working-directory: ./e2e-tests
 
+      - name: Install Playwright browsers
+        run: pnpm --filter e2e-tests exec playwright install --with-deps
+        working-directory: .
+
       - name: Run Playwright tests
-        run: pnpm playwright test e2e-tests/react-app --project=react-app
-        working-directory: ./e2e-tests
+        run: pnpm --filter e2e-tests exec playwright test e2e-tests/react-app --project=react-app
+        working-directory: .
