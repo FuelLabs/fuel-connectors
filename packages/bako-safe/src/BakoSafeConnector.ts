@@ -10,6 +10,7 @@ import {
   type TransactionRequestLike,
 } from 'fuels';
 
+import crypto from 'node:crypto';
 import { BakoStorage } from './BakoSafeStorage';
 import { DAppWindow } from './DAPPWindow';
 import { SocketClient } from './SocketClient';

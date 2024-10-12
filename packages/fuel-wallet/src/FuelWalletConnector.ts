@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import {
   Address,
   type Asset,
@@ -16,7 +17,6 @@ import {
 } from 'fuels';
 import type { JSONRPCRequest } from 'json-rpc-2.0';
 import { JSONRPCClient } from 'json-rpc-2.0';
-
 import {
   CONNECTOR_SCRIPT,
   CONTENT_SCRIPT_NAME,
