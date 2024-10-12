@@ -17,6 +17,6 @@ console.log(isSupportedNetwork);
 ```
 
 #### Defined in
-[packages/react/src/hooks/useIsSupportedNetwork.tsx:30](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useIsSupportedNetwork.tsx#L30)
+[packages/react/src/hooks/useIsSupportedNetwork.tsx:29](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useIsSupportedNetwork.tsx#L29)
 
 ___

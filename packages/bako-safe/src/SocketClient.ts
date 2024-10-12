@@ -1,4 +1,3 @@
-import crypto from 'node:crypto';
 import { type Socket, io } from 'socket.io-client';
 import type { BakoSafeConnector } from './BakoSafeConnector';
 import { APP_URL, SOCKET_URL } from './constants';
