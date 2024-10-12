@@ -64,5 +64,8 @@ export function createSolanaWeb3ModalInstance({
     enableAnalytics: false,
     projectId: projectId ?? DEFAULT_PROJECT_ID,
     featuredWalletIds,
+    excludeWalletIds: [
+      '2bd8c14e035c2d48f184aaa168559e86b0e3433228d3c4075900a221785019b0', // Backpack SVM
+    ],
   });
 }
