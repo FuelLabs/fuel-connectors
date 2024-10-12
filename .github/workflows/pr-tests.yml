@@ -76,7 +76,6 @@ jobs:
           working-directory: ./packages/fuelet-wallet
           json-summary-path: ./coverage/coverage-summary.json
           json-final-path: ./coverage/coverage-final.json
-
   tests-e2e-connectors:
     runs-on: ubuntu-latest
 
@@ -93,12 +92,16 @@ jobs:
       - name: Run PNPM install
         id: pnpm-cache
         run: pnpm install --frozen-lockfile
-        working-directory: ./e2e-tests
 
-      - name: Install Playwright browsers
-        run: pnpm --filter e2e-tests exec playwright install --with-deps
-        working-directory: .
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run build:connectors
+        run: pnpm build:connectors
 
       - name: Run Playwright tests
-        run: pnpm --filter e2e-tests exec playwright test e2e-tests/react-app --project=react-app
-        working-directory: .
+        run: xvfb-run --auto-servernum -- pnpm test:react-app:ci
+        env:
+          VITE_FUEL_PROVIDER_URL: "http://localhost:4000/v1/graphql"
+          VITE_MASTER_WALLET_MNEMONIC: "approve task live lift describe basket warm razor ginger deny stairs matter"
+          PORT: 5173

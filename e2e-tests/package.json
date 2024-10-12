@@ -6,19 +6,8 @@
   "author": "Fuel Labs <contact@fuel.sh> (https://fuel.network/)",
   "homepage": "https://github.com/FuelLabs/fuel-connectors",
   "type": "module",
-  "scripts": {
-    "test:react-app": "pnpm test:react-app:ci -- --ui",
-    "test:react-app:ci": "npx playwright test e2e-tests/react-app --project=react-app"
-  },
-  "devDependencies": {
-    "@fuels/playwright-utils": "0.23.0",
-    "@fuels/ts-config": "0.20.0",
-    "@playwright/test": "1.46.1",
-    "@types/node": "20.12.11",
-    "dotenv": "16.4.5",
-    "fuels": "0.95.0",
-    "playwright": "1.46.1"
-  },
+  "scripts": {},
+  "devDependencies": {},
   "engines": {
     "node": ">=18",
     "pnpm": ">=9"

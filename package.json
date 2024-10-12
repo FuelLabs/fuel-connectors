@@ -23,11 +23,14 @@
     "changeset": "changeset",
     "changeset:next": "tsx ./scripts/changeset-next",
     "packages:version": "node ./scripts/version.js",
+    "test:react-app": "pnpm test:react-app:ci -- --ui",
+    "test:react-app:ci": "npx playwright test e2e-tests/react-app --config=e2e-tests/playwright.config.ts --project=react-app",
     "prepare": "husky"
   },
   "devDependencies": {
     "@biomejs/biome": "1.7.3",
     "@changesets/changelog-github": "0.5.0",
+    "@playwright/test": "^1.41.2",
     "@changesets/cli": "2.26.2",
     "@fuels/ts-config": "0.20.0",
     "@fuels/tsup-config": "0.20.0",
@@ -36,7 +39,11 @@
     "husky": "9.0.11",
     "lint-staged": "15.2.2",
     "tsx": "^4.16.2",
+    "fuels": "0.95.0",
+    "dotenv": "16.4.5",
+    "@types/node": "20.12.11",
     "turbo": "2.0.11",
+    "@fuels/playwright-utils": "0.23.0",
     "vitest": "2.0.2"
   },
   "engines": {
