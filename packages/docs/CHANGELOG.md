@@ -1,5 +1,11 @@
 # docs
 
+## 0.28.3
+
+### Patch Changes
+
+- [#385](https://github.com/FuelLabs/fuel-connectors/pull/385) [`9c0923b`](https://github.com/FuelLabs/fuel-connectors/commit/9c0923b333c35b42cff153182fb85a606dbe0279) Thanks [@helciofranco](https://github.com/helciofranco)! - Revert: fixed node dynamic import error introduced in https://github.com/FuelLabs/fuel-connectors/pull/382
+
 ## 0.28.2
 
 ### Patch Changes
