@@ -4,6 +4,13 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  braces@<3.0.3: '>=3.0.3'
+  ws@>=8.0.0 <8.17.1: '>=8.17.1'
+  ws@>=7.0.0 <7.5.10: '>=7.5.10'
+  ws@>=6.0.0 <6.2.3: '>=6.2.3'
+  fast-xml-parser@<4.4.1: '>=4.4.1'
+
 importers:
 
   .:
@@ -25,7 +32,7 @@ importers:
         version: 0.20.0(tsup@8.0.2(@microsoft/api-extractor@7.43.0(@types/node@22.7.5))(postcss@8.4.41)(ts-node@10.9.2(@types/node@22.7.5)(typescript@5.4.5))(typescript@5.4.5))
       '@vitest/coverage-v8':
         specifier: 2.0.2
-        version: 2.0.2(vitest@2.0.2(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.34.1))
+        version: 2.0.2(vitest@2.0.2(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.34.1))
       compare-versions:
         specifier: 6.1.0
         version: 6.1.0
@@ -43,31 +50,7 @@ importers:
         version: 2.0.11
       vitest:
         specifier: 2.0.2
-        version: 2.0.2(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.34.1)
-
-  e2e-tests:
-    devDependencies:
-      '@fuels/playwright-utils':
-        specifier: 0.23.0
-        version: 0.23.0(@playwright/test@1.46.1)(fuels@0.95.0)
-      '@fuels/ts-config':
-        specifier: 0.20.0
-        version: 0.20.0(typescript@5.4.5)
-      '@playwright/test':
-        specifier: 1.46.1
-        version: 1.46.1
-      '@types/node':
-        specifier: 20.12.11
-        version: 20.12.11
-      dotenv:
-        specifier: 16.4.5
-        version: 16.4.5
-      fuels:
-        specifier: 0.95.0
-        version: 0.95.0
-      playwright:
-        specifier: 1.46.1
-        version: 1.46.1
+        version: 2.0.2(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.34.1)
 
   examples/react-app:
     dependencies:
@@ -149,7 +132,7 @@ importers:
         version: 0.95.0
       next:
         specifier: 14.2.3
-        version: 14.2.3(@babel/core@7.25.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 14.2.3(@babel/core@7.25.7)(@playwright/test@1.46.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -220,7 +203,7 @@ importers:
         version: 3.9.1(@types/node@22.7.5)(rollup@4.20.0)(typescript@5.4.5)(vite@5.2.11(@types/node@22.7.5)(terser@5.34.1))
       vitest:
         specifier: 2.0.2
-        version: 2.0.2(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.34.1)
+        version: 2.0.2(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.34.1)
 
   packages/common:
     dependencies:
@@ -440,7 +423,7 @@ importers:
         version: 4.3.2(typescript@5.4.5)(vite@5.2.11(@types/node@22.7.5)(terser@5.34.1))
       vitest:
         specifier: 2.0.2
-        version: 2.0.2(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.34.1)
+        version: 2.0.2(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.34.1)
 
   packages/evm-predicates:
     devDependencies:
@@ -623,7 +606,7 @@ importers:
         version: 3.9.1(@types/node@22.7.5)(rollup@4.20.0)(typescript@5.4.5)(vite@5.2.11(@types/node@22.7.5)(terser@5.34.1))
       vitest:
         specifier: 2.0.2
-        version: 2.0.2(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.34.1)
+        version: 2.0.2(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.34.1)
 
   packages/walletconnect-connector:
     dependencies:
@@ -690,7 +673,7 @@ importers:
         version: 3.9.1(@types/node@22.7.5)(rollup@4.20.0)(typescript@5.4.5)(vite@5.2.11(@types/node@22.7.5)(terser@5.34.1))
       vitest:
         specifier: 2.0.2
-        version: 2.0.2(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.34.1)
+        version: 2.0.2(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.34.1)
 
 packages:
 
@@ -2527,12 +2510,6 @@ packages:
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
     hasBin: true
 
-  '@fuels/playwright-utils@0.23.0':
-    resolution: {integrity: sha512-OG35u211vrjIV4cPsTYOvOfDeY/gU3mazJ/PNWB3PyM9SOv3uHMVULg+/Qodf0Q/sg6o/+hcvHBxUdjzE1cJ5Q==}
-    peerDependencies:
-      '@playwright/test': ^1.39.0
-      fuels: '>=0.86.0'
-
   '@fuels/ts-config@0.20.0':
     resolution: {integrity: sha512-wFPifVVz2z/YXuYJ/qLFRKIAVq98ZtrrX9TlcKuL5E4ar32VGLRFTtoujEwFVcWRWmdkxA9ulcCiV3fEojdqlQ==}
     peerDependencies:
@@ -4350,10 +4327,6 @@ packages:
     resolution: {integrity: sha512-tcpGyI9zbizT9JbV6oYE477V6mTlXvvi0T0G3SNIYE2apm/G5huBa1+K89VGeovbg+jycCrfhl3ADxErOuO6Jg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
-
-  adm-zip@0.5.16:
-    resolution: {integrity: sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==}
-    engines: {node: '>=12.0'}
 
   agent-base@7.1.1:
     resolution: {integrity: sha512-H0TSyFNDMomMNJQBn8wFV5YC/2eJ+VXECwOadZJT554xP6cODZHPX3H9QMQECxvrgiSOP1pHjy1sMWQVYJOUOA==}
@@ -9171,7 +9144,7 @@ snapshots:
       debug: 4.3.7(supports-color@5.5.0)
       gensync: 1.0.0-beta.2
       json5: 2.2.3
-      semver: 7.6.3
+      semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
 
@@ -11657,12 +11630,6 @@ snapshots:
       chalk: 4.1.2
       cli-table: 0.3.11
 
-  '@fuels/playwright-utils@0.23.0(@playwright/test@1.46.1)(fuels@0.95.0)':
-    dependencies:
-      '@playwright/test': 1.46.1
-      adm-zip: 0.5.16
-      fuels: 0.95.0
-
   '@fuels/ts-config@0.20.0(typescript@5.4.5)':
     dependencies:
       typescript: 5.4.5
@@ -12270,6 +12237,7 @@ snapshots:
   '@playwright/test@1.46.1':
     dependencies:
       playwright: 1.46.1
+    optional: true
 
   '@radix-ui/primitive@1.0.1':
     dependencies:
@@ -13552,7 +13520,7 @@ snapshots:
       vite: 5.4.0(@types/node@22.7.5)(terser@5.34.1)
       vue: 3.4.37(typescript@5.4.5)
 
-  '@vitest/coverage-v8@2.0.2(vitest@2.0.2(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.34.1))':
+  '@vitest/coverage-v8@2.0.2(vitest@2.0.2(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.34.1))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -13567,7 +13535,7 @@ snapshots:
       strip-literal: 2.1.0
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 2.0.2(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.34.1)
+      vitest: 2.0.2(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.34.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -15050,8 +15018,6 @@ snapshots:
       acorn: 8.12.1
 
   acorn@8.12.1: {}
-
-  adm-zip@0.5.16: {}
 
   agent-base@7.1.1:
     dependencies:
@@ -17900,7 +17866,7 @@ snapshots:
 
   next-tick@1.1.0: {}
 
-  next@14.2.3(@babel/core@7.25.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  next@14.2.3(@babel/core@7.25.7)(@playwright/test@1.46.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@next/env': 14.2.3
       '@swc/helpers': 0.5.5
@@ -17921,6 +17887,7 @@ snapshots:
       '@next/swc-win32-arm64-msvc': 14.2.3
       '@next/swc-win32-ia32-msvc': 14.2.3
       '@next/swc-win32-x64-msvc': 14.2.3
+      '@playwright/test': 1.46.1
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
@@ -18215,13 +18182,15 @@ snapshots:
       mlly: 1.7.1
       pathe: 1.1.2
 
-  playwright-core@1.46.1: {}
+  playwright-core@1.46.1:
+    optional: true
 
   playwright@1.46.1:
     dependencies:
       playwright-core: 1.46.1
     optionalDependencies:
       fsevents: 2.3.2
+    optional: true
 
   pngjs@3.4.0: {}
 
@@ -20035,7 +20004,7 @@ snapshots:
       - supports-color
       - terser
 
-  vitest@2.0.2(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(terser@5.34.1):
+  vitest@2.0.2(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.34.1):
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@vitest/expect': 2.0.2
@@ -20107,7 +20076,7 @@ snapshots:
   wagmi@2.12.7(@tanstack/query-core@5.35.1)(@tanstack/react-query@5.35.1(react@18.3.1))(@types/react@18.3.1)(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4):
     dependencies:
       '@tanstack/react-query': 5.35.1(react@18.3.1)
-      '@wagmi/connectors': 5.1.7(@types/react@18.3.1)(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-native@0.75.0(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(@types/react@18.3.1)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.20.0)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
+      '@wagmi/connectors': 5.1.7(@types/react@18.3.1)(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-native@0.75.0(@babel/core@7.25.7)(@babel/preset-env@7.25.3(@babel/core@7.25.7))(@types/react@18.3.1)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.20.0)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
       '@wagmi/core': 2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))
       react: 18.3.1
       use-sync-external-store: 1.2.0(react@18.3.1)
