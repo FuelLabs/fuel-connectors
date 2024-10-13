@@ -1,5 +1,7 @@
 # @fuel-connectors/solana-connector
 
+## 0.34.2
+
 ## 0.34.1
 
 ## 0.34.0
