@@ -1,6 +1,6 @@
 {
   "name": "@fuels/connectors",
-  "version": "0.34.1",
+  "version": "0.35.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -42,7 +42,7 @@
     "@fuel-connectors/fuelet-wallet": "workspace:*",
     "@fuel-connectors/solana-connector": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
-    "fuels": "0.95.0",
+    "fuels": "0.96.0",
     "terser": "5.31.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5"

@@ -1,7 +1,7 @@
 {
   "name": "@fuel-connectors/walletconnect-connector",
   "private": true,
-  "version": "0.34.1",
+  "version": "0.35.0",
   "type": "module",
   "files": ["dist"],
   "main": "./dist/wallet-connector-walletconnect.umd.cjs",
@@ -37,7 +37,7 @@
     "@fuel-connectors/evm-predicates": "workspace:*",
     "@types/memoizee": "0.4.11",
     "@web3modal/core": "5.0.0",
-    "fuels": "0.95.0",
+    "fuels": "0.96.0",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
