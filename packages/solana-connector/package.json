@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/solana-connector",
-  "version": "0.34.2",
+  "version": "0.35.0",
   "private": true,
   "type": "module",
   "files": ["dist"],
@@ -38,7 +38,7 @@
     "@fuel-connectors/common": "workspace:*",
     "@types/memoizee": "0.4.11",
     "@web3modal/core": "5.0.0",
-    "fuels": "0.95.0",
+    "fuels": "0.96.0",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
