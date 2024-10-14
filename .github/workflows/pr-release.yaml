@@ -7,13 +7,8 @@ jobs:
   release-pr:
     name: 'Release PR to npm'
     runs-on: buildjet-4vcpu-ubuntu-2204
-<<<<<<< HEAD
-    # Comment if:false to enable release PR to npm
-    # if: false
-=======
     # comment out if:false to enable release PR to npm
     if: false
->>>>>>> 12cefa6 (chore: add rodrigobranas to codeowners (#151))
     permissions: write-all
     steps:
       - uses: actions/checkout@v3
