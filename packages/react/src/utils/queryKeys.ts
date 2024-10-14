@@ -82,8 +82,8 @@ export const QUERY_KEYS = {
   currentConnector: (): QueryKey => {
     return QUERY_KEYS.base.concat(['currentConnector']);
   },
-  currentNetwork: (): QueryKey => {
-    return QUERY_KEYS.base.concat('currentNetwork');
+  currentNetwork: (isConnected: boolean | undefined): QueryKey => {
+    return QUERY_KEYS.base.concat(['currentNetwork', isConnected]);
   },
   isSupportedNetwork: (
     connectorName: string | null | undefined,

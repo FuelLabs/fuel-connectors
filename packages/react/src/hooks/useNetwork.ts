@@ -1,14 +1,21 @@
-import type { Network } from 'fuels';
+import { keepPreviousData } from '@tanstack/react-query';
+import { FuelConnectorEventTypes, type Network } from 'fuels';
+import { useEffect } from 'react';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
 import { useIsConnected } from './useIsConnected';
 
+const TIMEOUT = 500;
+
 type UseNetwork = {
   /**
    * Additional query parameters to customize the behavior of `useNamedQuery`.
    */
-  query?: UseNamedQueryParams<'network', Network | null, Error, Network | null>;
+  query?: Omit<
+    UseNamedQueryParams<'network', Network | null, Error, Network | null>,
+    'queryKey' | 'queryFn' | 'refetchInterval'
+  >;
 };
 
 // @TODO: Add a link to fuel connector's documentation.
@@ -29,24 +36,45 @@ type UseNetwork = {
 export const useNetwork = (params?: UseNetwork) => {
   const { fuel } = useFuel();
   const { isConnected } = useIsConnected();
-  return useNamedQuery('network', {
-    queryKey: QUERY_KEYS.currentNetwork(),
+  const networkQuery = useNamedQuery('network', {
+    queryKey: QUERY_KEYS.currentNetwork(isConnected),
     queryFn: async () => {
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject('Time out fetching network'), TIMEOUT),
+      );
       const current = await fuel.currentNetwork();
       if (!current && isConnected) {
         throw new Error('Network not found');
       }
-      return current;
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      return Promise.race([current, timeout as any]);
     },
     placeholderData: null,
     refetchOnMount: true,
     refetchInterval: (e) => {
       if (!e.state.data || e.state.error) {
-        return 4000;
+        return TIMEOUT;
       }
       return false;
+    },
+    retry: (attempts) => {
+      if (attempts > 10) {
+        return false;
+      }
+      return true;
     },
     enabled: isConnected,
     ...params?.query,
   });
+
+  useEffect(() => {
+    const sub = fuel.on(FuelConnectorEventTypes.currentNetwork, () => {
+      networkQuery.refetch();
+    });
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [fuel, networkQuery.refetch]);
+
+  return networkQuery;
 };
