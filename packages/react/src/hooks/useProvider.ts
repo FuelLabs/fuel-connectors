@@ -1,10 +1,10 @@
 import { keepPreviousData } from '@tanstack/react-query';
 import { Provider } from 'fuels';
-import { useWallet } from 'src/hooks/useWallet';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
 import { useNetwork } from './useNetwork';
+import { useWallet } from './useWallet';
 
 type UseProviderParams = {
   networkUrl?: string;
