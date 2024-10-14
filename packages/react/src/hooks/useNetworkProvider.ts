@@ -29,7 +29,7 @@ type UseProviderParams = {
  * @examples
  * To get the current provider:
  * ```ts
- * const { provider } = useProvider();
+ * const { networkProvider } = useNetworkProvider();
  * ```
  */
 export const useNetworkProvider = (params?: UseProviderParams) => {
