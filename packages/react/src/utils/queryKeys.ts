@@ -33,12 +33,13 @@ export const QUERY_KEYS = {
     currentAccount: string | null,
     currentNetwork: Network | null,
   ): QueryKey => {
-    return QUERY_KEYS.base.concat(
-      'provider',
-      currentNetwork?.chainId,
-      currentNetwork?.url,
-      currentAccount,
-    );
+    const queryKey = QUERY_KEYS.base.concat('provider');
+    if (currentNetwork) {
+      queryKey.push(currentNetwork.chainId);
+      queryKey.push(currentNetwork.url);
+    }
+    if (currentAccount) queryKey.push(currentAccount);
+    return queryKey;
   },
   balance: (
     address?: string,
@@ -85,10 +86,14 @@ export const QUERY_KEYS = {
     return QUERY_KEYS.base.concat('connectorList');
   },
   currentConnector: (connectorName: string | null | undefined): QueryKey => {
-    return QUERY_KEYS.base.concat(['currentConnector', connectorName]);
+    const queryKey = QUERY_KEYS.base.concat('currentConnector');
+    if (connectorName) queryKey.push(connectorName);
+    return queryKey;
   },
   currentNetwork: (isConnected: boolean | undefined): QueryKey => {
-    return QUERY_KEYS.base.concat(['currentNetwork', isConnected]);
+    const queryKey = QUERY_KEYS.base.concat('currentNetwork');
+    if (isConnected) queryKey.push(isConnected);
+    return queryKey;
   },
   isSupportedNetwork: (
     connectorName: string | null | undefined,
