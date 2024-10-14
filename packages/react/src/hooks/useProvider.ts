@@ -1,5 +1,5 @@
 import { keepPreviousData } from '@tanstack/react-query';
-import { Provider } from 'fuels';
+import type { Provider } from 'fuels';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
@@ -39,43 +39,27 @@ export const useProvider = (params?: UseProviderParams) => {
   const networkQuery = useNetwork();
   const accountQuery = useAccount();
   const account = accountQuery.account;
-  const currentNetwork = networkQuery.network;
-  const networkUrl = params?.networkUrl || currentNetwork?.url;
-  const chainId = params?.chainId || currentNetwork?.chainId;
 
   return useNamedQuery(
     'provider',
     {
-      queryKey: QUERY_KEYS.provider(account, networkUrl, chainId),
+      queryKey: QUERY_KEYS.provider(account),
       queryFn: async () => {
-        async function fetchProvider() {
-          if (!networkUrl) {
-            console.warn(
-              'Please provide a networks with a RPC url configuration to your FuelProvider getProvider will be removed.',
-            );
-          }
-          if (account) {
-            const provider = await fuel.getWallet(account);
-            return provider.provider || null;
-          }
-          if (!networkUrl) {
-            return fuel.getProvider();
-          }
-          const provider = await Provider.create(networkUrl);
-          if (chainId && provider.getChainId() !== chainId) {
-            throw new Error(
-              `The provider's chainId (${provider.getChainId()}) does not match the current network's chainId (${chainId})`,
-            );
-          }
-          return provider;
+        if (!account) {
+          throw new Error('No account connected');
         }
 
         const timeout = new Promise((_, reject) =>
           setTimeout(() => reject('Time out fetching provider'), 1000),
         ) as Promise<Provider | null>;
 
-        return Promise.race([fetchProvider(), timeout]);
+        const provider = fuel
+          .getWallet(account)
+          .then((wallet) => wallet.provider);
+
+        return Promise.race([provider, timeout]);
       },
+      enabled: !!account,
       placeholderData: keepPreviousData,
       refetchInterval: (e) => {
         if (!e.state.data || e.state.error) {
