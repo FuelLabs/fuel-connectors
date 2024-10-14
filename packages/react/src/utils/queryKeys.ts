@@ -30,7 +30,7 @@ export const QUERY_KEYS = {
     return QUERY_KEYS.base.concat('networks');
   },
   provider: (
-    currentAccount: string | null,
+    currentAccount: string | null | undefined,
     networkUrl: string | undefined | null,
     chainId: number | undefined | null,
   ): QueryKey => {

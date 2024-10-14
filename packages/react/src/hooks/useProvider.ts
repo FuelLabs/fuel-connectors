@@ -1,9 +1,9 @@
 import { keepPreviousData } from '@tanstack/react-query';
 import { Provider } from 'fuels';
+import { useWallet } from 'src/hooks/useWallet';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
-import { useAccount } from './useAccount';
 import { useNetwork } from './useNetwork';
 
 type UseProviderParams = {
@@ -37,8 +37,7 @@ type UseProviderParams = {
 export const useProvider = (params?: UseProviderParams) => {
   const { fuel } = useFuel();
   const networkQuery = useNetwork();
-  const accountQuery = useAccount();
-  const account = accountQuery.account;
+  const walletQuery = useWallet();
   const currentNetwork = networkQuery.network;
   const networkUrl = params?.networkUrl || currentNetwork?.url;
   const chainId = params?.chainId || currentNetwork?.chainId;
@@ -46,7 +45,11 @@ export const useProvider = (params?: UseProviderParams) => {
   return useNamedQuery(
     'provider',
     {
-      queryKey: QUERY_KEYS.provider(account, networkUrl, chainId),
+      queryKey: QUERY_KEYS.provider(
+        walletQuery.wallet?.address.toString(),
+        networkUrl,
+        chainId,
+      ),
       queryFn: async () => {
         async function fetchProvider() {
           if (!networkUrl) {
@@ -54,9 +57,8 @@ export const useProvider = (params?: UseProviderParams) => {
               'Please provide a networks with a RPC url configuration to your FuelProvider getProvider will be removed.',
             );
           }
-          if (account) {
-            const provider = await fuel.getWallet(account);
-            return provider.provider || null;
+          if (walletQuery.wallet) {
+            return walletQuery.wallet.provider || null;
           }
           if (!networkUrl) {
             return fuel.getProvider();
@@ -92,6 +94,6 @@ export const useProvider = (params?: UseProviderParams) => {
       ...params?.query,
     },
     undefined,
-    accountQuery.isFetching || networkQuery.isFetching,
+    walletQuery.isFetching || networkQuery.isFetching,
   );
 };
