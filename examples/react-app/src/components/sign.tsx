@@ -36,7 +36,7 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
       setToast({
         open: true,
         type: 'success',
-        children: resp || null,
+        children: 'Message signed',
       });
       setLoading(false);
       setIsSigning(false);
