@@ -24,4 +24,4 @@ const { wallet } = useWallet();
 Use `useWallet({ account })` instead.
 
 #### Defined in
-[packages/react/src/hooks/useWallet.ts:53](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useWallet.ts#L53)
+[packages/react/src/hooks/useWallet.ts:55](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useWallet.ts#L55)
