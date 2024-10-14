@@ -28,7 +28,7 @@ type UseProviderParams = {
 export const useProvider = (params?: UseProviderParams) => {
   const walletQuery = useWallet(params);
   return useMemo(
-    () => ({ provider: walletQuery?.wallet }),
+    () => ({ provider: walletQuery?.wallet?.provider }),
     [walletQuery.wallet],
   );
 };
