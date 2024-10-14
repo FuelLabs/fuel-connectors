@@ -29,7 +29,7 @@ export const QUERY_KEYS = {
   networks: (): QueryKey => {
     return QUERY_KEYS.base.concat('networks');
   },
-  provider: (currentAccount: string | null): QueryKey => {
+  provider: (currentAccount: string | null | undefined): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('provider');
     if (currentAccount) queryKey.push(currentAccount);
     return queryKey;
@@ -46,8 +46,13 @@ export const QUERY_KEYS = {
       queryKey.push(provider.getChainId());
     return queryKey;
   },
-  wallet: (address?: string | null, provider?: Provider | null): QueryKey => {
+  wallet: (
+    address?: string | null,
+    connectorName?: string | null,
+    provider?: Provider | null,
+  ): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('wallet');
+    if (connectorName) queryKey.push(connectorName);
     if (address) queryKey.push(address);
     if (provider?.getChainId?.() !== undefined)
       queryKey.push(provider.getChainId());

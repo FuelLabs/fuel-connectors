@@ -1,10 +1,8 @@
 import { keepPreviousData } from '@tanstack/react-query';
 import type { Provider } from 'fuels';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
-import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
-import { useAccount } from './useAccount';
-import { useNetwork } from './useNetwork';
+import { useWallet } from './useWallet';
 
 type UseProviderParams = {
   networkUrl?: string;
@@ -35,31 +33,19 @@ type UseProviderParams = {
  * ```
  */
 export const useProvider = (params?: UseProviderParams) => {
-  const { fuel } = useFuel();
-  const networkQuery = useNetwork();
-  const accountQuery = useAccount();
-  const account = accountQuery.account;
+  const walletQuery = useWallet();
 
   return useNamedQuery(
     'provider',
     {
-      queryKey: QUERY_KEYS.provider(account),
+      queryKey: QUERY_KEYS.provider(walletQuery.wallet?.address.toString()),
       queryFn: async () => {
-        if (!account) {
-          throw new Error('No account connected');
+        if (!walletQuery.wallet) {
+          throw new Error('No wallet connected');
         }
-
-        const timeout = new Promise((_, reject) =>
-          setTimeout(() => reject('Time out fetching provider'), 1000),
-        ) as Promise<Provider | null>;
-
-        const provider = fuel
-          .getWallet(account)
-          .then((wallet) => wallet.provider);
-
-        return Promise.race([provider, timeout]);
+        return walletQuery.wallet.provider || null;
       },
-      enabled: !!account,
+      enabled: !!walletQuery.wallet,
       placeholderData: keepPreviousData,
       refetchInterval: (e) => {
         if (!e.state.data || e.state.error) {
@@ -76,6 +62,6 @@ export const useProvider = (params?: UseProviderParams) => {
       ...params?.query,
     },
     undefined,
-    accountQuery.isFetching || networkQuery.isFetching,
+    walletQuery.isFetching,
   );
 };
