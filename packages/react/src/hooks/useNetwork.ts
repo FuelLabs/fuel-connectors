@@ -35,7 +35,9 @@ type UseNetwork = {
  */
 export const useNetwork = (params?: UseNetwork) => {
   const { fuel } = useFuel();
-  const { isConnected } = useIsConnected();
+  const connectedQuery = useIsConnected();
+  const isConnected = connectedQuery.isConnected;
+
   const networkQuery = useNamedQuery('network', {
     queryKey: QUERY_KEYS.currentNetwork(isConnected),
     queryFn: async () => {

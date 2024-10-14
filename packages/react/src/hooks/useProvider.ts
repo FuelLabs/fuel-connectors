@@ -34,8 +34,9 @@ type UseProviderParams = {
  */
 export const useProvider = (params?: UseProviderParams) => {
   const { fuel } = useFuel();
-  const { network: currentNetwork } = useNetwork();
+  const networkQuery = useNetwork();
   const { account } = useAccount();
+  const currentNetwork = networkQuery.network;
 
   return useNamedQuery('provider', {
     queryKey: QUERY_KEYS.provider(account, currentNetwork),
