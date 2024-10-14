@@ -17,6 +17,6 @@ const { provider } = useProvider();
 ```
 
 #### Defined in
-[packages/react/src/hooks/useProvider.ts:35](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useProvider.ts#L35)
+[packages/react/src/hooks/useProvider.ts:37](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useProvider.ts#L37)
 
 ___
