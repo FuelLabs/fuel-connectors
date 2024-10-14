@@ -23,6 +23,7 @@ import {
   APP_VERSION,
   HAS_WINDOW,
   HOST_URL,
+  IS_SAFARI,
   SESSION_ID,
   WINDOW,
 } from './constants';
@@ -47,7 +48,7 @@ export class BakoSafeConnector extends FuelConnector {
       description: APP_DESCRIPTION,
     },
   };
-  installed = true;
+  installed = !IS_SAFARI;
   connected = false;
   external = false;
 
@@ -163,12 +164,12 @@ export class BakoSafeConnector extends FuelConnector {
 
       //events controll
       // @ts-ignore
-      this.on(BakoSafeConnectorEvents.CLIENT_DISCONNECTED, () => {
+      this.once(BakoSafeConnectorEvents.CLIENT_DISCONNECTED, () => {
         this.dAppWindow?.close();
         reject(false);
       });
 
-      this.on(
+      this.once(
         //@ts-ignore
         BakoSafeConnectorEvents.AUTH_CONFIRMED,
         async ({ data }: { data: IResponseAuthConfirmed }) => {
@@ -203,31 +204,30 @@ export class BakoSafeConnector extends FuelConnector {
       this.checkWindow();
 
       //events controll
-
-      this.on(
+      this.once(
         //@ts-ignore
         BakoSafeConnectorEvents.CLIENT_DISCONNECTED,
         () => {
           this.dAppWindow?.close();
-          reject();
+          reject(new Error('Client disconnected'));
         },
       );
 
       // @ts-ignore
-      this.on(BakoSafeConnectorEvents.TX_TIMEOUT, () => {
+      this.once(BakoSafeConnectorEvents.TX_TIMEOUT, () => {
         this.dAppWindow?.close();
         reject(new Error('Transaction timeout'));
       });
 
       // @ts-ignore
-      this.on(BakoSafeConnectorEvents.CLIENT_CONNECTED, () => {
+      this.once(BakoSafeConnectorEvents.CLIENT_CONNECTED, () => {
         this.socket?.server.emit(BakoSafeConnectorEvents.TX_PENDING, {
           _transaction,
           _address,
         });
       });
 
-      this.on(
+      this.once(
         // @ts-ignore
         BakoSafeConnectorEvents.TX_CONFIRMED,
         ({ data }: { data: IResponseTxCofirmed }) => {
@@ -239,6 +239,9 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   async ping() {
+    if (IS_SAFARI) {
+      return false;
+    }
     await this.setup();
     return this.setupReady ?? false;
   }
