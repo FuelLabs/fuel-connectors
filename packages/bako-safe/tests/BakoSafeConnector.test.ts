@@ -118,7 +118,7 @@ describe('signMessage()', () => {
 
     expect(
       connector.signMessage(Address.fromRandom().toString(), 'message'),
-    ).rejects.toThrowError('Method not implemented.');
+    ).rejects.toThrowError('User rejected the request');
   });
 });
 
