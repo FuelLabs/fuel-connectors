@@ -231,7 +231,6 @@ export class BakoSafeConnector extends FuelConnector {
         // @ts-ignore
         BakoSafeConnectorEvents.TX_CONFIRMED,
         ({ data }: { data: IResponseTxCofirmed }) => {
-          this.dAppWindow?.close();
           resolve(`0x${data.id}`);
         },
       );
