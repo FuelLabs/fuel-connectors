@@ -5,6 +5,7 @@ export default defineWorkspace([
   {
     test: {
       include: ['tests/**/*.test.{ts}'],
+      exclude: ['codeInContextPlugin.test.ts'],
       name: 'node',
       environment: 'node',
     },

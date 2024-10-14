@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "docs",
-  "version": "0.28.1",
+  "version": "0.29.0",
   "description": "",
   "type": "module",
   "scripts": {
@@ -14,9 +14,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@fuel-ts/errors": "0.93.0",
-    "@fuel-ts/versions": "0.93.0",
-    "fuels": "0.94.9",
+    "@fuel-ts/errors": "0.96.0",
+    "@fuel-ts/versions": "0.96.0",
+    "fuels": "0.96.0",
     "typedoc-plugin-markdown": "^3.15.3"
   },
   "devDependencies": {

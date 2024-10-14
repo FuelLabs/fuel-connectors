@@ -93,7 +93,7 @@ describe('Burner Wallet Connector', () => {
 
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
       expect(await connector.currentAccount()).to.be.equal(
-        wallet.address.toB256(),
+        wallet.address.toString(),
       );
     });
 
@@ -117,7 +117,7 @@ describe('Burner Wallet Connector', () => {
 
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
       expect(await connector.currentAccount()).to.be.equal(
-        wallet.address.toB256(),
+        wallet.address.toString(),
       );
     });
 
@@ -144,7 +144,7 @@ describe('Burner Wallet Connector', () => {
 
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
       expect(await connector.currentAccount()).to.be.equal(
-        wallet2.address.toB256(),
+        wallet2.address.toString(),
       );
     });
 

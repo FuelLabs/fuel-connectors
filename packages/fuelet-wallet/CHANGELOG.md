@@ -1,5 +1,29 @@
 # @fuel-connectors/fuelet-wallet
 
+## 0.35.0
+
+### Minor Changes
+
+- [#387](https://github.com/FuelLabs/fuel-connectors/pull/387) [`5c3d337`](https://github.com/FuelLabs/fuel-connectors/commit/5c3d3375db00b31792a05010a026ed2b74df21db) Thanks [@arboleya](https://github.com/arboleya)! - Upgrading `fuels` to `0.96.0`
+
+## 0.34.2
+
+## 0.34.1
+
+## 0.34.0
+
+## 0.33.0
+
+## 0.32.0
+
+### Minor Changes
+
+- [#370](https://github.com/FuelLabs/fuel-connectors/pull/370) [`9a20224`](https://github.com/FuelLabs/fuel-connectors/commit/9a202245ceb8653435e963a98fc3453afd81f52b) Thanks [@petertonysmith94](https://github.com/petertonysmith94)! - Updated Fuel SDK to 0.95.0
+
+## 0.31.6
+
+## 0.31.5
+
 ## 0.31.4
 
 ## 0.31.3

@@ -48,3 +48,8 @@ export type PreparedTransaction = {
   account: string;
   transactionRequest: TransactionRequest;
 };
+
+export type SignedMessageCustomCurve = {
+  curve: string;
+  signature: string;
+};

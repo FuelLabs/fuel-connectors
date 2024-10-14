@@ -117,7 +117,7 @@ describe('signMessage()', () => {
     const connector = new BakoSafeConnector();
 
     expect(
-      connector.signMessage(Address.fromRandom().toAddress(), 'message'),
+      connector.signMessage(Address.fromRandom().toString(), 'message'),
     ).rejects.toThrowError('Method not implemented.');
   });
 });

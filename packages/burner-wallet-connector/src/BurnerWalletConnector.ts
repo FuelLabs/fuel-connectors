@@ -161,7 +161,7 @@ export class BurnerWalletConnector extends FuelConnector {
         this.storage.setItem(BURNER_WALLET_STATUS, 'connected'),
       ]);
 
-      const accountAddress = this.burnerWallet?.address.toAddress();
+      const accountAddress = this.burnerWallet?.address.toString();
 
       this.emit(this.events.connection, true);
       this.emit(this.events.currentAccount, accountAddress);
@@ -178,7 +178,7 @@ export class BurnerWalletConnector extends FuelConnector {
       throw Error('Wallet not connected');
     }
 
-    const account = this.burnerWallet.address.toAddress();
+    const account = this.burnerWallet.address.toString();
 
     if (!account) {
       return [];
@@ -235,7 +235,7 @@ export class BurnerWalletConnector extends FuelConnector {
       throw Error('Wallet not connected');
     }
 
-    return this.burnerWallet.address.toB256() || null;
+    return this.burnerWallet.address.toString() || null;
   }
 
   async addAssets(_assets: Asset[]): Promise<boolean> {

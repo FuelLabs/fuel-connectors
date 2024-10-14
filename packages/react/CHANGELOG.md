@@ -1,5 +1,41 @@
 # @fuels/react
 
+## 0.35.0
+
+### Minor Changes
+
+- [#387](https://github.com/FuelLabs/fuel-connectors/pull/387) [`5c3d337`](https://github.com/FuelLabs/fuel-connectors/commit/5c3d3375db00b31792a05010a026ed2b74df21db) Thanks [@arboleya](https://github.com/arboleya)! - Upgrading `fuels` to `0.96.0`
+
+## 0.34.2
+
+## 0.34.1
+
+## 0.34.0
+
+### Patch Changes
+
+- [#379](https://github.com/FuelLabs/fuel-connectors/pull/379) [`cd36eda`](https://github.com/FuelLabs/fuel-connectors/commit/cd36edaac17522f2061850a5eea55a5bc38077cb) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - fix: react to change in NETWORKS config passed to FuelProvider
+
+## 0.33.0
+
+## 0.32.0
+
+### Minor Changes
+
+- [#370](https://github.com/FuelLabs/fuel-connectors/pull/370) [`9a20224`](https://github.com/FuelLabs/fuel-connectors/commit/9a202245ceb8653435e963a98fc3453afd81f52b) Thanks [@petertonysmith94](https://github.com/petertonysmith94)! - Updated Fuel SDK to 0.95.0
+
+## 0.31.6
+
+## 0.31.5
+
+### Patch Changes
+
+- [#365](https://github.com/FuelLabs/fuel-connectors/pull/365) [`4eecdf3`](https://github.com/FuelLabs/fuel-connectors/commit/4eecdf3676013e21b260ac5c8596c64451bb0073) Thanks [@luizstacio](https://github.com/luizstacio)! - Fix delay start of current connector
+
+- [#359](https://github.com/FuelLabs/fuel-connectors/pull/359) [`64c291f`](https://github.com/FuelLabs/fuel-connectors/commit/64c291ffbe887b3a6b6328ef546a8203b13f7e44) Thanks [@helciofranco](https://github.com/helciofranco)! - Mark Burner Wallet as Fuel Native Wallet.
+
+- [#366](https://github.com/FuelLabs/fuel-connectors/pull/366) [`11f468c`](https://github.com/FuelLabs/fuel-connectors/commit/11f468c6ac4ef8166ea8911c4fb3465e3fe21cf6) Thanks [@luizstacio](https://github.com/luizstacio)! - Fix FUEL duplicated fuel instances
+
 ## 0.31.4
 
 ## 0.31.3

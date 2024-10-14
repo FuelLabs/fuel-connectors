@@ -39,6 +39,7 @@ const wagmiConfig = createConfig({
     [mainnet.id]: http(),
     [sepolia.id]: http(),
   },
+  syncConnectedChain: true,
   connectors: [
     injected({ shimDisconnect: false }),
     walletConnect({

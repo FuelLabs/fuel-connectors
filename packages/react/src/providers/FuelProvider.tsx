@@ -16,9 +16,9 @@ export { useConnectUI } from './FuelUIProvider';
 type FuelProviderProps = {
   ui?: boolean;
   uiConfig?: UIConfig;
-  fuelConfig?: FuelConfig;
+  fuelConfig: FuelConfig;
   networks?: Array<NetworkConfig>;
-} & Omit<FuelUIProviderProps, 'uiConfig'>;
+} & Pick<FuelUIProviderProps, 'theme' | 'children'>;
 
 export function FuelProvider({
   theme: _theme,
