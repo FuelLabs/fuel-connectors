@@ -10,6 +10,7 @@ import Balance from './components/balance';
 import Counter from './components/counter';
 import Transfer from './components/transfer';
 
+import Sign from './components/sign';
 import { useWallet } from './hooks/useWallet';
 
 export default function App() {
@@ -127,6 +128,7 @@ export default function App() {
                         isSigning={isSigning}
                         setIsSigning={setIsSigning}
                       />
+                      <Sign isSigning={isSigning} setIsSigning={setIsSigning} />
                     </section>
                   )}
                 </div>
