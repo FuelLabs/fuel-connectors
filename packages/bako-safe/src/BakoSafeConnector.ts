@@ -330,7 +330,7 @@ export class BakoSafeConnector extends FuelConnector {
         //@ts-ignore
         BakoSafeConnectorEvents.SIGN_CONFIRMED,
         (data: { data: { signedMessage: string }; from: string }) => {
-          const signedMessage = data.data.signedMessage;
+          const signedMessage = data?.data?.signedMessage || '';
 
           this.dAppWindow?.close();
           resolve(signedMessage);
