@@ -1,7 +1,6 @@
 import { type Account, Address } from 'fuels';
 
 import { keepPreviousData } from '@tanstack/react-query';
-import { useAccount } from 'src/hooks/useAccount';
 import {
   type DefinedNamedUseQueryResult,
   type UseNamedQueryParams,
@@ -9,6 +8,7 @@ import {
 } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
+import { useAccount } from './useAccount';
 import { useProvider } from './useProvider';
 
 type UseWalletParamsDeprecated = string | null;

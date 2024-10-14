@@ -1,9 +1,9 @@
 import { keepPreviousData } from '@tanstack/react-query';
 import { Provider } from 'fuels';
-import { useAccount } from 'src/hooks/useAccount';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
+import { useAccount } from './useAccount';
 import { useNetwork } from './useNetwork';
 
 type UseProviderParams = {
