@@ -37,55 +37,61 @@ type UseProviderParams = {
 export const useProvider = (params?: UseProviderParams) => {
   const { fuel } = useFuel();
   const networkQuery = useNetwork();
-  const { account } = useAccount();
+  const accountQuery = useAccount();
+  const account = accountQuery.account;
   const currentNetwork = networkQuery.network;
   const networkUrl = params?.networkUrl || currentNetwork?.url;
   const chainId = params?.chainId || currentNetwork?.chainId;
 
-  return useNamedQuery('provider', {
-    queryKey: QUERY_KEYS.provider(account, networkUrl, chainId),
-    queryFn: async () => {
-      async function fetchProvider() {
-        if (!networkUrl) {
-          console.warn(
-            'Please provide a networks with a RPC url configuration to your FuelProvider getProvider will be removed.',
-          );
+  return useNamedQuery(
+    'provider',
+    {
+      queryKey: QUERY_KEYS.provider(account, networkUrl, chainId),
+      queryFn: async () => {
+        async function fetchProvider() {
+          if (!networkUrl) {
+            console.warn(
+              'Please provide a networks with a RPC url configuration to your FuelProvider getProvider will be removed.',
+            );
+          }
+          if (account) {
+            const provider = await fuel.getWallet(account);
+            return provider.provider || null;
+          }
+          if (!networkUrl) {
+            return fuel.getProvider();
+          }
+          const provider = await Provider.create(networkUrl);
+          if (chainId && provider.getChainId() !== chainId) {
+            throw new Error(
+              `The provider's chainId (${provider.getChainId()}) does not match the current network's chainId (${chainId})`,
+            );
+          }
+          return provider;
         }
-        if (account) {
-          const provider = await fuel.getWallet(account);
-          return provider.provider || null;
-        }
-        if (!networkUrl) {
-          return fuel.getProvider();
-        }
-        const provider = await Provider.create(networkUrl);
-        if (chainId && provider.getChainId() !== chainId) {
-          throw new Error(
-            `The provider's chainId (${provider.getChainId()}) does not match the current network's chainId (${chainId})`,
-          );
-        }
-        return provider;
-      }
 
-      const timeout = new Promise((_, reject) =>
-        setTimeout(() => reject('Time out fetching provider'), 1000),
-      ) as Promise<Provider | null>;
+        const timeout = new Promise((_, reject) =>
+          setTimeout(() => reject('Time out fetching provider'), 1000),
+        ) as Promise<Provider | null>;
 
-      return Promise.race([fetchProvider(), timeout]);
-    },
-    placeholderData: keepPreviousData,
-    refetchInterval: (e) => {
-      if (!e.state.data || e.state.error) {
-        return 500;
-      }
-      return false;
-    },
-    retry: (attempts) => {
-      if (attempts > 10) {
+        return Promise.race([fetchProvider(), timeout]);
+      },
+      placeholderData: keepPreviousData,
+      refetchInterval: (e) => {
+        if (!e.state.data || e.state.error) {
+          return 500;
+        }
         return false;
-      }
-      return true;
+      },
+      retry: (attempts) => {
+        if (attempts > 10) {
+          return false;
+        }
+        return true;
+      },
+      ...params?.query,
     },
-    ...params?.query,
-  });
+    undefined,
+    accountQuery.isFetching || networkQuery.isFetching,
+  );
 };

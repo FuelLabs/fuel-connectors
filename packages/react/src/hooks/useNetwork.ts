@@ -38,36 +38,41 @@ export const useNetwork = (params?: UseNetwork) => {
   const connectedQuery = useIsConnected();
   const isConnected = connectedQuery.isConnected;
 
-  const networkQuery = useNamedQuery('network', {
-    queryKey: QUERY_KEYS.currentNetwork(isConnected),
-    queryFn: async () => {
-      const timeout = new Promise((_, reject) =>
-        setTimeout(() => reject('Time out fetching network'), TIMEOUT),
-      );
-      const current = await fuel.currentNetwork();
-      if (!current && isConnected) {
-        throw new Error('Network not found');
-      }
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      return Promise.race([current, timeout as any]);
-    },
-    placeholderData: null,
-    refetchOnMount: true,
-    refetchInterval: (e) => {
-      if (!e.state.data || e.state.error) {
-        return TIMEOUT;
-      }
-      return false;
-    },
-    retry: (attempts) => {
-      if (attempts > 10) {
+  const networkQuery = useNamedQuery(
+    'network',
+    {
+      queryKey: QUERY_KEYS.currentNetwork(isConnected),
+      queryFn: async () => {
+        const timeout = new Promise((_, reject) =>
+          setTimeout(() => reject('Time out fetching network'), TIMEOUT),
+        );
+        const current = await fuel.currentNetwork();
+        if (!current && isConnected) {
+          throw new Error('Network not found');
+        }
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        return Promise.race([current, timeout as any]);
+      },
+      placeholderData: null,
+      refetchOnMount: true,
+      refetchInterval: (e) => {
+        if (!e.state.data || e.state.error) {
+          return TIMEOUT;
+        }
         return false;
-      }
-      return true;
+      },
+      retry: (attempts) => {
+        if (attempts > 10) {
+          return false;
+        }
+        return true;
+      },
+      enabled: isConnected,
+      ...params?.query,
     },
-    enabled: isConnected,
-    ...params?.query,
-  });
+    undefined,
+    connectedQuery.isFetching,
+  );
 
   useEffect(() => {
     const sub = fuel.on(FuelConnectorEventTypes.currentNetwork, () => {
