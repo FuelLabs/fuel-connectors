@@ -316,7 +316,7 @@ export class BakoSafeConnector extends FuelConnector {
       this.dAppWindow?.open(`dapp/sign/${_message}`, reject);
       this.checkWindow();
 
-      //events controll
+      // events control
       this.on(
         //@ts-ignore
         BakoSafeConnectorEvents.CLIENT_DISCONNECTED,
