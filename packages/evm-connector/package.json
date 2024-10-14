@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/evm-connector",
-  "version": "0.8.1",
+  "version": "0.35.0",
   "private": true,
   "type": "module",
   "files": ["dist"],
@@ -14,15 +14,13 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build:forc": "pnpm fuels-forc build --release --path ./predicate",
-    "build:resources": "pnpm run build:forc && tsx ./scripts/generatePredicateResources.ts",
     "build": "tsup --dts-only",
-    "build:watch": "pnpm run build:resources && tsup --watch --dts-only",
+    "build:watch": "tsup --watch --dts-only",
     "ts:check": "tsc --noEmit",
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.88.1"
+    "fuels": ">=0.94.8"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -30,19 +28,20 @@
     "memoizee": "0.4.15"
   },
   "devDependencies": {
-    "@fuel-ts/account": "0.88.1",
-    "@fuel-ts/forc": "0.88.1",
-    "@fuel-ts/fuel-core": "0.88.1",
+    "@fuel-connectors/common": "workspace:*",
+    "@fuel-connectors/evm-predicates": "workspace:*",
     "@types/memoizee": "0.4.11",
-    "fuels": "0.88.1",
+    "fuels": "0.96.0",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
     "tsup": "8.0.2",
     "tsx": "4.9.3",
     "typescript": "5.4.5",
+    "viem": "2.20.1",
     "vite": "5.2.11",
     "vite-plugin-dts": "3.9.1",
-    "vitest": "1.6.0"
+    "vite-tsconfig-paths": "4.3.2",
+    "vitest": "2.0.2"
   }
 }

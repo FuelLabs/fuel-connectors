@@ -4,10 +4,17 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - release
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
+env:
+  FORC_VERSION: 0.63.3
+  CORE_VERSION: 0.35.0
 
 jobs:
   tests-vitest:
@@ -20,16 +27,23 @@ jobs:
         uses: FuelLabs/github-actions/setups/node@master
         with:
           node-version: 20.11.0
-          pnpm-version: 8.15.7
+          pnpm-version: 9.5.0
       
       - uses: FuelLabs/github-actions/setups/docker@master
         with:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install Fuel toolchain
+        uses: FuelLabs/action-fuel-toolchain@v0.6.0
+        with:
+          name: my-toolchain
+          components: forc@${{ env.FORC_VERSION }}, fuel-core@${{ env.CORE_VERSION }}
+
       # Unit tests running with Vitest
       - name: Find PR number
         uses: jwalton/gh-find-current-pr@v1
+        if: ${{ github.event_name == 'pull_request' }}
         id: findPr
 
       - name: Run Vitest
@@ -62,4 +76,3 @@ jobs:
           working-directory: ./packages/fuelet-wallet
           json-summary-path: ./coverage/coverage-summary.json
           json-final-path: ./coverage/coverage-final.json
-

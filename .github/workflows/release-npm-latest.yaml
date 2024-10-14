@@ -22,11 +22,11 @@ jobs:
       - uses: FuelLabs/github-actions/setups/node@master
         with:
           node-version: 20.11.0
-          pnpm-version: 8.15.7
+          pnpm-version: 9.5.0
       - uses: FuelLabs/github-actions/setups/npm@master
         with:
           npm-token: ${{ secrets.NPM_TOKEN }}
-      
+
       - name: Collect current version
         run: |
           echo "BUILD_VERSION=$(pnpm -s packages:version)" >> $GITHUB_ENV
@@ -34,3 +34,4 @@ jobs:
       - name: Change tag to latest
         run: |
           npm dist-tag add @fuels/connectors@${{ env.BUILD_VERSION }} latest
+          npm dist-tag add @fuels/react@${{ env.BUILD_VERSION }} latest

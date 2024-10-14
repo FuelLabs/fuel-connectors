@@ -3,20 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3001",
+    "dev": "next dev -p 3002",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
     "@fuels/connectors": "workspace:*",
-    "@fuels/react": "0.20.0",
+    "@fuels/react": "workspace:*",
     "@tanstack/react-query": "5.35.1",
-    "@wagmi/connectors": "4.3.3",
-    "fuels": "0.88.1",
+    "connectkit": "1.8.2",
+    "fuels": "0.96.0",
     "next": "14.2.3",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "wagmi": "2.8.1"
+    "wagmi": "2.12.7"
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "5.35.1",

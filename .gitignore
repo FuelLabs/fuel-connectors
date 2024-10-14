@@ -6,6 +6,7 @@ node_modules
 
 # Build Outputs
 dist
+.next
 
 # Coverage
 coverage
@@ -17,3 +18,17 @@ yarn-error.log*
 
 # Misc
 .DS_Store
+.zed
+
+# Sway
+**/out/release
+
+# Test
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/e2e-tests/playwright-report
+.env
+/e2e-tests/test-results
+**/*.tgz
