@@ -1,5 +1,7 @@
 import { type Account, Address } from 'fuels';
 
+import { keepPreviousData } from '@tanstack/react-query';
+import { useAccount } from 'src/hooks/useAccount';
 import {
   type DefinedNamedUseQueryResult,
   type UseNamedQueryParams,
@@ -58,27 +60,29 @@ export function useWallet(
   params?: UseWalletParamsDeprecated | UseWalletParams,
 ): DefinedNamedUseQueryResult<'wallet', Account | null, Error> {
   const { fuel } = useFuel();
-  const { provider } = useProvider();
+  const providerQuery = useProvider();
+  const provider = providerQuery.provider;
+  const accountData = useAccount();
   const _params: UseWalletParams =
     typeof params === 'string' ? { account: params } : params ?? {};
+  const account = _params.account || accountData?.account;
 
   return useNamedQuery('wallet', {
-    queryKey: QUERY_KEYS.wallet(_params.account, provider),
+    queryKey: QUERY_KEYS.wallet(account, provider),
     queryFn: async () => {
       try {
-        if (!provider) return null;
-        const accountAddress =
-          _params.account || (await fuel.currentAccount()) || '';
+        if (!provider || !account) return null;
         // Check if the address is valid
-        await Address.fromString(accountAddress);
-        const wallet = await fuel.getWallet(accountAddress);
+        await Address.fromString(account);
+        const wallet = await fuel.getWallet(account);
         wallet.connect(provider);
         return wallet || null;
       } catch (_error: unknown) {
         return null;
       }
     },
-    placeholderData: null,
+    enabled: !!account && !!provider,
+    placeholderData: keepPreviousData,
     ..._params.query,
   });
 }
