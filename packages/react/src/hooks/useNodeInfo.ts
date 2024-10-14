@@ -4,7 +4,7 @@ import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { QUERY_KEYS } from '../utils';
 
 import type { NodeInfo } from 'fuels';
-import { useProvider } from './useProvider';
+import { useNetworkProvider } from './useNetworkProvider';
 
 type UseNodeInfoParams = {
   /**
@@ -45,8 +45,8 @@ export const useNodeInfo = ({
   version = '0.0.0',
   query: queryParams,
 }: UseNodeInfoParams = {}) => {
-  const { provider } = useProvider();
-
+  const networkProviderQuery = useNetworkProvider();
+  const provider = networkProviderQuery.networkProvider;
   const query = useNamedQuery('nodeInfo', {
     queryKey: QUERY_KEYS.nodeInfo(provider?.url),
     queryFn: () => {

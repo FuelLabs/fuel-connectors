@@ -3,7 +3,7 @@
 import type { ChainInfo } from 'fuels';
 
 import { useMemo } from 'react';
-import { useProvider } from './useProvider';
+import { useNetworkProvider } from './useNetworkProvider';
 
 // @TODO: Add a link to fuel connector's documentation.
 /**
@@ -20,8 +20,8 @@ import { useProvider } from './useProvider';
  * ```
  */
 export const useChain = () => {
-  const providerData = useProvider();
-  const provider = providerData?.provider;
+  const providerData = useNetworkProvider();
+  const provider = providerData?.networkProvider;
 
   return useMemo(() => {
     try {
