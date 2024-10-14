@@ -1,3 +1,6 @@
+import { keepPreviousData } from '@tanstack/react-query';
+import { FuelConnectorEventTypes } from 'fuels';
+import { useEffect } from 'react';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
@@ -28,8 +31,8 @@ export const useAccount = (
 ) => {
   const { fuel } = useFuel();
 
-  return useNamedQuery('account', {
-    queryKey: QUERY_KEYS.account(),
+  const accountQuery = useNamedQuery('account', {
+    queryKey: QUERY_KEYS.account(fuel.name),
     queryFn: async () => {
       try {
         const currentFuelAccount = await fuel?.currentAccount();
@@ -39,6 +42,18 @@ export const useAccount = (
       }
     },
     placeholderData: null,
+    retry: 5,
     ...params?.query,
   });
+
+  useEffect(() => {
+    const sub = fuel.on(FuelConnectorEventTypes.currentAccount, () => {
+      accountQuery.refetch();
+    });
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [fuel, accountQuery.refetch]);
+
+  return accountQuery;
 };

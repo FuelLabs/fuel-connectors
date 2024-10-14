@@ -4,8 +4,8 @@ import type { NetworkConfig } from '../types';
 
 export const QUERY_KEYS = {
   base: ['fuel'] as QueryKey,
-  account: (): QueryKey => {
-    return QUERY_KEYS.base.concat('account');
+  account: (connectorName: string | null | undefined): QueryKey => {
+    return QUERY_KEYS.base.concat('account', connectorName);
   },
   accounts: (): QueryKey => {
     return QUERY_KEYS.base.concat('accounts');
