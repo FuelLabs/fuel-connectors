@@ -29,15 +29,13 @@ export const QUERY_KEYS = {
   networks: (): QueryKey => {
     return QUERY_KEYS.base.concat('networks');
   },
-  provider: (
-    currentAccount: string | null | undefined,
+  networkProvider: (
     networkUrl: string | undefined | null,
     chainId: number | undefined | null,
   ): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('provider');
     if (networkUrl) queryKey.push(networkUrl);
     if (chainId) queryKey.push(chainId);
-    if (currentAccount) queryKey.push(currentAccount);
     return queryKey;
   },
   balance: (

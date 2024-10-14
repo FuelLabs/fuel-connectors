@@ -1,10 +1,8 @@
 import { keepPreviousData } from '@tanstack/react-query';
 import { Provider } from 'fuels';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
-import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
 import { useNetwork } from './useNetwork';
-import { useWallet } from './useWallet';
 
 type UseProviderParams = {
   networkUrl?: string;
@@ -35,9 +33,7 @@ type UseProviderParams = {
  * ```
  */
 export const useProvider = (params?: UseProviderParams) => {
-  const { fuel } = useFuel();
   const networkQuery = useNetwork();
-  const walletQuery = useWallet();
   const currentNetwork = networkQuery.network;
   const networkUrl = params?.networkUrl || currentNetwork?.url;
   const chainId = params?.chainId || currentNetwork?.chainId;
@@ -45,23 +41,13 @@ export const useProvider = (params?: UseProviderParams) => {
   return useNamedQuery(
     'provider',
     {
-      queryKey: QUERY_KEYS.provider(
-        walletQuery.wallet?.address.toString(),
-        networkUrl,
-        chainId,
-      ),
+      queryKey: QUERY_KEYS.networkProvider(networkUrl, chainId),
       queryFn: async () => {
         async function fetchProvider() {
           if (!networkUrl) {
-            console.warn(
+            throw new Error(
               'Please provide a networks with a RPC url configuration to your FuelProvider getProvider will be removed.',
             );
-          }
-          if (walletQuery.wallet) {
-            return walletQuery.wallet.provider || null;
-          }
-          if (!networkUrl) {
-            return fuel.getProvider();
           }
           const provider = await Provider.create(networkUrl);
           if (chainId && provider.getChainId() !== chainId) {
@@ -94,6 +80,6 @@ export const useProvider = (params?: UseProviderParams) => {
       ...params?.query,
     },
     undefined,
-    walletQuery.isFetching || networkQuery.isFetching,
+    networkQuery.isFetching,
   );
 };
