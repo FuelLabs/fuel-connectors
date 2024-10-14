@@ -31,13 +31,12 @@ export const QUERY_KEYS = {
   },
   provider: (
     currentAccount: string | null,
-    currentNetwork: Network | null,
+    networkUrl: string | undefined | null,
+    chainId: number | undefined | null,
   ): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('provider');
-    if (currentNetwork) {
-      queryKey.push(currentNetwork.chainId);
-      queryKey.push(currentNetwork.url);
-    }
+    if (networkUrl) queryKey.push(networkUrl);
+    if (chainId) queryKey.push(chainId);
     if (currentAccount) queryKey.push(currentAccount);
     return queryKey;
   },

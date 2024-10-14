@@ -15,7 +15,7 @@ export function FuelEventsWatcher() {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.wallet() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.balance() });
     queryClient.invalidateQueries({
-      queryKey: QUERY_KEYS.provider(null, null),
+      queryKey: QUERY_KEYS.provider(null, null, null),
     });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.nodeInfo() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.accounts() });
@@ -49,7 +49,7 @@ export function FuelEventsWatcher() {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.wallet() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.balance() });
     queryClient.invalidateQueries({
-      queryKey: QUERY_KEYS.provider(null, null),
+      queryKey: QUERY_KEYS.provider(null, null, null),
     });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.nodeInfo() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.accounts() });
@@ -65,7 +65,7 @@ export function FuelEventsWatcher() {
     });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.networks() });
     queryClient.invalidateQueries({
-      queryKey: QUERY_KEYS.provider(null, null),
+      queryKey: QUERY_KEYS.provider(null, null, null),
     });
     queryClient.invalidateQueries({
       queryKey: QUERY_KEYS.transactionReceipts(),

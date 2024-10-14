@@ -7,6 +7,8 @@ import { useAccount } from './useAccount';
 import { useNetwork } from './useNetwork';
 
 type UseProviderParams = {
+  networkUrl?: string;
+  chainId?: number;
   /**
    * Additional query parameters to customize the behavior of `useNamedQuery`.
    */
@@ -37,12 +39,14 @@ export const useProvider = (params?: UseProviderParams) => {
   const networkQuery = useNetwork();
   const { account } = useAccount();
   const currentNetwork = networkQuery.network;
+  const networkUrl = params?.networkUrl || currentNetwork?.url;
+  const chainId = params?.chainId || currentNetwork?.chainId;
 
   return useNamedQuery('provider', {
-    queryKey: QUERY_KEYS.provider(account, currentNetwork),
+    queryKey: QUERY_KEYS.provider(account, networkUrl, chainId),
     queryFn: async () => {
       async function fetchProvider() {
-        if (!currentNetwork?.url) {
+        if (!networkUrl) {
           console.warn(
             'Please provide a networks with a RPC url configuration to your FuelProvider getProvider will be removed.',
           );
@@ -51,15 +55,13 @@ export const useProvider = (params?: UseProviderParams) => {
           const provider = await fuel.getWallet(account);
           return provider.provider || null;
         }
-        if (!currentNetwork?.url) {
+        if (!networkUrl) {
           return fuel.getProvider();
         }
-        const provider = await Provider.create(currentNetwork.url);
-        if (provider.getChainId() !== currentNetwork.chainId) {
+        const provider = await Provider.create(networkUrl);
+        if (chainId && provider.getChainId() !== chainId) {
           throw new Error(
-            `The provider's chainId (${provider.getChainId()}) does not match the current network's chainId (${
-              currentNetwork.chainId
-            })`,
+            `The provider's chainId (${provider.getChainId()}) does not match the current network's chainId (${chainId})`,
           );
         }
         return provider;
