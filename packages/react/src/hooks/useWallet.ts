@@ -7,7 +7,8 @@ import {
 } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
-import { useProvider } from './useProvider';
+import { useAccount } from './useAccount';
+import { useNetwork } from './useNetwork';
 
 type UseWalletParamsDeprecated = string | null;
 
@@ -56,29 +57,37 @@ export function useWallet(
 
 export function useWallet(
   params?: UseWalletParamsDeprecated | UseWalletParams,
-): DefinedNamedUseQueryResult<'wallet', Account | null, Error> {
+) {
   const { fuel } = useFuel();
-  const { provider } = useProvider();
+  const { network } = useNetwork();
+  const { account } = useAccount();
+
   const _params: UseWalletParams =
     typeof params === 'string' ? { account: params } : params ?? {};
 
-  return useNamedQuery('wallet', {
-    queryKey: QUERY_KEYS.wallet(_params.account, provider),
+  // console.log(`asd account`, account);
+  // console.log(`asd network?.url`, network?.url);
+
+  const queried = useNamedQuery('wallet', {
+    queryKey: QUERY_KEYS.wallet(account, network?.url),
     queryFn: async () => {
       try {
-        if (!provider) return null;
-        const accountAddress =
-          _params.account || (await fuel.currentAccount()) || '';
-        // Check if the address is valid
-        await Address.fromString(accountAddress);
-        const wallet = await fuel.getWallet(accountAddress);
-        wallet.connect(provider);
-        return wallet || null;
+        console.log('asd start querying useWallet', account, network?.url);
+        if (!account || !network?.url) return null;
+        await Address.fromString(account);
+        const wallet = await fuel.getWallet(account);
+        console.log('asd completed querying useWallet', wallet);
+        return wallet;
       } catch (_error: unknown) {
         return null;
       }
     },
+    enabled: !!account && !!network?.url,
     placeholderData: null,
     ..._params.query,
   });
+
+  // console.log(`asd queried.wallet`, queried.wallet);
+
+  return queried;
 }

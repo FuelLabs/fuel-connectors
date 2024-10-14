@@ -34,10 +34,10 @@ export const useWallet = () => {
     refetch: refetchBalance,
   } = useBalance({
     account,
-    query: {
-      refetchInterval: 5000,
-      refetchOnWindowFocus: true,
-    },
+    // query: {
+    //   refetchInterval: 5000,
+    //   refetchOnWindowFocus: true,
+    // },
   });
   const { wallet } = useFuelWallet({ account });
   const isLoading = [isLoadingAccount, isLoadingBalance].some(Boolean);
