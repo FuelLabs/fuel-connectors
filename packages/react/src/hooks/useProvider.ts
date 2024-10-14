@@ -1,7 +1,10 @@
+import { keepPreviousData } from '@tanstack/react-query';
 import { Provider } from 'fuels';
+import { useAccount } from 'src/hooks/useAccount';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
+import { useNetwork } from './useNetwork';
 
 type UseProviderParams = {
   /**
@@ -30,32 +33,56 @@ type UseProviderParams = {
  * ```
  */
 export const useProvider = (params?: UseProviderParams) => {
-  const { fuel, networks } = useFuel();
+  const { fuel } = useFuel();
+  const { network: currentNetwork } = useNetwork();
+  const { account } = useAccount();
+
   return useNamedQuery('provider', {
-    queryKey: QUERY_KEYS.provider(),
+    queryKey: QUERY_KEYS.provider(account, currentNetwork),
     queryFn: async () => {
-      const currentNetwork = await fuel.currentNetwork();
-      const network = networks.find(
-        (n) => n.chainId === currentNetwork.chainId,
-      );
-      if (!network?.url) {
-        const provider = await fuel.getProvider();
-        console.warn(
-          'Please provide a networks with a RPC url configuration to your FuelProvider getProvider will be removed.',
-        );
-        return provider || null;
+      async function fetchProvider() {
+        if (!currentNetwork?.url) {
+          console.warn(
+            'Please provide a networks with a RPC url configuration to your FuelProvider getProvider will be removed.',
+          );
+        }
+        if (account) {
+          const provider = await fuel.getWallet(account);
+          return provider.provider || null;
+        }
+        if (!currentNetwork?.url) {
+          return fuel.getProvider();
+        }
+        const provider = await Provider.create(currentNetwork.url);
+        if (provider.getChainId() !== currentNetwork.chainId) {
+          throw new Error(
+            `The provider's chainId (${provider.getChainId()}) does not match the current network's chainId (${
+              currentNetwork.chainId
+            })`,
+          );
+        }
+        return provider;
       }
-      const provider = await Provider.create(network.url);
-      if (provider.getChainId() !== currentNetwork.chainId) {
-        throw new Error(
-          `The provider's chainId (${provider.getChainId()}) does not match the current network's chainId (${
-            currentNetwork.chainId
-          })`,
-        );
-      }
-      return provider;
+
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject('Time out fetching provider'), 1000),
+      ) as Promise<Provider | null>;
+
+      return Promise.race([fetchProvider(), timeout]);
     },
-    placeholderData: null,
+    placeholderData: keepPreviousData,
+    refetchInterval: (e) => {
+      if (!e.state.data || e.state.error) {
+        return 500;
+      }
+      return false;
+    },
+    retry: (attempts) => {
+      if (attempts > 10) {
+        return false;
+      }
+      return true;
+    },
     ...params?.query,
   });
 };
