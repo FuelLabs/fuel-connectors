@@ -1,6 +1,7 @@
-import { type Account, Address } from 'fuels';
+import { type Account, Address, FuelConnectorEventTypes } from 'fuels';
 
 import { keepPreviousData } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import {
   type DefinedNamedUseQueryResult,
   type UseNamedQueryParams,
@@ -68,7 +69,7 @@ export function useWallet(
   const account = _params.account || accountData?.account;
 
   return useNamedQuery('wallet', {
-    queryKey: QUERY_KEYS.wallet(account, provider),
+    queryKey: QUERY_KEYS.wallet(account, fuel.name, provider),
     queryFn: async () => {
       try {
         if (!provider || !account) return null;
