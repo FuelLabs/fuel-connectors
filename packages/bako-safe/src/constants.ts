@@ -19,3 +19,6 @@ export const WINDOW: any = HAS_WINDOW ? window : {};
 
 //storage
 export const SESSION_ID = 'sessionId';
+export const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(
+  WINDOW.navigator?.userAgent,
+);

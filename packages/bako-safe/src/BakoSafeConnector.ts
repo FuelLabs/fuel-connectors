@@ -23,6 +23,7 @@ import {
   APP_VERSION,
   HAS_WINDOW,
   HOST_URL,
+  IS_SAFARI,
   SESSION_ID,
   WINDOW,
 } from './constants';
@@ -47,7 +48,7 @@ export class BakoSafeConnector extends FuelConnector {
       description: APP_DESCRIPTION,
     },
   };
-  installed = true;
+  installed = !IS_SAFARI;
   connected = false;
   external = false;
 
@@ -231,7 +232,7 @@ export class BakoSafeConnector extends FuelConnector {
         // @ts-ignore
         BakoSafeConnectorEvents.TX_CONFIRMED,
         ({ data }: { data: IResponseTxCofirmed }) => {
-          this.dAppWindow?.close();
+          // this.dAppWindow?.close(); -> will closed on bako ui, after tx redirect
           resolve(`0x${data.id}`);
         },
       );
@@ -239,6 +240,9 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   async ping() {
+    if (IS_SAFARI) {
+      return false;
+    }
     await this.setup();
     return this.setupReady ?? false;
   }
@@ -307,7 +311,32 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   async signMessage(_address: string, _message: string): Promise<string> {
-    throw new Error('Method not implemented.');
+    return new Promise<string>((resolve, reject) => {
+      // window controll
+      this.dAppWindow?.open(`dapp/sign/${_message}`, reject);
+      this.checkWindow();
+
+      //events controll
+      this.on(
+        //@ts-ignore
+        BakoSafeConnectorEvents.CLIENT_DISCONNECTED,
+        () => {
+          this.dAppWindow?.close();
+          reject();
+        },
+      );
+
+      this.on(
+        //@ts-ignore
+        BakoSafeConnectorEvents.SIGN_CONFIRMED,
+        (data: { data: { signedMessage: string }; from: string }) => {
+          const signedMessage = data.data.signedMessage;
+
+          this.dAppWindow?.close();
+          resolve(signedMessage);
+        },
+      );
+    });
   }
 
   async addAssets(_assets: Asset[]): Promise<boolean> {

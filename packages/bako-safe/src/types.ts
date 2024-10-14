@@ -17,6 +17,9 @@ export enum BakoSafeConnectorEvents {
 
   //auth
   AUTH_CONFIRMED = '[AUTH_CONFIRMED]',
+
+  //sign
+  SIGN_CONFIRMED = '[SIGN_CONFIRMED]',
 }
 
 export enum BakoSafeUsernames {
