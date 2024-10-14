@@ -11,7 +11,7 @@ type UseProviderParams = {
    * Additional query parameters to customize the behavior of `useNamedQuery`.
    */
   query?: UseNamedQueryParams<
-    'provider',
+    'networkProvider',
     Provider | null,
     Error,
     Provider | null
@@ -32,14 +32,14 @@ type UseProviderParams = {
  * const { provider } = useProvider();
  * ```
  */
-export const useProvider = (params?: UseProviderParams) => {
+export const useNetworkProvider = (params?: UseProviderParams) => {
   const networkQuery = useNetwork();
   const currentNetwork = networkQuery.network;
   const networkUrl = params?.networkUrl || currentNetwork?.url;
   const chainId = params?.chainId || currentNetwork?.chainId;
 
   return useNamedQuery(
-    'provider',
+    'networkProvider',
     {
       queryKey: QUERY_KEYS.networkProvider(networkUrl, chainId),
       queryFn: async () => {
