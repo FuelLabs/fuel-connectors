@@ -4,7 +4,7 @@ import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { QUERY_KEYS } from '../utils';
 import { useNetwork } from './useNetwork';
 
-type UseProviderParams = {
+type UseNetworkProviderParams = {
   networkUrl?: string;
   chainId?: number;
   /**
@@ -32,7 +32,7 @@ type UseProviderParams = {
  * const { networkProvider } = useNetworkProvider();
  * ```
  */
-export const useNetworkProvider = (params?: UseProviderParams) => {
+export const useNetworkProvider = (params?: UseNetworkProviderParams) => {
   const networkQuery = useNetwork();
   const currentNetwork = networkQuery.network;
   const networkUrl = params?.networkUrl || currentNetwork?.url;
