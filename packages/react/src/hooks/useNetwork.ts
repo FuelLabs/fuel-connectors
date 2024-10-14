@@ -38,7 +38,7 @@ export const useNetwork = (params?: UseNetwork) => {
   const connectedQuery = useIsConnected();
   const isConnected = connectedQuery.isConnected;
 
-  const networkQuery = useNamedQuery(
+  return useNamedQuery(
     'network',
     {
       queryKey: QUERY_KEYS.currentNetwork(isConnected),
@@ -73,15 +73,4 @@ export const useNetwork = (params?: UseNetwork) => {
     undefined,
     connectedQuery.isFetching,
   );
-
-  useEffect(() => {
-    const sub = fuel.on(FuelConnectorEventTypes.currentNetwork, () => {
-      networkQuery.refetch();
-    });
-    return () => {
-      sub.unsubscribe();
-    };
-  }, [fuel, networkQuery.refetch]);
-
-  return networkQuery;
 };

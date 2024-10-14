@@ -40,7 +40,7 @@ export const useCurrentConnector = <
   query,
 }: UseCurrentConnectorParams<TName, TData> = {}) => {
   const { fuel } = useFuel();
-  const connectorQuery = useNamedQuery('currentConnector', {
+  return useNamedQuery('currentConnector', {
     queryKey: QUERY_KEYS.currentConnector(fuel.name),
     queryFn: async () => {
       const isConnected = await fuel.isConnected();
@@ -50,16 +50,4 @@ export const useCurrentConnector = <
     placeholderData: null,
     ...query,
   });
-
-  useEffect(() => {
-    const onChangeConnector = () => {
-      connectorQuery.refetch();
-    };
-    fuel.on(FuelConnectorEventTypes.currentConnector, onChangeConnector);
-    return () => {
-      fuel.off(FuelConnectorEventTypes.currentConnector, onChangeConnector);
-    };
-  }, [connectorQuery.refetch, fuel]);
-
-  return connectorQuery;
 };

@@ -31,7 +31,7 @@ export const useAccount = (
 ) => {
   const { fuel } = useFuel();
 
-  const accountQuery = useNamedQuery('account', {
+  return useNamedQuery('account', {
     queryKey: QUERY_KEYS.account(fuel.name),
     queryFn: async () => {
       try {
@@ -45,15 +45,4 @@ export const useAccount = (
     retry: 5,
     ...params?.query,
   });
-
-  useEffect(() => {
-    const sub = fuel.on(FuelConnectorEventTypes.currentAccount, () => {
-      accountQuery.refetch();
-    });
-    return () => {
-      sub.unsubscribe();
-    };
-  }, [fuel, accountQuery.refetch]);
-
-  return accountQuery;
 };
