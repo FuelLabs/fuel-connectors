@@ -56,7 +56,6 @@ export function FuelEventsWatcher() {
     queryClient.invalidateQueries({
       queryKey: QUERY_KEYS.transactionReceipts(),
     });
-    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.chain() });
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.nodeInfo() });
   }
 

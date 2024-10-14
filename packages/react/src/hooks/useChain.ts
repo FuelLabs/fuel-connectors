@@ -1,19 +1,9 @@
 // should import ChainInfo because of this error: https://github.com/FuelLabs/fuels-ts/issues/1054
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ChainInfo } from 'fuels';
-import type { UseNamedQueryParams } from '../core';
 
-import { useNamedQuery } from '../core';
-import { QUERY_KEYS } from '../utils';
-
+import { useMemo } from 'react';
 import { useProvider } from './useProvider';
-
-type UseChainParams<TName extends string, TData> = {
-  /**
-   * Additional query parameters to customize the behavior of `useNamedQuery`.
-   */
-  query?: UseNamedQueryParams<TName, TData, Error, TData>;
-};
 
 // @TODO: Add a link to fuel connector's documentation.
 /**
@@ -29,23 +19,17 @@ type UseChainParams<TName extends string, TData> = {
  * console.log(chain);
  * ```
  */
-export const useChain = (
-  params?: UseChainParams<'chain', ChainInfo | null>,
-) => {
-  const { provider } = useProvider();
+export const useChain = () => {
+  const providerData = useProvider();
+  const provider = providerData?.provider;
 
-  return useNamedQuery('chain', {
-    queryKey: QUERY_KEYS.chain(),
-    queryFn: async () => {
-      try {
-        const currentFuelChain = await provider?.getChain();
-        return currentFuelChain || null;
-      } catch (_error: unknown) {
-        return null;
-      }
-    },
-    placeholderData: null,
-    enabled: !!provider,
-    ...params?.query,
-  });
+  return useMemo(() => {
+    try {
+      const currentFuelChain = provider?.getChain();
+      return { chain: currentFuelChain || null };
+    } catch (e) {
+      console.error(e);
+      return { provider: null };
+    }
+  }, [provider]);
 };

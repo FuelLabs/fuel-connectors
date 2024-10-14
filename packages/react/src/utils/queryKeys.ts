@@ -23,9 +23,6 @@ export const QUERY_KEYS = {
     if (typeof chainId !== 'undefined') queryKey.push(chainId);
     return queryKey;
   },
-  chain: (): QueryKey => {
-    return QUERY_KEYS.base.concat('chain');
-  },
   isConnected: (): QueryKey => {
     return QUERY_KEYS.base.concat('isConnected');
   },
