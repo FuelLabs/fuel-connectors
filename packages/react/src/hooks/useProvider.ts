@@ -1,4 +1,5 @@
 import type { Account } from 'fuels';
+import { useMemo } from 'react';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useWallet } from './useWallet';
 
@@ -26,5 +27,8 @@ type UseProviderParams = {
  */
 export const useProvider = (params?: UseProviderParams) => {
   const walletQuery = useWallet(params);
-  return walletQuery?.wallet;
+  return useMemo(
+    () => ({ provider: walletQuery?.wallet }),
+    [walletQuery.wallet],
+  );
 };
