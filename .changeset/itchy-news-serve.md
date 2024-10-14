@@ -1,5 +1,5 @@
 ---
-"@fuel-connectors/bako-safe": minor
+"@fuel-connectors/bako-safe": patch
 ---
 
 use base64 url to icon
