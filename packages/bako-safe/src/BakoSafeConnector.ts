@@ -166,7 +166,7 @@ export class BakoSafeConnector extends FuelConnector {
       // @ts-ignore
       this.on(BakoSafeConnectorEvents.CLIENT_DISCONNECTED, () => {
         this.dAppWindow?.close();
-        reject(false);
+        reject(new Error('User rejected the request'));
       });
 
       this.on(
@@ -210,7 +210,7 @@ export class BakoSafeConnector extends FuelConnector {
         BakoSafeConnectorEvents.CLIENT_DISCONNECTED,
         () => {
           this.dAppWindow?.close();
-          reject();
+          reject(new Error('User rejected the request'));
         },
       );
 
@@ -321,7 +321,7 @@ export class BakoSafeConnector extends FuelConnector {
         BakoSafeConnectorEvents.CLIENT_DISCONNECTED,
         () => {
           this.dAppWindow?.close();
-          reject('User rejected the request');
+          reject(new Error('User rejected the request'));
         },
       );
 
