@@ -49,13 +49,10 @@ export const QUERY_KEYS = {
   wallet: (
     address?: string | null,
     connectorName?: string | null,
-    provider?: Provider | null,
   ): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('wallet');
     if (connectorName) queryKey.push(connectorName);
     if (address) queryKey.push(address);
-    if (provider?.getChainId?.() !== undefined)
-      queryKey.push(provider.getChainId());
     return queryKey;
   },
   transaction: (id?: string): QueryKey => {
