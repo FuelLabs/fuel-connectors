@@ -312,7 +312,7 @@ export class BakoSafeConnector extends FuelConnector {
 
   async signMessage(_address: string, _message: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      // window controll
+      // window control
       this.dAppWindow?.open(`dapp/sign/${_message}`, reject);
       this.checkWindow();
 
