@@ -80,6 +80,5 @@ export const useNetworkProvider = (params?: UseProviderParams) => {
       ...params?.query,
     },
     undefined,
-    networkQuery.isFetching,
   );
 };

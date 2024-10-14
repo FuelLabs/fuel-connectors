@@ -1,6 +1,3 @@
-import { keepPreviousData } from '@tanstack/react-query';
-import { FuelConnectorEventTypes } from 'fuels';
-import { useEffect } from 'react';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';

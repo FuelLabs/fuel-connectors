@@ -65,16 +65,12 @@ function createProxyHandler<
   TName extends string,
   TData = unknown,
   TError = DefaultError,
->(name: TName, incomingIsFetching?: boolean) {
+>(name: TName) {
   const handlers: ProxyHandler<UseQueryResult<TData, TError>> = {
     get(target, prop) {
       const shouldReplaceData = prop === name;
       if (shouldReplaceData) {
         return Reflect.get(target, 'data');
-      }
-
-      if (prop === 'isFetching') {
-        return incomingIsFetching || Reflect.get(target, 'isFetching');
       }
 
       return Reflect.get(target, prop);
@@ -101,16 +97,15 @@ export function useNamedQuery<
   name: TName,
   options: UseNamedQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-  fetchingExternal?: boolean,
 ): DefinedNamedUseQueryResult<TName, TData, TError> {
   const query = useQuery(options, queryClient);
 
   const proxy = useMemo(() => {
     return new Proxy(
       query,
-      createProxyHandler(name, fetchingExternal),
+      createProxyHandler(name),
     ) as DefinedNamedUseQueryResult<TName, TData, TError>;
-  }, [name, query, fetchingExternal]);
+  }, [name, query]);
 
   return proxy;
 }

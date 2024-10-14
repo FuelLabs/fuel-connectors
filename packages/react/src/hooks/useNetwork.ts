@@ -1,6 +1,4 @@
-import { keepPreviousData } from '@tanstack/react-query';
-import { FuelConnectorEventTypes, type Network } from 'fuels';
-import { useEffect } from 'react';
+import type { Network } from 'fuels';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
@@ -71,6 +69,5 @@ export const useNetwork = (params?: UseNetwork) => {
       ...params?.query,
     },
     undefined,
-    connectedQuery.isFetching,
   );
 };
