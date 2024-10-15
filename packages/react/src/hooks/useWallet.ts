@@ -1,4 +1,4 @@
-import { type Account, Address } from 'fuels';
+import { type Account, Address, Provider } from 'fuels';
 
 import {
   type DefinedNamedUseQueryResult,
@@ -58,25 +58,34 @@ export function useWallet(
 export function useWallet(
   params?: UseWalletParamsDeprecated | UseWalletParams,
 ) {
-  const { fuel } = useFuel();
+  const { fuel, networks } = useFuel();
   const { network } = useNetwork();
   const { account } = useAccount();
 
   const _params: UseWalletParams =
-    typeof params === 'string' ? { account: params } : params ?? {};
-
-  // console.log(`asd account`, account);
-  // console.log(`asd network?.url`, network?.url);
+    typeof params === 'string' ? { account: params } : (params ?? {});
 
   const queried = useNamedQuery('wallet', {
     queryKey: QUERY_KEYS.wallet(account, network?.url),
     queryFn: async () => {
       try {
-        console.log('asd start querying useWallet', account, network?.url);
+        console.log('asd useWallet querying start', account, network?.url);
         if (!account || !network?.url) return null;
         await Address.fromString(account);
         const wallet = await fuel.getWallet(account);
-        console.log('asd completed querying useWallet', wallet);
+
+        console.log('asd useWallet querying completed', wallet);
+
+        const configuredNetwork = networks.find(
+          (n) => n.chainId === network.chainId,
+        );
+
+        if (configuredNetwork?.url && configuredNetwork.url !== network.url) {
+          // if the user configured a different network for the same chainId, we connect to the configured network instead
+          const provider = await Provider.create(configuredNetwork.url);
+          wallet.connect(provider);
+        }
+
         return wallet;
       } catch (_error: unknown) {
         return null;
@@ -86,8 +95,6 @@ export function useWallet(
     placeholderData: null,
     ..._params.query,
   });
-
-  // console.log(`asd queried.wallet`, queried.wallet);
 
   return queried;
 }

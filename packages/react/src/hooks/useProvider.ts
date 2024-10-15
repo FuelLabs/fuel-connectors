@@ -17,9 +17,6 @@ type UseProviderParams = {
 
 // @TODO: Add a link to fuel connector's documentation.
 /**
- * @deprecated This hook is deprecated and will be removed in a future version.
- */
-/**
  * A hook to retrieve the current provider in the connected app.
  *
  * @returns {object} An object containing:
