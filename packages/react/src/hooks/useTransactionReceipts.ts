@@ -5,7 +5,7 @@ import type { TransactionResult } from 'fuels';
 
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { QUERY_KEYS } from '../utils';
-import { useProvider } from './useProvider';
+import { useNetworkProvider } from './useNetworkProvider';
 
 type UseTransactionReceiptsParams<TTransactionType = void> = {
   /**
@@ -35,7 +35,8 @@ export const useTransactionReceipts = <TTransactionType = void>({
   txId,
   query,
 }: UseTransactionReceiptsParams<TTransactionType>) => {
-  const { provider } = useProvider();
+  const networkQuery = useNetworkProvider();
+  const provider = networkQuery.networkProvider;
 
   return useNamedQuery('transactionReceipts', {
     queryKey: QUERY_KEYS.transactionReceipts(txId, provider),

@@ -23,6 +23,6 @@ console.log(currentConnector);
 ```
 
 #### Defined in
-[packages/react/src/hooks/useCurrentConnector.tsx:31](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useCurrentConnector.tsx#L31)
+[packages/react/src/hooks/useCurrentConnector.tsx:36](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useCurrentConnector.tsx#L36)
 
 ___

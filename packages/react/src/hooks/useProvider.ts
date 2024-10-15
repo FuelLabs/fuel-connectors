@@ -1,18 +1,14 @@
-import { Provider } from 'fuels';
+import type { Account } from 'fuels';
+import { useMemo } from 'react';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
-import { useFuel } from '../providers';
-import { QUERY_KEYS } from '../utils';
+import { useWallet } from './useWallet';
 
 type UseProviderParams = {
   /**
-   * Additional query parameters to customize the behavior of `useNamedQuery`.
+   * The wallet address used to fetch the provider. If not provided, the current account's address will be used.
    */
-  query?: UseNamedQueryParams<
-    'provider',
-    Provider | null,
-    Error,
-    Provider | null
-  >;
+  account?: string | null;
+  query?: UseNamedQueryParams<'wallet', Account | null, Error, Account | null>;
 };
 
 // @TODO: Add a link to fuel connector's documentation.
@@ -30,32 +26,9 @@ type UseProviderParams = {
  * ```
  */
 export const useProvider = (params?: UseProviderParams) => {
-  const { fuel, networks } = useFuel();
-  return useNamedQuery('provider', {
-    queryKey: QUERY_KEYS.provider(),
-    queryFn: async () => {
-      const currentNetwork = await fuel.currentNetwork();
-      const network = networks.find(
-        (n) => n.chainId === currentNetwork.chainId,
-      );
-      if (!network?.url) {
-        const provider = await fuel.getProvider();
-        console.warn(
-          'Please provide a networks with a RPC url configuration to your FuelProvider getProvider will be removed.',
-        );
-        return provider || null;
-      }
-      const provider = await Provider.create(network.url);
-      if (provider.getChainId() !== currentNetwork.chainId) {
-        throw new Error(
-          `The provider's chainId (${provider.getChainId()}) does not match the current network's chainId (${
-            currentNetwork.chainId
-          })`,
-        );
-      }
-      return provider;
-    },
-    placeholderData: null,
-    ...params?.query,
-  });
+  const walletQuery = useWallet(params);
+  return useMemo(
+    () => ({ provider: walletQuery?.wallet?.provider }),
+    [walletQuery.wallet?.provider],
+  );
 };

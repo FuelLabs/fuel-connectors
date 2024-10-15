@@ -29,16 +29,13 @@ export const useAccount = (
   const { fuel } = useFuel();
 
   return useNamedQuery('account', {
-    queryKey: QUERY_KEYS.account(),
+    queryKey: QUERY_KEYS.account(fuel.name),
     queryFn: async () => {
-      try {
-        const currentFuelAccount = await fuel?.currentAccount();
-        return currentFuelAccount;
-      } catch (_error: unknown) {
-        return null;
-      }
+      return await fuel?.currentAccount();
     },
     placeholderData: null,
+    retry: 5,
+    retryDelay: 100,
     ...params?.query,
   });
 };

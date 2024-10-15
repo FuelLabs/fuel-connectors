@@ -4,8 +4,10 @@ import type { NetworkConfig } from '../types';
 
 export const QUERY_KEYS = {
   base: ['fuel'] as QueryKey,
-  account: (): QueryKey => {
-    return QUERY_KEYS.base.concat('account');
+  account: (connectorName: string | null | undefined): QueryKey => {
+    const queryKey = QUERY_KEYS.base.concat('account');
+    if (connectorName) queryKey.push(connectorName);
+    return queryKey;
   },
   accounts: (): QueryKey => {
     return QUERY_KEYS.base.concat('accounts');
@@ -23,17 +25,20 @@ export const QUERY_KEYS = {
     if (typeof chainId !== 'undefined') queryKey.push(chainId);
     return queryKey;
   },
-  chain: (): QueryKey => {
-    return QUERY_KEYS.base.concat('chain');
-  },
   isConnected: (): QueryKey => {
     return QUERY_KEYS.base.concat('isConnected');
   },
   networks: (): QueryKey => {
     return QUERY_KEYS.base.concat('networks');
   },
-  provider: (): QueryKey => {
-    return QUERY_KEYS.base.concat('provider');
+  networkProvider: (
+    networkUrl: string | undefined | null,
+    chainId: number | undefined | null,
+  ): QueryKey => {
+    const queryKey = QUERY_KEYS.base.concat('provider');
+    if (networkUrl) queryKey.push(networkUrl);
+    if (chainId) queryKey.push(chainId);
+    return queryKey;
   },
   balance: (
     address?: string,
@@ -47,11 +52,13 @@ export const QUERY_KEYS = {
       queryKey.push(provider.getChainId());
     return queryKey;
   },
-  wallet: (address?: string | null, provider?: Provider | null): QueryKey => {
+  wallet: (
+    address?: string | null,
+    connectorName?: string | null,
+  ): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('wallet');
+    if (connectorName) queryKey.push(connectorName);
     if (address) queryKey.push(address);
-    if (provider?.getChainId?.() !== undefined)
-      queryKey.push(provider.getChainId());
     return queryKey;
   },
   transaction: (id?: string): QueryKey => {
@@ -79,11 +86,15 @@ export const QUERY_KEYS = {
   connectorList: (): QueryKey => {
     return QUERY_KEYS.base.concat('connectorList');
   },
-  currentConnector: (): QueryKey => {
-    return QUERY_KEYS.base.concat(['currentConnector']);
+  currentConnector: (connectorName: string | null | undefined): QueryKey => {
+    const queryKey = QUERY_KEYS.base.concat('currentConnector');
+    if (connectorName) queryKey.push(connectorName);
+    return queryKey;
   },
-  currentNetwork: (): QueryKey => {
-    return QUERY_KEYS.base.concat('currentNetwork');
+  currentNetwork: (isConnected: boolean | undefined): QueryKey => {
+    const queryKey = QUERY_KEYS.base.concat('currentNetwork');
+    if (isConnected) queryKey.push(isConnected);
+    return queryKey;
   },
   isSupportedNetwork: (
     connectorName: string | null | undefined,

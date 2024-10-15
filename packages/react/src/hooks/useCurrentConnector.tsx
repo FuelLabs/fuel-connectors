@@ -1,4 +1,9 @@
-import type { FuelConnector } from 'fuels';
+import {
+  type FuelConnector,
+  FuelConnectorEventType,
+  FuelConnectorEventTypes,
+} from 'fuels';
+import { useEffect } from 'react';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
@@ -36,7 +41,7 @@ export const useCurrentConnector = <
 }: UseCurrentConnectorParams<TName, TData> = {}) => {
   const { fuel } = useFuel();
   return useNamedQuery('currentConnector', {
-    queryKey: QUERY_KEYS.currentConnector(),
+    queryKey: QUERY_KEYS.currentConnector(fuel.name),
     queryFn: async () => {
       const isConnected = await fuel.isConnected();
       if (!isConnected) return null;
