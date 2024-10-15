@@ -1,4 +1,4 @@
-import PageContent from '@/components/PageContet';
+import PageContent from '@/components/PageContent';
 
 export default function Page() {
   return (
