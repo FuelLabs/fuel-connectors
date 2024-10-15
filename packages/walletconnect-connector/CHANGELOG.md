@@ -1,5 +1,11 @@
 # @fuel-connectors/walletconnect-connector
 
+## 0.36.0
+
+### Minor Changes
+
+- [#403](https://github.com/FuelLabs/fuel-connectors/pull/403) [`02574b4`](https://github.com/FuelLabs/fuel-connectors/commit/02574b4ed29d698915b928b218812fbc57612cb1) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: added `skipAutoReconnect` to avoid WalletConnectConnector reconnecting automatically over the Wagmi already reconnected
+
 ## 0.35.1
 
 ### Patch Changes
