@@ -69,13 +69,9 @@ export function useWallet(
     queryKey: QUERY_KEYS.wallet(account, network?.url),
     queryFn: async () => {
       try {
-        console.log('asd useWallet querying start', account, network?.url);
         if (!account || !network?.url) return null;
         await Address.fromString(account);
         const wallet = await fuel.getWallet(account);
-
-        console.log('asd useWallet querying completed', wallet);
-
         const configuredNetwork = networks.find(
           (n) => n.chainId === network.chainId,
         );
