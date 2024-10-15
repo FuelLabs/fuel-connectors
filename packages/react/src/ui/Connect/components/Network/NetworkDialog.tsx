@@ -51,7 +51,7 @@ export function NetworkDialog({
 
   function handleSwitch() {
     if (networks[0].chainId == null) return;
-    selectNetwork({ chainId: networks[0].chainId });
+    selectNetwork({ chainId: networks[0].chainId, url: networks[0].url });
   }
 
   function handleDisconnect() {
