@@ -202,10 +202,11 @@ export class WalletConnectConnector extends PredicateConnector {
   protected async requireConnection() {
     const wagmiConfig = this.getWagmiConfig();
     if (!this.web3Modal) this.createModal();
-    if (!wagmiConfig) return;
 
-    const { state } = wagmiConfig;
-    if (state.status === 'disconnected' && state.connections.size > 0) {
+    if (this.config.skipAutoReconnect || !wagmiConfig) return;
+
+    const { status, connections } = wagmiConfig.state;
+    if (status === 'disconnected' && connections.size > 0) {
       await reconnect(wagmiConfig);
     }
   }
