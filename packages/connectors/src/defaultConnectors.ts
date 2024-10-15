@@ -18,6 +18,7 @@ type DefaultConnectors = {
   wcProjectId?: string;
   burnerWalletConfig?: BurnerWalletConfig;
   ethWagmiConfig?: Config;
+  ethSkipAutoReconnect?: boolean;
   solanaConfig?: ProviderType;
   chainId?: number;
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
@@ -28,6 +29,7 @@ export function defaultConnectors({
   wcProjectId,
   burnerWalletConfig,
   ethWagmiConfig,
+  ethSkipAutoReconnect,
   solanaConfig: _solanaConfig,
   chainId,
   fuelProvider,
@@ -41,6 +43,7 @@ export function defaultConnectors({
       wagmiConfig: ethWagmiConfig,
       chainId,
       fuelProvider,
+      skipAutoReconnect: ethSkipAutoReconnect,
     }),
     new SolanaConnector({
       projectId: wcProjectId,
