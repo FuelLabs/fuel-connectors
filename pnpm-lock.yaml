@@ -13368,7 +13368,7 @@ snapshots:
 
   '@types/bn.js@5.1.6':
     dependencies:
-      '@types/node': 20.12.11
+      '@types/node': 22.7.5
 
   '@types/connect@3.4.38':
     dependencies:
