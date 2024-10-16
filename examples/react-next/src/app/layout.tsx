@@ -26,7 +26,7 @@ export default function RootLayout({
   // WalletConnect Connector configurations
   // https://docs.walletconnect.com/web3modal/javascript/about
   // ============================================================
-  const WC_PROJECT_ID = process.env.NEXT_PUBLIC_WC_PROJECT_ID;
+  const WC_PROJECT_ID = process.env.NEXT_PUBLIC_WC_PROJECT_ID || '';
   const METADATA = {
     name: 'Wallet Demo',
     description: 'Fuel Wallets Demo',
