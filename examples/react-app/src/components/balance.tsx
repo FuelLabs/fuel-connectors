@@ -1,5 +1,5 @@
 import { bn } from 'fuels';
-import { CHAIN_ID_NAME } from '../config';
+import { useConfig } from '../context/ConfigContext';
 import { useWallet } from '../hooks/useWallet';
 import { Faucet } from './faucet';
 import Feature from './feature';
@@ -15,6 +15,7 @@ const BalanceSkeleton = () => (
 
 export default function Balance({ isSigning }: Props) {
   const { balance, account, isConnected } = useWallet();
+  const { chainIdName } = useConfig();
 
   if (!account && isConnected) {
     return (
@@ -32,7 +33,7 @@ export default function Balance({ isSigning }: Props) {
       <Faucet
         isSigning={isSigning}
         address={account}
-        disabled={CHAIN_ID_NAME === 'mainnet'}
+        disabled={chainIdName === 'mainnet'}
       />
     </Feature>
   );
