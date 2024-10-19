@@ -18,35 +18,21 @@ test.describe('BurnerWalletConnector', () => {
     await connectBurner(page);
 
     expect(await page.waitForSelector('text=Your Fuel Address')).toBeTruthy();
-  });
-
-  test('should connect, disconnect, and reconnect', async ({ page }) => {
-    await connectBurner(page);
 
     await page.click('text=Disconnect');
     await page.waitForSelector('text=Connect Wallet');
 
     await connectBurner(page);
     expect(await page.waitForSelector('text=Your Fuel Address')).toBeTruthy();
-  });
-
-  test('should connect, refresh and stay connected', async ({ page }) => {
-    await connectBurner(page);
 
     await page.reload();
-    await page.waitForSelector('text=Your Fuel Address');
-  });
-
-  test('should connect, disconnect, refresh and stay disconnected', async ({
-    page,
-  }) => {
-    await connectBurner(page);
+    expect(await page.waitForSelector('text=Your Fuel Address')).toBeTruthy();
 
     await page.click('text=Disconnect');
-    await page.waitForSelector('text=Connect Wallet');
+    expect(await page.waitForSelector('text=Connect Wallet')).toBeTruthy();
 
     await page.reload();
-    await page.waitForSelector('text=Connect Wallet');
+    expect(await page.waitForSelector('text=Connect Wallet')).toBeTruthy();
   });
 
   // test('should increment counter', async ({ page }) => {
