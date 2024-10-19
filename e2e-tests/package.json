@@ -10,8 +10,8 @@
     "@fuels/playwright-utils": "0.23.0"
   },
   "engines": {
-    "node": "18",
-    "pnpm": "9"
+    "node": ">=20.11.0",
+    "pnpm": "9.x"
   },
   "packageManager": "pnpm@9.5.0",
   "dependencies": {
