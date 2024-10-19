@@ -1,5 +1,7 @@
 # @fuel-connectors/evm-connector
 
+## 0.36.0
+
 ## 0.35.1
 
 ### Patch Changes
