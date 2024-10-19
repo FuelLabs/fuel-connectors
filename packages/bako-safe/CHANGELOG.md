@@ -1,5 +1,11 @@
 # @fuel-connectors/bako-safe
 
+## 0.36.0
+
+### Patch Changes
+
+- [#398](https://github.com/FuelLabs/fuel-connectors/pull/398) [`46000eb`](https://github.com/FuelLabs/fuel-connectors/commit/46000ebac0fc52aec4319adfd2e56f2f4884329a) Thanks [@luisburigo](https://github.com/luisburigo)! - fix(bako-safe): prevents events from remaining active
+
 ## 0.35.1
 
 ### Patch Changes

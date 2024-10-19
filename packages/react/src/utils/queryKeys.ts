@@ -47,11 +47,10 @@ export const QUERY_KEYS = {
       queryKey.push(provider.getChainId());
     return queryKey;
   },
-  wallet: (address?: string | null, provider?: Provider | null): QueryKey => {
+  wallet: (address?: string | null, providerUrl?: string | null): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('wallet');
     if (address) queryKey.push(address);
-    if (provider?.getChainId?.() !== undefined)
-      queryKey.push(provider.getChainId());
+    if (providerUrl) queryKey.push(providerUrl);
     return queryKey;
   },
   transaction: (id?: string): QueryKey => {

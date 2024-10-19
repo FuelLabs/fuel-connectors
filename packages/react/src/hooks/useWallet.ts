@@ -1,4 +1,4 @@
-import { type Account, Address } from 'fuels';
+import { type Account, Address, Provider } from 'fuels';
 
 import {
   type DefinedNamedUseQueryResult,
@@ -7,7 +7,8 @@ import {
 } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
-import { useProvider } from './useProvider';
+import { useAccount } from './useAccount';
+import { useNetwork } from './useNetwork';
 
 type UseWalletParamsDeprecated = string | null;
 
@@ -56,29 +57,40 @@ export function useWallet(
 
 export function useWallet(
   params?: UseWalletParamsDeprecated | UseWalletParams,
-): DefinedNamedUseQueryResult<'wallet', Account | null, Error> {
-  const { fuel } = useFuel();
-  const { provider } = useProvider();
-  const _params: UseWalletParams =
-    typeof params === 'string' ? { account: params } : params ?? {};
+) {
+  const { fuel, networks } = useFuel();
+  const { network } = useNetwork();
+  const { account } = useAccount();
 
-  return useNamedQuery('wallet', {
-    queryKey: QUERY_KEYS.wallet(_params.account, provider),
+  const _params: UseWalletParams =
+    typeof params === 'string' ? { account: params } : (params ?? {});
+
+  const queried = useNamedQuery('wallet', {
+    queryKey: QUERY_KEYS.wallet(account, network?.url),
     queryFn: async () => {
       try {
-        if (!provider) return null;
-        const accountAddress =
-          _params.account || (await fuel.currentAccount()) || '';
-        // Check if the address is valid
-        await Address.fromString(accountAddress);
-        const wallet = await fuel.getWallet(accountAddress);
-        wallet.connect(provider);
-        return wallet || null;
+        if (!account || !network?.url) return null;
+        await Address.fromString(account);
+        const wallet = await fuel.getWallet(account);
+        const configuredNetwork = networks.find(
+          (n) => n.chainId === network.chainId,
+        );
+
+        if (configuredNetwork?.url && configuredNetwork.url !== network.url) {
+          // if the user configured a different network for the same chainId, we connect to the configured network instead
+          const provider = await Provider.create(configuredNetwork.url);
+          wallet.connect(provider);
+        }
+
+        return wallet;
       } catch (_error: unknown) {
         return null;
       }
     },
+    enabled: !!account && !!network?.url,
     placeholderData: null,
     ..._params.query,
   });
+
+  return queried;
 }
