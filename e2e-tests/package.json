@@ -6,6 +6,9 @@
   "author": "Fuel Labs <contact@fuel.sh> (https://fuel.network/)",
   "homepage": "https://github.com/FuelLabs/fuel-connectors",
   "type": "module",
+  "scripts": {
+    "test:e2e": "pnpm playwright test"
+  },
   "devDependencies": {
     "@fuels/playwright-utils": "0.23.0"
   },
