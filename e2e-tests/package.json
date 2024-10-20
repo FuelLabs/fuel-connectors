@@ -7,7 +7,7 @@
   "homepage": "https://github.com/FuelLabs/fuel-connectors",
   "type": "module",
   "scripts": {
-    "test:e2e": "pnpm playwright test"
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
     "@fuels/connectors": "workspace:*",
