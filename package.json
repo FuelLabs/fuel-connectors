@@ -17,6 +17,7 @@
     "ts:check": "turbo run ts:check",
     "test": "vitest",
     "test:ci": "turbo run test -- --run --coverage.enabled --coverage.reporter=json-summary --coverage.reporter=json",
+    "test:e2e": "turbo run test:e2e",
     "lint:check": "biome check --apply-unsafe .",
     "lint:ci": "biome lint --max-diagnostics=1000 --diagnostic-level=error .",
     "format": "biome format --write .",

@@ -10,14 +10,15 @@
     "test:e2e": "pnpm playwright test"
   },
   "devDependencies": {
-    "@fuels/playwright-utils": "0.23.0"
+    "@fuels/connectors": "workspace:*",
+    "@fuels/playwright-utils": "0.23.0",
+    "@playwright/test": "1.48.1",
+    "dotenv": "16.4.5",
+    "fuels": "0.96.1"
   },
   "engines": {
     "node": ">=20.11.0",
     "pnpm": "9.x"
   },
-  "packageManager": "pnpm@9.5.0",
-  "dependencies": {
-    "playwright": "1.46.1"
-  }
+  "packageManager": "pnpm@9.5.0"
 }
