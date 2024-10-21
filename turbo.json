@@ -23,6 +23,9 @@
     },
     "test": {
       "dependsOn": ["^build"]
+    },
+    "test:e2e": {
+      "cache": false
     }
   }
 }
