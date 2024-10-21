@@ -7,23 +7,18 @@
   "homepage": "https://github.com/FuelLabs/fuel-connectors",
   "type": "module",
   "scripts": {
-    "test:react-app": "pnpm test:react-app:ci -- --ui",
-    "test:react-app:ci": "playwright test e2e-tests/react-app --project=react-app"
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
+    "@fuels/connectors": "workspace:*",
     "@fuels/playwright-utils": "0.23.0",
-    "@fuels/ts-config": "0.20.0",
-    "@playwright/test": "1.46.1",
-    "@types/node": "20.12.11",
+    "@playwright/test": "1.48.1",
     "dotenv": "16.4.5",
     "fuels": "0.96.1"
   },
   "engines": {
-    "node": ">=18",
-    "pnpm": ">=9"
+    "node": ">=20.11.0",
+    "pnpm": "9.x"
   },
-  "packageManager": "pnpm@9.5.0",
-  "dependencies": {
-    "playwright": "1.46.1"
-  }
+  "packageManager": "pnpm@9.5.0"
 }
