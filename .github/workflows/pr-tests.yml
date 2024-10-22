@@ -89,6 +89,14 @@ jobs:
           node-version: 20.11.0
           pnpm-version: 9.5.0
 
+      - uses: FuelLabs/github-actions/setups/docker@master
+        with:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Start Test Node
+        run: pnpm node:up
+
       - name: Run PNPM install
         id: pnpm-cache
         run: pnpm install --frozen-lockfile
