@@ -14,7 +14,7 @@ test.describe('BurnerWalletConnector', async () => {
     await page.bringToFront();
   });
 
-  test('should connect and show fuel address', async ({ page }) => {
+  test('BurnerWallet Tests', async ({ page }) => {
     await connectBurner(page);
 
     expect(await page.waitForSelector('text=/Your Fuel Address/')).toBeTruthy();
