@@ -7,11 +7,12 @@
   "homepage": "https://github.com/FuelLabs/fuel-connectors",
   "type": "module",
   "scripts": {
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui --debug"
   },
   "devDependencies": {
     "@fuels/connectors": "workspace:*",
-    "@fuels/playwright-utils": "0.23.0",
+    "@fuels/playwright-utils": "0.40.1",
     "@playwright/test": "1.48.1",
     "dotenv": "16.4.5",
     "fuels": "0.96.1"
