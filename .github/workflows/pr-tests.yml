@@ -77,7 +77,7 @@ jobs:
           json-summary-path: ./coverage/coverage-summary.json
           json-final-path: ./coverage/coverage-final.json
   tests-e2e-connectors:
-    runs-on: ubuntu-latest
+    runs-on: buildjet-8vcpu-ubuntu-2204
 
     steps:
       - name: Check out the code
@@ -93,19 +93,21 @@ jobs:
         with:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: Start Test Node
         run: pnpm node:up
 
       - name: Run PNPM install
         id: pnpm-cache
         run: pnpm install --frozen-lockfile
-
-      # - name: Install Playwright Browsers
-      #   run: pnpm exec playwright install --with-deps chromium
-
+    
       - name: Run build:connectors
         run: pnpm build:connectors
+        
+      # E2E tests running with Playwright
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps chromium
+        working-directory: e2e-tests
 
       - name: Run Playwright tests
         run: xvfb-run --auto-servernum -- pnpm --filter e2e-tests test:e2e
