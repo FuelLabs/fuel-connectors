@@ -6,6 +6,14 @@ const connectBurner = async (page: Page, walletName = 'Burner Wallet') => {
   const connectButton = getButtonByText(page, 'Connect');
   await connectButton.click();
   await getByAriaLabel(page, `Connect to ${walletName}`, true).click();
+
+  await skipBridgeFunds(page);
+};
+
+const skipBridgeFunds = async (page: Page) => {
+  if (await page.isVisible('text=Bridge Funds')) {
+    await page.click('text=Continue to application');
+  }
 };
 
 test.describe('BurnerWalletConnector', async () => {
@@ -31,10 +39,12 @@ test.describe('BurnerWalletConnector', async () => {
 
     await test.step('should connect, refresh and stay connected', async () => {
       await page.reload();
+      await skipBridgeFunds(page);
       await page.waitForSelector('text=/Your Fuel Address/');
     });
 
     await test.step('should connect, disconnect, refresh and stay disconnected', async () => {
+      await skipBridgeFunds(page);
       await page.click('text=Disconnect');
       await page.waitForSelector('text=/Connect Wallet/');
 
