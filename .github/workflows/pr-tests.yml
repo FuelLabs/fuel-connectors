@@ -119,3 +119,46 @@ jobs:
           VITE_CHAIN_ID_NAME: testnet
           PORT: 5173
 
+  tests-e2e-connectors-testnet:
+    runs-on: buildjet-8vcpu-ubuntu-2204
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: FuelLabs/github-actions/setups/node@master
+        with:
+          node-version: 20.11.0
+          pnpm-version: 9.5.0
+
+      - uses: FuelLabs/github-actions/setups/docker@master
+        with:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Start Test Node
+        run: pnpm node:up
+
+      - name: Run PNPM install
+        id: pnpm-cache
+        run: pnpm install --frozen-lockfile
+    
+      - name: Run build:connectors
+        run: pnpm build:connectors
+        
+      # E2E tests running with Playwright
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps chromium
+        working-directory: e2e-tests
+
+      - name: Run Playwright tests
+        run: xvfb-run --auto-servernum -- pnpm --filter e2e-tests test:e2e
+        env:
+          VITE_FUEL_PROVIDER_URL: "https://testnet.fuel.network/v1/graphql"
+          VITE_WALLET_SECRET: "0xa449b1ffee0e2205fa924c6740cc48b3b473aa28587df6dab12abc245d1f5298"
+          VITE_MASTER_WALLET_MNEMONIC: "shuffle become fold deputy sick shove wolf olympic breeze antique ball broom"
+          VITE_APP_WC_PROJECT_ID: e01471314fc69cc4efba6dce12dfd710
+          VITE_CHAIN_ID_NAME: testnet
+          PORT: 5173
+
