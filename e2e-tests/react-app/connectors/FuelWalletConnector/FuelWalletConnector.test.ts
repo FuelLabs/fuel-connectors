@@ -55,8 +55,6 @@ test.describe('FuelWalletConnector', () => {
 
   test('FuelWallet Tests', async ({ page }) => {
     if (await page.isVisible('text=Network Switch Required')) {
-      console.log('Switching network');
-
       await page.click('text=Switch Network');
 
       const walletPage = await fuelWalletTestHelper.getWalletPopupPage();
