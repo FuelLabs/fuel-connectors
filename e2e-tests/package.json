@@ -10,11 +10,12 @@
     "test:react-app": "pnpm test:react-app:ci -- --ui",
     "test:react-app:ci": "playwright test e2e-tests/react-app --project=react-app",
     "test:react-next": "pnpm playwright test --project=react-next",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui --debug"
   },
   "devDependencies": {
     "@fuels/connectors": "workspace:*",
-    "@fuels/playwright-utils": "0.23.0",
+    "@fuels/playwright-utils": "0.40.1",
     "@playwright/test": "1.48.1",
     "dotenv": "16.4.5",
     "fuels": "0.96.1"
