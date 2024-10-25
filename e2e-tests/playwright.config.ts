@@ -26,7 +26,7 @@ const config: PlaywrightTestConfig = defineConfig({
       testDir: './react-next',
       use: { ...devices['Desktop Chrome'] },
       webServer: {
-        command: `pnpm --filter react-next dev --port ${process.env.REACT_NEXT_PORT}`,
+        command: `pnpm --filter @fuel-connectors/react-next-e2e dev --port ${process.env.REACT_NEXT_PORT}`,
         baseURL: `http://localhost:${process.env.REACT_NEXT_PORT}`,
         port: Number(process.env.REACT_NEXT_PORT),
         reuseExistingServer: true,
