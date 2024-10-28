@@ -118,7 +118,8 @@ jobs:
           VITE_MASTER_WALLET_MNEMONIC: "shuffle become fold deputy sick shove wolf olympic breeze antique ball broom"
           VITE_APP_WC_PROJECT_ID: e01471314fc69cc4efba6dce12dfd710
           VITE_CHAIN_ID_NAME: testnet
-          PORT: 5173
+          REACT_APP_PORT: 5173
+          REACT_NEXT_PORT: 3002
 
       - name: Run Playwright tests locally for Preview
         if: ${{ github.event_name == 'pull_request' }}
