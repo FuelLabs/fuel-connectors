@@ -12,25 +12,17 @@ const config: PlaywrightTestConfig = defineConfig({
     {
       name: 'react-app',
       testDir: './react-app',
-      use: { ...devices['Desktop Chrome'] },
-      webServer: {
-        command: `pnpm --filter react-app dev --port ${process.env.REACT_APP_PORT}`,
+      use: {
+        ...devices['Desktop Chrome'],
         baseURL: `http://localhost:${process.env.REACT_APP_PORT}`,
-        port: Number(process.env.REACT_APP_PORT),
-        reuseExistingServer: true,
-        timeout: 20000,
       },
     },
     {
       name: 'react-next',
       testDir: './react-next',
-      use: { ...devices['Desktop Chrome'] },
-      webServer: {
-        command: `pnpm --filter @fuel-connectors/react-next-e2e dev --port ${process.env.REACT_NEXT_PORT}`,
+      use: {
+        ...devices['Desktop Chrome'],
         baseURL: `http://localhost:${process.env.REACT_NEXT_PORT}`,
-        port: Number(process.env.REACT_NEXT_PORT),
-        reuseExistingServer: true,
-        timeout: 20000,
       },
     },
   ],
