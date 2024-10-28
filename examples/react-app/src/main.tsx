@@ -61,14 +61,14 @@ const wagmiConfig = createConfig({
 const CHAIN_ID_NAME = import.meta.env
   .VITE_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel;
 const CHAIN_ID = CHAIN_IDS.fuel[CHAIN_ID_NAME];
-const PROVIDER_URL = import.meta.env.VITE_PROVIDER_URL;
+const PROVIDER_URL = import.meta.env.VITE_FUEL_PROVIDER_URL;
 
 if (CHAIN_ID == null) {
   throw new Error('VITE_CHAIN_ID_NAME is not set');
 }
 
 if (!PROVIDER_URL) {
-  throw new Error('VITE_PROVIDER_URL is not set');
+  throw new Error('VITE_FUEL_PROVIDER_URL is not set');
 }
 
 const NETWORKS = [
@@ -109,7 +109,7 @@ const config = {
   explorerUrl:
     EXPLORER_URL_MAP[CHAIN_ID_NAME as keyof typeof EXPLORER_URL_MAP] ||
     EXPLORER_LOCAL_URL,
-  providerUrl: import.meta.env.VITE_PROVIDER_URL,
+  providerUrl: import.meta.env.VITE_FUEL_PROVIDER_URL,
   counterContractId: getContractId(),
   chainIdName: import.meta.env
     .VITE_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel,
