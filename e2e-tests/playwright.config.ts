@@ -10,16 +10,16 @@ const config: PlaywrightTestConfig = defineConfig({
   testDir: './',
   projects: [
     {
-      name: 'react-app',
-      testDir: './react-app',
+      name: 'Examples - React',
+      testDir: './examples',
       use: {
         ...devices['Desktop Chrome'],
         baseURL: `http://localhost:${process.env.REACT_APP_PORT}`,
       },
     },
     {
-      name: 'react-next',
-      testDir: './react-next',
+      name: 'Examples - Next.js',
+      testDir: './examples',
       use: {
         ...devices['Desktop Chrome'],
         baseURL: `http://localhost:${process.env.REACT_NEXT_PORT}`,

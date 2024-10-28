@@ -7,21 +7,32 @@ import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
 import { http, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
 import { CHAIN_IDS, Provider, bn } from 'fuels';
+import { counter as COUNTER_CONTRACT_ID_LOCAL } from '../../../react-app/src/types/contract-ids-local.json';
+import { counter as COUNTER_CONTRACT_ID_MAINNET } from '../../../react-app/src/types/contract-ids-mainnet.json';
+import { counter as COUNTER_CONTRACT_ID_TESTNET } from '../../../react-app/src/types/contract-ids-testnet.json';
 
 const CHAIN_ID_NAME = process.env
   .NEXT_PUBLIC_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel;
-
-const config = {
-  explorerUrl: 'https://app-mainnet.fuel.network',
-  providerUrl: 'https://some-provider-url',
-  counterContractId: 'your-contract-id',
-  chainIdName: 'mainnet',
-  defaultAmount: bn.parseUnits(
-    CHAIN_ID_NAME === 'mainnet' ? '0.000000001' : '0.0001',
-  ),
-};
 const CHAIN_ID = CHAIN_IDS.fuel[CHAIN_ID_NAME];
-const PROVIDER_URL = process.env.NEXT_PUBLIC_PROVIDER_URL;
+const PROVIDER_URL = process.env.NEXT_PUBLIC_PROVIDER_URL || '';
+
+function getContractId() {
+  switch (CHAIN_ID_NAME) {
+    case 'mainnet':
+      return COUNTER_CONTRACT_ID_MAINNET;
+    case 'testnet':
+      return COUNTER_CONTRACT_ID_TESTNET;
+    default:
+      return COUNTER_CONTRACT_ID_LOCAL;
+  }
+}
+
+export const EXPLORER_LOCAL_URL = 'http://localhost:3001';
+export const EXPLORER_URL_MAP: Record<keyof typeof CHAIN_IDS.fuel, string> = {
+  testnet: 'https://app-testnet.fuel.network',
+  devnet: 'https://app-testnet.fuel.network',
+  mainnet: 'https://app-mainnet.fuel.network',
+};
 
 const NETWORKS = [
   {
@@ -29,13 +40,16 @@ const NETWORKS = [
     url: PROVIDER_URL,
   },
 ];
+
 const WC_PROJECT_ID = process.env.NEXT_PUBLIC_WC_PROJECT_ID || '';
+
 const METADATA = {
   name: 'Wallet Demo',
   description: 'Fuel Wallets Demo',
   url: 'https://connectors.fuel.network',
   icons: ['https://connectors.fuel.network/logo_white.png'],
 };
+
 const wagmiConfig = createConfig({
   chains: [mainnet, sepolia],
   transports: {
@@ -71,6 +85,18 @@ const FUEL_CONFIG = {
     chainId: CHAIN_ID,
     fuelProvider: Provider.create(PROVIDER_URL),
   }),
+};
+
+const config = {
+  explorerUrl:
+    EXPLORER_URL_MAP[CHAIN_ID_NAME as keyof typeof EXPLORER_URL_MAP] ||
+    EXPLORER_LOCAL_URL,
+  providerUrl: PROVIDER_URL,
+  counterContractId: getContractId(),
+  chainIdName: CHAIN_ID,
+  defaultAmount: bn.parseUnits(
+    CHAIN_ID_NAME === 'mainnet' ? '0.000000001' : '0.0001',
+  ),
 };
 
 export default function Page() {
