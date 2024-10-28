@@ -1,12 +1,13 @@
 import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
 import type { ConnectorMetadata } from 'fuels';
+import { APP_IMAGE_DARK, APP_IMAGE_LIGHT } from './constants';
 
 export class FueletWalletConnector extends FuelWalletConnector {
   name = 'Fuelet Wallet';
   metadata: ConnectorMetadata = {
     image: {
-      light: '/connectors/fuelet-light.svg',
-      dark: '/connectors/fuelet-dark.svg',
+      light: APP_IMAGE_LIGHT,
+      dark: APP_IMAGE_DARK,
     },
     install: {
       action: 'Install',
