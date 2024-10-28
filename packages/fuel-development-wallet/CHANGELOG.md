@@ -1,5 +1,11 @@
 # @fuel-connectors/fuel-development-wallet
 
+## 0.36.1
+
+### Patch Changes
+
+- [#418](https://github.com/FuelLabs/fuel-connectors/pull/418) [`b0ef68f`](https://github.com/FuelLabs/fuel-connectors/commit/b0ef68fddfeee60ad86111673b226c6ec2cf3417) Thanks [@helciofranco](https://github.com/helciofranco)! - Add missing `base64` images for `Fuel` and `Fuelet` connectors.
+
 ## 0.36.0
 
 ## 0.35.1
