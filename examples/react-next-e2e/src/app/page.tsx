@@ -7,9 +7,9 @@ import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
 import { http, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
 import { CHAIN_IDS, Provider, bn } from 'fuels';
-import { counter as COUNTER_CONTRACT_ID_LOCAL } from '../../../react-app/src/types/contract-ids-local.json';
-import { counter as COUNTER_CONTRACT_ID_MAINNET } from '../../../react-app/src/types/contract-ids-mainnet.json';
-import { counter as COUNTER_CONTRACT_ID_TESTNET } from '../../../react-app/src/types/contract-ids-testnet.json';
+import COUNTER_CONTRACT_ID_LOCAL from '../../../react-app/src/types/contract-ids-local.json';
+import COUNTER_CONTRACT_ID_MAINNET from '../../../react-app/src/types/contract-ids-mainnet.json';
+import COUNTER_CONTRACT_ID_TESTNET from '../../../react-app/src/types/contract-ids-testnet.json';
 
 const CHAIN_ID_NAME = process.env
   .NEXT_PUBLIC_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel;
