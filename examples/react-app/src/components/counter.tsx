@@ -79,7 +79,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
         getCount();
 
         if (waitForResult) {
-          async function checkResult() {
+          const checkResult = async () => {
             const tx = await waitForResult();
 
             await getCount();
@@ -104,7 +104,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
             refetchBalance();
             setLoading(false);
             setIsSigning(false);
-          }
+          };
 
           checkResult();
         }
