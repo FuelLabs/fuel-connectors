@@ -1,6 +1,6 @@
-import { counter as COUNTER_CONTRACT_ID_LOCAL } from '@fuel-connectors/shared/src/types/contract-ids-local.json';
-import { counter as COUNTER_CONTRACT_ID_MAINNET } from '@fuel-connectors/shared/src/types/contract-ids-mainnet.json';
-import { counter as COUNTER_CONTRACT_ID_TESTNET } from '@fuel-connectors/shared/src/types/contract-ids-testnet.json';
+import { counter as COUNTER_CONTRACT_ID_LOCAL } from '@fuel-connectors/react-app/src/types/contract-ids-local.json';
+import { counter as COUNTER_CONTRACT_ID_MAINNET } from '@fuel-connectors/react-app/src/types/contract-ids-mainnet.json';
+import { counter as COUNTER_CONTRACT_ID_TESTNET } from '@fuel-connectors/react-app/src/types/contract-ids-testnet.json';
 import { type CHAIN_IDS, bn } from 'fuels';
 
 export const CHAIN_ID_NAME = process.env

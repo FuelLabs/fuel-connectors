@@ -27,8 +27,8 @@ function getContractId() {
   }
 }
 
-export const EXPLORER_LOCAL_URL = 'http://localhost:3001';
-export const EXPLORER_URL_MAP: Record<keyof typeof CHAIN_IDS.fuel, string> = {
+const EXPLORER_LOCAL_URL = 'http://localhost:3001';
+const EXPLORER_URL_MAP: Record<keyof typeof CHAIN_IDS.fuel, string> = {
   testnet: 'https://app-testnet.fuel.network',
   devnet: 'https://app-testnet.fuel.network',
   mainnet: 'https://app-mainnet.fuel.network',
@@ -93,7 +93,7 @@ const config = {
     EXPLORER_LOCAL_URL,
   providerUrl: PROVIDER_URL,
   counterContractId: getContractId(),
-  chainIdName: CHAIN_ID,
+  chainIdName: CHAIN_ID_NAME,
   defaultAmount: bn.parseUnits(
     CHAIN_ID_NAME === 'mainnet' ? '0.000000001' : '0.0001',
   ),

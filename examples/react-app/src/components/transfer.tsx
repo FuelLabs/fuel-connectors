@@ -56,7 +56,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
         checkResult();
       }, TIME_TO_WAIT);
 
-      async function checkResult() {
+      const checkResult = async () => {
         const result = await resp?.waitForResult();
         refetchBalance();
         setLoading(false);
@@ -79,7 +79,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
           ),
         });
         clearInterval(checkTimeout);
-      }
+      };
     } catch (err) {
       const error = err as CustomError;
       console.error(error.message);
