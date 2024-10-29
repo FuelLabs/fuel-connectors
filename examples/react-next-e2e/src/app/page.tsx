@@ -19,11 +19,11 @@ const PROVIDER_URL = process.env.NEXT_PUBLIC_PROVIDER_URL || '';
 function getContractId() {
   switch (CHAIN_ID_NAME) {
     case 'mainnet':
-      return COUNTER_CONTRACT_ID_MAINNET;
+      return COUNTER_CONTRACT_ID_MAINNET.counter;
     case 'testnet':
-      return COUNTER_CONTRACT_ID_TESTNET;
+      return COUNTER_CONTRACT_ID_TESTNET.counter;
     default:
-      return COUNTER_CONTRACT_ID_LOCAL;
+      return COUNTER_CONTRACT_ID_LOCAL.counter;
   }
 }
 
@@ -74,7 +74,7 @@ const wagmiConfig = createConfig({
 });
 
 if (!PROVIDER_URL) {
-  throw new Error('PROVIDER_URL is not set');
+  throw new Error(`PROVIDER_URL is not set: ${PROVIDER_URL}`);
 }
 
 const FUEL_CONFIG = {
