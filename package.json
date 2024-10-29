@@ -10,7 +10,7 @@
     "build:connectors": "turbo run build --filter @fuels/connectors",
     "build:docs": "turbo run build --filter=docs",
     "fuels:build": "turbo run fuels:build && pnpm format",
-    "dev:examples:react": "turbo run dev --filter=react-app",
+    "dev:examples:react": "turbo run dev --filter=@fuel-connectors/react-app",
     "dev:examples:next": "turbo run dev --filter=react-next",
     "dev:docs": "turbo run dev --filter=docs",
     "build:watch": "turbo build:watch",
