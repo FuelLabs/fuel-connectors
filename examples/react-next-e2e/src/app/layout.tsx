@@ -20,6 +20,10 @@ export default function RootLayout({
         <QueryClientProvider client={queryClient}>
           <Toast.Provider>
             {children}
+            <Toast.Viewport
+              id="toast-viewport"
+              className="fixed bottom-0 right-0 z-[100] m-0 flex w-[420px] max-w-[100vw] list-none flex-col gap-[10px] p-[var(--viewport-padding)] outline-none [--viewport-padding:_25px]"
+            />
             <Toast.Root />
           </Toast.Provider>
           {isDev && <ReactQueryDevtools initialIsOpen={false} />}
