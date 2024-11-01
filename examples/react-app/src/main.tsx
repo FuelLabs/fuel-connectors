@@ -56,11 +56,7 @@ const wagmiConfig = createConfig({
   ],
 });
 
-const CHAIN_ID = CHAIN_IDS.fuel[CHAIN_ID_NAME];
-
-if (CHAIN_ID == null) {
-  throw new Error('VITE_CHAIN_ID_NAME is not set');
-}
+const CHAIN_ID = CHAIN_IDS.fuel[CHAIN_ID_NAME] || 0;
 
 if (!PROVIDER_URL) {
   throw new Error('VITE_PROVIDER_URL is not set');
