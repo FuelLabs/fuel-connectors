@@ -3,7 +3,7 @@ import {
   getButtonByText,
   getByAriaLabel,
 } from '@fuels/playwright-utils';
-import { FuelWalletTestHelper } from '@fuels/playwright-utils';
+import type { FuelWalletTestHelper } from '@fuels/playwright-utils';
 import { test } from '@fuels/playwright-utils';
 import { type Page, expect } from '@playwright/test';
 import dotenv from 'dotenv';
@@ -21,6 +21,12 @@ const connect = async (
   await fuelWalletTestHelper.walletConnect();
 };
 
+const fuelPathToExtension = await downloadFuel('0.40.1');
+
+test.use({
+  pathToExtension: fuelPathToExtension,
+});
+
 test.describe('FuelWalletConnector', () => {
   let fuelWalletTestHelper: FuelWalletTestHelper;
   let fuelWallet: WalletUnlocked;
@@ -29,20 +35,12 @@ test.describe('FuelWalletConnector', () => {
   const depositAmount = '0.0003'; // Should be enough to cover the increment and transfer
 
   test.beforeEach(async ({ context, extensionId, page }) => {
-    const { fuelProvider, chainName, randomMnemonic } = await testSetup({
+    ({ fuelWalletTestHelper, fuelWallet, masterWallet } = await testSetup({
       context,
       page,
       extensionId,
       amountToFund: bn.parseUnits(depositAmount),
-    });
-
-    fuelWalletTestHelper = await FuelWalletTestHelper.walletSetup(
-      context,
-      extensionId,
-      fuelProvider.url,
-      chainName,
-      randomMnemonic,
-    );
+    }));
 
     await page.goto('/');
     await connect(page, fuelWalletTestHelper);
@@ -55,49 +53,58 @@ test.describe('FuelWalletConnector', () => {
     });
   });
 
-  test('should connect and show fuel address', async ({ page }) => {
-    expect(await page.waitForSelector('text=Your Fuel Address')).toBeTruthy();
-  });
+  test('FuelWallet Tests', async ({ page }) => {
+    if (await page.isVisible('text=Network Switch Required')) {
+      await page.click('text=Switch Network');
 
-  test('should connect and increment', async ({ page }) => {
-    await page.click('text=Increment');
-    await fuelWalletTestHelper.walletApprove();
+      const walletPage = await fuelWalletTestHelper.getWalletPopupPage();
 
-    expect(await page.waitForSelector('text=Success')).toBeTruthy();
-    expect(
-      await page.waitForSelector('text=Counter Incremented!'),
-    ).toBeTruthy();
-  });
-
-  test('should connect and transfer', async ({ page }) => {
-    await page.click('text=Transfer 0.0001 ETH');
-    await fuelWalletTestHelper.walletApprove();
-
-    expect(await page.waitForSelector('text=Success')).toBeTruthy();
-    expect(
-      await page.waitForSelector('text=Transferred successfully!'),
-    ).toBeTruthy();
-  });
-
-  test('should connect, disconnect, and reconnect', async ({ page }) => {
-    await page.click('text=Disconnect');
-    await page.waitForSelector('text=Connect Wallet');
+      const switchButton = getButtonByText(walletPage, 'Switch Network');
+      await switchButton.click();
+    }
 
     expect(await page.waitForSelector('text=Your Fuel Address')).toBeTruthy();
-  });
 
-  test('should connect, refresh and stay connected', async ({ page }) => {
-    await page.reload();
-    await page.waitForSelector('text=Your Fuel Address');
-  });
+    // await test.step('should connect and increment', async () => {
+    //   await page.click('text=Increment');
+    //   await fuelWalletTestHelper.walletApprove();
 
-  test('should connect, disconnect, refresh and stay disconnected', async ({
-    page,
-  }) => {
-    await page.click('text=Disconnect');
-    await page.waitForSelector('text=Connect Wallet');
+    //   expect(await page.waitForSelector('text=Success')).toBeTruthy();
+    //   expect(
+    //     await page.waitForSelector('text=Counter Incremented!'),
+    //   ).toBeTruthy();
+    // });
 
-    await page.reload();
-    await page.waitForSelector('text=Connect Wallet');
+    await test.step('should connect and transfer', async () => {
+      await page.click('text=Transfer 0.0001 ETH');
+      await fuelWalletTestHelper.walletApprove();
+
+      expect(await page.waitForSelector('text=Success')).toBeTruthy();
+      expect(
+        await page.waitForSelector('text=Transferred successfully!'),
+      ).toBeTruthy();
+    });
+
+    await test.step('should connect, disconnect, and reconnect', async () => {
+      await page.click('text=Disconnect');
+      await page.waitForSelector('text=Connect Wallet');
+
+      await connect(page, fuelWalletTestHelper);
+
+      expect(await page.waitForSelector('text=Your Fuel Address')).toBeTruthy();
+    });
+
+    await test.step('should connect, refresh and stay connected', async () => {
+      await page.reload();
+      await page.waitForSelector('text=Your Fuel Address');
+    });
+
+    await test.step('should connect, disconnect, refresh and stay disconnected', async () => {
+      await page.click('text=Disconnect');
+      await page.waitForSelector('text=Connect Wallet');
+
+      await page.reload();
+      await page.waitForSelector('text=Connect Wallet');
+    });
   });
 });

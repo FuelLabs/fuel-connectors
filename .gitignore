@@ -30,5 +30,6 @@ yarn-error.log*
 /playwright/.cache/
 /e2e-tests/playwright-report
 .env
+!docker/.env
 /e2e-tests/test-results
 **/*.tgz

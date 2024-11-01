@@ -5,7 +5,7 @@ import { counter as COUNTER_CONTRACT_ID_TESTNET } from './types/contract-ids-tes
 
 export const CHAIN_ID_NAME = import.meta.env
   .VITE_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel;
-export const PROVIDER_URL = import.meta.env.VITE_PROVIDER_URL;
+export const PROVIDER_URL = import.meta.env.VITE_FUEL_PROVIDER_URL;
 export const DEFAULT_AMOUNT = bn.parseUnits(
   CHAIN_ID_NAME === 'mainnet' ? '0.000000001' : '0.0001',
 );
