@@ -109,35 +109,18 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
         working-directory: e2e-tests
 
-      # - name: Run Playwright tests on Testnet
-      #   if: ${{ github.ref == 'refs/heads/main' }}
-      #   run: xvfb-run --auto-servernum -- pnpm --filter e2e-tests test:e2e
-      #   env:
-      #     VITE_FUEL_PROVIDER_URL: "https://testnet.fuel.network/v1/graphql"
-      #     NEXT_PUBLIC_PROVIDER_URL: "https://testnet.fuel.network/v1/graphql"
-      #     VITE_WALLET_SECRET: "0xa449b1ffee0e2205fa924c6740cc48b3b473aa28587df6dab12abc245d1f5298"
-      #     VITE_APP_WC_PROJECT_ID: e01471314fc69cc4efba6dce12dfd710
-      #     NEXT_PUBLIC_WC_PROJECT_ID: e01471314fc69cc4efba6dce12dfd710
-      #     VITE_CHAIN_ID_NAME: testnet
-      #     NEXT_PUBLIC_CHAIN_ID_NAME: testnet
-      #     REACT_APP_PORT: 5173
-      #     REACT_NEXT_PORT: 3002
-      #     VITE_MASTER_WALLET_MNEMONIC: ${{ secrets.VITE_MASTER_WALLET_MNEMONIC }}
-      #     VITE_APP_WC_PROJECT_ID: e01471314fc69cc4efba6dce12dfd710
-      #     VITE_CHAIN_ID_NAME: testnet
-
       - name: Run Playwright tests locally for Preview
         if: ${{ github.event_name == 'pull_request' }}
         run: xvfb-run --auto-servernum -- pnpm --filter e2e-tests test:e2e
         env:
           VITE_FUEL_PROVIDER_URL: "http://localhost:4000/v1/graphql"
           NEXT_PUBLIC_PROVIDER_URL: "http://localhost:4000/v1/graphql"
-          VITE_APP_WC_PROJECT_ID: e01471314fc69cc4efba6dce12dfd710
           NEXT_PUBLIC_WC_PROJECT_ID: e01471314fc69cc4efba6dce12dfd710
           NEXT_PUBLIC_CHAIN_ID_NAME: testnet
           REACT_APP_PORT: 5173
           REACT_NEXT_PORT: 3002
           VITE_WALLET_SECRET: "0xa449b1ffee0e2205fa924c6740cc48b3b473aa28587df6dab12abc245d1f5298"
           VITE_MASTER_WALLET_MNEMONIC: ${{ secrets.VITE_MASTER_WALLET_MNEMONIC }}
+          VITE_APP_WC_PROJECT_ID: e01471314fc69cc4efba6dce12dfd710
           VITE_CHAIN_ID_NAME: local
           PORT: 5173
