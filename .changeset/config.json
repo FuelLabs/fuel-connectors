@@ -14,11 +14,7 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "@fuel-connectors/react-app",
-    "react-next",
-    "@fuel-connectors/react-next-e2e"
-  ],
+  "ignore": ["react-app", "react-next", "@e2e-tests/react-next"],
   "snapshot": {
     "useCalculatedVersion": true,
     "prereleaseTemplate": "{tag}-{commit}"

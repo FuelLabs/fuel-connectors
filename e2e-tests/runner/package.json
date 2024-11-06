@@ -1,5 +1,5 @@
 {
-  "name": "@fuel-connectors/e2e-tests",
+  "name": "@e2e-tests/runner",
   "version": "0.36.1",
   "private": true,
   "description": "E2E tests for Fuel Wallet Connectors",
@@ -12,8 +12,8 @@
     "test:react-app": "pnpm test:react-app:ci -- --ui",
     "test:react-app:ci": "playwright test e2e-tests/react-app --project=react-app",
     "test:react-next": "pnpm playwright test --project=react-next",
-    "start:react-app": "pnpm --filter @fuel-connectors/react-app dev",
-    "start:react-next": "pnpm --filter @fuel-connectors/react-next-e2e dev",
+    "start:react-app": "pnpm --filter react-app dev",
+    "start:react-next": "pnpm --filter @e2e-tests/react-next dev",
     "start:servers": "pnpm run start:react-app & pnpm run start:react-next"
   },
   "devDependencies": {

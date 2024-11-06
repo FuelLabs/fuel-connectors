@@ -1,15 +1,15 @@
 'use client';
-import App from '@fuel-connectors/react-app/src/App';
-import { ConfigProvider } from '@fuel-connectors/react-app/src/context/ConfigContext';
 import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
 import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
 import { http, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
 import { CHAIN_IDS, Provider, bn } from 'fuels';
-import COUNTER_CONTRACT_ID_LOCAL from '../../../react-app/src/types/contract-ids-local.json';
-import COUNTER_CONTRACT_ID_MAINNET from '../../../react-app/src/types/contract-ids-mainnet.json';
-import COUNTER_CONTRACT_ID_TESTNET from '../../../react-app/src/types/contract-ids-testnet.json';
+import App from 'react-app/src/App';
+import { ConfigProvider } from 'react-app/src/context/ConfigContext';
+import COUNTER_CONTRACT_ID_LOCAL from 'react-app/src/types/contract-ids-local.json';
+import COUNTER_CONTRACT_ID_MAINNET from 'react-app/src/types/contract-ids-mainnet.json';
+import COUNTER_CONTRACT_ID_TESTNET from 'react-app/src/types/contract-ids-testnet.json';
 
 const CHAIN_ID_NAME = process.env
   .NEXT_PUBLIC_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel;

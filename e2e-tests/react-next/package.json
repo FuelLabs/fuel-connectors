@@ -1,5 +1,5 @@
 {
-  "name": "@fuel-connectors/react-next-e2e",
+  "name": "@e2e-tests/react-next",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,8 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@fuel-connectors/react-app": "link:../react-app",
-    "@fuel-connectors/shared": "link:../shared",
+    "react-app": "workspace:*",
     "@fuels/connectors": "workspace:*",
     "@fuels/react": "workspace:*",
     "@radix-ui/react-toast": "1.1.5",
@@ -18,7 +17,6 @@
     "@wagmi/core": "2.13.4",
     "fuels": "0.96.1",
     "clsx": "2.1.1",
-    "components": "link:../components",
     "connectkit": "1.8.2",
     "next": "14.2.3",
     "wagmi": "2.12.7"
