@@ -21,10 +21,6 @@
     "next": "14.2.3",
     "wagmi": "2.12.7"
   },
-  "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
-  },
   "devDependencies": {
     "@tanstack/react-query-devtools": "5.35.1",
     "@types/react": "18.3.1",
