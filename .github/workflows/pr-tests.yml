@@ -78,6 +78,7 @@ jobs:
           json-final-path: ./coverage/coverage-final.json
 
   tests-e2e-connectors:
+    name: E2E
     runs-on: buildjet-8vcpu-ubuntu-2204
     steps:
       - name: Check out the code
