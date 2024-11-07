@@ -107,7 +107,7 @@ jobs:
       # E2E tests running with Playwright
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
-        working-directory: e2e-tests
+        working-directory: e2e-tests/runner
 
       - name: Run Playwright tests locally for Preview
         if: ${{ github.event_name == 'pull_request' }}
