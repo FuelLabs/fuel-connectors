@@ -1,5 +1,5 @@
 import { useConnect, useDisconnect } from '@fuels/react';
-import { EXPLORER_URL } from '../config';
+import { useConfig } from '../context/ConfigContext';
 import { useWallet } from '../hooks/useWallet';
 import { Copyable } from './Copyable';
 import Button from './button';
@@ -14,8 +14,9 @@ export default function ConnectedAccount({ isSigning }: Props) {
   const { account, currentConnector, isConnected } = useWallet();
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
+  const { explorerUrl } = useConfig();
 
-  const explorerAccountUrl = `${EXPLORER_URL}/account/${account}/assets`;
+  const explorerAccountUrl = `${explorerUrl}/account/${account}/assets`;
 
   if (!account && isConnected) {
     return (

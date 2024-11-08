@@ -1,0 +1,31 @@
+{
+  "name": "@e2e-tests/runner",
+  "version": "0.36.1",
+  "private": true,
+  "description": "E2E tests for Fuel Wallet Connectors",
+  "author": "Fuel Labs <contact@fuel.sh> (https://fuel.network/)",
+  "homepage": "https://github.com/FuelLabs/fuel-connectors",
+  "type": "module",
+  "scripts": {
+    "test:e2e": "pnpm run start:servers & pnpm exec playwright test",
+    "test:e2e:ui": "playwright test --ui --debug",
+    "test:react-app": "pnpm test:react-app:ci -- --ui",
+    "test:react-app:ci": "playwright test e2e-tests/react-app --project=react-app",
+    "test:react-next": "pnpm playwright test --project=react-next",
+    "start:react-app": "pnpm --filter react-app dev",
+    "start:react-next": "pnpm --filter @e2e-tests/react-next dev",
+    "start:servers": "pnpm run start:react-app & pnpm run start:react-next"
+  },
+  "devDependencies": {
+    "@fuels/connectors": "workspace:*",
+    "@fuels/playwright-utils": "0.40.1",
+    "@playwright/test": "1.48.1",
+    "dotenv": "16.4.5",
+    "fuels": "0.96.1"
+  },
+  "engines": {
+    "node": ">=20.11.0",
+    "pnpm": "9.x"
+  },
+  "packageManager": "pnpm@9.5.0"
+}

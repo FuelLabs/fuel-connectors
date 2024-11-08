@@ -5,8 +5,7 @@ import { Counter } from '../types';
 
 import type { CustomError } from '../utils/customError';
 
-import { COUNTER_CONTRACT_ID, DEFAULT_AMOUNT } from '../config';
-import { EXPLORER_URL } from '../config';
+import { useConfig } from '../context/ConfigContext';
 import Button from './button';
 import ContractLink from './contract-link';
 import Feature from './feature';
@@ -19,6 +18,7 @@ interface Props {
 
 export default function ContractCounter({ isSigning, setIsSigning }: Props) {
   const { balance, wallet, refetchBalance } = useWallet();
+  const { defaultAmount, counterContractId, explorerUrl } = useConfig();
 
   const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
     open: false,
@@ -27,7 +27,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
   const [isLoading, setLoading] = useState(false);
   const [counter, setCounter] = useState(0);
 
-  const hasBalance = balance?.gte(DEFAULT_AMOUNT);
+  const hasBalance = balance?.gte(defaultAmount);
 
   useLogEvents();
 
@@ -64,7 +64,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
     if (wallet) {
       setLoading(true);
       setIsSigning(true);
-      const contract = new Counter(COUNTER_CONTRACT_ID, wallet);
+      const contract = new Counter(counterContractId, wallet);
       try {
         const { waitForResult } = await contract.functions
           .increment_counter()
@@ -79,7 +79,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
         getCount();
 
         if (waitForResult) {
-          async function checkResult() {
+          const checkResult = async () => {
             const tx = await waitForResult();
 
             await getCount();
@@ -90,7 +90,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
                 <p>
                   Counter incremented! View it on the{' '}
                   <a
-                    href={`${EXPLORER_URL}/tx/${tx.transactionId}`}
+                    href={`${explorerUrl}/tx/${tx.transactionId}`}
                     className="underline"
                     target="_blank"
                     rel="noreferrer"
@@ -104,7 +104,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
             refetchBalance();
             setLoading(false);
             setIsSigning(false);
-          }
+          };
 
           checkResult();
         }
@@ -129,7 +129,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
   async function getCount() {
     if (!wallet) return;
 
-    const counterContract = new Counter(COUNTER_CONTRACT_ID, wallet);
+    const counterContract = new Counter(counterContractId, wallet);
 
     try {
       const { value } = await counterContract.functions
