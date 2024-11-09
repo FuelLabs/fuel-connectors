@@ -107,7 +107,7 @@ jobs:
         
       - name: Build & Deploy Contracts
         run: pnpm deploy:contracts
-        working-directory: ./packages/e2e-contract-tests
+        working-directory: e2e-tests/runner
 
       # E2E tests running with Playwright
       - name: Install Playwright Browsers
