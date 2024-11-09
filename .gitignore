@@ -33,3 +33,6 @@ yarn-error.log*
 !docker/.env
 /e2e-tests/test-results
 **/*.tgz
+e2e-tests/runner/playwright-report/
+e2e-tests/runner/blob-report/
+e2e-tests/runner/test-results/
