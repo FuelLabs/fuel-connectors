@@ -17,10 +17,14 @@ export const sessionTests = async (
   await connect(page);
 
   await test.step('should connect, disconnect, and reconnect', async () => {
+    await skipBridgeFunds(page);
+
     await page.click('text=Disconnect');
     await page.waitForSelector('text=/Connect Wallet/');
 
     await connect(page);
+    await skipBridgeFunds(page);
+
     expect(await page.waitForSelector('text=/Your Fuel Address/')).toBeTruthy();
   });
 
