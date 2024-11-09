@@ -105,6 +105,10 @@ jobs:
       - name: Run build:connectors
         run: pnpm build:connectors
         
+      - name: Build & Deploy Contracts
+        run: pnpm deploy:contracts
+        working-directory: ./packages/e2e-contract-tests
+
       # E2E tests running with Playwright
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
