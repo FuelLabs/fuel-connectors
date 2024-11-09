@@ -33,7 +33,6 @@ const config: PlaywrightTestConfig = defineConfig({
   use: {
     permissions: ['clipboard-read', 'clipboard-write'],
     trace: 'on-first-retry',
-    headless: true,
   },
 });
 
