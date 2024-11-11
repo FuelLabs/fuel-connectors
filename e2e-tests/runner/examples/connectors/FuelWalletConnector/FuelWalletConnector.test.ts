@@ -65,15 +65,15 @@ test.describe('FuelWalletConnector', () => {
 
     expect(await page.waitForSelector('text=Your Fuel Address')).toBeTruthy();
 
-    // await test.step('should connect and increment', async () => {
-    //   await page.click('text=Increment');
-    //   await fuelWalletTestHelper.walletApprove();
+    await test.step('should connect and increment', async () => {
+      await page.click('text=Increment');
+      await fuelWalletTestHelper.walletApprove();
 
-    //   expect(await page.waitForSelector('text=Success')).toBeTruthy();
-    //   expect(
-    //     await page.waitForSelector('text=Counter Incremented!'),
-    //   ).toBeTruthy();
-    // });
+      expect(await page.waitForSelector('text=Success')).toBeTruthy();
+      expect(
+        await page.waitForSelector('text=Counter Incremented!'),
+      ).toBeTruthy();
+    });
 
     await test.step('should connect and transfer', async () => {
       await page.click('text=Transfer 0.0001 ETH');
