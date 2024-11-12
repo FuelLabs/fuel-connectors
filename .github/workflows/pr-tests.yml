@@ -107,7 +107,7 @@ jobs:
         
       - name: Install Forc and Fuel-Core
         run: |
-          curl -sSf https://fuelup.fuel.network/install | sh
+          curl -sSf https://install.fuel.network | sh
           export PATH="$HOME/.fuelup/bin:$PATH"
       
       - name: Verify Forc and Fuel-Core
