@@ -4,7 +4,7 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "Build contracts"
-pnpm fuels build > /dev/null 2>&1
+pnpm fuels build 
 
 echo "Deploy contract"
 export CONTRACT_NAME="LocalIncrement"
