@@ -19,6 +19,11 @@ mkdir -p "$(dirname "$OUTPUT_PATH_APP")"
 # Extract the LocalIncrement contract ID from contract-ids.json
 CONTRACT_ID=$(jq -r '.LocalIncrement' "$CONTRACT_IDS_PATH")
 
+echo "SCRIPT_DIR is: $SCRIPT_DIR"
+echo "CONTRACT_IDS_PATH is: $CONTRACT_IDS_PATH"
+echo "OUTPUT_PATH_APP is: $OUTPUT_PATH_APP"
+ls -la "$CONTRACT_IDS_PATH"
+
 jq -n --arg counter "$CONTRACT_ID" '{ "counter": $counter }' > "$OUTPUT_PATH_APP"
 
 echo "Saved contract ID as 'counter' in  contract-ids-local.json"
