@@ -128,8 +128,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/connectors
       '@fuels/playwright-utils':
-        specifier: 0.40.1
-        version: 0.40.1(@playwright/test@1.48.1)(fuels@0.96.1)
+        specifier: 0.41.1
+        version: 0.41.1(@playwright/test@1.48.1)(fuels@0.96.1)
       '@playwright/test':
         specifier: 1.48.1
         version: 1.48.1
@@ -2537,8 +2537,8 @@ packages:
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
     hasBin: true
 
-  '@fuels/playwright-utils@0.40.1':
-    resolution: {integrity: sha512-32HpohBGXoXcVXvE80K/Tg366SypWb+L5WpHfG7JzUhrpsI/DoHtI1pwu2ugi6OMkh8oxXKBWhx8S8dRFI7k/g==}
+  '@fuels/playwright-utils@0.41.1':
+    resolution: {integrity: sha512-8/oKlMVuKAf1u+hXeA6HEmLEJr3tBu6OczrGqAznHy3H1iHu/MqGq22YVYiRuKz+tzOy/KNL26irV1hRFmU13w==}
     peerDependencies:
       '@playwright/test': '>=1.46.1'
       fuels: '>=0.96.1'
@@ -10839,7 +10839,7 @@ snapshots:
       chalk: 4.1.2
       cli-table: 0.3.11
 
-  '@fuels/playwright-utils@0.40.1(@playwright/test@1.48.1)(fuels@0.96.1)':
+  '@fuels/playwright-utils@0.41.1(@playwright/test@1.48.1)(fuels@0.96.1)':
     dependencies:
       '@playwright/test': 1.48.1
       adm-zip: 0.5.16
