@@ -109,7 +109,13 @@ jobs:
         run: |
           curl -sSf https://install.fuel.network | sh
           export PATH="$HOME/.fuelup/bin:$PATH"
-      
+
+      - name: Add Fuelup to PATH
+        run: echo "export PATH=\"${HOME}/.fuelup/bin:\$PATH\"" >> $GITHUB_ENV
+
+      - name: Install Fuel Toolchain
+        run: fuelup toolchain install latest      
+
       - name: Verify Forc and Fuel-Core
         run: |
           forc --version
