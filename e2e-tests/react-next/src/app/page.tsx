@@ -13,8 +13,12 @@ import COUNTER_CONTRACT_ID_TESTNET from 'react-app/src/types/contract-ids-testne
 
 const CHAIN_ID_NAME = process.env
   .NEXT_PUBLIC_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel;
-const CHAIN_ID = CHAIN_IDS.fuel[CHAIN_ID_NAME];
-const PROVIDER_URL = process.env.NEXT_PUBLIC_PROVIDER_URL || '';
+const CHAIN_ID = CHAIN_IDS.fuel[CHAIN_ID_NAME] || 0;
+const PROVIDER_URL = process.env.NEXT_PUBLIC_PROVIDER_URL;
+
+if (!PROVIDER_URL) {
+  throw new Error(`PROVIDER_URL is not set: ${PROVIDER_URL}`);
+}
 
 function getContractId() {
   switch (CHAIN_ID_NAME) {
