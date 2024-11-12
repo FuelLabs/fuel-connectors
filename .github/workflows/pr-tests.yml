@@ -116,7 +116,7 @@ jobs:
 
       - name: Run Playwright tests locally for Preview
         if: ${{ github.event_name == 'pull_request' }}
-        run: xvfb-run --auto-servernum -- pnpm --filter e2e-tests test:e2e
+        run: xvfb-run --auto-servernum -- pnpm --filter @e2e-tests/runner test:e2e
         env:
           VITE_FUEL_PROVIDER_URL: "http://localhost:4000/v1/graphql"
           NEXT_PUBLIC_PROVIDER_URL: "http://localhost:4000/v1/graphql"
