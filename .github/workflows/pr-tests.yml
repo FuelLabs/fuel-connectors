@@ -105,6 +105,16 @@ jobs:
       - name: Run build:connectors
         run: pnpm build:connectors
         
+      - name: Install Forc and Fuel-Core
+        run: |
+          curl -sSf https://fuelup.fuel.network/install | sh
+          export PATH="$HOME/.fuelup/bin:$PATH"
+      
+      - name: Verify Forc and Fuel-Core
+        run: |
+          forc --version
+          fuel-core --version
+
       - name: Build & Deploy Contracts
         run: pnpm deploy:contracts
         working-directory: e2e-tests/runner
