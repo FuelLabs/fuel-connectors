@@ -1,8 +1,12 @@
 #!/bin/bash
 
 # Get the directory where the script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/scripts"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# If SCRIPT_DIR doesnt end with /scripts, add it
+if [[ $SCRIPT_DIR != */scripts ]]; then
+    SCRIPT_DIR="$SCRIPT_DIR/scripts"
+fi
 
 echo "Build contracts"
 pnpm fuels build 
