@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get the directory where the script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 
 # If SCRIPT_DIR doesnt end with /scripts, add it
 if [[ $SCRIPT_DIR != */scripts ]]; then
