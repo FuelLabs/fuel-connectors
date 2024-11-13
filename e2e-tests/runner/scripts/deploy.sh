@@ -7,11 +7,10 @@ echo "Build contracts"
 pnpm fuels build 
 
 echo "Deploy contract"
-export CONTRACT_NAME="LocalIncrement"
 pnpm fuels deploy
 
 # Define paths for the input and output files
-CONTRACT_IDS_PATH="$SCRIPT_DIR/../src/contract-ids.json"
+CONTRACT_IDS_PATH="$SCRIPT_DIR/../src/contracts/contract-ids.json"
 OUTPUT_PATH_APP="$SCRIPT_DIR/../../../examples/react-app/src/types/contract-ids-local.json"
 
 # Ensure the output directory exists
@@ -31,12 +30,12 @@ else
     exit 1
 fi
 
-# Extract the LocalIncrement contract ID from contract-ids.json
-CONTRACT_ID=$(jq -r '.LocalIncrement // empty' "$CONTRACT_IDS_PATH")
+# Extract the customAsset contract ID from contract-ids.json
+CONTRACT_ID=$(jq -r '.customAsset // empty' "$CONTRACT_IDS_PATH")
 
 # Check if CONTRACT_ID was successfully extracted
 if [ -z "$CONTRACT_ID" ]; then
-    echo "Error: Contract ID for 'LocalIncrement' not found in $CONTRACT_IDS_PATH"
+    echo "Error: Contract ID for 'customAsset' not found in $CONTRACT_IDS_PATH"
     exit 1
 fi
 
