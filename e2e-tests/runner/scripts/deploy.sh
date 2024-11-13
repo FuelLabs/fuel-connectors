@@ -23,7 +23,7 @@ echo "CONTRACT_IDS_PATH is: $CONTRACT_IDS_PATH"
 echo "OUTPUT_PATH_APP is: $OUTPUT_PATH_APP"
 
 # Check if the contract-ids.json file exists and display its contents
-if [[ -f "$CONTRACT_IDS_PATH" ]]; then
+if [ -f "$CONTRACT_IDS_PATH" ]; then
     echo "Found contract-ids.json at $CONTRACT_IDS_PATH"
     cat "$CONTRACT_IDS_PATH"
 else
@@ -35,7 +35,7 @@ fi
 CONTRACT_ID=$(jq -r '.LocalIncrement // empty' "$CONTRACT_IDS_PATH")
 
 # Check if CONTRACT_ID was successfully extracted
-if [[ -z "$CONTRACT_ID" ]]; then
+if [ -z "$CONTRACT_ID" ]; then
     echo "Error: Contract ID for 'LocalIncrement' not found in $CONTRACT_IDS_PATH"
     exit 1
 fi
