@@ -65,7 +65,6 @@ export function useWallet(
   const _params: UseWalletParams =
     typeof params === 'string' ? { account: params } : (params ?? {});
 
-
   const queried = useNamedQuery('wallet', {
     queryKey: QUERY_KEYS.wallet(account, network?.url),
     queryFn: async () => {
