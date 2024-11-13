@@ -107,21 +107,29 @@ jobs:
         
       - uses: ./.github/workflows/setup-rust
 
-      - name: Add Fuelup to PATH
-        run: echo "export PATH=\"${HOME}/.fuelup/bin:\$PATH\"" >> $GITHUB_ENV
-
-      - name: Install Fuel Toolchain
-        run: fuelup toolchain install latest      
-
       - name: Verify Forc and Fuel-Core
         run: |
           forc --version
           fuel-core --version
 
+      # Check the directory structure before deployment
+      - name: Debug Paths Before Deployment
+        run: |
+          echo "Checking paths before deployment"
+          ls -la e2e-tests/runner/src
+          ls -la examples/react-app/src/types/
+
       - name: Build & Deploy Contracts
         run: pnpm deploy:contracts
         working-directory: e2e-tests/runner
 
+      # Check the directory structure after deployment
+      - name: Debug Paths After Deployment
+        run: |
+          echo "Checking paths after deployment"
+          ls -la e2e-tests/runner/src/contracts/
+          ls -la examples/react-app/src/types/
+      
       # E2E tests running with Playwright
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
