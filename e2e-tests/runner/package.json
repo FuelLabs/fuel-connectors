@@ -15,7 +15,8 @@
     "start:react-app": "pnpm --filter react-app dev",
     "start:react-next": "pnpm --filter @e2e-tests/react-next dev",
     "start:servers": "pnpm run start:react-app & pnpm run start:react-next",
-    "deploy:contracts": "sh ./scripts/deploy.sh"
+    "deploy:contracts": "sh ./scripts/deployLocal.sh",
+    "deploy:contracts:ci": "sh ./scripts/deployCI.sh"
   },
   "devDependencies": {
     "@fuels/connectors": "workspace:*",

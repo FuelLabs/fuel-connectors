@@ -120,7 +120,7 @@ jobs:
           ls -la examples/react-app/src/types/
 
       - name: Build & Deploy Contracts
-        run: pnpm deploy:contracts
+        run: pnpm deploy:contracts:ci
         working-directory: e2e-tests/runner/scripts
 
       # Check the directory structure after deployment
