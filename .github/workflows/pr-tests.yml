@@ -105,10 +105,7 @@ jobs:
       - name: Run build:connectors
         run: pnpm build:connectors
         
-      - name: Install Forc and Fuel-Core
-        run: |
-          curl -sSf https://install.fuel.network | sh
-          export PATH="$HOME/.fuelup/bin:$PATH"
+      - uses: ./.github/workflows/setup-rust
 
       - name: Add Fuelup to PATH
         run: echo "export PATH=\"${HOME}/.fuelup/bin:\$PATH\"" >> $GITHUB_ENV
