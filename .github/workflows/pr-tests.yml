@@ -121,7 +121,7 @@ jobs:
 
       - name: Build & Deploy Contracts
         run: pnpm deploy:contracts
-        working-directory: e2e-tests/runner
+        working-directory: e2e-tests/runner/scripts
 
       # Check the directory structure after deployment
       - name: Debug Paths After Deployment
