@@ -112,13 +112,6 @@ jobs:
           forc --version
           fuel-core --version
 
-      # Check the directory structure before deployment
-      - name: Debug Paths Before Deployment
-        run: |
-          echo "Checking paths before deployment"
-          ls -la e2e-tests/runner/src
-          ls -la examples/react-app/src/types/
-
       - name: Build & Deploy Contracts
         run: pnpm deploy:contracts:ci
         working-directory: e2e-tests/runner/scripts
