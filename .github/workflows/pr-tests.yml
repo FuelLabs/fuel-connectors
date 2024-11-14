@@ -110,9 +110,8 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
         working-directory: e2e-tests/runner
 
-
       - name: Build Synpress cache
-        run: pnpm synpress wallet-setup
+        run: xvfb-run pnpm synpress wallet-setup
         working-directory: e2e-tests/runner
 
       - name: Run Playwright tests locally for Preview
