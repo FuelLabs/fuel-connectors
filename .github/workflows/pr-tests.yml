@@ -104,6 +104,10 @@ jobs:
     
       - name: Run build:connectors
         run: pnpm build:connectors
+
+      - name: Build Synpress cache
+        run: pnpm synpress wallet-setup
+        working-directory: e2e-tests/runner
         
       # E2E tests running with Playwright
       - name: Install Playwright Browsers
