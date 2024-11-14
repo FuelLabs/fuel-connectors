@@ -4,7 +4,7 @@ import type { ApproveTransferFunction, ConnectorFunctions } from './types';
 
 // biome-ignore lint/suspicious/noExportsInTest: <explanation>
 export const skipBridgeFunds = async (page: Page) => {
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(1000);
   if (await page.isVisible('text=Bridge Funds', { timeout: 2000 })) {
     await page.click('text=Continue to application');
   }
