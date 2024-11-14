@@ -12,7 +12,7 @@ import basicSetup from '../../../wallet-setup/basic.setup';
 // Set up the test environment with Synpress and MetaMask fixtures, using the basic setup configuration
 const test = testWithSynpress(metaMaskFixtures(basicSetup));
 
-test.describe('FuelWalletConnector', () => {
+test.describe('WalletConnectConnector', () => {
   let metamask: MetaMask;
 
   test.beforeEach(async ({ context, extensionId, metamaskPage, page }) => {
@@ -22,7 +22,7 @@ test.describe('FuelWalletConnector', () => {
       basicSetup.walletPassword,
       extensionId,
     );
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 
   const connect: ConnectorFunctions['connect'] = async (page) => {
