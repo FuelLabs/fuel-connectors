@@ -57,5 +57,8 @@
       "fast-xml-parser@<4.4.1": ">=4.4.1"
     }
   },
-  "packageManager": "pnpm@9.5.0"
+  "packageManager": "pnpm@9.5.0",
+  "dependencies": {
+    "@synthetixio/synpress": "4.0.3"
+  }
 }

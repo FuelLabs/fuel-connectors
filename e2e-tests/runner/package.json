@@ -19,7 +19,9 @@
   "devDependencies": {
     "@fuels/connectors": "workspace:*",
     "@fuels/playwright-utils": "0.41.1",
-    "@playwright/test": "1.48.1",
+    "@playwright/test": "1.48.2",
+    "@synthetixio/synpress": "4.0.3",
+    "@synthetixio/synpress-cache": "0.0.4",
     "dotenv": "16.4.5",
     "fuels": "0.96.1"
   },
