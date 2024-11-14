@@ -105,6 +105,31 @@ jobs:
       - name: Run build:connectors
         run: pnpm build:connectors
         
+      - uses: ./.github/workflows/setup-rust
+
+      - name: Verify Forc and Fuel-Core
+        run: |
+          forc --version
+          fuel-core --version
+
+      # Check the directory structure before deployment
+      - name: Debug Paths Before Deployment
+        run: |
+          echo "Checking paths before deployment"
+          ls -la e2e-tests/runner/src
+          ls -la examples/react-app/src/types/
+
+      - name: Build & Deploy Contracts
+        run: pnpm deploy:contracts:ci
+        working-directory: e2e-tests/runner/scripts
+
+      # Check the directory structure after deployment
+      - name: Debug Paths After Deployment
+        run: |
+          echo "Checking paths after deployment"
+          ls -la e2e-tests/runner/src/contracts/
+          ls -la examples/react-app/src/types/
+      
       # E2E tests running with Playwright
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
@@ -117,7 +142,7 @@ jobs:
           VITE_FUEL_PROVIDER_URL: "http://localhost:4000/v1/graphql"
           NEXT_PUBLIC_PROVIDER_URL: "http://localhost:4000/v1/graphql"
           NEXT_PUBLIC_WC_PROJECT_ID: e01471314fc69cc4efba6dce12dfd710
-          NEXT_PUBLIC_CHAIN_ID_NAME: testnet
+          NEXT_PUBLIC_CHAIN_ID_NAME: local
           REACT_APP_PORT: 5173
           REACT_NEXT_PORT: 3002
           VITE_WALLET_SECRET: "0xa449b1ffee0e2205fa924c6740cc48b3b473aa28587df6dab12abc245d1f5298"

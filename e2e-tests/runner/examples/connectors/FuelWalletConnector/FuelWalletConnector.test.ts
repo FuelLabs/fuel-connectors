@@ -7,7 +7,11 @@ import type { FuelWalletTestHelper } from '@fuels/playwright-utils';
 import { test } from '@fuels/playwright-utils';
 import dotenv from 'dotenv';
 import { type WalletUnlocked, bn } from 'fuels';
-import { sessionTests, transferTests } from '../../../common/common';
+import {
+  incrementTests,
+  sessionTests,
+  transferTests,
+} from '../../../common/common';
 import type { ConnectorFunctions } from '../../../common/types';
 import { testSetup, transferMaxBalance } from '../setup';
 dotenv.config();
@@ -67,5 +71,7 @@ test.describe('FuelWalletConnector', () => {
     await sessionTests(page, { connect, approveTransfer });
 
     await transferTests(page, { connect, approveTransfer });
+
+    await incrementTests(page, { connect, approveTransfer });
   });
 });

@@ -57,15 +57,23 @@ export const transferTests = async (
   expect(
     await page.waitForSelector('text=Transferred successfully!'),
   ).toBeTruthy();
+
+  await page.click('text=Disconnect');
 };
 
 // biome-ignore lint/suspicious/noExportsInTest: <explanation>
 export const incrementTests = async (
   page: Page,
-  { approveTransfer }: ConnectorFunctions,
+  { approveTransfer, connect }: ConnectorFunctions,
 ) => {
   await test.step('should connect and increment', async () => {
-    await page.click('text=Increment');
+    await connect(page);
+
+    const incrementButton = await page.getByRole('button', {
+      name: 'Increment',
+    });
+    await incrementButton.click();
+
     await approveTransfer(page);
 
     expect(await page.waitForSelector('text=Success')).toBeTruthy();
