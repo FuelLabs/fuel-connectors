@@ -9,7 +9,6 @@ import { sessionTests, skipBridgeFunds } from '../../../common/common';
 import type { ConnectorFunctions } from '../../../common/types';
 import basicSetup from '../../../wallet-setup/basic.setup';
 
-// Set up the test environment with Synpress and MetaMask fixtures, using the basic setup configuration
 const test = testWithSynpress(metaMaskFixtures(basicSetup));
 
 test.describe('WalletConnectConnector', () => {
