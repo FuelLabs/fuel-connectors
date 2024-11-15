@@ -40,6 +40,8 @@ export default function ConnectedAccount({ isSigning }: Props) {
         <div
           className="flex items-center space-between"
           style={{ gap: '10px' }}
+          id="address"
+          data-address={account}
         >
           <code className="block md:hidden">
             {truncAddressMiddle(account, 4)}
