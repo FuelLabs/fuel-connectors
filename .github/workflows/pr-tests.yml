@@ -116,14 +116,10 @@ jobs:
         run: pnpm deploy:contracts:ci
         working-directory: e2e-tests/runner/scripts
 
-      # Check the directory structure after deployment
-      - name: Debug Paths After Deployment
-        run: |
-          echo "Checking paths after deployment"
-          ls -la e2e-tests/runner/src/contracts/
-          ls -la examples/react-app/src/types/
-      
-      # E2E tests running with Playwright
+      - name: Build & Deploy EVM Predicates
+        run: pnpm versions:generate
+        working-directory: packages/evm-predicates
+
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
         working-directory: e2e-tests/runner
