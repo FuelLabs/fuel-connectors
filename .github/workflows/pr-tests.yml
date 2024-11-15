@@ -121,7 +121,7 @@ jobs:
         working-directory: packages/evm-predicates/predicate
 
       - name: Deploy EVM Predicates
-        run: pnpm versions:generate
+        run: pnpm fuels build && pnpm fuels deploy
         working-directory: packages/evm-predicates
 
       - name: Install Playwright Browsers
