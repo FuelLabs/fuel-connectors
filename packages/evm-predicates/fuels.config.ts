@@ -7,5 +7,5 @@ export default createConfig({
   forcBuildFlags: ['--release'],
   // needs the private key to deploy the predicate
   privateKey:
-    '0x94ffcc53b892684acefaebc8a3d4a595e528a8cf664eeb3ef36f1020b0809d0d', // genesis private key
+    '0xa449b1ffee0e2205fa924c6740cc48b3b473aa28587df6dab12abc245d1f5298', // genesis private key
 });
