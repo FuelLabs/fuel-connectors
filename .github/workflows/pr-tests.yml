@@ -116,11 +116,7 @@ jobs:
         run: pnpm deploy:contracts:ci
         working-directory: e2e-tests/runner/scripts
 
-      - name: Build EVM Predicates
-        run: forc build --release
-        working-directory: packages/evm-predicates/predicate
-
-      - name: Deploy EVM Predicates
+      - name: Build & Deploy EVM Predicates
         run: pnpm fuels build && pnpm fuels deploy
         working-directory: packages/evm-predicates
 
