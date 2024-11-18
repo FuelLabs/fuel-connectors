@@ -1,4 +1,5 @@
 import { Provider } from 'fuels';
+import { useMemo } from 'react';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { useFuel } from '../providers';
 import { QUERY_KEYS } from '../utils';
@@ -31,9 +32,11 @@ export function useIsSupportedNetwork(params?: UseIsSupportedNetwork) {
   const { network } = useNetwork();
   const { isConnected } = useIsConnected();
   const { currentConnector } = useCurrentConnector();
+
   return useNamedQuery('isSupportedNetwork', {
     queryKey: QUERY_KEYS.isSupportedNetwork(
       currentConnector?.name,
+      networks,
       network,
       isConnected,
     ),

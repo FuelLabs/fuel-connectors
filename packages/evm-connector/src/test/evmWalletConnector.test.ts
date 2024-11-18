@@ -64,7 +64,7 @@ async function createTransaction(
     tx.inputs?.forEach((input) => {
       if (
         input.type === InputType.Coin &&
-        hexlify(input.owner) === predicate.address.toB256()
+        hexlify(input.owner) === predicate.address.toString()
       ) {
         input.predicate = arrayify(predicate.bytes);
       }

@@ -188,8 +188,10 @@ export class WalletConnectConnector extends PredicateConnector {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) return;
 
-    const { state } = wagmiConfig;
-    if (state.status === 'disconnected' && state.connections.size > 0) {
+    if (this.config.skipAutoReconnect || !wagmiConfig) return;
+
+    const { status, connections } = wagmiConfig.state;
+    if (status === 'disconnected' && connections.size > 0) {
       await reconnect(wagmiConfig);
     }
   }
@@ -433,5 +435,20 @@ export class WalletConnectConnector extends PredicateConnector {
       this.disconnect();
       throw error;
     }
+  }
+
+  async signMessageCustomCurve(message: string) {
+    const { ethProvider } = await this.getProviders();
+    if (!ethProvider) throw new Error('Eth provider not found');
+    const accountAddress = await this.getAccountAddress();
+    if (!accountAddress) throw new Error('No connected accounts');
+    const signature = await ethProvider.request({
+      method: 'personal_sign',
+      params: [accountAddress, message],
+    });
+    return {
+      curve: 'secp256k1',
+      signature: signature as string,
+    };
   }
 }

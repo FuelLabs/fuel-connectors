@@ -30,5 +30,11 @@ yarn-error.log*
 /playwright/.cache/
 /e2e-tests/playwright-report
 .env
+!docker/.env
 /e2e-tests/test-results
 **/*.tgz
+e2e-tests/runner/playwright-report/
+e2e-tests/runner/blob-report/
+e2e-tests/runner/test-results/
+e2e-tests/runner/src/contracts/
+e2e-tests/runner/src/contracts/contract-ids.json

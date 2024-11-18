@@ -28,6 +28,7 @@ import type {
   PredicateVersion,
   PreparedTransaction,
   ProviderDictionary,
+  SignedMessageCustomCurve,
 } from './types';
 
 export abstract class PredicateConnector extends FuelConnector {
@@ -59,6 +60,9 @@ export abstract class PredicateConnector extends FuelConnector {
   protected abstract getProviders(): Promise<ProviderDictionary>;
   protected abstract requireConnection(): MaybeAsync<void>;
   protected abstract walletAccounts(): Promise<Array<string>>;
+  abstract signMessageCustomCurve(
+    _message: string,
+  ): Promise<SignedMessageCustomCurve>;
 
   protected async emitAccountChange(
     address: string,
@@ -163,7 +167,7 @@ export abstract class PredicateConnector extends FuelConnector {
       throw Error('No predicate account found');
     }
 
-    const b256Address = Address.fromDynamicInput(address).toB256();
+    const b256Address = Address.fromDynamicInput(address).toString();
     const { fuelProvider } = await this.getProviders();
     const chainId = fuelProvider.getChainId();
     const walletAccount = this.predicateAccount.getAccountAddress(

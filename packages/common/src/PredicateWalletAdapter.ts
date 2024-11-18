@@ -18,7 +18,7 @@ export interface PredicateWalletAdapter {
 
 export class EthereumWalletAdapter implements PredicateWalletAdapter {
   convertAddress = (address: string): string => {
-    return Address.fromEvmAddress(address).toB256();
+    return Address.fromEvmAddress(address).toString();
   };
 
   generateFakeAccount = (): FakeAccount => {

@@ -1,5 +1,47 @@
 # @fuel-connectors/solana-connector
 
+## 0.36.1
+
+## 0.36.0
+
+## 0.35.1
+
+### Patch Changes
+
+- [#389](https://github.com/FuelLabs/fuel-connectors/pull/389) [`d6e12c9`](https://github.com/FuelLabs/fuel-connectors/commit/d6e12c9e13c67a6c00065cf8960a02d798830cdb) Thanks [@Torres-ssf](https://github.com/Torres-ssf)! - Upgrading `fuels` to `0.96.1`
+
+## 0.35.0
+
+### Minor Changes
+
+- [#387](https://github.com/FuelLabs/fuel-connectors/pull/387) [`5c3d337`](https://github.com/FuelLabs/fuel-connectors/commit/5c3d3375db00b31792a05010a026ed2b74df21db) Thanks [@arboleya](https://github.com/arboleya)! - Upgrading `fuels` to `0.96.0`
+
+## 0.34.2
+
+## 0.34.1
+
+## 0.34.0
+
+## 0.33.0
+
+### Minor Changes
+
+- [#377](https://github.com/FuelLabs/fuel-connectors/pull/377) [`aa757db`](https://github.com/FuelLabs/fuel-connectors/commit/aa757dbddf0b458be14310251613ba39abd52413) Thanks [@helciofranco](https://github.com/helciofranco)! - Hide `All Wallets` option in the EVM and SVM connectors.
+
+### Patch Changes
+
+- [#374](https://github.com/FuelLabs/fuel-connectors/pull/374) [`58d0388`](https://github.com/FuelLabs/fuel-connectors/commit/58d0388d78e455b5dc420cfca6fdf0c77db47456) Thanks [@luizstacio](https://github.com/luizstacio)! - feat: add sign message with custom curves for predicates
+
+## 0.32.0
+
+### Minor Changes
+
+- [#370](https://github.com/FuelLabs/fuel-connectors/pull/370) [`9a20224`](https://github.com/FuelLabs/fuel-connectors/commit/9a202245ceb8653435e963a98fc3453afd81f52b) Thanks [@petertonysmith94](https://github.com/petertonysmith94)! - Updated Fuel SDK to 0.95.0
+
+### Patch Changes
+
+- [#371](https://github.com/FuelLabs/fuel-connectors/pull/371) [`5a2cfe3`](https://github.com/FuelLabs/fuel-connectors/commit/5a2cfe3642e85dec34a0995d86d1a7874767435e) Thanks [@luizstacio](https://github.com/luizstacio)! - Fix disconnection not dropping the state
+
 ## 0.31.6
 
 ## 0.31.5

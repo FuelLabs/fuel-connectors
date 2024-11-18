@@ -1,0 +1,14 @@
+name: 'Forc Setup'
+
+inputs:
+  forc-components:
+    default: 'forc@0.65.2, fuel-core@0.39.0'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Fuel toolchain
+      uses: FuelLabs/action-fuel-toolchain@v0.6.0
+      with:
+        name: fuel-bridge
+        components: ${{ inputs.forc-components }}

@@ -1,5 +1,39 @@
 # @fuel-connectors/fuelet-wallet
 
+## 0.36.1
+
+### Patch Changes
+
+- [#418](https://github.com/FuelLabs/fuel-connectors/pull/418) [`b0ef68f`](https://github.com/FuelLabs/fuel-connectors/commit/b0ef68fddfeee60ad86111673b226c6ec2cf3417) Thanks [@helciofranco](https://github.com/helciofranco)! - Add missing `base64` images for `Fuel` and `Fuelet` connectors.
+
+## 0.36.0
+
+## 0.35.1
+
+### Patch Changes
+
+- [#389](https://github.com/FuelLabs/fuel-connectors/pull/389) [`d6e12c9`](https://github.com/FuelLabs/fuel-connectors/commit/d6e12c9e13c67a6c00065cf8960a02d798830cdb) Thanks [@Torres-ssf](https://github.com/Torres-ssf)! - Upgrading `fuels` to `0.96.1`
+
+## 0.35.0
+
+### Minor Changes
+
+- [#387](https://github.com/FuelLabs/fuel-connectors/pull/387) [`5c3d337`](https://github.com/FuelLabs/fuel-connectors/commit/5c3d3375db00b31792a05010a026ed2b74df21db) Thanks [@arboleya](https://github.com/arboleya)! - Upgrading `fuels` to `0.96.0`
+
+## 0.34.2
+
+## 0.34.1
+
+## 0.34.0
+
+## 0.33.0
+
+## 0.32.0
+
+### Minor Changes
+
+- [#370](https://github.com/FuelLabs/fuel-connectors/pull/370) [`9a20224`](https://github.com/FuelLabs/fuel-connectors/commit/9a202245ceb8653435e963a98fc3453afd81f52b) Thanks [@petertonysmith94](https://github.com/petertonysmith94)! - Updated Fuel SDK to 0.95.0
+
 ## 0.31.6
 
 ## 0.31.5

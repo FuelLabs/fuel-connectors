@@ -16,7 +16,11 @@
     "build:watch": "turbo build:watch",
     "ts:check": "turbo run ts:check",
     "test": "vitest",
+    "node:up": "make -C ./docker up",
+    "node:down": "make -C ./docker down",
+    "node:clean": "make -C ./docker clean",
     "test:ci": "turbo run test -- --run --coverage.enabled --coverage.reporter=json-summary --coverage.reporter=json",
+    "test:e2e": "turbo run test:e2e",
     "lint:check": "biome check --apply-unsafe .",
     "lint:ci": "biome lint --max-diagnostics=1000 --diagnostic-level=error .",
     "format": "biome format --write .",
@@ -31,6 +35,7 @@
     "@changesets/cli": "2.26.2",
     "@fuels/ts-config": "0.20.0",
     "@fuels/tsup-config": "0.20.0",
+    "@types/node": "20.12.11",
     "@vitest/coverage-v8": "2.0.2",
     "compare-versions": "6.1.0",
     "husky": "9.0.11",
@@ -40,8 +45,8 @@
     "vitest": "2.0.2"
   },
   "engines": {
-    "node": ">=18",
-    "pnpm": ">=9"
+    "node": ">=20.11.0",
+    "pnpm": "9.x"
   },
   "pnpm": {
     "overrides": {

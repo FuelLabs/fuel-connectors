@@ -1,5 +1,6 @@
 import type { QueryKey } from '@tanstack/react-query';
 import type { BytesLike, Network, Provider } from 'fuels';
+import type { NetworkConfig } from '../types';
 
 export const QUERY_KEYS = {
   base: ['fuel'] as QueryKey,
@@ -46,11 +47,10 @@ export const QUERY_KEYS = {
       queryKey.push(provider.getChainId());
     return queryKey;
   },
-  wallet: (address?: string | null, provider?: Provider | null): QueryKey => {
+  wallet: (address?: string | null, providerUrl?: string | null): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('wallet');
     if (address) queryKey.push(address);
-    if (provider?.getChainId?.() !== undefined)
-      queryKey.push(provider.getChainId());
+    if (providerUrl) queryKey.push(providerUrl);
     return queryKey;
   },
   transaction: (id?: string): QueryKey => {
@@ -86,11 +86,13 @@ export const QUERY_KEYS = {
   },
   isSupportedNetwork: (
     connectorName: string | null | undefined,
+    networks: Array<NetworkConfig>,
     network: Partial<Network> | null,
     isConnected: boolean,
   ): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('isSupportedNetwork');
     if (connectorName) queryKey.push(connectorName);
+    if (networks) queryKey.push(networks);
     if (network) queryKey.push(network);
     if (isConnected) queryKey.push(isConnected);
     return queryKey;

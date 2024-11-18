@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/solana-connector",
-  "version": "0.31.6",
+  "version": "0.36.1",
   "private": true,
   "type": "module",
   "files": ["dist"],
@@ -21,9 +21,9 @@
     "versions:generate": "pnpm fuels build && pnpm fuels deploy && tsx ./scripts/versions.ts"
   },
   "peerDependencies": {
-    "@reown/appkit": ">=1.1.2",
-    "@reown/appkit-adapter-wagmi": ">=1.1.2",
-    "fuels": ">=0.95.0"
+    "@web3modal/core": ">=5.0.0",
+    "@web3modal/scaffold": ">=5.0.0",
+    "fuels": ">=0.96.1"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -38,7 +38,8 @@
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",
     "@types/memoizee": "0.4.11",
-    "fuels": "0.95.0",
+    "@web3modal/core": "5.0.0",
+    "fuels": "0.96.1",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",

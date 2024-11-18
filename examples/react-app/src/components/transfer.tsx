@@ -1,14 +1,14 @@
 import { Address } from 'fuels';
 import { useState } from 'react';
+import { useConfig } from '../context/ConfigContext';
 import { useWallet } from '../hooks/useWallet';
 import type { CustomError } from '../utils/customError';
-
-import { DEFAULT_AMOUNT, EXPLORER_URL } from '../config';
 import Button from './button';
 import Feature from './feature';
 import Notification, { type Props as NotificationProps } from './notification';
 
-const DEFAULT_ADDRESS = Address.fromRandom().toB256();
+const DEFAULT_ADDRESS =
+  '0xa671949e92e3cf75a497f6759c785336308f8867b677defe1ba71d5979197baf';
 
 interface Props {
   isSigning: boolean;
@@ -17,6 +17,7 @@ interface Props {
 
 export default function Transfer({ isSigning, setIsSigning }: Props) {
   const { balance, wallet, refetchBalance } = useWallet();
+  const { defaultAmount, explorerUrl } = useConfig();
 
   const [receiver, setReceiver] = useState(DEFAULT_ADDRESS);
   const [isLoading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
     open: false,
   });
 
-  const hasBalance = balance?.gte(DEFAULT_AMOUNT);
+  const hasBalance = balance?.gte(defaultAmount);
 
   const handleTransfer = async () => {
     setLoading(true);
@@ -39,7 +40,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
 
       const resp = await wallet?.transfer(
         receiverAddress,
-        DEFAULT_AMOUNT,
+        defaultAmount,
         asset_id,
       );
 
@@ -55,7 +56,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
         checkResult();
       }, TIME_TO_WAIT);
 
-      async function checkResult() {
+      const checkResult = async () => {
         const result = await resp?.waitForResult();
         refetchBalance();
         setLoading(false);
@@ -67,7 +68,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
             <p>
               Transferred successfully! View it on the{' '}
               <a
-                href={`${EXPLORER_URL}/tx/${result?.id}`}
+                href={`${explorerUrl}/tx/${result?.id}`}
                 className="underline"
                 target="_blank"
                 rel="noreferrer"
@@ -78,7 +79,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
           ),
         });
         clearInterval(checkTimeout);
-      }
+      };
     } catch (err) {
       const error = err as CustomError;
       console.error(error.message);
@@ -115,7 +116,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
         loading={isLoading}
         loadingText="Transferring..."
       >
-        {`Transfer ${DEFAULT_AMOUNT.format()} ETH`}
+        {`Transfer ${defaultAmount.format()} ETH`}
       </Button>
       <Notification
         setOpen={() => setToast({ ...toast, open: false })}

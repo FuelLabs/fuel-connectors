@@ -18,6 +18,7 @@ import type { JSONRPCRequest } from 'json-rpc-2.0';
 import { JSONRPCClient } from 'json-rpc-2.0';
 
 import {
+  APP_IMAGE,
   CONNECTOR_SCRIPT,
   CONTENT_SCRIPT_NAME,
   EVENT_MESSAGE,
@@ -36,7 +37,7 @@ export class FuelWalletConnector extends FuelConnector {
   external = false;
   events = FuelConnectorEventTypes;
   metadata: ConnectorMetadata = {
-    image: '/connectors/fuel-wallet.svg',
+    image: APP_IMAGE,
     install: {
       action: 'Install',
       description:
@@ -176,7 +177,7 @@ export class FuelWalletConnector extends FuelConnector {
   async currentAccount(): Promise<string | null> {
     const account = await this.client.request('currentAccount', {});
     if (!account) return null;
-    return Address.fromDynamicInput(account).toB256();
+    return Address.fromDynamicInput(account).toString();
   }
 
   async signMessage(address: string, message: string): Promise<string> {

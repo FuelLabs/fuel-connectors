@@ -1,6 +1,6 @@
 {
   "name": "@fuels/connectors",
-  "version": "0.31.6",
+  "version": "0.36.1",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -18,7 +18,7 @@
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "fuels": ">=0.95.0",
+    "fuels": ">=0.96.1",
     "@reown/appkit": ">=1.1.2",
     "@reown/appkit-adapter-wagmi": ">=1.1.2"
   },
@@ -44,7 +44,7 @@
     "@fuel-connectors/fuelet-wallet": "workspace:*",
     "@fuel-connectors/solana-connector": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
-    "fuels": "0.95.0",
+    "fuels": "0.96.1",
     "terser": "5.31.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5"
