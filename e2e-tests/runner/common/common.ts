@@ -48,9 +48,9 @@ export const sessionTests = async (
 // biome-ignore lint/suspicious/noExportsInTest: <explanation>
 export const transferTests = async (
   page: Page,
-  { connect, approveTransfer }: ConnectorFunctions,
+  { connect, approveTransfer, alreadyConnected }: ConnectorFunctions,
 ) => {
-  await connect(page);
+  !alreadyConnected && (await connect(page));
 
   await page.click('text=Transfer 0.0001 ETH');
   await approveTransfer(page);

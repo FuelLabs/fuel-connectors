@@ -1,12 +1,17 @@
-import { getButtonByText, getByAriaLabel, test } from '@fuels/playwright-utils';
+import {
+  getButtonByText,
+  getByAriaLabel,
+  seedWallet,
+  test,
+} from '@fuels/playwright-utils';
 import { type Page, expect } from '@playwright/test';
+import { type BN, bn } from 'fuels';
 import {
   sessionTests,
   skipBridgeFunds,
   transferTests,
 } from '../../../common/common';
 import type { ConnectFunction } from '../../../common/types';
-import { fundWallet } from '../setup';
 
 const connect: ConnectFunction = async (page: Page) => {
   await page.bringToFront();
@@ -29,26 +34,29 @@ test.describe('BurnerWalletConnector', async () => {
     await sessionTests(page, { connect, approveTransfer: async () => {} });
     await connect(page);
 
-    const addressElement = await page.locator('#address');
+    // wait 5 seconds for the wallet to load
+    await page.waitForTimeout(5000);
+    const addressElement = await page.locator('css=#address');
+    console.log('Address element:', addressElement);
 
-    let address: string | null = null;
-
-    if (addressElement) {
-      address = await addressElement.getAttribute('data-address');
-    }
+    const address = await addressElement.getAttribute('data-address');
+    const amount: BN = bn(100_000_000);
 
     if (address) {
-      await fundWallet({ publicKey: address });
+      await seedWallet(
+        address,
+        amount,
+        process.env.VITE_FUEL_PROVIDER_URL || '',
+        process.env.VITE_WALLET_SECRET || '',
+      );
     } else {
       throw new Error('Address is null');
     }
 
-    await page.click('text=Disconnect');
-    await page.waitForSelector('text=/Connect Wallet/');
-
     await transferTests(page, {
       connect,
       approveTransfer: async () => {},
+      alreadyConnected: true,
     });
   });
 });
