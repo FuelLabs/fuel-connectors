@@ -41,8 +41,6 @@ test.describe('BurnerWalletConnector', async () => {
     await sessionTests(page, { connect, approveTransfer: async () => {} });
     await connect(page);
 
-    // wait 5 seconds for the wallet to load
-    await page.waitForTimeout(5000);
     const addressElement = await page.locator('css=#address');
 
     const address = await addressElement.getAttribute('data-address');
