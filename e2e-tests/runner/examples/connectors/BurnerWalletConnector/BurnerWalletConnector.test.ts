@@ -5,14 +5,18 @@ import {
   test,
 } from '@fuels/playwright-utils';
 import { type Page, expect } from '@playwright/test';
-import { type BN, bn } from 'fuels';
+import { type BN, Provider, Wallet, bn } from 'fuels';
 import {
   sessionTests,
   skipBridgeFunds,
   transferTests,
 } from '../../../common/common';
 import type { ConnectFunction } from '../../../common/types';
-
+import { transferMaxBalance } from '../setup';
+const { VITE_FUEL_PROVIDER_URL, VITE_WALLET_SECRET } = process.env as Record<
+  string,
+  string
+>;
 const connect: ConnectFunction = async (page: Page) => {
   await page.bringToFront();
   const connectButton = getButtonByText(page, 'Connect');
@@ -46,8 +50,8 @@ test.describe('BurnerWalletConnector', async () => {
       await seedWallet(
         address,
         amount,
-        process.env.VITE_FUEL_PROVIDER_URL || '',
-        process.env.VITE_WALLET_SECRET || '',
+        VITE_FUEL_PROVIDER_URL || '',
+        VITE_WALLET_SECRET || '',
       );
     } else {
       throw new Error('Address is null');
@@ -57,6 +61,24 @@ test.describe('BurnerWalletConnector', async () => {
       connect,
       approveTransfer: async () => {},
       alreadyConnected: true,
+    });
+
+    // get burner-wallet-private-key from local storage
+    const privateKey = await page.evaluate(() =>
+      localStorage.getItem('burner-wallet-private-key'),
+    );
+
+    if (!privateKey) {
+      throw new Error('Private key is null');
+    }
+
+    const burnerWallet = Wallet.fromPrivateKey(privateKey);
+
+    const fuelProvider = await Provider.create(VITE_FUEL_PROVIDER_URL);
+    burnerWallet.connect(fuelProvider);
+    await transferMaxBalance({
+      fromWallet: burnerWallet,
+      toWallet: Wallet.fromPrivateKey(VITE_WALLET_SECRET || ''),
     });
   });
 });
