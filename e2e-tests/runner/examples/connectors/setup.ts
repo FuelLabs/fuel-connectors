@@ -75,10 +75,7 @@ export const fundWallet = async ({ publicKey }: { publicKey: string }) => {
     publicKey,
     bn.parseUnits('0.1'),
   );
-
   await txResponse.waitForResult();
-
-  return true;
 };
 
 export const transferMaxBalance = async ({
