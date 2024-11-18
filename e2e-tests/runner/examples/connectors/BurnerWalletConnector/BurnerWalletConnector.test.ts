@@ -7,6 +7,7 @@ import {
 import { type Page, expect } from '@playwright/test';
 import { type BN, Provider, Wallet, bn } from 'fuels';
 import {
+  incrementTests,
   sessionTests,
   skipBridgeFunds,
   transferTests,
@@ -43,7 +44,6 @@ test.describe('BurnerWalletConnector', async () => {
     // wait 5 seconds for the wallet to load
     await page.waitForTimeout(5000);
     const addressElement = await page.locator('css=#address');
-    console.log('Address element:', addressElement);
 
     const address = await addressElement.getAttribute('data-address');
     const amount: BN = bn(100_000_000);
@@ -59,11 +59,18 @@ test.describe('BurnerWalletConnector', async () => {
       throw new Error('Address is null');
     }
 
+    await incrementTests(page, {
+      connect,
+      approveTransfer: async () => {},
+      keepSession: true,
+    });
+
     await transferTests(page, {
       connect,
       approveTransfer: async () => {},
-      alreadyConnected: true,
+      keepSession: true,
     });
+
     const privateKey = await page.evaluate(() =>
       localStorage.getItem('burner-wallet-private-key'),
     );
@@ -73,7 +80,6 @@ test.describe('BurnerWalletConnector', async () => {
     }
 
     const burnerWallet = Wallet.fromPrivateKey(privateKey);
-
     const fuelProvider = await Provider.create(VITE_FUEL_PROVIDER_URL);
     burnerWallet.connect(fuelProvider);
     await transferMaxBalance({

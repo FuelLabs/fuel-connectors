@@ -48,9 +48,9 @@ export const sessionTests = async (
 // biome-ignore lint/suspicious/noExportsInTest: <explanation>
 export const transferTests = async (
   page: Page,
-  { connect, approveTransfer, alreadyConnected }: ConnectorFunctions,
+  { connect, approveTransfer, keepSession }: ConnectorFunctions,
 ) => {
-  !alreadyConnected && (await connect(page));
+  !keepSession && (await connect(page));
 
   await page.click('text=Transfer 0.0001 ETH');
   await approveTransfer(page);
@@ -59,16 +59,16 @@ export const transferTests = async (
     await page.waitForSelector('text=Transferred successfully!'),
   ).toBeTruthy();
 
-  await page.click('text=Disconnect');
+  !keepSession && (await page.click('text=Disconnect'));
 };
 
 // biome-ignore lint/suspicious/noExportsInTest: <explanation>
 export const incrementTests = async (
   page: Page,
-  { approveTransfer, connect }: ConnectorFunctions,
+  { approveTransfer, connect, keepSession }: ConnectorFunctions,
 ) => {
   await test.step('should connect and increment', async () => {
-    await connect(page);
+    !keepSession && (await connect(page));
 
     const incrementButton = await page.getByRole('button', {
       name: 'Increment',
@@ -81,5 +81,7 @@ export const incrementTests = async (
     expect(
       await page.waitForSelector('text=Counter Incremented!'),
     ).toBeTruthy();
+
+    !keepSession && (await page.click('text=Disconnect'));
   });
 };
