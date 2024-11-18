@@ -13,10 +13,12 @@ import {
 } from '../../../common/common';
 import type { ConnectFunction } from '../../../common/types';
 import { transferMaxBalance } from '../setup';
+
 const { VITE_FUEL_PROVIDER_URL, VITE_WALLET_SECRET } = process.env as Record<
   string,
   string
 >;
+
 const connect: ConnectFunction = async (page: Page) => {
   await page.bringToFront();
   const connectButton = getButtonByText(page, 'Connect');
@@ -62,8 +64,6 @@ test.describe('BurnerWalletConnector', async () => {
       approveTransfer: async () => {},
       alreadyConnected: true,
     });
-
-    // get burner-wallet-private-key from local storage
     const privateKey = await page.evaluate(() =>
       localStorage.getItem('burner-wallet-private-key'),
     );
