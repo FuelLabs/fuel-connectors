@@ -9,9 +9,7 @@
   "scripts": {
     "test:e2e": "pnpm run start:servers & pnpm exec playwright test",
     "test:e2e:ui": "playwright test --ui --debug",
-    "test:react-app": "pnpm test:react-app:ci -- --ui",
-    "test:react-app:ci": "playwright test e2e-tests/react-app --project=react-app",
-    "test:react-next": "pnpm playwright test --project=react-next",
+    "test:e2e:local": "pnpm run deploy:contracts && pnpm run test:e2e",
     "start:react-app": "pnpm --filter react-app dev",
     "start:react-next": "pnpm --filter @e2e-tests/react-next dev",
     "start:servers": "pnpm run start:react-app & pnpm run start:react-next",
