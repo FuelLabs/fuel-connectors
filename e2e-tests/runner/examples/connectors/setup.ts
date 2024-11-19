@@ -67,18 +67,12 @@ export const testSetup = async ({
 };
 
 export const fundWallet = async ({ publicKey }: { publicKey: string }) => {
-  const fuelProvider = await Provider.create(VITE_FUEL_PROVIDER_URL);
-  const masterWallet = Wallet.fromMnemonic(VITE_MASTER_WALLET_MNEMONIC);
-  masterWallet.connect(fuelProvider);
-
-  const txResponse = await masterWallet.transfer(
+  await seedWallet(
     publicKey,
     bn.parseUnits('0.1'),
+    VITE_FUEL_PROVIDER_URL,
+    VITE_WALLET_SECRET,
   );
-
-  await txResponse.waitForResult();
-
-  return true;
 };
 
 export const transferMaxBalance = async ({

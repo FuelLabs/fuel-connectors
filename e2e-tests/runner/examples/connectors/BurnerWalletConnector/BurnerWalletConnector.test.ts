@@ -1,7 +1,24 @@
-import { getButtonByText, getByAriaLabel, test } from '@fuels/playwright-utils';
+import {
+  getButtonByText,
+  getByAriaLabel,
+  seedWallet,
+  test,
+} from '@fuels/playwright-utils';
 import { type Page, expect } from '@playwright/test';
-import { sessionTests, skipBridgeFunds } from '../../../common/common';
+import { type BN, Provider, Wallet, bn } from 'fuels';
+import {
+  incrementTests,
+  sessionTests,
+  skipBridgeFunds,
+  transferTests,
+} from '../../../common/common';
 import type { ConnectFunction } from '../../../common/types';
+import { transferMaxBalance } from '../setup';
+
+const { VITE_FUEL_PROVIDER_URL, VITE_WALLET_SECRET } = process.env as Record<
+  string,
+  string
+>;
 
 const connect: ConnectFunction = async (page: Page) => {
   await page.bringToFront();
@@ -22,5 +39,50 @@ test.describe('BurnerWalletConnector', async () => {
 
   test('BurnerWallet Tests', async ({ page }) => {
     await sessionTests(page, { connect, approveTransfer: async () => {} });
+    await connect(page);
+
+    const addressElement = await page.locator('css=#address');
+
+    const address = await addressElement.getAttribute('data-address');
+    const amount: BN = bn(100_000_000);
+
+    if (address) {
+      await seedWallet(
+        address,
+        amount,
+        VITE_FUEL_PROVIDER_URL || '',
+        VITE_WALLET_SECRET || '',
+      );
+    } else {
+      throw new Error('Address is null');
+    }
+
+    await incrementTests(page, {
+      connect,
+      approveTransfer: async () => {},
+      keepSession: true,
+    });
+
+    await transferTests(page, {
+      connect,
+      approveTransfer: async () => {},
+      keepSession: true,
+    });
+
+    const privateKey = await page.evaluate(() =>
+      localStorage.getItem('burner-wallet-private-key'),
+    );
+
+    if (!privateKey) {
+      throw new Error('Private key is null');
+    }
+
+    const burnerWallet = Wallet.fromPrivateKey(privateKey);
+    const fuelProvider = await Provider.create(VITE_FUEL_PROVIDER_URL);
+    burnerWallet.connect(fuelProvider);
+    await transferMaxBalance({
+      fromWallet: burnerWallet,
+      toWallet: Wallet.fromPrivateKey(VITE_WALLET_SECRET || ''),
+    });
   });
 });
