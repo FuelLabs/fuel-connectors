@@ -1,12 +1,25 @@
-import { getButtonByText, getByAriaLabel } from '@fuels/playwright-utils';
+import {
+  getButtonByText,
+  getByAriaLabel,
+  seedWallet,
+} from '@fuels/playwright-utils';
 import { testWithSynpress } from '@synthetixio/synpress';
 import { MetaMask, metaMaskFixtures } from '@synthetixio/synpress/playwright';
-import { sessionTests, transferTests } from '../../../common/common';
+import { type BN, bn } from 'fuels';
+import {
+  incrementTests,
+  sessionTests,
+  transferTests,
+} from '../../../common/common';
 import type { ConnectorFunctions } from '../../../common/types';
 import basicSetup from '../../../wallet-setup/basic.setup';
-import { fundWallet } from '../setup';
 
 const test = testWithSynpress(metaMaskFixtures(basicSetup));
+
+const { VITE_FUEL_PROVIDER_URL, VITE_WALLET_SECRET } = process.env as Record<
+  string,
+  string
+>;
 
 test.describe('WalletConnectConnector', () => {
   let metamask: MetaMask;
@@ -46,14 +59,18 @@ test.describe('WalletConnectConnector', () => {
 
     await connect(page);
 
-    const addressElement = await page.locator('#address');
-    let address: string | null = null;
-    if (addressElement) {
-      address = await addressElement.getAttribute('data-address');
-    }
+    const addressElement = await page.locator('css=#address');
+
+    const address = await addressElement.getAttribute('data-address');
+    const amount: BN = bn(100_000_000);
 
     if (address) {
-      await fundWallet({ publicKey: address });
+      await seedWallet(
+        address,
+        amount,
+        VITE_FUEL_PROVIDER_URL || '',
+        VITE_WALLET_SECRET || '',
+      );
     } else {
       throw new Error('Address is null');
     }
@@ -63,6 +80,6 @@ test.describe('WalletConnectConnector', () => {
 
     await transferTests(page, { connect, approveTransfer });
 
-    // await incrementTests(page, { connect, approveTransfer });
+    await incrementTests(page, { connect, approveTransfer });
   });
 });
