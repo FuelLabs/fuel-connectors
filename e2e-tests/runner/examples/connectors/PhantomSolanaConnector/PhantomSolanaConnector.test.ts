@@ -40,7 +40,7 @@ test.describe('PhantomSolanaConnector', () => {
     await page.waitForTimeout(3000);
   };
 
-  const _approveTransfer = async () => {
+  const approveTransfer = async () => {
     await phantom.confirmTransaction();
   };
 
