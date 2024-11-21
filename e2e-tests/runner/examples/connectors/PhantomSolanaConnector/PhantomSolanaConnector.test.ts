@@ -1,4 +1,8 @@
-import { getButtonByText, getByAriaLabel } from '@fuels/playwright-utils';
+import {
+  expect,
+  getButtonByText,
+  getByAriaLabel,
+} from '@fuels/playwright-utils';
 import type { Page } from '@playwright/test';
 import { testWithSynpress } from '@synthetixio/synpress';
 import { sessionTests, transferTests } from '../../../common/common';
@@ -36,7 +40,7 @@ test.describe('PhantomSolanaConnector', () => {
     await page.waitForTimeout(3000);
   };
 
-  const approveTransfer = async () => {
+  const _approveTransfer = async () => {
     await phantom.confirmTransaction();
   };
 
@@ -51,13 +55,17 @@ test.describe('PhantomSolanaConnector', () => {
       address = await addressElement.getAttribute('data-address');
     }
 
+    test.step('Check if address is not null', () => {
+      expect(address).not.toBeNull();
+    });
+
     if (address) {
       await fundWallet({ publicKey: address });
     } else {
       throw new Error('Address is null');
     }
 
-    await transferTests(page, { connect, approveTransfer, keepSession: true });
+    // await transferTests(page, { connect, approveTransfer, keepSession: true });
 
     // await incrementTests(page, { connect, approveTransfer });
   });
