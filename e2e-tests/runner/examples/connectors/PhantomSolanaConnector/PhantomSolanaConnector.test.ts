@@ -65,7 +65,9 @@ test.describe('PhantomSolanaConnector', () => {
       throw new Error('Address is null');
     }
 
-    // await transferTests(page, { connect, approveTransfer, keepSession: true });
+    // wait 40 seconds
+    // await page.waitForTimeout(40000);
+    await transferTests(page, { connect, approveTransfer, keepSession: true });
 
     // await incrementTests(page, { connect, approveTransfer });
   });
