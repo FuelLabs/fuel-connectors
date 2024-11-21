@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "moduleResolution": "bundler",
+    "module": "es2015",
     "strict": true
   }
 }
