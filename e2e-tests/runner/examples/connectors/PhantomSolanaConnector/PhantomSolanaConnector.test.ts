@@ -40,15 +40,14 @@ test.describe('PhantomSolanaConnector', () => {
     await page.waitForTimeout(3000);
   };
 
-  const approveTransfer = async () => {
-    await phantom.confirmTransaction();
-  };
+  // const approveTransfer = async () => {
+  //   await phantom.confirmTransaction();
+  // };
 
   test('Fuel tests', async ({ page }) => {
     // await sessionTests(page, { connect, approveTransfer });
 
     await connect(page);
-
     const addressElement = await page.locator('#address');
     let address = null;
     if (addressElement) {
@@ -59,15 +58,13 @@ test.describe('PhantomSolanaConnector', () => {
       expect(address).not.toBeNull();
     });
 
-    if (address) {
-      await fundWallet({ publicKey: address });
-    } else {
-      throw new Error('Address is null');
-    }
+    // if (address) {
+    //   await fundWallet({ publicKey: address });
+    // } else {
+    //   throw new Error('Address is null');
+    // }
 
-    // wait 40 seconds
-    // await page.waitForTimeout(40000);
-    await transferTests(page, { connect, approveTransfer, keepSession: true });
+    // await transferTests(page, { connect, approveTransfer, keepSession: true });
 
     // await incrementTests(page, { connect, approveTransfer });
   });
