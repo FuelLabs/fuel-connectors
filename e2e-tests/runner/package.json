@@ -28,7 +28,7 @@
     "@synthetixio/synpress-cache": "0.0.4",
     "dotenv": "16.4.5",
     "fuels": "0.96.1",
-    "@phantom/synpress": "github:phantom/synpress#dev"
+    "@phantom/synpress": "4.0.0-alpha.53"
   },
   "engines": {
     "node": ">=20.11.0",
