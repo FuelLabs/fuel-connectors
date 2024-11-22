@@ -8,6 +8,10 @@ export default defineConfig({
   plugins: [
     react(),
     nodePolyfills({
+      globals: {
+        process: false,
+        Buffer: false,
+      },
       include: ['buffer', 'crypto', 'stream', 'util'],
     }),
   ],
