@@ -14,6 +14,10 @@ import { mainnet, sepolia } from '@wagmi/core/chains';
 import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
 
+import Capsule, { Environment } from '@usecapsule/react-sdk';
+import { capsuleConnector } from '@usecapsule/wagmi-v2-integration';
+import type { Chain } from 'wagmi/chains';
+
 import * as Toast from '@radix-ui/react-toast';
 
 import App from './App.tsx';
@@ -36,6 +40,33 @@ const METADATA = {
   url: location.href,
   icons: ['https://connectors.fuel.network/logo_white.png'],
 };
+
+const connectors = [
+  injected({ shimDisconnect: false }),
+  walletConnect({
+    projectId: WC_PROJECT_ID,
+    metadata: METADATA,
+    showQrModal: false,
+  }),
+  coinbaseWallet({
+    appName: METADATA.name,
+    appLogoUrl: METADATA.icons[0],
+    darkMode: true,
+    reloadOnDisconnect: true,
+  }),
+  capsuleConnector({
+    capsule: new Capsule(
+      Environment.BETA,
+      '9e1ce73625425f6bd64fc79ab7ea7028',
+      {},
+    ),
+    chains: [mainnet, sepolia],
+    appName: 'Fuel BETA',
+    options: {},
+    nameOverride: 'Fuel BETA',
+  }),
+];
+
 const wagmiConfig = createConfig({
   chains: [mainnet, sepolia],
   transports: {
@@ -43,20 +74,7 @@ const wagmiConfig = createConfig({
     [sepolia.id]: http(),
   },
   syncConnectedChain: true,
-  connectors: [
-    injected({ shimDisconnect: false }),
-    walletConnect({
-      projectId: WC_PROJECT_ID,
-      metadata: METADATA,
-      showQrModal: false,
-    }),
-    coinbaseWallet({
-      appName: METADATA.name,
-      appLogoUrl: METADATA.icons[0],
-      darkMode: true,
-      reloadOnDisconnect: true,
-    }),
-  ],
+  connectors,
 });
 
 const CHAIN_ID_NAME = import.meta.env
