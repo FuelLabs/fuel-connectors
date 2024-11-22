@@ -46,32 +46,6 @@ const capsule = new Capsule(
   import.meta.env.VITE_CAPSULE_CLIENT_ID,
 );
 
-const connectors = [
-  injected({ shimDisconnect: false }),
-  walletConnect({
-    projectId: WC_PROJECT_ID,
-    metadata: METADATA,
-    showQrModal: false,
-  }),
-  coinbaseWallet({
-    appName: METADATA.name,
-    appLogoUrl: METADATA.icons[0],
-    darkMode: true,
-    reloadOnDisconnect: true,
-  }),
-  capsuleConnector({
-    capsule: capsule,
-    chains: [mainnet, sepolia],
-    appName: 'Fuel BETA',
-    options: {},
-    nameOverride: 'Fuel BETA',
-    oAuthMethods: Object.values(OAuthMethod),
-    disableEmailLogin: false,
-    disablePhoneLogin: false,
-    onRampTestMode: true,
-  }),
-];
-
 const wagmiConfig = createConfig({
   chains: [mainnet, sepolia],
   transports: {
@@ -79,7 +53,31 @@ const wagmiConfig = createConfig({
     [sepolia.id]: http(),
   },
   syncConnectedChain: true,
-  connectors,
+  connectors: [
+    injected({ shimDisconnect: false }),
+    walletConnect({
+      projectId: WC_PROJECT_ID,
+      metadata: METADATA,
+      showQrModal: false,
+    }),
+    coinbaseWallet({
+      appName: METADATA.name,
+      appLogoUrl: METADATA.icons[0],
+      darkMode: true,
+      reloadOnDisconnect: true,
+    }),
+    capsuleConnector({
+      capsule: capsule,
+      chains: [mainnet, sepolia],
+      appName: 'Fuel BETA',
+      options: {},
+      nameOverride: 'Fuel BETA',
+      oAuthMethods: Object.values(OAuthMethod),
+      disableEmailLogin: false,
+      disablePhoneLogin: false,
+      onRampTestMode: true,
+    }),
+  ],
 });
 
 const CHAIN_ID_NAME = import.meta.env
@@ -138,6 +136,7 @@ const config = {
     CHAIN_ID_NAME === 'mainnet' ? '0.000000001' : '0.0001',
   ),
 };
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
