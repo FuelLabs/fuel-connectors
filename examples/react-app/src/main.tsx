@@ -14,7 +14,7 @@ import { mainnet, sepolia } from '@wagmi/core/chains';
 import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
 
-import Capsule, { Environment } from '@usecapsule/react-sdk';
+import Capsule, { Environment, OAuthMethod } from '@usecapsule/react-sdk';
 import { capsuleConnector } from '@usecapsule/wagmi-v2-integration';
 
 import * as Toast from '@radix-ui/react-toast';
@@ -27,6 +27,7 @@ import { ConfigProvider } from './context/ConfigContext.tsx';
 
 const queryClient = new QueryClient();
 const isDev = process.env.NODE_ENV === 'development';
+import '@usecapsule/react-sdk/styles.css';
 
 // ============================================================
 // WalletConnect Connector configurations
@@ -39,6 +40,11 @@ const METADATA = {
   url: location.href,
   icons: ['https://connectors.fuel.network/logo_white.png'],
 };
+
+const capsule = new Capsule(
+  Environment.BETA,
+  import.meta.env.VITE_CAPSULE_CLIENT_ID,
+);
 
 const connectors = [
   injected({ shimDisconnect: false }),
@@ -54,15 +60,15 @@ const connectors = [
     reloadOnDisconnect: true,
   }),
   capsuleConnector({
-    capsule: new Capsule(
-      Environment.BETA,
-      '9e1ce73625425f6bd64fc79ab7ea7028',
-      {},
-    ),
+    capsule: capsule,
     chains: [mainnet, sepolia],
     appName: 'Fuel BETA',
     options: {},
     nameOverride: 'Fuel BETA',
+    oAuthMethods: Object.values(OAuthMethod),
+    disableEmailLogin: false,
+    disablePhoneLogin: false,
+    onRampTestMode: true,
   }),
 ];
 
@@ -132,7 +138,6 @@ const config = {
     CHAIN_ID_NAME === 'mainnet' ? '0.000000001' : '0.0001',
   ),
 };
-
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
