@@ -18,7 +18,7 @@ phantom.confirmTransaction = async () => {
   );
   return true;
 };
-
+// TODO Call test Solana Connector and separate the Phantom logic
 test.describe('PhantomSolanaConnector', () => {
   test.slow();
 
