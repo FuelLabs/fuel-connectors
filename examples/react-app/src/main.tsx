@@ -16,7 +16,6 @@ import { FuelProvider } from '@fuels/react';
 
 import Capsule, { Environment } from '@usecapsule/react-sdk';
 import { capsuleConnector } from '@usecapsule/wagmi-v2-integration';
-import type { Chain } from 'wagmi/chains';
 
 import * as Toast from '@radix-ui/react-toast';
 

@@ -16,4 +16,12 @@ export default defineConfig({
       plugins: [tailwindcss()],
     },
   },
+  build: {
+    rollupOptions: {
+      external: [
+        'vite-plugin-node-polyfills/shims/process',
+        'vite-plugin-node-polyfills/shims/buffer',
+      ],
+    },
+  },
 });
