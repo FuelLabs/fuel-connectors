@@ -14,31 +14,22 @@ export const test = base.extend<{
   extensionId: string;
 }>({
   context: async ({ context: _ }, use) => {
-    // required for synpress
     global.expect = expect;
-    // download fuel wallet
-    // download metamask
     const phantomPath = await phantomHelpers.prepareProvider(
       'phantom',
       'latest',
     );
-    // prepare browser args
     const browserArgs = [
       `--disable-extensions-except=${phantomPath}`,
       `--load-extension=${phantomPath}`,
       '--remote-debugging-port=9222',
     ];
-    // launch browser
     const context = await chromium.launchPersistentContext('', {
       headless: false,
       args: browserArgs,
     });
-
     const extensions = await getExtensionsData(context);
-    // Wait for Wallet to load
     await waitForExtensions(context, extensions);
-    // Setup cynpress MetaMask
-
     await phantomCommands.initialSetup(chromium, {
       secretWordsOrPrivateKey: ETH_MNEMONIC,
       network: 'localhost',
@@ -46,7 +37,6 @@ export const test = base.extend<{
       enableAdvancedSettings: true,
       enableExperimentalSettings: false,
     });
-    // Set context to playwright
     await use(context);
   },
   extensionId: async ({ context }, use) => {
