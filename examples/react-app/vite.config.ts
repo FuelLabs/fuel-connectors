@@ -8,29 +8,12 @@ export default defineConfig({
   plugins: [
     react(),
     nodePolyfills({
-      globals: {
-        Buffer: false,
-      },
       include: ['buffer', 'crypto', 'stream', 'util'],
     }),
   ],
   css: {
     postcss: {
       plugins: [tailwindcss()],
-    },
-  },
-  build: {
-    rollupOptions: {
-      external: [
-        'vite-plugin-node-polyfills/shims/process',
-        'vite-plugin-node-polyfills/shims/buffer',
-      ],
-    },
-  },
-  resolve: {
-    alias: {
-      process: 'vite-plugin-node-polyfills/shims/process',
-      buffer: 'vite-plugin-node-polyfills/shims/buffer',
     },
   },
 });
