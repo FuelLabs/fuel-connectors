@@ -24,4 +24,10 @@ export default defineConfig({
       ],
     },
   },
+  resolve: {
+    alias: {
+      process: 'vite-plugin-node-polyfills/shims/process',
+      buffer: 'vite-plugin-node-polyfills/shims/buffer',
+    },
+  },
 });
