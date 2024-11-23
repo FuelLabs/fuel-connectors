@@ -16,6 +16,7 @@ import { FuelProvider } from '@fuels/react';
 
 import Capsule, { Environment, OAuthMethod } from '@usecapsule/react-sdk';
 import { capsuleConnector } from '@usecapsule/wagmi-v2-integration';
+import { WagmiProvider } from 'wagmi';
 
 import * as Toast from '@radix-ui/react-toast';
 
@@ -28,6 +29,7 @@ import { ConfigProvider } from './context/ConfigContext.tsx';
 const queryClient = new QueryClient();
 const isDev = process.env.NODE_ENV === 'development';
 import '@usecapsule/react-sdk/styles.css';
+import { capsuleClient } from './components/CapsuleClient.tsx';
 
 // ============================================================
 // WalletConnect Connector configurations
@@ -40,11 +42,6 @@ const METADATA = {
   url: location.href,
   icons: ['https://connectors.fuel.network/logo_white.png'],
 };
-
-const capsule = new Capsule(
-  Environment.BETA,
-  import.meta.env.VITE_CAPSULE_CLIENT_ID,
-);
 
 const wagmiConfig = createConfig({
   chains: [mainnet, sepolia],
@@ -67,11 +64,11 @@ const wagmiConfig = createConfig({
       reloadOnDisconnect: true,
     }),
     capsuleConnector({
-      capsule: capsule,
+      capsule: capsuleClient,
       chains: [mainnet, sepolia],
-      appName: 'Fuel BETA',
+      appName: 'Capsule',
       options: {},
-      nameOverride: 'Fuel BETA',
+      nameOverride: 'Capsule',
       oAuthMethods: Object.values(OAuthMethod),
       disableEmailLogin: false,
       disablePhoneLogin: false,
@@ -139,21 +136,23 @@ const config = {
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <FuelProvider theme="dark" networks={NETWORKS} fuelConfig={FUEL_CONFIG}>
-        <ConfigProvider config={config}>
-          <Toast.Provider>
-            <App />
-            <Toast.Viewport
-              id="toast-viewport"
-              className="fixed bottom-0 right-0 z-[100] m-0 flex w-[420px] max-w-[100vw] list-none flex-col gap-[10px] p-[var(--viewport-padding)] outline-none [--viewport-padding:_25px]"
-            />
-          </Toast.Provider>
-        </ConfigProvider>
-        <ScreenSizeIndicator />
-      </FuelProvider>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <FuelProvider theme="dark" networks={NETWORKS} fuelConfig={FUEL_CONFIG}>
+          <ConfigProvider config={config}>
+            <Toast.Provider>
+              <App />
+              <Toast.Viewport
+                id="toast-viewport"
+                className="fixed bottom-0 right-0 z-[100] m-0 flex w-[420px] max-w-[100vw] list-none flex-col gap-[10px] p-[var(--viewport-padding)] outline-none [--viewport-padding:_25px]"
+              />
+            </Toast.Provider>
+          </ConfigProvider>
+          <ScreenSizeIndicator />
+        </FuelProvider>
 
-      {isDev && <ReactQueryDevtools initialIsOpen={false} />}
-    </QueryClientProvider>
+        {isDev && <ReactQueryDevtools initialIsOpen={false} />}
+      </QueryClientProvider>
+    </WagmiProvider>
   </React.StrictMode>,
 );

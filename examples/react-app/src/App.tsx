@@ -10,6 +10,7 @@ import Balance from './components/balance';
 import Counter from './components/counter';
 import Transfer from './components/transfer';
 
+import { CapsuleConnector } from './components/CapsuleConnector';
 import Sign from './components/sign';
 import { useWallet } from './hooks/useWallet';
 
@@ -89,7 +90,7 @@ export default function App() {
               <div className="col-span-4">
                 <div className="gradient-border h-full rounded-xl bg-gradient-to-b from-zinc-900 to-zinc-950/80">
                   {!isConnected && (
-                    <section className="flex h-full flex-col items-center justify-center px-4 py-8 sm:px-8 sm:py-8 md:px-10 md:py-12">
+                    <section className="flex h-full flex-col items-center justify-center gap-4 px-4 py-8 sm:px-8 sm:py-8 md:px-10 md:py-12">
                       <Button
                         onClick={connect}
                         loading={isConnecting || isLoadingConnectors}
@@ -101,6 +102,7 @@ export default function App() {
                       >
                         Connect Wallet
                       </Button>
+                      <CapsuleConnector />
                     </section>
                   )}
 

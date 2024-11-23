@@ -38,19 +38,29 @@ export function defaultConnectors({
     new FuelWalletConnector(),
     new BakoSafeConnector(),
     new FueletWalletConnector(),
-    new WalletConnectConnector({
-      projectId: wcProjectId,
-      wagmiConfig: ethWagmiConfig,
-      chainId,
-      fuelProvider,
-      skipAutoReconnect: ethSkipAutoReconnect,
-    }),
-    new SolanaConnector({
-      projectId: wcProjectId,
-      chainId,
-      fuelProvider,
-    }),
   ];
+
+  if (ethWagmiConfig) {
+    connectors.push(
+      new WalletConnectConnector({
+        projectId: wcProjectId,
+        wagmiConfig: ethWagmiConfig,
+        chainId,
+        fuelProvider,
+        skipAutoReconnect: ethSkipAutoReconnect,
+      }),
+    );
+  }
+
+  if (_solanaConfig) {
+    connectors.push(
+      new SolanaConnector({
+        projectId: wcProjectId,
+        chainId,
+        fuelProvider,
+      }),
+    );
+  }
 
   if (devMode) {
     connectors.push(
