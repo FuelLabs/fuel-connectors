@@ -217,8 +217,8 @@ importers:
         specifier: 5.2.11
         version: 5.2.11(@types/node@22.9.1)(terser@5.36.0)
       vite-plugin-node-polyfills:
-        specifier: 0.17.0
-        version: 0.17.0(rollup@4.27.3)(vite@5.2.11(@types/node@22.9.1)(terser@5.36.0))
+        specifier: 0.22.0
+        version: 0.22.0(rollup@4.27.3)(vite@5.2.11(@types/node@22.9.1)(terser@5.36.0))
 
   examples/react-next:
     dependencies:
@@ -9651,8 +9651,8 @@ packages:
       vite:
         optional: true
 
-  vite-plugin-node-polyfills@0.17.0:
-    resolution: {integrity: sha512-iPmPn7376e5u6QvoTSJa16hf5Q0DFwHFXJk2uYpsNlmI3JdPms7hWyh55o+OysJ5jo9J5XPhLC9sMOYifwFd1w==}
+  vite-plugin-node-polyfills@0.22.0:
+    resolution: {integrity: sha512-F+G3LjiGbG8QpbH9bZ//GSBr9i1InSTkaulfUHFa9jkLqVGORFBoqc2A/Yu5Mmh1kNAbiAeKeK+6aaQUf3x0JA==}
     peerDependencies:
       vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
 
@@ -22711,12 +22711,10 @@ snapshots:
       - rollup
       - supports-color
 
-  vite-plugin-node-polyfills@0.17.0(rollup@4.27.3)(vite@5.2.11(@types/node@22.9.1)(terser@5.36.0)):
+  vite-plugin-node-polyfills@0.22.0(rollup@4.27.3)(vite@5.2.11(@types/node@22.9.1)(terser@5.36.0)):
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.27.3)
-      buffer-polyfill: buffer@6.0.3
       node-stdlib-browser: 1.3.0
-      process: 0.11.10
       vite: 5.2.11(@types/node@22.9.1)(terser@5.36.0)
     transitivePeerDependencies:
       - rollup
