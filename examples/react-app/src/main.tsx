@@ -14,6 +14,9 @@ import { mainnet, sepolia } from '@wagmi/core/chains';
 import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
 
+import { OAuthMethod } from '@usecapsule/react-sdk';
+import { capsuleConnector } from '@usecapsule/wagmi-v2-integration';
+
 import * as Toast from '@radix-ui/react-toast';
 
 import App from './App.tsx';
@@ -24,6 +27,8 @@ import { ConfigProvider } from './context/ConfigContext.tsx';
 
 const queryClient = new QueryClient();
 const isDev = process.env.NODE_ENV === 'development';
+import '@usecapsule/react-sdk/styles.css';
+import { capsuleClient } from './components/CapsuleClient.tsx';
 
 // ============================================================
 // WalletConnect Connector configurations
@@ -55,6 +60,17 @@ const wagmiConfig = createConfig({
       appLogoUrl: METADATA.icons[0],
       darkMode: true,
       reloadOnDisconnect: true,
+    }),
+    capsuleConnector({
+      capsule: capsuleClient,
+      chains: [mainnet, sepolia],
+      appName: 'Capsule',
+      options: {},
+      nameOverride: 'Capsule',
+      oAuthMethods: Object.values(OAuthMethod),
+      disableEmailLogin: false,
+      disablePhoneLogin: false,
+      onRampTestMode: true,
     }),
   ],
 });

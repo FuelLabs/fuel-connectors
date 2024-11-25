@@ -1,20 +1,24 @@
-import react from '@vitejs/plugin-react';
-import tailwindcss from 'tailwindcss';
+// vite.config.js
+import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
+import dts from 'vite-plugin-dts';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
-// https://vitejs.dev/config/
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 export default defineConfig({
   plugins: [
-    react(),
+    dts({
+      include: [resolve(__dirname, 'src/')],
+    }),
     nodePolyfills({
-      include: ['buffer', 'crypto', 'stream', 'util', 'url', 'path'],
+      include: ['buffer', 'crypto', 'stream', 'util', 'url'],
     }),
   ],
-  css: {
-    postcss: {
-      plugins: [tailwindcss()],
-    },
+  define: {
+    __dirname: JSON.stringify(path.dirname(__filename)),
+    __filename: JSON.stringify(fileURLToPath(import.meta.url)),
   },
   build: {
     rollupOptions: {

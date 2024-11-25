@@ -14,6 +14,7 @@ export default defineConfig((options) => ({
     '@fuel-connectors/walletconnect-connector',
     '@fuel-connectors/bako-safe',
     '@fuel-connectors/solana-connector',
+    '@fuel-connectors/capsule-connector',
   ],
   minify: 'terser',
   dts: {
@@ -26,6 +27,7 @@ export default defineConfig((options) => ({
       '@fuel-connectors/walletconnect-connector',
       '@fuel-connectors/bako-safe',
       '@fuel-connectors/solana-connector',
+      '@fuel-connectors/capsule-connector',
     ],
   },
   splitting: true,
