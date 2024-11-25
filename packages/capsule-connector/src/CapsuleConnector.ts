@@ -1,7 +1,6 @@
 import {
   type ConnectorConfig,
   type EIP1193Provider,
-  EthereumWalletAdapter,
   type Maybe,
   type MaybeAsync,
   PredicateConnector,
@@ -9,29 +8,18 @@ import {
   type PredicateWalletAdapter,
   type ProviderDictionary,
   type SignedMessageCustomCurve,
-  getMockedSignatureIndex,
   getOrThrow,
   getProviderUrl,
 } from '@fuel-connectors/common';
 import Capsule, { Environment } from '@usecapsule/web-sdk';
 import {
-  type Config,
-  type GetAccountReturnType,
-  disconnect,
-  getAccount,
-  reconnect,
-  watchAccount,
-} from '@wagmi/core';
-import {
   CHAIN_IDS,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
-  LocalStorage,
-  type StorageAbstract,
   type TransactionRequestLike,
 } from 'fuels';
-import { CAPSULE_ICON, WINDOW } from './constants';
+import { CAPSULE_ICON } from './constants';
 import type { CapsuleConfig } from './types';
 
 export class CapsuleConnector extends PredicateConnector {

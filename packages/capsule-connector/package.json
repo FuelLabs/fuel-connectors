@@ -38,6 +38,7 @@
     "@fuel-connectors/common": "workspace:*",
     "@types/memoizee": "0.4.11",
     "@usecapsule/web-sdk": "2.10.0",
+    "@wagmi/core": "2.13.4",
     "@web3modal/core": "5.0.0",
     "fuels": "0.96.1",
     "jsdom": "24.0.0",
