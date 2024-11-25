@@ -14,9 +14,8 @@ import { mainnet, sepolia } from '@wagmi/core/chains';
 import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
 
-import Capsule, { Environment, OAuthMethod } from '@usecapsule/react-sdk';
+import { OAuthMethod } from '@usecapsule/react-sdk';
 import { capsuleConnector } from '@usecapsule/wagmi-v2-integration';
-import { WagmiProvider } from 'wagmi';
 
 import * as Toast from '@radix-ui/react-toast';
 
@@ -42,7 +41,6 @@ const METADATA = {
   url: location.href,
   icons: ['https://connectors.fuel.network/logo_white.png'],
 };
-
 const wagmiConfig = createConfig({
   chains: [mainnet, sepolia],
   transports: {
@@ -136,23 +134,21 @@ const config = {
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <FuelProvider theme="dark" networks={NETWORKS} fuelConfig={FUEL_CONFIG}>
-          <ConfigProvider config={config}>
-            <Toast.Provider>
-              <App />
-              <Toast.Viewport
-                id="toast-viewport"
-                className="fixed bottom-0 right-0 z-[100] m-0 flex w-[420px] max-w-[100vw] list-none flex-col gap-[10px] p-[var(--viewport-padding)] outline-none [--viewport-padding:_25px]"
-              />
-            </Toast.Provider>
-          </ConfigProvider>
-          <ScreenSizeIndicator />
-        </FuelProvider>
+    <QueryClientProvider client={queryClient}>
+      <FuelProvider theme="dark" networks={NETWORKS} fuelConfig={FUEL_CONFIG}>
+        <ConfigProvider config={config}>
+          <Toast.Provider>
+            <App />
+            <Toast.Viewport
+              id="toast-viewport"
+              className="fixed bottom-0 right-0 z-[100] m-0 flex w-[420px] max-w-[100vw] list-none flex-col gap-[10px] p-[var(--viewport-padding)] outline-none [--viewport-padding:_25px]"
+            />
+          </Toast.Provider>
+        </ConfigProvider>
+        <ScreenSizeIndicator />
+      </FuelProvider>
 
-        {isDev && <ReactQueryDevtools initialIsOpen={false} />}
-      </QueryClientProvider>
-    </WagmiProvider>
+      {isDev && <ReactQueryDevtools initialIsOpen={false} />}
+    </QueryClientProvider>
   </React.StrictMode>,
 );
