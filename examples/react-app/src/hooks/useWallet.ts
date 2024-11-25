@@ -1,47 +1,20 @@
 import {
   useAccount,
   useBalance,
-  useConnect,
   useConnectUI,
   useCurrentConnector,
   useWallet as useFuelWallet,
 } from '@fuels/react';
-import { useEffect } from 'react';
-import { useAccount as useWagmiAccount } from 'wagmi';
 import { getConnectorLogo } from '../utils/getConnectorInfo';
 
 export const useWallet = () => {
-  const { isConnected: isWagmiConnected } = useWagmiAccount();
-  const { connect } = useConnect();
   const {
-    isConnected: isFuelConnected,
+    connect,
+    isConnected,
     isConnecting,
     isLoading: isLoadingConnectors,
   } = useConnectUI();
-
   const { currentConnector: _currentConnector } = useCurrentConnector();
-
-  // When Wagmi connects via Capsule, connect Fuel
-  useEffect(() => {
-    console.log('=== Wallet Connection State ===');
-    console.log('Wagmi Connected:', isWagmiConnected);
-    console.log('Fuel Connected:', isFuelConnected);
-    console.log('Fuel Connecting:', isConnecting);
-    console.log('Current Connector:', _currentConnector?.name);
-    console.log('============================');
-
-    if (isWagmiConnected && !isFuelConnected) {
-      console.log('Attempting to connect Fuel with Capsule connector');
-      connect('capsule');
-    }
-  }, [
-    isWagmiConnected,
-    isFuelConnected,
-    isConnecting,
-    connect,
-    _currentConnector,
-  ]);
-
   const connectImage = _currentConnector
     ? getConnectorLogo(_currentConnector)
     : '';
@@ -74,12 +47,13 @@ export const useWallet = () => {
     account,
     balance,
     currentConnector,
-    isConnected: isFuelConnected,
+    isConnected,
     isConnecting,
     isLoading,
     isFetching,
     isLoadingConnectors,
     wallet,
+    connect,
     refetchBalance,
   };
 };
