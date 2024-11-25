@@ -102,7 +102,6 @@ export default function App() {
                       >
                         Connect Wallet
                       </Button>
-                      <CapsuleConnector />
                     </section>
                   )}
 

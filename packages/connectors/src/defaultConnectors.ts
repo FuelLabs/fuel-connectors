@@ -3,6 +3,7 @@ import {
   type BurnerWalletConfig,
   BurnerWalletConnector,
 } from '@fuel-connectors/burner-wallet-connector';
+import { CapsuleConnector } from '@fuel-connectors/capsule-connector';
 import { FuelWalletDevelopmentConnector } from '@fuel-connectors/fuel-development-wallet';
 import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
 import { FueletWalletConnector } from '@fuel-connectors/fuelet-wallet';
@@ -22,6 +23,7 @@ type DefaultConnectors = {
   solanaConfig?: ProviderType;
   chainId?: number;
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
+  capsuleApiKey: string;
 };
 
 export function defaultConnectors({
@@ -33,7 +35,8 @@ export function defaultConnectors({
   solanaConfig: _solanaConfig,
   chainId,
   fuelProvider,
-}: DefaultConnectors = {}): Array<FuelConnector> {
+  capsuleApiKey,
+}: DefaultConnectors): Array<FuelConnector> {
   const connectors: Array<FuelConnector> = [
     new FuelWalletConnector(),
     new BakoSafeConnector(),
@@ -72,6 +75,16 @@ export function defaultConnectors({
       }),
     );
   }
+
+  connectors.push(
+    new CapsuleConnector({
+      projectId: wcProjectId,
+      wagmiConfig: ethWagmiConfig,
+      chainId,
+      fuelProvider,
+      apiKey: capsuleApiKey,
+    }),
+  );
 
   return connectors;
 }
