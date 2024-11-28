@@ -4,20 +4,8 @@ import {
   getByAriaLabel,
 } from '@fuels/playwright-utils';
 import type { Page } from '@playwright/test';
-import phantom from '../../../node_modules/@phantom/synpress/commands/phantom';
+import phantomExtended from './phantom/phantom';
 import { test } from './setup';
-
-phantom.confirmTransaction = async () => {
-  const notificationPage =
-    await phantom.playwright.switchToNotification('phantom');
-  await phantom.playwright.waitAndClick(
-    'phantom',
-    phantom.transactionPageElements.buttons.confirmTransaction, // Ensure this locator exists or define it
-    notificationPage,
-    { waitForEvent: 'close' },
-  );
-  return true;
-};
 
 test.describe('SolanaConnector', () => {
   test.slow();
@@ -29,7 +17,7 @@ test.describe('SolanaConnector', () => {
     await getByAriaLabel(page, 'Connect to Solana Wallets', true).click();
     await page.getByText('Proceed anyway').click();
     await getButtonByText(page, 'Phantom').click();
-    await phantom.acceptAccess();
+    await phantomExtended.acceptAccess();
     await page.waitForTimeout(3000);
   };
 
