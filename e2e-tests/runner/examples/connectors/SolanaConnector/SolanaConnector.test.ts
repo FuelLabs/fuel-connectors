@@ -38,7 +38,7 @@ test.describe('SolanaConnector', () => {
   });
 
   test('Solana tests', async ({ page }) => {
-    await sessionTests(page, { connect });
+    await sessionTests(page, { connect, approveTransfer });
     await transferTests(page, { connect, approveTransfer });
   });
 });
