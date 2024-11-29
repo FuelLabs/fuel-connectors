@@ -10,6 +10,6 @@ export type ApproveTransferFunction = (page: Page) => Promise<void>;
  */
 export interface ConnectorFunctions {
   connect: ConnectFunction;
-  approveTransfer: ApproveTransferFunction;
+  approveTransfer?: ApproveTransferFunction;
   keepSession?: boolean;
 }
