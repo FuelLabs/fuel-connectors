@@ -4,32 +4,41 @@ import {
   getByAriaLabel,
 } from '@fuels/playwright-utils';
 import type { Page } from '@playwright/test';
+import { sessionTests, transferTests } from '../../../common/common';
+import type {
+  ApproveTransferFunction,
+  ConnectFunction,
+} from '../../../common/types';
 import phantomExtended from './phantom/phantom';
 import { test } from './setup';
 
 test.describe('SolanaConnector', () => {
   test.slow();
 
-  const connect = async (page: Page) => {
-    await page.goto('/');
+  const connect: ConnectFunction = async (page: Page) => {
     const connectButton = getButtonByText(page, 'Connect Wallet', true);
     await connectButton.click();
     await getByAriaLabel(page, 'Connect to Solana Wallets', true).click();
     await page.getByText('Proceed anyway').click();
     await getButtonByText(page, 'Phantom').click();
-    await phantomExtended.acceptAccess();
-    await page.waitForTimeout(3000);
+    try {
+      await phantomExtended.acceptAccess();
+    } catch (error) {
+      // Phantom might not need to accept access if it already connected before
+      console.log('Error: ', error);
+    }
   };
 
-  test('Fuel tests', async ({ page }) => {
-    await connect(page);
-    const addressElement = await page.locator('#address');
-    let address = null;
-    if (addressElement) {
-      address = await addressElement.getAttribute('data-address');
-    }
-    test.step('Check if address is not null', () => {
-      expect(address).not.toBeNull();
-    });
+  const approveTransfer: ApproveTransferFunction = async () => {
+    await phantomExtended.confirmSignatureRequest();
+  };
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+  });
+
+  test('Solana tests', async ({ page }) => {
+    await sessionTests(page, { connect });
+    await transferTests(page, { connect, approveTransfer });
   });
 });
