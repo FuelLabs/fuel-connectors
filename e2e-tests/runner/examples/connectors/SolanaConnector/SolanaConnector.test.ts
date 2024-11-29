@@ -4,11 +4,16 @@ import {
   getByAriaLabel,
 } from '@fuels/playwright-utils';
 import type { Page } from '@playwright/test';
-import { sessionTests, transferTests } from '../../../common/common';
+import {
+  sessionTests,
+  skipBridgeFunds,
+  transferTests,
+} from '../../../common/common';
 import type {
   ApproveTransferFunction,
   ConnectFunction,
 } from '../../../common/types';
+import { fundWallet } from '../setup';
 import phantomExtended from './phantom/phantom';
 import { test } from './setup';
 
@@ -39,6 +44,24 @@ test.describe('SolanaConnector', () => {
 
   test('Solana tests', async ({ page }) => {
     await sessionTests(page, { connect, approveTransfer });
+    await connect(page);
+
+    await skipBridgeFunds(page);
+
+    const addressElement = await page.locator('#address');
+    let address: string | null = null;
+    if (addressElement) {
+      address = await addressElement.getAttribute('data-address');
+    }
+
+    if (address) {
+      await fundWallet({ publicKey: address });
+    } else {
+      throw new Error('Address is null');
+    }
+
+    await page.click('text=Disconnect');
+    await page.waitForSelector('text=/Connect Wallet/');
     await transferTests(page, { connect, approveTransfer });
   });
 });
