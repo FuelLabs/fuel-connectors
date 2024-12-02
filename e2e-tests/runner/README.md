@@ -49,7 +49,7 @@
 4. **Build and Deploy Contracts**
    ```bash
    cd e2e-tests/runner/scripts
-   pnpm deploy:contracts:ci
+   pnpm deploy:contracts
    ```
 
 5. **Build and Deploy EVM Predicates**
