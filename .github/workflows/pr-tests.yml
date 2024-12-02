@@ -119,6 +119,9 @@ jobs:
       - name: Build & Deploy EVM Predicates
         run: pnpm fuels build && pnpm fuels deploy
         working-directory: packages/evm-predicates
+        env:
+          PROVIDER_URL: "http://localhost:4000/v1/graphql"
+          PRIVATE_KEY: "0xa449b1ffee0e2205fa924c6740cc48b3b473aa28587df6dab12abc245d1f5298"
 
       - name: Build & Deploy Solana Predicates
         run: pnpm fuels build && pnpm fuels deploy
