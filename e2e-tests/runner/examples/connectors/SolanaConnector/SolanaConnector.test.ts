@@ -53,13 +53,8 @@ test.describe('SolanaConnector', () => {
       address = await addressElement.getAttribute('data-address');
     }
 
-    const transferButton = await page.getByRole('button', {
-      name: 'Transfer 0.0001 ETH',
-    });
-    const isDisabled = await transferButton.getAttribute('disabled');
-
     if (address) {
-      isDisabled && (await fundWallet({ publicKey: address }));
+      await fundWallet({ publicKey: address });
     } else {
       throw new Error('Address is null');
     }
