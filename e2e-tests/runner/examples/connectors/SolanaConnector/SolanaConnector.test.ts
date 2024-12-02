@@ -1,8 +1,4 @@
-import {
-  expect,
-  getButtonByText,
-  getByAriaLabel,
-} from '@fuels/playwright-utils';
+import { getButtonByText, getByAriaLabel } from '@fuels/playwright-utils';
 import type { Page } from '@playwright/test';
 import {
   sessionTests,
@@ -45,7 +41,6 @@ test.describe('SolanaConnector', () => {
   test('Solana tests', async ({ page }) => {
     await sessionTests(page, { connect, approveTransfer });
     await connect(page);
-
     await skipBridgeFunds(page);
 
     const addressElement = await page.locator('#address');
@@ -54,8 +49,14 @@ test.describe('SolanaConnector', () => {
       address = await addressElement.getAttribute('data-address');
     }
 
+    const transferButton = await page.getByRole('button', {
+      name: 'Transfer 0.0001 ETH',
+    });
+    const isDisabled = await transferButton.getAttribute('disabled');
+
     if (address) {
-      await fundWallet({ publicKey: address });
+      isDisabled &&
+        (await fundWallet({ publicKey: address, amount: '0.0002' }));
     } else {
       throw new Error('Address is null');
     }
