@@ -1,6 +1,7 @@
 import { getButtonByText, getByAriaLabel } from '@fuels/playwright-utils';
 import type { Page } from '@playwright/test';
 import {
+  incrementTests,
   sessionTests,
   skipBridgeFunds,
   transferTests,
@@ -61,8 +62,7 @@ test.describe('SolanaConnector', () => {
       throw new Error('Address is null');
     }
 
-    await page.click('text=Disconnect');
-    await page.waitForSelector('text=/Connect Wallet/');
-    await transferTests(page, { connect, approveTransfer });
+    await transferTests(page, { connect, approveTransfer, keepSession: true });
+    await incrementTests(page, { connect, approveTransfer, keepSession: true });
   });
 });
