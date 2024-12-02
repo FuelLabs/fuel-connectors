@@ -59,8 +59,7 @@ test.describe('SolanaConnector', () => {
     const isDisabled = await transferButton.getAttribute('disabled');
 
     if (address) {
-      isDisabled &&
-        (await fundWallet({ publicKey: address, amount: '0.0002' }));
+      isDisabled && (await fundWallet({ publicKey: address }));
     } else {
       throw new Error('Address is null');
     }
