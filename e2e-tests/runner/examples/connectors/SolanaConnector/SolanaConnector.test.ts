@@ -40,7 +40,10 @@ test.describe('SolanaConnector', () => {
   });
 
   test('Solana tests', async ({ page }) => {
-    await sessionTests(page, { connect, approveTransfer });
+    await test.step('Session tests', async () => {
+      await sessionTests(page, { connect, approveTransfer });
+    });
+
     await connect(page);
     await skipBridgeFunds(page);
 
@@ -61,8 +64,20 @@ test.describe('SolanaConnector', () => {
     } else {
       throw new Error('Address is null');
     }
+    await test.step('Transfer tests', async () => {
+      await transferTests(page, {
+        connect,
+        approveTransfer,
+        keepSession: true,
+      });
+    });
 
-    await transferTests(page, { connect, approveTransfer, keepSession: true });
-    await incrementTests(page, { connect, approveTransfer, keepSession: true });
+    await test.step('Increment tests', async () => {
+      await incrementTests(page, {
+        connect,
+        approveTransfer,
+        keepSession: true,
+      });
+    });
   });
 });
