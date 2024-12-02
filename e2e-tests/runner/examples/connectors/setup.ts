@@ -66,10 +66,16 @@ export const testSetup = async ({
   return { fuelWallet, fuelWalletTestHelper, masterWallet };
 };
 
-export const fundWallet = async ({ publicKey }: { publicKey: string }) => {
+export const fundWallet = async ({
+  publicKey,
+  amount = '0.1',
+}: {
+  publicKey: string;
+  amount?: string;
+}) => {
   await seedWallet(
     publicKey,
-    bn.parseUnits('0.1'),
+    bn.parseUnits(amount),
     VITE_FUEL_PROVIDER_URL,
     VITE_WALLET_SECRET,
   );
