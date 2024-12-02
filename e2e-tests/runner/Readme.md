@@ -56,21 +56,27 @@
    ```bash
    cd packages/evm-predicates
    pnpm fuels build && pnpm fuels deploy
+
+6. **Build and Deploy Solana Predicates** 
+   Set the private key in the fuels.config.ts file, and the provider URL to your local node.
+   ```bash
+   cd packages/solana-predicates
+   pnpm fuels build && pnpm fuels deploy
    ```
 
-6. **Install Playwright Browser**
+7. **Install Playwright Browser**
    ```bash
    cd e2e-tests/runner
    pnpm exec playwright install --with-deps chromium
    ```
 
-7. **Setup Synpress**
+8. **Setup Synpress**
    ```bash
    cd e2e-tests/runner
    pnpm synpress wallet-setup
    ```
 
-8. **Run the Tests**
+9. **Run the Tests**
    ```bash
    cd e2e-tests/runner
    pnpm test:e2e
