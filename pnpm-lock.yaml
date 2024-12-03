@@ -527,6 +527,9 @@ importers:
       '@fuel-connectors/common':
         specifier: workspace:*
         version: link:../common
+      dotenv:
+        specifier: 16.4.5
+        version: 16.4.5
       fuels:
         specifier: 0.96.1
         version: 0.96.1
@@ -674,6 +677,9 @@ importers:
       '@web3modal/core':
         specifier: 5.0.0
         version: 5.0.0(@types/react@18.3.1)(react@18.3.1)
+      dotenv:
+        specifier: 16.4.5
+        version: 16.4.5
       fuels:
         specifier: 0.96.1
         version: 0.96.1
