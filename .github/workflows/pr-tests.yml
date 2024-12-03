@@ -128,14 +128,10 @@ jobs:
       - name: Build & Deploy EVM Predicates
         run: pnpm fuels build && pnpm fuels deploy
         working-directory: packages/evm-predicates
-        env:
-          PROVIDER_URL: "http://localhost:4000/v1/graphql"
 
       - name: Build & Deploy Solana Predicates
         run: pnpm fuels build && pnpm fuels deploy
         working-directory: packages/solana-connector
-        env:
-          PROVIDER_URL: "http://localhost:4000/v1/graphql"
 
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
