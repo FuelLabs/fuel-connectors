@@ -28,8 +28,8 @@ const config: PlaywrightTestConfig = defineConfig({
       },
     },
   ],
-  workers: 1,
   retries: 1,
+  workers: 1,
   timeout: 60_000,
   reporter: [['html', { printSteps: true }]],
   use: {
