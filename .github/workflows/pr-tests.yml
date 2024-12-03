@@ -106,7 +106,7 @@ jobs:
         run: cp e2e-tests/runner/.env.example e2e-tests/runner/.env
 
       - name: Copy .env file for React Next
-        run: cp examples/react-next/.env.example examples/react-next/.env
+        run: cp e2e-tests/react-next/.env.example e2e-tests/react-next/.env
 
       - name: Copy .env file for React App
         run: cp examples/react-app/.env.example examples/react-app/.env
