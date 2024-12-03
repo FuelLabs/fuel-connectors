@@ -1,7 +1,11 @@
 import { getButtonByText, getByAriaLabel } from '@fuels/playwright-utils';
 import { testWithSynpress } from '@synthetixio/synpress';
 import { MetaMask, metaMaskFixtures } from '@synthetixio/synpress/playwright';
-import { sessionTests, transferTests } from '../../../common/common';
+import {
+  incrementTests,
+  sessionTests,
+  transferTests,
+} from '../../../common/common';
 import type { ConnectorFunctions } from '../../../common/types';
 import basicSetup from '../../../wallet-setup/basic.setup';
 import { fundWallet } from '../setup';
@@ -63,6 +67,6 @@ test.describe('WalletConnectConnector', () => {
 
     await transferTests(page, { connect, approveTransfer });
 
-    // await incrementTests(page, { connect, approveTransfer });
+    await incrementTests(page, { connect, approveTransfer });
   });
 });
