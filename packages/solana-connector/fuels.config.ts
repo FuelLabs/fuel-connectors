@@ -2,11 +2,11 @@ import dotenv from 'dotenv';
 import { createConfig } from 'fuels';
 
 dotenv.config({
-  path: ['.env.local', '.env'],
+  path: ['.env'],
 });
 
 export default createConfig({
-  providerUrl: 'http://localhost:4000/v1/graphql',
+  providerUrl: process.env.PROVIDER_URL || 'http://localhost:4000/v1/graphql',
   predicates: ['./predicate'],
   output: './src/generated/tmp',
   forcBuildFlags: ['--release'],
