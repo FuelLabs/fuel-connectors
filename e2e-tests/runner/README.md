@@ -6,28 +6,9 @@
 - Rust toolchain with `forc` and `fuel-core`
 
 ## Environment Setup
-1. Create a `.env` file in the `e2e-tests/runner` directory:
-
-   ```env
-   # Provider URLs (local node)
-   VITE_FUEL_PROVIDER_URL="http://localhost:4000/v1/graphql"
-   NEXT_PUBLIC_PROVIDER_URL="http://localhost:4000/v1/graphql"
-
-   # Project and chain configuration
-   NEXT_PUBLIC_WC_PROJECT_ID="your_wc_project_id"
-   NEXT_PUBLIC_CHAIN_ID_NAME="testnet"
-   VITE_APP_WC_PROJECT_ID="your_wc_project_id"
-   VITE_CHAIN_ID_NAME="local"
-
-   # Wallet configuration
-   VITE_WALLET_SECRET="your_wallet_secret"
-   VITE_MASTER_WALLET_MNEMONIC="your_wallet_mnemonic"
-
-   # Port settings
-   REACT_APP_PORT=5173
-   REACT_NEXT_PORT=3002
-   PORT=5173
-   ```
+1. Copy `e2e-tests/runner/.env.example` to `e2e-tests/runner/.env`. They will have the required environment variables for local testing providing you have a local Fuel node running.
+2. Copy `examples/react-app/.env.example` to `examples/react-app/.env`.
+3. Copy `examples/react-next/.env.example` to `examples/react-next/.env`.
 
 ## Steps to Run Tests
 
@@ -53,14 +34,17 @@
    ```
 
 5. **Build and Deploy EVM Predicates**
+   Copy `packages/evm-predicates/.env.example` to `packages/evm-predicates/.env`.
+   From the root directory:
    ```bash
    cd packages/evm-predicates
    pnpm fuels build && pnpm fuels deploy
+   ```
 
 6. **Build and Deploy Solana Predicates** 
-   Set the private key in the fuels.config.ts file, and the provider URL to your local node.
+   Copy `packages/solana-connector/.env.example` to `packages/solana-connector/.env`.
    ```bash
-   cd packages/solana-predicates
+   cd packages/solana-connector
    pnpm fuels build && pnpm fuels deploy
    ```
 
@@ -80,6 +64,11 @@
    ```bash
    cd e2e-tests/runner
    pnpm test:e2e
+   ```
+   Or to run the Playwright UI and start the servers:
+   ```bash
+   cd e2e-tests/runner
+   pnpm test:e2e:dev
    ```
 
 ## Environment Variables
