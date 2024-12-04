@@ -39,13 +39,9 @@ test.describe('WalletConnectConnector', () => {
     await getByAriaLabel(page, 'Connect to Ethereum Wallets', true).click();
     await page.getByText('Proceed anyway').click();
     await getButtonByText(page, 'MetaMask', true).click();
-    await page.waitForTimeout(2000);
-
     await metamask.connectToDapp();
     await page.waitForTimeout(5000);
-
     await metamask.confirmSignature();
-    await page.waitForTimeout(2000);
   };
 
   const approveTransfer: ConnectorFunctions['approveTransfer'] = async () => {
