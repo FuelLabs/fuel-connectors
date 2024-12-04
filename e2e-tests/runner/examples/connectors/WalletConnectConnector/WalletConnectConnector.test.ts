@@ -40,7 +40,7 @@ test.describe('WalletConnectConnector', () => {
     await page.getByText('Proceed anyway').click();
     await getButtonByText(page, 'MetaMask', true).click();
     await metamask.connectToDapp();
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(4000);
     await metamask.confirmSignature();
   };
 
@@ -72,8 +72,8 @@ test.describe('WalletConnectConnector', () => {
     await page.click('text=Disconnect');
     await page.waitForSelector('text=/Connect Wallet/');
 
-    await transferTests(page, { connect, approveTransfer });
+    await transferTests(page, { connect, approveTransfer, keepSession: true });
 
-    await incrementTests(page, { connect, approveTransfer });
+    await incrementTests(page, { connect, approveTransfer, keepSession: true });
   });
 });
