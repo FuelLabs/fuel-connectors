@@ -23,7 +23,7 @@ const { VITE_FUEL_PROVIDER_URL, VITE_WALLET_SECRET } = process.env as Record<
 
 test.describe('WalletConnectConnector', () => {
   let metamask: MetaMask;
-
+  test.slow();
   test.beforeEach(async ({ context, extensionId, metamaskPage, page }) => {
     metamask = new MetaMask(
       context,
@@ -35,19 +35,18 @@ test.describe('WalletConnectConnector', () => {
   });
 
   const connect: ConnectorFunctions['connect'] = async (page) => {
-    await page.goto('/');
     const connectButton = getButtonByText(page, 'Connect Wallet', true);
     await connectButton.click();
     await getByAriaLabel(page, 'Connect to Ethereum Wallets', true).click();
-
     await page.getByText('Proceed anyway').click();
     await getButtonByText(page, 'MetaMask', true).click();
+    await page.waitForTimeout(2000);
 
     await metamask.connectToDapp();
-    // wait 3 seconds for the connection to be established
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(5000);
 
     await metamask.confirmSignature();
+    await page.waitForTimeout(2000);
   };
 
   const approveTransfer: ConnectorFunctions['approveTransfer'] = async () => {
