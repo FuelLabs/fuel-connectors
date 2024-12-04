@@ -49,9 +49,11 @@ test.describe('WalletConnectConnector', () => {
     await metamask.confirmTransaction();
   };
 
-  test('Fuel tests', async ({ page }) => {
+  test('Ethereum session tests', async ({ page }) => {
     await sessionTests(page, { connect, approveTransfer });
+  });
 
+  test('Ethereum transfer tests', async ({ page }) => {
     await connect(page);
 
     const addressElement = await page.locator('css=#address');
