@@ -23,7 +23,6 @@ const { VITE_FUEL_PROVIDER_URL, VITE_WALLET_SECRET } = process.env as Record<
 
 test.describe('WalletConnectConnector', () => {
   let metamask: MetaMask;
-  test.slow();
   test.beforeEach(async ({ context, extensionId, metamaskPage, page }) => {
     metamask = new MetaMask(
       context,
