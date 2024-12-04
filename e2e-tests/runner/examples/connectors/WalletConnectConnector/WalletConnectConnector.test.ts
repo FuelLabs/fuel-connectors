@@ -27,6 +27,8 @@ test.describe('WalletConnectConnector', () => {
 
   const connect: ConnectorFunctions['connect'] = async (page) => {
     await page.goto('/');
+    await page.waitForTimeout(2000);
+
     const connectButton = getButtonByText(page, 'Connect Wallet', true);
     await connectButton.click();
     await getByAriaLabel(page, 'Connect to Ethereum Wallets', true).click();
