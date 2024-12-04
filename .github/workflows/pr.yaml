@@ -54,7 +54,6 @@ jobs:
   audit:
     name: Audit
     runs-on: ubuntu-latest
-    if: false
     steps:
       - uses: actions/checkout@v3
       - uses: FuelLabs/github-actions/setups/node@master
