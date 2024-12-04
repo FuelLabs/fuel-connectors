@@ -3,7 +3,7 @@ import {
   defineConfig,
   devices,
 } from '@playwright/test';
-import { synpressFixtures } from '@synthetixio/synpress';
+// import { synpressFixtures } from '@synthetixio/synpress';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -28,6 +28,7 @@ const config: PlaywrightTestConfig = defineConfig({
       },
     },
   ],
+  retries: 1,
   workers: 1,
   timeout: 60_000,
   reporter: [['html', { printSteps: true }]],

@@ -73,7 +73,6 @@ test.describe('WalletConnectConnector', () => {
     }
 
     await transferTests(page, { connect, approveTransfer, keepSession: true });
-
     await incrementTests(page, { connect, approveTransfer, keepSession: true });
   });
 });
