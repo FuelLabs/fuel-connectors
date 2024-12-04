@@ -54,7 +54,35 @@ jobs:
   audit:
     name: Audit
     runs-on: ubuntu-latest
-    if: false
+    steps:
+      - uses: actions/checkout@v3
+      - uses: FuelLabs/github-actions/setups/node@master
+        with:
+          node-version: 20.11.0
+          pnpm-version: 9.5.0
+      - name: Install jq
+        run: sudo apt-get install jq
+      - run: |
+          pnpm audit --prod --json | jq '
+            def has_fix: 
+              .advisories | to_entries | map(.value.patched_versions != "<0.0.0") | any;
+            if has_fix then
+              1
+            else
+              0
+            end
+          ' > audit_result.txt
+          if [ "$(cat audit_result.txt)" -eq "1" ]; then
+            echo "Actionable vulnerabilities found"
+            exit 1
+          else
+            echo "No actionable vulnerabilities"
+            exit 0
+          fi
+  
+  strict-audit:
+    name: Strict Audit
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: FuelLabs/github-actions/setups/node@master
