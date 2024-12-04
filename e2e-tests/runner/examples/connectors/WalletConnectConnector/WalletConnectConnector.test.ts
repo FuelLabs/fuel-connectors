@@ -69,9 +69,6 @@ test.describe('WalletConnectConnector', () => {
       throw new Error('Address is null');
     }
 
-    await page.click('text=Disconnect');
-    await page.waitForSelector('text=/Connect Wallet/');
-
     await transferTests(page, { connect, approveTransfer, keepSession: true });
 
     await incrementTests(page, { connect, approveTransfer, keepSession: true });
