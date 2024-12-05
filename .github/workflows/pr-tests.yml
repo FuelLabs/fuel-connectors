@@ -102,6 +102,15 @@ jobs:
         id: pnpm-cache
         run: pnpm install --frozen-lockfile
     
+      - name: Copy .env file for E2E Tests
+        run: cp e2e-tests/runner/.env.example e2e-tests/runner/.env
+
+      - name: Copy .env file for React Next
+        run: cp e2e-tests/react-next/.env.example e2e-tests/react-next/.env
+
+      - name: Copy .env file for React App
+        run: cp examples/react-app/.env.example examples/react-app/.env
+
       - name: Run build:connectors
         run: pnpm build:connectors
         
@@ -120,6 +129,10 @@ jobs:
         run: pnpm fuels build && pnpm fuels deploy
         working-directory: packages/evm-predicates
 
+      - name: Build & Deploy Solana Predicates
+        run: pnpm fuels build && pnpm fuels deploy
+        working-directory: packages/solana-connector
+
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
         working-directory: e2e-tests/runner
@@ -132,14 +145,5 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: xvfb-run --auto-servernum -- pnpm --filter @e2e-tests/runner test:e2e
         env:
-          VITE_FUEL_PROVIDER_URL: "http://localhost:4000/v1/graphql"
-          NEXT_PUBLIC_PROVIDER_URL: "http://localhost:4000/v1/graphql"
-          NEXT_PUBLIC_WC_PROJECT_ID: e01471314fc69cc4efba6dce12dfd710
-          NEXT_PUBLIC_CHAIN_ID_NAME: local
-          REACT_APP_PORT: 5173
-          REACT_NEXT_PORT: 3002
-          VITE_WALLET_SECRET: "0xa449b1ffee0e2205fa924c6740cc48b3b473aa28587df6dab12abc245d1f5298"
           VITE_MASTER_WALLET_MNEMONIC: ${{ secrets.VITE_MASTER_WALLET_MNEMONIC }}
-          VITE_APP_WC_PROJECT_ID: e01471314fc69cc4efba6dce12dfd710
-          VITE_CHAIN_ID_NAME: local
-          PORT: 5173
+          

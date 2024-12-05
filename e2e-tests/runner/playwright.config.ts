@@ -3,7 +3,7 @@ import {
   defineConfig,
   devices,
 } from '@playwright/test';
-import { synpressFixtures } from '@synthetixio/synpress';
+// import { synpressFixtures } from '@synthetixio/synpress';
 
 import dotenv from 'dotenv';
 dotenv.config();
