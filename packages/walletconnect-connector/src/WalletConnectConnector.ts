@@ -331,6 +331,9 @@ export class WalletConnectConnector extends PredicateConnector {
 
   async requestValidation(address?: string) {
     return new Promise(async (resolve, reject) => {
+      const hasSignature = await this.accountHasValidation(address);
+      if (hasSignature) return resolve(true);
+
       // Disconnect if user doesn't provide signature in time
       const validationTimeout = setTimeout(() => {
         reject(
@@ -359,11 +362,11 @@ export class WalletConnectConnector extends PredicateConnector {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
 
-    const { addresses, connector, isConnected } = getAccount(wagmiConfig);
+    const { connector, isConnected } = getAccount(wagmiConfig);
     await disconnect(wagmiConfig, {
       connector,
     });
-    addresses?.map((a) => this.storage.removeItem(`SIGNATURE_VALIDATION_${a}`));
+
     return isConnected || false;
   }
 
