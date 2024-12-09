@@ -38,7 +38,7 @@ test.describe('WalletConnectConnector', () => {
     const connectButton = getButtonByText(page, 'Connect Wallet', true);
     await connectButton.click();
     await getByAriaLabel(page, 'Connect to Ethereum Wallets', true).click();
-    await page.getByText('Proceed anyway').click();
+    await page.getByText('Proceed').click();
     await getButtonByText(page, 'MetaMask', true).click();
     await metamask.connectToDapp();
     await page.waitForTimeout(4000);
