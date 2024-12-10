@@ -29,7 +29,7 @@ jobs:
         uses: tj-actions/changed-files@v22.2
         with:
           files: |
-            **/packages/connectors/**
+            **/packages/**
 
   validate-changeset:
     name: Validate PR Changeset
