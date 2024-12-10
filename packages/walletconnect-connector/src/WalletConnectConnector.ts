@@ -39,6 +39,7 @@ import {
 } from '@fuel-connectors/common';
 import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
 import { ApiController } from '@web3modal/core';
+import { stringToHex } from 'viem';
 import {
   ETHEREUM_ICON,
   HAS_WINDOW,
@@ -330,7 +331,10 @@ export class WalletConnectConnector extends PredicateConnector {
 
   async requestValidation(address?: string) {
     return new Promise(async (resolve, reject) => {
-      // Disconnect if user dosen't provide signature in time
+      const hasSignature = await this.accountHasValidation(address);
+      if (hasSignature) return resolve(true);
+
+      // Disconnect if user doesn't provide signature in time
       const validationTimeout = setTimeout(() => {
         reject(
           new Error("User didn't provide signature in less than 1 minute"),
@@ -358,11 +362,11 @@ export class WalletConnectConnector extends PredicateConnector {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
 
-    const { addresses, connector, isConnected } = getAccount(wagmiConfig);
+    const { connector, isConnected } = getAccount(wagmiConfig);
     await disconnect(wagmiConfig, {
       connector,
     });
-    addresses?.map((a) => this.storage.removeItem(`SIGNATURE_VALIDATION_${a}`));
+
     return isConnected || false;
   }
 
@@ -440,7 +444,7 @@ export class WalletConnectConnector extends PredicateConnector {
       const message = `Sign this message to verify the connected account: ${currentAccount}`;
       const signature = (await ethProvider.request({
         method: 'personal_sign',
-        params: [message, currentAccount],
+        params: [stringToHex(message), currentAccount],
       })) as string;
 
       if (!this.validateSignature(currentAccount, message, signature)) {

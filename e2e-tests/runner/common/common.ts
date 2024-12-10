@@ -1,6 +1,6 @@
 import { test } from '@fuels/playwright-utils';
 import { type Page, expect } from '@playwright/test';
-import type { ApproveTransferFunction, ConnectorFunctions } from './types';
+import type { ConnectorFunctions } from './types';
 
 // biome-ignore lint/suspicious/noExportsInTest: <explanation>
 export const skipBridgeFunds = async (page: Page) => {
@@ -13,7 +13,7 @@ export const skipBridgeFunds = async (page: Page) => {
 // biome-ignore lint/suspicious/noExportsInTest: <explanation>
 export const sessionTests = async (
   page: Page,
-  { connect }: ConnectorFunctions,
+  { connect, secondConnect = connect }: ConnectorFunctions,
 ) => {
   await connect(page);
 
@@ -23,19 +23,19 @@ export const sessionTests = async (
     await page.click('text=Disconnect');
     await page.waitForSelector('text=/Connect Wallet/');
 
-    await connect(page);
+    await secondConnect(page);
     await skipBridgeFunds(page);
 
     expect(await page.waitForSelector('text=/Your Fuel Address/')).toBeTruthy();
   });
 
-  await test.step('should connect, refresh and stay connected', async () => {
+  await test.step('should refresh and stay connected', async () => {
     await page.reload();
     await skipBridgeFunds(page);
     await page.waitForSelector('text=/Your Fuel Address/');
   });
 
-  await test.step('should connect, disconnect, refresh and stay disconnected', async () => {
+  await test.step('should disconnect, refresh and stay disconnected', async () => {
     await skipBridgeFunds(page);
     await page.click('text=Disconnect');
     await page.waitForSelector('text=/Connect Wallet/');

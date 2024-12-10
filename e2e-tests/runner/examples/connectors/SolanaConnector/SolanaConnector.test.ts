@@ -21,7 +21,7 @@ test.describe('SolanaConnector', () => {
     const connectButton = getButtonByText(page, 'Connect Wallet', true);
     await connectButton.click();
     await getByAriaLabel(page, 'Connect to Solana Wallets', true).click();
-    await page.getByText('Proceed anyway').click();
+    await page.getByText('Proceed').click();
     await getButtonByText(page, 'Phantom').click();
     try {
       await phantomExtended.acceptAccess();
