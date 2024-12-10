@@ -62,7 +62,7 @@ test.describe('WalletConnectConnector', () => {
   });
 
   test('Ethereum transfer tests', async ({ page }) => {
-    await secondConnect(page);
+    await connect(page);
 
     const addressElement = await page.locator('css=#address');
 
@@ -81,12 +81,12 @@ test.describe('WalletConnectConnector', () => {
     }
 
     await transferTests(page, {
-      connect: secondConnect,
+      connect,
       approveTransfer,
       keepSession: true,
     });
     await incrementTests(page, {
-      connect: secondConnect,
+      connect,
       approveTransfer,
       keepSession: true,
     });
