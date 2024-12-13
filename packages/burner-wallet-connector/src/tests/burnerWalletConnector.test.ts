@@ -1,5 +1,12 @@
 import path from 'node:path';
-import { type Asset, type Network, Provider, Wallet } from 'fuels';
+import {
+  type Asset,
+  type Network,
+  Provider,
+  Signer,
+  Wallet,
+  getRandomB256,
+} from 'fuels';
 import { launchTestNode } from 'fuels/test-utils';
 import {
   afterAll,
@@ -14,6 +21,7 @@ import {
 import { BurnerWalletConnector } from '../BurnerWalletConnector';
 import { BURNER_WALLET_PRIVATE_KEY, TESTNET_URL } from '../constants';
 import type { BurnerWalletConfig } from '../types';
+import { PRIVATE_KEY, SCRIPT_TX_REQUEST, SIGNED_TX } from './mock-transaction';
 import { createMockedStorage } from './mockedStorage';
 
 const mockConfirm = vi.fn();
@@ -242,6 +250,50 @@ describe('Burner Wallet Connector', () => {
 
       expect(connected).to.be.false;
       expect(privateKey).toBeNull();
+    });
+  });
+
+  describe('signTransaction()', () => {
+    test('should throw error when not connected', async () => {
+      const connector = await getBurnerWallet();
+      const address = getRandomB256();
+
+      await expect(() =>
+        connector.signTransaction(address, SCRIPT_TX_REQUEST),
+      ).rejects.toThrow('Wallet not connected');
+    });
+
+    test('should throw error when address is not found for the connector', async () => {
+      const connector = await getBurnerWallet();
+      await connector.connect();
+      const address = '0xInvalidAddress';
+
+      await expect(() =>
+        connector.signTransaction(address, SCRIPT_TX_REQUEST),
+      ).rejects.toThrow('Address not found for the connector');
+    });
+
+    test('should return signed transaction', async () => {
+      const storage = createMockedStorage();
+      const burnerWallet = Wallet.fromPrivateKey(PRIVATE_KEY, fuelProvider);
+      await storage.setItem(BURNER_WALLET_PRIVATE_KEY, burnerWallet.privateKey);
+      const connector = await getBurnerWallet({ fuelProvider, storage });
+      mockConfirm.mockImplementationOnce(() => true);
+      await connector.connect();
+      expect(mockConfirm).toHaveBeenCalled();
+
+      const signedTransaction = await connector.signTransaction(
+        burnerWallet.address.toString(),
+        SCRIPT_TX_REQUEST,
+      );
+
+      const chainId = burnerWallet.provider.getChainId();
+      const verifiedAddress = Signer.recoverAddress(
+        SCRIPT_TX_REQUEST.getTransactionId(chainId),
+        signedTransaction,
+      );
+      expect(signedTransaction).toEqual(SIGNED_TX);
+      expect(verifiedAddress).toEqual(burnerWallet.address);
     });
   });
 
