@@ -97,7 +97,7 @@ export function ExternalDisclaimer() {
         </DisclaimerList>
       </DisclaimerContainer>
       <ConnectorButtonPrimary onClick={() => _startConnection(connector)}>
-        Proceed anyway
+        Proceed
       </ConnectorButtonPrimary>
       <ConnectorButton onClick={() => back()}>
         Select a Native Wallet

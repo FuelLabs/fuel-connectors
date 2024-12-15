@@ -34,23 +34,31 @@ test.describe('WalletConnectConnector', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
   });
 
-  const connect: ConnectorFunctions['connect'] = async (page) => {
+  const commonConnect: ConnectorFunctions['connect'] = async (page) => {
     const connectButton = getButtonByText(page, 'Connect Wallet', true);
     await connectButton.click();
     await getByAriaLabel(page, 'Connect to Ethereum Wallets', true).click();
-    await page.getByText('Proceed anyway').click();
+    await page.getByText('Proceed').click();
     await getButtonByText(page, 'MetaMask', true).click();
     await metamask.connectToDapp();
     await page.waitForTimeout(4000);
+  };
+
+  // First-time connection requires a message signature (to prove ownership of the wallet)
+  const connect: ConnectorFunctions['connect'] = async (page) => {
+    await commonConnect(page);
     await metamask.confirmSignature();
   };
+
+  // From here on, we'll skip the signature step
+  const secondConnect: ConnectorFunctions['connect'] = commonConnect;
 
   const approveTransfer: ConnectorFunctions['approveTransfer'] = async () => {
     await metamask.confirmTransaction();
   };
 
   test('Ethereum session tests', async ({ page }) => {
-    await sessionTests(page, { connect, approveTransfer });
+    await sessionTests(page, { connect, secondConnect, approveTransfer });
   });
 
   test('Ethereum transfer tests', async ({ page }) => {
@@ -72,7 +80,15 @@ test.describe('WalletConnectConnector', () => {
       throw new Error('Address is null');
     }
 
-    await transferTests(page, { connect, approveTransfer, keepSession: true });
-    await incrementTests(page, { connect, approveTransfer, keepSession: true });
+    await transferTests(page, {
+      connect,
+      approveTransfer,
+      keepSession: true,
+    });
+    await incrementTests(page, {
+      connect,
+      approveTransfer,
+      keepSession: true,
+    });
   });
 });

@@ -46,7 +46,7 @@
     "vitest": "2.0.2"
   },
   "engines": {
-    "node": ">=20.11.0",
+    "node": "20.x",
     "pnpm": "9.x"
   },
   "pnpm": {
