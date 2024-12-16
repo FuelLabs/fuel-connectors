@@ -21,6 +21,7 @@ import {
   FuelConnectorEventTypes,
   Provider as FuelProvider,
   LocalStorage,
+  type SendTransactionParams,
   type StorageAbstract,
   type TransactionRequestLike,
 } from 'fuels';
@@ -39,7 +40,7 @@ import {
 } from '@fuel-connectors/common';
 import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
 import { ApiController } from '@web3modal/core';
-import { stringToHex } from 'viem';
+import { type TransactionRequest, stringToHex } from 'viem';
 import {
   ETHEREUM_ICON,
   HAS_WINDOW,
@@ -373,6 +374,7 @@ export class WalletConnectConnector extends PredicateConnector {
   public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
+    params?: SendTransactionParams,
   ): Promise<string> {
     const { ethProvider, fuelProvider } = await this.getProviders();
     const { request, transactionId, account, transactionRequest } =
@@ -394,10 +396,12 @@ export class WalletConnectConnector extends PredicateConnector {
     const transactionWithPredicateEstimated =
       await fuelProvider.estimatePredicates(request);
 
+    const txAfterUserCallback = params?.onBeforeSend
+      ? params.onBeforeSend(transactionWithPredicateEstimated)
+      : transactionWithPredicateEstimated;
+
     const response = await fuelProvider.operations.submit({
-      encodedTransaction: hexlify(
-        transactionWithPredicateEstimated.toTransactionBytes(),
-      ),
+      encodedTransaction: hexlify(txAfterUserCallback.toTransactionBytes()),
     });
 
     return response.submit.id;
