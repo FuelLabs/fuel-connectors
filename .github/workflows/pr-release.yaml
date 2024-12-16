@@ -1,6 +1,6 @@
 name: Release to @pr-<number> tag on npm
 on:
-  pull_request:
+  pull_request: [opened, synchronize, edited, closed, reopened]
   workflow_dispatch:
 
 jobs:
