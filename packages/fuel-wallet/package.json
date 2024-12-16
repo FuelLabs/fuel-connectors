@@ -13,7 +13,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.96.1"
+    "fuels": "0.0.0-pr-3487-20241216212201"
   },
   "dependencies": {
     "json-rpc-2.0": "1.7.0"
