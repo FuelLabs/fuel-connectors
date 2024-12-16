@@ -23,7 +23,7 @@
   "peerDependencies": {
     "@web3modal/core": ">=5.0.0",
     "@web3modal/scaffold": ">=5.0.0",
-    "fuels": "0.0.0-pr-3487-20241216212201"
+    "fuels": "0.0.0-pr-3487-20241216225631"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -39,7 +39,7 @@
     "@types/memoizee": "0.4.11",
     "@web3modal/core": "5.0.0",
     "dotenv": "16.4.5",
-    "fuels": "0.0.0-pr-3487-20241216212201",
+    "fuels": "0.0.0-pr-3487-20241216225631",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
