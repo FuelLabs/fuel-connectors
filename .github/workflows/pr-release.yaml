@@ -1,6 +1,7 @@
 name: Release to @pr-<number> tag on npm
 on:
-  pull_request: [opened, synchronize, edited, closed, reopened]
+  pull_request:
+    types: [opened, synchronize, edited, closed, reopened]
 
 jobs:
   release-pr:
