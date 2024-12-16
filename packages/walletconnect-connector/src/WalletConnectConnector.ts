@@ -396,9 +396,12 @@ export class WalletConnectConnector extends PredicateConnector {
     const transactionWithPredicateEstimated =
       await fuelProvider.estimatePredicates(request);
 
-    const txAfterUserCallback = params?.onBeforeSend
-      ? await params.onBeforeSend(transactionWithPredicateEstimated)
-      : transactionWithPredicateEstimated;
+    let txAfterUserCallback = transactionWithPredicateEstimated;
+    if (params?.onBeforeSend) {
+      txAfterUserCallback = await params.onBeforeSend(
+        transactionWithPredicateEstimated,
+      );
+    }
 
     const response = await fuelProvider.operations.submit({
       encodedTransaction: hexlify(txAfterUserCallback.toTransactionBytes()),
