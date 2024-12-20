@@ -10,6 +10,7 @@ import {
   type Network,
   Provider,
   type SelectNetworkArguments,
+  type SendTransactionParams,
   type TransactionRequestLike,
   type Version,
   transactionRequestify,
@@ -193,6 +194,7 @@ export class FuelWalletConnector extends FuelConnector {
   async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
+    params?: SendTransactionParams,
   ): Promise<string> {
     if (!transaction) {
       throw new Error('Transaction is required');
@@ -213,6 +215,7 @@ export class FuelWalletConnector extends FuelConnector {
       address,
       transaction: JSON.stringify(txRequest),
       provider,
+      skipCustomFee: params?.skipCustomFee,
     });
   }
 
