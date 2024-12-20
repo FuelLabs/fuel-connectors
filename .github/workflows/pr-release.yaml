@@ -8,7 +8,7 @@ jobs:
     name: 'Release PR to npm'
     runs-on: buildjet-4vcpu-ubuntu-2204
     # Comment if:false to enable release PR to npm
-    # if: false
+    if: false
     permissions: write-all
     steps:
       - uses: actions/checkout@v3
@@ -27,6 +27,7 @@ jobs:
 
       - name: Build
         run: pnpm build
+        env:
           NEXT_PUBLIC_PROVIDER_URL: "http://localhost:4000/v1/graphql"
           NEXT_PUBLIC_WC_PROJECT_ID: e01471314fc69cc4efba6dce12dfd710
           NEXT_PUBLIC_CHAIN_ID_NAME: testnet
