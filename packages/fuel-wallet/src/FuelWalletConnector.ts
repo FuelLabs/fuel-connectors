@@ -199,27 +199,13 @@ export class FuelWalletConnector extends FuelConnector {
     if (!transaction) {
       throw new Error('Transaction is required');
     }
+    let txRequest = transactionRequestify(transaction);
 
-    // Log the incoming transaction details
-    console.log('FuelWalletConnector - Incoming Transaction:', {
-      inputs: transaction.inputs?.map((input) => ({
-        type: input.type,
-        owner: 'owner' in input ? input.owner : undefined,
-        amount: 'amount' in input ? input.amount?.toString() : undefined,
-        assetId: 'assetId' in input ? input.assetId : undefined,
-      })),
-      outputs: transaction.outputs?.map((output) => ({
-        type: output.type,
-        to: 'to' in output ? output.to : undefined,
-        amount: 'amount' in output ? output.amount?.toString() : undefined,
-        assetId: 'assetId' in output ? output.assetId : undefined,
-      })),
-      witnesses: transaction.witnesses?.length,
-      params,
-    });
+    if (params?.onBeforeSend) {
+      txRequest = await params.onBeforeSend(txRequest);
+    }
 
     // Transform transaction object to a transaction request
-    const txRequest = transactionRequestify(transaction);
 
     /**
      * @todo We should remove this once the chainId standard start to be used and chainId is required
@@ -229,15 +215,6 @@ export class FuelWalletConnector extends FuelConnector {
     const provider = {
       url: network.url,
     };
-
-    // Log the final request being sent
-    console.log('FuelWalletConnector - Sending Request:', {
-      address,
-      provider,
-      skipCustomFee: params?.skipCustomFee,
-      maxFee: txRequest.maxFee?.toString(),
-      tip: txRequest.tip?.toString(),
-    });
 
     return this.client.request('sendTransaction', {
       address,
