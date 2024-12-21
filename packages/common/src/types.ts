@@ -1,5 +1,6 @@
 import type EventEmitter from 'node:events';
 import type {
+  BN,
   BytesLike,
   Predicate as FuelPredicate,
   Provider as FuelProvider,
@@ -53,3 +54,15 @@ export type SignedMessageCustomCurve = {
   curve: string;
   signature: string;
 };
+
+export interface PaymasterParams {
+  paymasterAddress: string;
+  maxFeePerGas?: BN;
+  deadline?: number;
+}
+
+export interface SendTransactionParams {
+  skipCustomFee?: boolean;
+  onBeforeSend?: (txRequest: TransactionRequest) => Promise<TransactionRequest>;
+  paymaster?: PaymasterParams;
+}
