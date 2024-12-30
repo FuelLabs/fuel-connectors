@@ -161,7 +161,7 @@ describe('Burner Wallet Connector', () => {
 
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
       expect(await connector.currentNetwork()).to.be.deep.equal({
-        chainId: MAINNET_NETWORK.chainId,
+        chainId: 0,
         url: TESTNET_URL,
       });
     });
@@ -176,7 +176,7 @@ describe('Burner Wallet Connector', () => {
       const connector = await getBurnerWallet(config);
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
       expect(await connector.currentNetwork()).to.be.deep.equal({
-        chainId: MAINNET_NETWORK.chainId,
+        chainId: 0,
         url: TESTNET_URL,
       });
     });
