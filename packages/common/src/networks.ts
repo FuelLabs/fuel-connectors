@@ -1,6 +1,6 @@
 import { CHAIN_IDS, type Network } from 'fuels';
 
-export const DEFAULT_NETWORKS: Array<Partial<Network>> = [
+export const DEFAULT_NETWORKS: Network[] = [
   {
     chainId: CHAIN_IDS.fuel.testnet,
     url: 'https://testnet.fuel.network/v1/graphql',
@@ -19,6 +19,7 @@ export const getProviderUrl = (chainId: number): string => {
   const network = DEFAULT_NETWORKS.find(
     (network) => network.chainId === chainId,
   );
+
   if (!network || !network.url) {
     throw new Error(`Network with chainId ${chainId} not found`);
   }
