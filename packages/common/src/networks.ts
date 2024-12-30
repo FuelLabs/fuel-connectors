@@ -1,5 +1,10 @@
 import { CHAIN_IDS, type Network } from 'fuels';
 
+export const MAINNET_NETWORK: Network = {
+  chainId: CHAIN_IDS.fuel.mainnet,
+  url: 'https://mainnet.fuel.network/v1/graphql',
+};
+
 export const DEFAULT_NETWORKS: Network[] = [
   {
     chainId: CHAIN_IDS.fuel.testnet,
@@ -9,10 +14,7 @@ export const DEFAULT_NETWORKS: Network[] = [
     chainId: CHAIN_IDS.fuel.devnet,
     url: 'https://devnet.fuel.network/v1/graphql',
   },
-  {
-    chainId: CHAIN_IDS.fuel.mainnet,
-    url: 'https://mainnet.fuel.network/v1/graphql',
-  },
+  MAINNET_NETWORK,
 ];
 
 export const getProviderUrl = (chainId: number): string => {

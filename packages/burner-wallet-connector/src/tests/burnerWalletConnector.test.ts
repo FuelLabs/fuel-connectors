@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { MAINNET_NETWORK } from '@fuel-connectors/common';
 import { type Asset, type Network, Provider, Wallet } from 'fuels';
 import { launchTestNode } from 'fuels/test-utils';
 import {
@@ -12,9 +13,11 @@ import {
   vi,
 } from 'vitest';
 import { BurnerWalletConnector } from '../BurnerWalletConnector';
-import { BURNER_WALLET_PRIVATE_KEY, TESTNET_URL } from '../constants';
+import { BURNER_WALLET_PRIVATE_KEY } from '../constants';
 import type { BurnerWalletConfig } from '../types';
 import { createMockedStorage } from './mockedStorage';
+
+const TESTNET_URL = 'https://testnet.fuel.network/v1/graphql';
 
 const mockConfirm = vi.fn();
 window.confirm = mockConfirm;
@@ -73,7 +76,7 @@ describe('Burner Wallet Connector', () => {
       expect(connector.connected).to.be.false;
       expect(connector.installed).to.be.true;
       expect(await connector.currentNetwork()).to.be.deep.equal({
-        chainId: 0,
+        chainId: MAINNET_NETWORK.chainId,
         url: fuelProvider.url,
       });
     });
@@ -158,7 +161,7 @@ describe('Burner Wallet Connector', () => {
 
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
       expect(await connector.currentNetwork()).to.be.deep.equal({
-        chainId: 0,
+        chainId: MAINNET_NETWORK.chainId,
         url: TESTNET_URL,
       });
     });
@@ -173,7 +176,7 @@ describe('Burner Wallet Connector', () => {
       const connector = await getBurnerWallet(config);
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
       expect(await connector.currentNetwork()).to.be.deep.equal({
-        chainId: 0,
+        chainId: MAINNET_NETWORK.chainId,
         url: TESTNET_URL,
       });
     });
