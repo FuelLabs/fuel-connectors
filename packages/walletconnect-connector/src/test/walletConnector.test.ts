@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { PredicateFactory } from '@fuel-connectors/common';
+import { MAINNET_NETWORK, PredicateFactory } from '@fuel-connectors/common';
 import { type Asset, type Network, Provider } from 'fuels';
 import { launchTestNode } from 'fuels/test-utils';
 import {
@@ -11,7 +11,6 @@ import {
   test,
 } from 'vitest';
 import { WalletConnectConnector } from '../WalletConnectConnector';
-import { TESTNET_URL } from '../constants';
 import { PREDICATE_VERSIONS } from './mockedPredicate';
 
 describe('WalletConnect Connector', () => {
@@ -62,10 +61,9 @@ describe('WalletConnect Connector', () => {
       expect(walletWalletConnector.name).to.equal('Ethereum Wallets');
       expect(walletWalletConnector.connected).to.be.false;
       expect(walletWalletConnector.installed).to.be.true;
-      expect(await walletWalletConnector.currentNetwork()).to.be.deep.equal({
-        chainId: 0,
-        url: TESTNET_URL,
-      });
+      expect(await walletWalletConnector.currentNetwork()).to.be.deep.equal(
+        MAINNET_NETWORK,
+      );
     });
 
     test('can construct a WalletConnectConnector with a non default Provider', async () => {
