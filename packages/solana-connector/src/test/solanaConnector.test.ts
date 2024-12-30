@@ -78,9 +78,10 @@ describe('Solana Connector', () => {
       expect(solanaConnector.name).to.equal('Solana Wallets');
       expect(solanaConnector.connected).to.be.false;
       expect(solanaConnector.installed).to.be.false;
-      expect(await solanaConnector.currentNetwork()).to.be.deep.equal(
-        MAINNET_NETWORK,
-      );
+      expect(await solanaConnector.currentNetwork()).to.be.deep.equal({
+        chainId: 0,
+        url: fuelProvider.url,
+      });
     });
 
     test('can construct a SolanaConnector with a non default Promise Provider', async () => {
@@ -95,7 +96,7 @@ describe('Solana Connector', () => {
       expect(solanaConnector.connected).to.be.false;
       expect(solanaConnector.installed).to.be.false;
       expect(await solanaConnector.currentNetwork()).to.be.deep.equal({
-        chainId: MAINNET_NETWORK.chainId,
+        chainId: 0,
         url: fuelProvider.url,
       });
     });
