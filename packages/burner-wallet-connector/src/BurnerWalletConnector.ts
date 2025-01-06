@@ -230,6 +230,21 @@ export class BurnerWalletConnector extends FuelConnector {
     return transactionRequest.id;
   }
 
+  async signTransaction(
+    _address: string,
+    _transaction: TransactionRequestLike,
+  ): Promise<string> {
+    if (!this.burnerWallet) {
+      throw Error('Wallet not connected');
+    }
+
+    if (_address !== this.burnerWallet.address.toString()) {
+      throw Error('Address not found for the connector');
+    }
+
+    return this.burnerWallet.signTransaction(_transaction);
+  }
+
   async currentAccount(): Promise<string | null> {
     if (!this.burnerWallet) {
       throw Error('Wallet not connected');
