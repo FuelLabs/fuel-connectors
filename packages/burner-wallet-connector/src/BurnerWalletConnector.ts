@@ -59,7 +59,7 @@ export class BurnerWalletConnector extends FuelConnector {
   }
 
   private configProvider(config: BurnerWalletConfig = {}) {
-    const network = getProviderUrl(config.chainId ?? CHAIN_IDS.fuel.mainnet);
+    const network = getProviderUrl(config.chainId ?? CHAIN_IDS.fuel.testnet);
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || Provider.create(network),
     });

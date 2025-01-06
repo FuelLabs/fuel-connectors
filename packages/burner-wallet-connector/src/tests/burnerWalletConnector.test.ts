@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { MAINNET_NETWORK } from '@fuel-connectors/common';
+import { TESTNET_NETWORK } from '@fuel-connectors/common';
 import { type Asset, type Network, Provider, Wallet } from 'fuels';
 import { launchTestNode } from 'fuels/test-utils';
 import {
@@ -16,8 +16,6 @@ import { BurnerWalletConnector } from '../BurnerWalletConnector';
 import { BURNER_WALLET_PRIVATE_KEY } from '../constants';
 import type { BurnerWalletConfig } from '../types';
 import { createMockedStorage } from './mockedStorage';
-
-const TESTNET_URL = 'https://testnet.fuel.network/v1/graphql';
 
 const mockConfirm = vi.fn();
 window.confirm = mockConfirm;
@@ -74,7 +72,7 @@ describe('Burner Wallet Connector', () => {
       expect(connector.connected).to.be.false;
       expect(connector.installed).to.be.true;
       expect(await connector.currentNetwork()).to.be.deep.equal(
-        MAINNET_NETWORK,
+        TESTNET_NETWORK,
       );
     });
 
@@ -149,7 +147,7 @@ describe('Burner Wallet Connector', () => {
     });
 
     test('Creates a new BurnerWalletConnector instance with non default Provider url', async () => {
-      const nonDefaultProvider = await Provider.create(TESTNET_URL);
+      const nonDefaultProvider = await Provider.create(TESTNET_NETWORK.url);
 
       const config: BurnerWalletConfig = {
         fuelProvider: nonDefaultProvider,
@@ -157,14 +155,13 @@ describe('Burner Wallet Connector', () => {
       const connector = await getBurnerWallet(config);
 
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
-      expect(await connector.currentNetwork()).to.be.deep.equal({
-        chainId: 0,
-        url: TESTNET_URL,
-      });
+      expect(await connector.currentNetwork()).to.be.deep.equal(
+        TESTNET_NETWORK,
+      );
     });
 
     test('Creates a new BurnerWalletConnector instance with non default Promise Provider url', async () => {
-      const nonDefaultProvider = Provider.create(TESTNET_URL);
+      const nonDefaultProvider = Provider.create(TESTNET_NETWORK.url);
 
       const config: BurnerWalletConfig = {
         fuelProvider: nonDefaultProvider,
@@ -172,10 +169,9 @@ describe('Burner Wallet Connector', () => {
 
       const connector = await getBurnerWallet(config);
       expect(connector).to.be.an.instanceOf(BurnerWalletConnector);
-      expect(await connector.currentNetwork()).to.be.deep.equal({
-        chainId: 0,
-        url: TESTNET_URL,
-      });
+      expect(await connector.currentNetwork()).to.be.deep.equal(
+        TESTNET_NETWORK,
+      );
     });
   });
 
