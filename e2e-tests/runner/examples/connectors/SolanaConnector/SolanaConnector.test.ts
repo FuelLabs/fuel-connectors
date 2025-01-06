@@ -14,7 +14,8 @@ import { fundWallet } from '../setup';
 import phantomExtended from './phantom/phantom';
 import { test } from './setup';
 
-test.describe('SolanaConnector', () => {
+// @TODO: Phantom CRX is currently broken, so we're skipping this step for now
+test.skip('SolanaConnector', () => {
   test.slow();
 
   const connect: ConnectFunction = async (page: Page) => {

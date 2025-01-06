@@ -131,6 +131,7 @@ jobs:
 
       - name: Build & Deploy Solana Predicates
         run: pnpm fuels build && pnpm fuels deploy
+        if: false # @TODO: Phantom CRX is currently broken, so we're skipping this step for now
         working-directory: packages/solana-connector
 
       - name: Install Playwright Browsers
