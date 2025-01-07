@@ -17,6 +17,7 @@ import {
 import type { Web3Modal } from '@web3modal/wagmi';
 import {
   CHAIN_IDS,
+  type ConnectorEvent,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
@@ -46,7 +47,7 @@ import {
   SIGNATURE_VALIDATION_TIMEOUT,
   WINDOW,
 } from './constants';
-import type { WalletConnectConfig } from './types';
+import type { CustomCurrentConnectorEvent, WalletConnectConfig } from './types';
 import { subscribeAndEnforceChain } from './utils';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
@@ -263,6 +264,17 @@ export class WalletConnectConnector extends PredicateConnector {
           for (const address of addresses) {
             this.storage.setItem(`SIGNATURE_VALIDATION_${address}`, 'pending');
           }
+
+          const currentConnectorEvent: CustomCurrentConnectorEvent = {
+            type: this.events.currentConnector,
+            data: this,
+            metadata: {
+              pendingSignature: true,
+            },
+          };
+
+          // Workaround to tell Connecting dialog that now we'll request signature
+          this.emit(this.events.currentConnector, currentConnectorEvent);
           unsub();
           break;
         }

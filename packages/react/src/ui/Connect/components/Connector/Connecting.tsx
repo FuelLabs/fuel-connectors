@@ -1,8 +1,10 @@
 import { Routes, useConnectUI } from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../Core/ConnectorIcon';
 
-import { useEffect } from 'react';
+import type { ConnectorEvent } from 'fuels';
+import { useEffect, useMemo, useState } from 'react';
 import { Spinner } from '../../../../icons/Spinner';
+import { useFuel } from '../../../../providers/FuelHooksProvider';
 import {
   ConnectorButton,
   ConnectorButtonPrimary,
@@ -17,7 +19,32 @@ type ConnectorProps = {
   className?: string;
 };
 
+export interface CustomCurrentConnectorEvent extends ConnectorEvent {
+  metadata?: {
+    pendingSignature: boolean;
+  };
+}
+
+enum ConnectStep {
+  CONNECT = 'connect',
+  SIGN = 'sign',
+}
+
+const copy = {
+  [ConnectStep.CONNECT]: {
+    description: `Click on the button below to connect to ${location.origin}.`,
+    cta: 'Connect',
+  },
+  [ConnectStep.SIGN]: {
+    title: 'Signing in progress',
+    description:
+      'Sign this message to prove you own this wallet and proceed. Canceling will disconnect you.',
+    cta: 'Sign',
+  },
+} as const;
+
 export function Connecting({ className }: ConnectorProps) {
+  const { fuel } = useFuel();
   const {
     error,
     isConnecting,
@@ -27,12 +54,35 @@ export function Connecting({ className }: ConnectorProps) {
     isConnected,
   } = useConnectUI();
 
+  const [connectStep, setConnectStep] = useState<ConnectStep>(
+    ConnectStep.CONNECT,
+  );
+
+  const { description, cta } = useMemo(() => {
+    return copy[connectStep];
+  }, [connectStep]);
+
   // Auto-close connecting
   useEffect(() => {
     if (isConnected && route === Routes.CONNECTING && !isConnecting) {
       cancel();
     }
   }, [isConnected, route, isConnecting, cancel]);
+
+  // Switching to signing ownership mode
+  useEffect(() => {
+    const onCurrentConnectorChange = (e: CustomCurrentConnectorEvent) => {
+      if (e.metadata?.pendingSignature) {
+        setConnectStep(ConnectStep.SIGN);
+      }
+    };
+
+    fuel.on(fuel.events.currentConnector, onCurrentConnectorChange);
+
+    return () => {
+      fuel.off(fuel.events.currentConnector, onCurrentConnectorChange);
+    };
+  }, [fuel]);
 
   if (!connector) return null;
 
@@ -55,9 +105,7 @@ export function Connecting({ className }: ConnectorProps) {
             Requesting connection to <br /> {connector.name}.
           </ConnectorDescription>
         ) : (
-          <ConnectorDescription>
-            Click on the button below to connect to {location.origin}.
-          </ConnectorDescription>
+          <ConnectorDescription>{description}</ConnectorDescription>
         )}
       </ConnectorContent>
       {isConnecting ? (
@@ -66,7 +114,7 @@ export function Connecting({ className }: ConnectorProps) {
         </ConnectorButton>
       ) : (
         <ConnectorButtonPrimary onClick={() => retryConnect(connector)}>
-          Connect
+          {cta}
         </ConnectorButtonPrimary>
       )}
     </div>
