@@ -29,7 +29,6 @@ export enum Routes {
   INSTALL = 'install',
   CONNECTING = 'connecting',
   EXTERNAL_DISCLAIMER = 'disclaimer',
-  PRESIGNATURE = 'presignature',
 }
 
 export type FuelUIContextType = {

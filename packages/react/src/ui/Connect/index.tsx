@@ -16,7 +16,6 @@ import { Connecting } from './components/Connector/Connecting';
 import { DialogContent } from './components/Core/DialogContent';
 import { DialogFuel } from './components/Core/DialogFuel';
 import { ExternalDisclaimer } from './components/ExternalDisclaimer/ExternalDisclaimer';
-import { PreSignatureDialog } from './components/PreSignature/PreSignatureDialog';
 
 const ConnectRoutes = ({ route }: { route: Routes }) => {
   switch (route) {
@@ -26,8 +25,6 @@ const ConnectRoutes = ({ route }: { route: Routes }) => {
       return <Connector />;
     case Routes.EXTERNAL_DISCLAIMER:
       return <ExternalDisclaimer />;
-    case Routes.PRESIGNATURE:
-      return <PreSignatureDialog />;
     case Routes.CONNECTING:
       return <Connecting />;
     default:
