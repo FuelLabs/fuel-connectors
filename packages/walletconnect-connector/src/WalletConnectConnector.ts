@@ -261,20 +261,30 @@ export class WalletConnectConnector extends PredicateConnector {
           break;
         case 'CONNECT_SUCCESS': {
           const { addresses = [] } = getAccount(wagmiConfig);
+
+          let hasAccountToSign = false;
           for (const address of addresses) {
+            if (await this.accountHasValidation(address)) {
+              continue;
+            }
+
+            hasAccountToSign = true;
             this.storage.setItem(`SIGNATURE_VALIDATION_${address}`, 'pending');
           }
 
-          const currentConnectorEvent: CustomCurrentConnectorEvent = {
-            type: this.events.currentConnector,
-            data: this,
-            metadata: {
-              pendingSignature: true,
-            },
-          };
+          if (hasAccountToSign) {
+            const currentConnectorEvent: CustomCurrentConnectorEvent = {
+              type: this.events.currentConnector,
+              data: this,
+              metadata: {
+                pendingSignature: true,
+              },
+            };
 
-          // Workaround to tell Connecting dialog that now we'll request signature
-          this.emit(this.events.currentConnector, currentConnectorEvent);
+            // Workaround to tell Connecting dialog that now we'll request signature
+            this.emit(this.events.currentConnector, currentConnectorEvent);
+          }
+
           unsub();
           break;
         }
