@@ -43,7 +43,7 @@ import { stringToHex } from 'viem';
 import {
   ETHEREUM_ICON,
   HAS_WINDOW,
-  SINGATURE_VALIDATION_TIMEOUT,
+  SIGNATURE_VALIDATION_TIMEOUT,
   WINDOW,
 } from './constants';
 import type { WalletConnectConfig } from './types';
@@ -193,7 +193,7 @@ export class WalletConnectConnector extends PredicateConnector {
   protected async getAccountAddresses(): Promise<Maybe<readonly string[]>> {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) return null;
-    const addresses = getAccount(wagmiConfig).addresses || [];
+    const { addresses = [] } = getAccount(wagmiConfig);
     const accountsValidations = await this.getAccountValidations(
       addresses as `0x${string}`[],
     );
@@ -240,53 +240,40 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   public async connect(): Promise<boolean> {
-    this.createModal();
-    const result = await new Promise<boolean>((resolve, reject) => {
-      this.web3Modal.open();
-      const wagmiConfig = this.getWagmiConfig();
-      const unsub = this.web3Modal.subscribeEvents(async (event) => {
-        const requestValidations = () => {
-          this.requestValidations()
-            .then(() => resolve(true))
-            .catch((err) => reject(err))
-            .finally(() => unsub());
-        };
+    const wagmiConfig = this.getWagmiConfig();
+    if (!wagmiConfig) throw new Error('Wagmi config not found');
 
-        switch (event.data.event) {
-          case 'MODAL_OPEN':
-            if (wagmiConfig) {
-              const account = getAccount(wagmiConfig);
-              if (account?.isConnected) {
-                unsub();
-                this.web3Modal.close();
-                requestValidations();
-                break;
-              }
-            }
-            // Ensures that the WC Web3Modal config is applied over pre-existing states (e.g. Solan Connect Web3Modal)
-            this.createModal();
-            break;
-          case 'CONNECT_SUCCESS': {
-            requestValidations();
-            break;
+    // User might have connected already, now let's ask for the signatures
+    const state = await this.requestSignatures(wagmiConfig);
+    if (state === 'validated') {
+      return true;
+    }
+
+    // User not connected, let's show the WalletConnect modal
+    this.createModal();
+    this.web3Modal.open();
+    const unsub = this.web3Modal.subscribeEvents(async (event) => {
+      switch (event.data.event) {
+        case 'MODAL_OPEN':
+          // Ensures that the WC Web3Modal config is applied over pre-existing states (e.g. Solana Connect Web3Modal)
+          this.createModal();
+          break;
+        case 'CONNECT_SUCCESS': {
+          const { addresses = [] } = getAccount(wagmiConfig);
+          for (const address of addresses) {
+            this.storage.setItem(`SIGNATURE_VALIDATION_${address}`, 'pending');
           }
-          case 'MODAL_CLOSE':
-          case 'CONNECT_ERROR': {
-            if (wagmiConfig) {
-              const account = getAccount(wagmiConfig);
-              if (account) {
-                requestValidations();
-                break;
-              }
-            }
-            resolve(false);
-            unsub();
-            break;
-          }
+          unsub();
+          break;
         }
-      });
+        case 'MODAL_CLOSE':
+        case 'CONNECT_ERROR': {
+          unsub();
+          break;
+        }
+      }
     });
-    return result;
+    return false;
   }
 
   private async getAccountValidations(
@@ -310,26 +297,30 @@ export class WalletConnectConnector extends PredicateConnector {
     return hasValidate;
   }
 
-  async requestValidations() {
-    const wagmiConfig = this.getWagmiConfig();
-    if (!wagmiConfig) {
-      throw new Error('Wagmi config not found');
-    }
+  private async requestSignatures(
+    wagmiConfig: Config,
+  ): Promise<'validated' | 'pending'> {
     const account = getAccount(wagmiConfig);
-    const { addresses } = account;
-    for (const address of addresses || []) {
-      await this.requestValidation(address)
-        .then(() => {
-          this.handleConnect(account);
-        })
-        .catch((err) => {
-          this.disconnect();
-          throw err;
-        });
+
+    const { addresses = [], isConnected } = account;
+    for (const address of addresses) {
+      try {
+        await this.requestSignature(address);
+      } catch (err) {
+        this.disconnect();
+        throw err;
+      }
     }
+
+    if (isConnected) {
+      await this.handleConnect(account);
+      return 'validated';
+    }
+
+    return 'pending';
   }
 
-  async requestValidation(address?: string) {
+  private async requestSignature(address?: string) {
     return new Promise(async (resolve, reject) => {
       const hasSignature = await this.accountHasValidation(address);
       if (hasSignature) return resolve(true);
@@ -339,7 +330,7 @@ export class WalletConnectConnector extends PredicateConnector {
         reject(
           new Error("User didn't provide signature in less than 1 minute"),
         );
-      }, SINGATURE_VALIDATION_TIMEOUT);
+      }, SIGNATURE_VALIDATION_TIMEOUT);
       const { ethProvider } = await this.getProviders();
 
       if (!ethProvider) return;
