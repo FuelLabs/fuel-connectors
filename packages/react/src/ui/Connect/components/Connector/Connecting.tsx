@@ -27,6 +27,7 @@ export function Connecting({ className }: ConnectorProps) {
     isConnected,
   } = useConnectUI();
 
+  // Auto-close connecting
   useEffect(() => {
     if (isConnected && route === Routes.CONNECTING && !isConnecting) {
       cancel();
