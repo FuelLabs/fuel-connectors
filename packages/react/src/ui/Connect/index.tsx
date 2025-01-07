@@ -16,15 +16,18 @@ import { Connecting } from './components/Connector/Connecting';
 import { DialogContent } from './components/Core/DialogContent';
 import { DialogFuel } from './components/Core/DialogFuel';
 import { ExternalDisclaimer } from './components/ExternalDisclaimer/ExternalDisclaimer';
+import { PreSignatureDialog } from './components/PreSignature/PreSignatureDialog';
 
-const ConnectRoutes = ({ state }: { state: Routes }) => {
-  switch (state) {
+const ConnectRoutes = ({ route }: { route: Routes }) => {
+  switch (route) {
     case Routes.LIST:
       return <Connectors />;
     case Routes.INSTALL:
       return <Connector />;
     case Routes.EXTERNAL_DISCLAIMER:
       return <ExternalDisclaimer />;
+    case Routes.PRESIGNATURE:
+      return <PreSignatureDialog />;
     case Routes.CONNECTING:
       return <Connecting />;
     default:
@@ -36,7 +39,7 @@ export function Connect() {
   const {
     theme,
     cancel,
-    dialog: { isOpen, route: state, connector, back },
+    dialog: { isOpen, route, connector, back },
   } = useConnectUI();
 
   const handleOpenChange = (openState: boolean) => {
@@ -55,7 +58,7 @@ export function Connect() {
         </DialogHeader>
         <Divider />
         <DialogMain>
-          <ConnectRoutes state={state} />
+          <ConnectRoutes route={route} />
         </DialogMain>
       </DialogContent>
     </DialogFuel>
