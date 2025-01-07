@@ -344,7 +344,6 @@ export class WalletConnectConnector extends PredicateConnector {
 
       if (!ethProvider) return;
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
       this.signAndValidate(ethProvider, address)
         .then(() => {
           clearTimeout(validationTimeout);
