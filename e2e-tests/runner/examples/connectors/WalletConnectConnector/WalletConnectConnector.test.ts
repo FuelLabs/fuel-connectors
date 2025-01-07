@@ -47,6 +47,7 @@ test.describe('WalletConnectConnector', () => {
   // First-time connection requires a message signature (to prove ownership of the wallet)
   const connect: ConnectorFunctions['connect'] = async (page) => {
     await commonConnect(page);
+    await page.getByText('Sign').click();
     await metamask.confirmSignature();
   };
 

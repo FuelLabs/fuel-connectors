@@ -36,7 +36,6 @@ const copy = {
     cta: 'Connect',
   },
   [ConnectStep.SIGN]: {
-    title: 'Signing in progress',
     description:
       'Sign this message to prove you own this wallet and proceed. Canceling will disconnect you.',
     cta: 'Sign',
