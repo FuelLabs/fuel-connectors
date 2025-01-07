@@ -343,6 +343,7 @@ export class WalletConnectConnector extends PredicateConnector {
         })
         .catch((err) => {
           clearTimeout(validationTimeout);
+          this.storage.removeItem(`SIGNATURE_VALIDATION_${address}`);
           reject(err);
         });
     });
