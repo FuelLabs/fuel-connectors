@@ -30,18 +30,6 @@ enum ConnectStep {
   SIGN = 'sign',
 }
 
-const copy = {
-  [ConnectStep.CONNECT]: {
-    description: `Click on the button below to connect to ${location.origin}.`,
-    cta: 'Connect',
-  },
-  [ConnectStep.SIGN]: {
-    description:
-      'Sign this message to prove you own this wallet and proceed. Canceling will disconnect you.',
-    cta: 'Sign',
-  },
-} as const;
-
 export function Connecting({ className }: ConnectorProps) {
   const { fuel } = useFuel();
   const {
@@ -58,7 +46,18 @@ export function Connecting({ className }: ConnectorProps) {
   );
 
   const { description, cta } = useMemo(() => {
-    return copy[connectStep];
+    if (connectStep === ConnectStep.CONNECT) {
+      return {
+        description: `Click on the button below to connect to ${location.origin}.`,
+        cta: 'Connect',
+      };
+    }
+
+    return {
+      description:
+        'Sign this message to prove you own this wallet and proceed. Canceling will disconnect you.',
+      cta: 'Sign',
+    };
   }, [connectStep]);
 
   // Auto-close connecting
