@@ -15,7 +15,7 @@ import {
 import { Connecting } from './components/Connector/Connecting';
 import { DialogContent } from './components/Core/DialogContent';
 import { DialogFuel } from './components/Core/DialogFuel';
-import { ExternalDisclaimer } from './components/ExternalDisclaimer/ExternalDisclaimer';
+import { PredicateExternalDisclaimer } from './components/PredicateExternalDisclaimer/PredicateExternalDisclaimer';
 
 const ConnectRoutes = ({ state }: { state: Routes }) => {
   switch (state) {
@@ -24,7 +24,7 @@ const ConnectRoutes = ({ state }: { state: Routes }) => {
     case Routes.Install:
       return <Connector />;
     case Routes.PredicateExternalDisclaimer:
-      return <ExternalDisclaimer />;
+      return <PredicateExternalDisclaimer />;
     case Routes.Connecting:
       return <Connecting />;
     default:
