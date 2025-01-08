@@ -3,6 +3,7 @@ import { ConnectorIcon } from '../Core/ConnectorIcon';
 
 import { useEffect } from 'react';
 import { Spinner } from '../../../../icons/Spinner';
+import { isNativeConnector } from '../../../../utils/isNativeConnector';
 import {
   ConnectorButton,
   ConnectorButtonPrimary,
@@ -23,15 +24,22 @@ export function Connecting({ className }: ConnectorProps) {
     isConnecting,
     theme,
     cancel,
-    dialog: { route, connector, retryConnect },
+    dialog: { route, setRoute, connector, retryConnect },
     isConnected,
   } = useConnectUI();
 
   useEffect(() => {
     if (isConnected && route === Routes.Connecting && !isConnecting) {
-      cancel();
+      // Connected to a native connector, we can close the dialog
+      if (connector && isNativeConnector(connector)) {
+        cancel();
+        return;
+      }
+
+      // If the connector is not native, we need to show the disclaimer about predicates
+      setRoute(Routes.PredicateAddressDisclaimer);
     }
-  }, [isConnected, route, isConnecting, cancel]);
+  }, [isConnected, connector, route, setRoute, isConnecting, cancel]);
 
   if (!connector) return null;
 
