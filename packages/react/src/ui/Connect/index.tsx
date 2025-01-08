@@ -19,13 +19,13 @@ import { ExternalDisclaimer } from './components/ExternalDisclaimer/ExternalDisc
 
 const ConnectRoutes = ({ state }: { state: Routes }) => {
   switch (state) {
-    case Routes.LIST:
+    case Routes.List:
       return <Connectors />;
-    case Routes.INSTALL:
+    case Routes.Install:
       return <Connector />;
-    case Routes.EXTERNAL_DISCLAIMER:
+    case Routes.PredicateExternalDisclaimer:
       return <ExternalDisclaimer />;
-    case Routes.CONNECTING:
+    case Routes.Connecting:
       return <Connecting />;
     default:
       return null;

@@ -25,10 +25,11 @@ export type FuelUIProviderProps = {
 };
 
 export enum Routes {
-  LIST = 'list',
-  INSTALL = 'install',
-  CONNECTING = 'connecting',
-  EXTERNAL_DISCLAIMER = 'disclaimer',
+  List = 'LIST',
+  Install = 'INSTALL',
+  Connecting = 'CONNECTING',
+  PredicateExternalDisclaimer = 'PREDICATE_EXTERNAL_DISCLAIMER',
+  PredicateAddressDisclaimer = 'PREDICATE_ADDRESS_DISCLAIMER',
 }
 
 export type FuelUIContextType = {
@@ -107,7 +108,7 @@ export function FuelUIProvider({
   });
   const { isConnected } = useIsConnected();
   const [connector, setConnector] = useState<FuelConnector | null>(null);
-  const [dialogRoute, setDialogRoute] = useState<Routes>(Routes.LIST);
+  const [dialogRoute, setDialogRoute] = useState<Routes>(Routes.List);
   const [isOpen, setOpen] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -127,7 +128,7 @@ export function FuelUIProvider({
   const handleBack = useCallback(() => {
     setError(null);
     setConnector(null);
-    setDialogRoute(Routes.LIST);
+    setDialogRoute(Routes.List);
   }, []);
 
   const handleRetryConnect = useCallback(
@@ -144,7 +145,7 @@ export function FuelUIProvider({
 
   const handleStartConnection = useCallback(
     async (connector: FuelConnector) => {
-      setDialogRoute(Routes.CONNECTING);
+      setDialogRoute(Routes.Connecting);
       await handleRetryConnect(connector);
     },
     [handleRetryConnect],
@@ -154,11 +155,11 @@ export function FuelUIProvider({
     async (connector: FuelConnector) => {
       setConnector(connector);
       if (!connector.installed) {
-        setDialogRoute(Routes.INSTALL);
+        setDialogRoute(Routes.Install);
       } else if (isNativeConnector(connector)) {
         handleStartConnection(connector);
       } else {
-        setDialogRoute(Routes.EXTERNAL_DISCLAIMER);
+        setDialogRoute(Routes.PredicateExternalDisclaimer);
       }
     },
     [handleStartConnection],
@@ -177,7 +178,7 @@ export function FuelUIProvider({
   const handleConnect = useCallback(() => {
     setConnector(null);
     setError(null);
-    setDialogRoute(Routes.LIST);
+    setDialogRoute(Routes.List);
     setOpen(true);
   }, []);
 
@@ -186,7 +187,7 @@ export function FuelUIProvider({
     setOpen(false);
     if (clean) {
       setConnector(null);
-      setDialogRoute(Routes.LIST);
+      setDialogRoute(Routes.List);
     }
   }, []);
 

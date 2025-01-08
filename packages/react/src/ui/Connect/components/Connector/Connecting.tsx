@@ -28,7 +28,7 @@ export function Connecting({ className }: ConnectorProps) {
   } = useConnectUI();
 
   useEffect(() => {
-    if (isConnected && route === Routes.CONNECTING && !isConnecting) {
+    if (isConnected && route === Routes.Connecting && !isConnecting) {
       cancel();
     }
   }, [isConnected, route, isConnecting, cancel]);
