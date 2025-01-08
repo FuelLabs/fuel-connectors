@@ -30,6 +30,7 @@ test.skip('SolanaConnector', () => {
       // Phantom might not need to accept access if it already connected before
       console.log('Error: ', error);
     }
+    await page.getByText('Continue to application').click();
   };
 
   const approveTransfer: ApproveTransferFunction = async () => {
