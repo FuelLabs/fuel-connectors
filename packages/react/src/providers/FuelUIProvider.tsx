@@ -182,13 +182,9 @@ export function FuelUIProvider({
     setOpen(true);
   }, []);
 
-  const handleCancel = useCallback(({ clean }: { clean?: boolean } = {}) => {
+  const handleCancel = useCallback(() => {
     setError(null);
     setOpen(false);
-    if (clean) {
-      setConnector(null);
-      setDialogRoute(Routes.List);
-    }
   }, []);
 
   useEffect(() => {
