@@ -7,7 +7,7 @@ import {
 } from '../Connector/styles';
 import { DisclaimerContainer, DisclaimerList } from './styles';
 
-export function ExternalDisclaimer() {
+export function PredicateExternalDisclaimer() {
   const {
     dialog: { connector, _startConnection, back },
   } = useConnectUI();
