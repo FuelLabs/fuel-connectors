@@ -28,7 +28,7 @@ export const testSetup = async ({
   extensionId: string;
   amountToFund: BNInput;
 }) => {
-  const fuelProvider = await Provider.create(VITE_FUEL_PROVIDER_URL);
+  const fuelProvider = new Provider(VITE_FUEL_PROVIDER_URL);
   const masterWallet = Wallet.fromMnemonic(VITE_MASTER_WALLET_MNEMONIC);
   masterWallet.connect(fuelProvider);
   if (VITE_WALLET_SECRET) {
@@ -54,7 +54,7 @@ export const testSetup = async ({
     fuelExtensionId: extensionId,
     fuelProvider: {
       url: fuelProvider.url,
-      chainId: fuelProvider.getChainId(),
+      chainId: await fuelProvider.getChainId(),
     },
     chainName,
     mnemonic: randomMnemonic,

@@ -15,12 +15,12 @@ export const QUERY_KEYS = {
   },
   contract: (
     address: string,
-    chainId: number | undefined,
+    providerUrl: string | undefined,
     args: string | undefined,
   ): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('contract').concat(address);
     if (typeof args !== 'undefined') queryKey.push(args);
-    if (typeof chainId !== 'undefined') queryKey.push(chainId);
+    if (typeof providerUrl !== 'undefined') queryKey.push(providerUrl);
     return queryKey;
   },
   chain: (): QueryKey => {

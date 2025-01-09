@@ -59,7 +59,7 @@ export const useBalance = ({
       try {
         if (!provider) throw new Error('Provider is needed');
 
-        const baseAssetId = assetId || provider.getBaseAssetId();
+        const baseAssetId = assetId || (await provider.getBaseAssetId());
         const currentFuelBalance = await provider.getBalance(
           Address.fromString(_address || ''),
           baseAssetId,

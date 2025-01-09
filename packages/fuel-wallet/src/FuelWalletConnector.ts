@@ -285,11 +285,12 @@ export class FuelWalletConnector extends FuelConnector {
      * @todo: Remove fetch provider once Fuel Wallet supports adding networks
      * by URL
      */
-    const provider = await Provider.create(networkUrl);
+    const provider = new Provider(networkUrl);
+    const chain = await provider.getChain();
     return this.client.request('addNetwork', {
       network: {
         url: provider.url,
-        name: provider.getChain().name,
+        name: chain.name,
       },
     });
   }

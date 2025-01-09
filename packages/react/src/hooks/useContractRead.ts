@@ -70,14 +70,13 @@ export const useContractRead = <
   args,
 }: ContractReadProps<A, C, F>) => {
   const isContractInstance = isContract(_contract);
-  const chainId = _contract?.provider?.getChainId();
 
   return useNamedQuery('contractRead', {
     queryKey: QUERY_KEYS.contract(
       isContractInstance
         ? _contract?.id?.toString()
         : _contract?.address?.toString(),
-      chainId,
+      _contract.provider.url,
       args?.toString(),
     ),
     queryFn: async () => {

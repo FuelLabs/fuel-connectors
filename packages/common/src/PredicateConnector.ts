@@ -170,7 +170,7 @@ export abstract class PredicateConnector extends FuelConnector {
 
     const b256Address = Address.fromDynamicInput(address).toString();
     const { fuelProvider } = await this.getProviders();
-    const chainId = fuelProvider.getChainId();
+    const chainId = await fuelProvider.getChainId();
     const walletAccount = this.predicateAccount.getAccountAddress(
       b256Address,
       await this.walletAccounts(),
@@ -212,7 +212,7 @@ export abstract class PredicateConnector extends FuelConnector {
       ZeroBytes32,
     ]);
 
-    const { gasPriceFactor } = predicate.provider.getGasConfig();
+    const { gasPriceFactor } = await predicate.provider.getGasConfig();
     const { maxFee, gasPrice } = await predicate.provider.estimateTxGasAndFee({
       transactionRequest: requestWithPredicateAttached,
     });
@@ -301,7 +301,7 @@ export abstract class PredicateConnector extends FuelConnector {
 
   public async currentNetwork(): Promise<Network> {
     const { fuelProvider } = await this.getProviders();
-    const chainId = fuelProvider.getChainId();
+    const chainId = await fuelProvider.getChainId();
 
     return { url: fuelProvider.url, chainId: chainId };
   }

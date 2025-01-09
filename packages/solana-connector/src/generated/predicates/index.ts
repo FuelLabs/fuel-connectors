@@ -12,7 +12,9 @@ import {
   generationDate as generationDate1728255070813,
 } from './0xee4fd742e5d265465885707e0a58a19974dbdff9292ae7345c3988ac90b1478e';
 
-export const PREDICATE_VERSIONS = {
+export type PredicateVersions = Record<string, PredicateVersion>;
+
+export const PREDICATE_VERSIONS: PredicateVersions = {
   '0x15f8fd16e3281aa89e7567c5f8423f77b34983a8cd7d0a1714100c8bc3d4c8d0': {
     predicate: { abi: abi1725561405784, bin: bin1725561405784 },
     generatedAt: generationDate1725561405784,
@@ -21,4 +23,4 @@ export const PREDICATE_VERSIONS = {
     predicate: { abi: abi1728255070813, bin: bin1728255070813 },
     generatedAt: generationDate1728255070813,
   },
-} as const satisfies Record<string, PredicateVersion>;
+} as const satisfies PredicateVersions;
