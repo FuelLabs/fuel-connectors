@@ -1,6 +1,10 @@
 import type { PredicateConfig } from '@fuel-connectors/common';
 import type { Config as WagmiConfig } from '@wagmi/core';
-import type { Provider as FuelProvider, StorageAbstract } from 'fuels';
+import type {
+  ConnectorEvent,
+  Provider as FuelProvider,
+  StorageAbstract,
+} from 'fuels';
 
 export type WalletConnectConfig = {
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
@@ -12,3 +16,9 @@ export type WalletConnectConfig = {
   // if the dapp already has wagmi from eth connectors, it's better to skip auto reconnection as it can lead to session loss when refreshing the page
   skipAutoReconnect?: boolean;
 };
+
+export interface CustomCurrentConnectorEvent extends ConnectorEvent {
+  metadata: {
+    pendingSignature: boolean;
+  };
+}
