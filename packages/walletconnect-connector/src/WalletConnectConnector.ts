@@ -335,8 +335,13 @@ export class WalletConnectConnector extends PredicateConnector {
     }
 
     if (isConnected) {
-      await this.handleConnect(account);
-      return 'validated';
+      try {
+        await this.handleConnect(account);
+        return 'validated';
+      } catch (err) {
+        this.disconnect();
+        throw err;
+      }
     }
 
     return 'pending';
