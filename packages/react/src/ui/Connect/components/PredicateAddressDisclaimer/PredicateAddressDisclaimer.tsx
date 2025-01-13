@@ -1,8 +1,15 @@
 import { useConnectUI } from '../../../../providers/FuelUIProvider';
 import { ConnectorButtonPrimary, ConnectorContent } from '../Connector/styles';
 
+export const PREDICATE_DISCLAIMER_KEY = '@fuels/predicate-address-disclaimer';
+
 export function PredicateAddressDisclaimer() {
   const { cancel } = useConnectUI();
+
+  const onContinueToApplication = () => {
+    localStorage.setItem(PREDICATE_DISCLAIMER_KEY, Date.now().toString());
+    cancel();
+  };
 
   return (
     <div>
@@ -38,7 +45,7 @@ export function PredicateAddressDisclaimer() {
         </div>
       </ConnectorContent>
 
-      <ConnectorButtonPrimary onClick={() => cancel()}>
+      <ConnectorButtonPrimary onClick={onContinueToApplication}>
         Continue to application
       </ConnectorButtonPrimary>
     </div>

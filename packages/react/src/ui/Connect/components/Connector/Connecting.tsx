@@ -4,6 +4,7 @@ import { ConnectorIcon } from '../Core/ConnectorIcon';
 import { useEffect } from 'react';
 import { Spinner } from '../../../../icons/Spinner';
 import { isNativeConnector } from '../../../../utils/isNativeConnector';
+import { PREDICATE_DISCLAIMER_KEY } from '../PredicateAddressDisclaimer/PredicateAddressDisclaimer';
 import {
   ConnectorButton,
   ConnectorButtonPrimary,
@@ -36,7 +37,13 @@ export function Connecting({ className }: ConnectorProps) {
         return;
       }
 
-      // If the connector is not native, we need to show the disclaimer about predicates
+      // If the connector is not native, let's check if we have already displayed the disclaimer
+      if (localStorage.getItem(PREDICATE_DISCLAIMER_KEY)) {
+        cancel();
+        return;
+      }
+
+      // So we need to show the disclaimer about predicates
       setRoute(Routes.PredicateAddressDisclaimer);
     }
   }, [isConnected, connector, route, setRoute, isConnecting, cancel]);

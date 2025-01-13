@@ -9,6 +9,7 @@ import {
 import type {
   ApproveTransferFunction,
   ConnectFunction,
+  ConnectorFunctions,
 } from '../../../common/types';
 import { fundWallet } from '../setup';
 import phantomExtended from './phantom/phantom';
@@ -18,7 +19,7 @@ import { test } from './setup';
 test.skip('SolanaConnector', () => {
   test.slow();
 
-  const connect: ConnectFunction = async (page: Page) => {
+  const commonConnect: ConnectFunction = async (page: Page) => {
     const connectButton = getButtonByText(page, 'Connect Wallet', true);
     await connectButton.click();
     await getByAriaLabel(page, 'Connect to Solana Wallets', true).click();
@@ -30,8 +31,16 @@ test.skip('SolanaConnector', () => {
       // Phantom might not need to accept access if it already connected before
       console.log('Error: ', error);
     }
+  };
+
+  // First-time connection requires to confirm the fuel predicate address difference
+  const connect: ConnectorFunctions['connect'] = async (page) => {
+    await commonConnect(page);
     await page.getByText('Continue to application').click();
   };
+
+  // From here on, we'll skip the predicate warning step
+  const secondConnect: ConnectorFunctions['connect'] = commonConnect;
 
   const approveTransfer: ApproveTransferFunction = async () => {
     await phantomExtended.confirmSignatureRequest();
@@ -46,7 +55,7 @@ test.skip('SolanaConnector', () => {
       await sessionTests(page, { connect, approveTransfer });
     });
 
-    await connect(page);
+    await secondConnect(page);
     await skipBridgeFunds(page);
 
     const addressElement = await page.locator('#address');
@@ -62,7 +71,7 @@ test.skip('SolanaConnector', () => {
     }
     await test.step('Transfer tests', async () => {
       await transferTests(page, {
-        connect,
+        connect: secondConnect,
         approveTransfer,
         keepSession: true,
       });
@@ -70,7 +79,7 @@ test.skip('SolanaConnector', () => {
 
     await test.step('Increment tests', async () => {
       await incrementTests(page, {
-        connect,
+        connect: secondConnect,
         approveTransfer,
         keepSession: true,
       });
