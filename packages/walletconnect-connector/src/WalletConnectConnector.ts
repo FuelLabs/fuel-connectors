@@ -366,6 +366,17 @@ export class WalletConnectConnector extends PredicateConnector {
         .catch((err) => {
           clearTimeout(validationTimeout);
           this.storage.removeItem(`SIGNATURE_VALIDATION_${address}`);
+
+          const currentConnectorEvent: CustomCurrentConnectorEvent = {
+            type: this.events.currentConnector,
+            data: this,
+            metadata: {
+              pendingSignature: false,
+            },
+          };
+
+          // Workaround to tell Connecting dialog that now we'll request connection again
+          this.emit(this.events.currentConnector, currentConnectorEvent);
           reject(err);
         });
     });

@@ -45,10 +45,11 @@ export function Connecting({ className }: ConnectorProps) {
     ConnectStep.CONNECT,
   );
 
-  const { description, cta } = useMemo(() => {
+  const { description, operation, cta } = useMemo(() => {
     if (connectStep === ConnectStep.CONNECT) {
       return {
         description: `Click on the button below to connect to ${location.origin}.`,
+        operation: 'connection',
         cta: 'Connect',
       };
     }
@@ -56,6 +57,7 @@ export function Connecting({ className }: ConnectorProps) {
     return {
       description:
         'Sign this message to prove you own this wallet and proceed. Canceling will disconnect you.',
+      operation: 'signature',
       cta: 'Sign',
     };
   }, [connectStep]);
@@ -70,8 +72,10 @@ export function Connecting({ className }: ConnectorProps) {
   // Switching to signing ownership mode
   useEffect(() => {
     const onCurrentConnectorChange = (e: CustomCurrentConnectorEvent) => {
-      if (e.metadata?.pendingSignature) {
-        setConnectStep(ConnectStep.SIGN);
+      if (e.metadata && 'pendingSignature' in e.metadata) {
+        setConnectStep(
+          e.metadata.pendingSignature ? ConnectStep.SIGN : ConnectStep.CONNECT,
+        );
       }
     };
 
@@ -96,14 +100,15 @@ export function Connecting({ className }: ConnectorProps) {
       </ConnectorImage>
       <ConnectorContent>
         <ConnectorTitle>{connector.name}</ConnectorTitle>
-        {error ? (
-          <ConnectorDescriptionError>{error.message}</ConnectorDescriptionError>
-        ) : isConnecting ? (
+        {isConnecting ? (
           <ConnectorDescription>
-            Requesting connection to <br /> {connector.name}.
+            Requesting {operation} to <br /> {connector.name}.
           </ConnectorDescription>
         ) : (
           <ConnectorDescription>{description}</ConnectorDescription>
+        )}
+        {error && (
+          <ConnectorDescriptionError>{error.message}</ConnectorDescriptionError>
         )}
       </ConnectorContent>
       {isConnecting ? (
