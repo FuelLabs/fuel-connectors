@@ -133,7 +133,7 @@ export class EVMWalletConnector extends PredicateConnector {
   protected requireConnection(): MaybeAsync<void> {}
 
   protected async configProviders(config: EVMWalletConnectorConfig = {}) {
-    const network = getProviderUrl(config.chainId ?? CHAIN_IDS.fuel.testnet);
+    const network = getProviderUrl(config.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || Provider.create(network),
       ethProvider: config.ethProvider || WINDOW?.ethereum,
