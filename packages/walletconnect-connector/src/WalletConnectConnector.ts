@@ -169,7 +169,7 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   protected async configProviders(config: WalletConnectConfig = {}) {
-    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.testnet);
+    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || new FuelProvider(network),
     });

@@ -1,5 +1,13 @@
 # @fuels/react
 
+## 0.37.0
+
+### Minor Changes
+
+- [#450](https://github.com/FuelLabs/fuel-connectors/pull/450) [`dd2c3e0`](https://github.com/FuelLabs/fuel-connectors/commit/dd2c3e0a12c90f220a442aef6b1098e82e0b78c1) Thanks [@helciofranco](https://github.com/helciofranco)! - Set mainnet as default chain if no chain ID is specified.
+
+- [#443](https://github.com/FuelLabs/fuel-connectors/pull/443) [`d9c0624`](https://github.com/FuelLabs/fuel-connectors/commit/d9c06243c092313a331228a081a0c5f722905234) Thanks [@helciofranco](https://github.com/helciofranco)! - Skip EVM signature step for previously signed accounts.
+
 ## 0.36.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 import path from 'node:path';
-import { PredicateFactory } from '@fuel-connectors/common';
-import { type Asset, type Network, Provider } from 'fuels';
+import { MAINNET_NETWORK, PredicateFactory } from '@fuel-connectors/common';
+import { type Asset, Provider } from 'fuels';
 import { launchTestNode } from 'fuels/test-utils';
 import {
   afterAll,
@@ -11,7 +11,6 @@ import {
   test,
 } from 'vitest';
 import { SolanaConnector } from '../SolanaConnector';
-import { TESTNET_URL } from '../constants';
 import { PREDICATE_VERSIONS } from './mockedPredicate';
 
 describe('Solana Connector', () => {
@@ -63,10 +62,9 @@ describe('Solana Connector', () => {
       expect(solanaConnector.name).to.equal('Solana Wallets');
       expect(solanaConnector.connected).to.be.false;
       expect(solanaConnector.installed).to.be.false;
-      expect(await solanaConnector.currentNetwork()).to.be.deep.equal({
-        chainId: 0,
-        url: TESTNET_URL,
-      });
+      expect(await solanaConnector.currentNetwork()).to.be.deep.equal(
+        MAINNET_NETWORK,
+      );
     });
 
     test('can construct a SolanaConnector with a non default Provider', async () => {
@@ -203,10 +201,9 @@ describe('Solana Connector', () => {
 
   describe('selectNetwork()', () => {
     test('throws error', async () => {
-      const network: Network = { url: '', chainId: 0 };
-      await expect(() => connector.selectNetwork(network)).rejects.toThrowError(
-        'Method not implemented.',
-      );
+      await expect(() =>
+        connector.selectNetwork(MAINNET_NETWORK),
+      ).rejects.toThrowError('Method not implemented.');
     });
   });
 });

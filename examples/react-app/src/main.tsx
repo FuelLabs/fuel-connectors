@@ -12,14 +12,14 @@ import { http, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
 
 import { defaultConnectors } from '@fuels/connectors';
-import { FuelProvider } from '@fuels/react';
+import { FuelProvider, type NetworkConfig } from '@fuels/react';
 
 import * as Toast from '@radix-ui/react-toast';
 
 import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import './index.css';
-import { CHAIN_IDS, Provider, bn } from 'fuels';
+import { CHAIN_IDS, type FuelConfig, Provider, bn } from 'fuels';
 import { ConfigProvider } from './context/ConfigContext.tsx';
 
 const queryClient = new QueryClient();
@@ -69,14 +69,14 @@ if (!PROVIDER_URL) {
   throw new Error('VITE_FUEL_PROVIDER_URL is not set');
 }
 
-const NETWORKS = [
+const NETWORKS: NetworkConfig[] = [
   {
     chainId: CHAIN_ID,
     url: PROVIDER_URL,
   },
 ];
 
-const FUEL_CONFIG = {
+const FUEL_CONFIG: FuelConfig = {
   connectors: defaultConnectors({
     devMode: true,
     wcProjectId: WC_PROJECT_ID,
@@ -85,6 +85,7 @@ const FUEL_CONFIG = {
     fuelProvider: new Provider(PROVIDER_URL),
   }),
 };
+
 function getContractId() {
   switch (CHAIN_ID_NAME) {
     case 'mainnet':
