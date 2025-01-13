@@ -14,7 +14,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=next"
+    "fuels": ">=0.98.0"
   },
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",

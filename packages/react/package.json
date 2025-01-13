@@ -27,7 +27,7 @@
   },
   "peerDependencies": {
     "@tanstack/react-query": ">=5.0.0",
-    "fuels": ">=next",
+    "fuels": ">=0.98.0",
     "react": ">=18.0.0"
   },
   "dependencies": {

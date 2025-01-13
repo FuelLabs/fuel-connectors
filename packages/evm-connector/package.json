@@ -20,7 +20,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=next"
+    "fuels": ">=0.98.0"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
