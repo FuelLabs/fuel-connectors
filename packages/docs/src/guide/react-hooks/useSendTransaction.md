@@ -31,6 +31,6 @@ await sendTransactionAsync({ address: '0x...', transaction: {...} });
 ```
 
 #### Defined in
-[packages/react/src/hooks/useSendTransaction.ts:46](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useSendTransaction.ts#L46)
+[packages/react/src/hooks/useSendTransaction.ts:43](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useSendTransaction.ts#L43)
 
 ___

@@ -147,7 +147,7 @@ describe('Burner Wallet Connector', () => {
     });
 
     test('Creates a new BurnerWalletConnector instance with non default Provider url', async () => {
-      const nonDefaultProvider = new Provider(TESTNET_URL);
+      const nonDefaultProvider = new Provider(TESTNET_NETWORK.url);
 
       const config: BurnerWalletConfig = {
         fuelProvider: nonDefaultProvider,
@@ -161,7 +161,7 @@ describe('Burner Wallet Connector', () => {
     });
 
     test('Creates a new BurnerWalletConnector instance with non default Promise Provider url', async () => {
-      const nonDefaultProvider = new Provider(TESTNET_URL);
+      const nonDefaultProvider = new Provider(TESTNET_NETWORK.url);
 
       const config: BurnerWalletConfig = {
         fuelProvider: nonDefaultProvider,
