@@ -1,8 +1,10 @@
 import { Routes, useConnectUI } from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../Core/ConnectorIcon';
 
-import { useEffect } from 'react';
+import type { ConnectorEvent } from 'fuels';
+import { useEffect, useMemo, useState } from 'react';
 import { Spinner } from '../../../../icons/Spinner';
+import { useFuel } from '../../../../providers/FuelHooksProvider';
 import { isNativeConnector } from '../../../../utils/isNativeConnector';
 import { PREDICATE_DISCLAIMER_KEY } from '../PredicateAddressDisclaimer/PredicateAddressDisclaimer';
 import {
@@ -19,7 +21,19 @@ type ConnectorProps = {
   className?: string;
 };
 
+export interface CustomCurrentConnectorEvent extends ConnectorEvent {
+  metadata?: {
+    pendingSignature: boolean;
+  };
+}
+
+enum ConnectStep {
+  CONNECT = 'connect',
+  SIGN = 'sign',
+}
+
 export function Connecting({ className }: ConnectorProps) {
+  const { fuel } = useFuel();
   const {
     error,
     isConnecting,
@@ -29,6 +43,28 @@ export function Connecting({ className }: ConnectorProps) {
     isConnected,
   } = useConnectUI();
 
+  const [connectStep, setConnectStep] = useState<ConnectStep>(
+    ConnectStep.CONNECT,
+  );
+
+  const { description, operation, cta } = useMemo(() => {
+    if (connectStep === ConnectStep.CONNECT) {
+      return {
+        description: `Click on the button below to connect to ${location.origin}.`,
+        operation: 'connection',
+        cta: 'Connect',
+      };
+    }
+
+    return {
+      description:
+        'Sign this message to prove you own this wallet and proceed. Canceling will disconnect you.',
+      operation: 'signature',
+      cta: 'Sign',
+    };
+  }, [connectStep]);
+
+  // Auto-close connecting
   useEffect(() => {
     if (isConnected && route === Routes.Connecting && !isConnecting) {
       // Connected to a native connector, we can close the dialog
@@ -48,6 +84,23 @@ export function Connecting({ className }: ConnectorProps) {
     }
   }, [isConnected, connector, route, setRoute, isConnecting, cancel]);
 
+  // Switching to signing ownership mode
+  useEffect(() => {
+    const onCurrentConnectorChange = (e: CustomCurrentConnectorEvent) => {
+      if (e.metadata && 'pendingSignature' in e.metadata) {
+        setConnectStep(
+          e.metadata.pendingSignature ? ConnectStep.SIGN : ConnectStep.CONNECT,
+        );
+      }
+    };
+
+    fuel.on(fuel.events.currentConnector, onCurrentConnectorChange);
+
+    return () => {
+      fuel.off(fuel.events.currentConnector, onCurrentConnectorChange);
+    };
+  }, [fuel]);
+
   if (!connector) return null;
 
   return (
@@ -62,16 +115,15 @@ export function Connecting({ className }: ConnectorProps) {
       </ConnectorImage>
       <ConnectorContent>
         <ConnectorTitle>{connector.name}</ConnectorTitle>
-        {error ? (
-          <ConnectorDescriptionError>{error.message}</ConnectorDescriptionError>
-        ) : isConnecting ? (
+        {isConnecting ? (
           <ConnectorDescription>
-            Requesting connection to <br /> {connector.name}.
+            Requesting {operation} to <br /> {connector.name}.
           </ConnectorDescription>
         ) : (
-          <ConnectorDescription>
-            Click on the button below to connect to {location.origin}.
-          </ConnectorDescription>
+          <ConnectorDescription>{description}</ConnectorDescription>
+        )}
+        {error && (
+          <ConnectorDescriptionError>{error.message}</ConnectorDescriptionError>
         )}
       </ConnectorContent>
       {isConnecting ? (
@@ -80,7 +132,7 @@ export function Connecting({ className }: ConnectorProps) {
         </ConnectorButton>
       ) : (
         <ConnectorButtonPrimary onClick={() => retryConnect(connector)}>
-          Connect
+          {cta}
         </ConnectorButtonPrimary>
       )}
     </div>

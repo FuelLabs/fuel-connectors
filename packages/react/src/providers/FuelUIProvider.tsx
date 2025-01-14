@@ -165,10 +165,6 @@ export function FuelUIProvider({
     [handleStartConnection],
   );
 
-  const setRoute = useCallback((state: Routes) => {
-    setDialogRoute(state);
-  }, []);
-
   const isLoading = useMemo(() => {
     const hasLoadedConnectors =
       (fuelConfig.connectors || []).length > connectors.length;
@@ -221,7 +217,7 @@ export function FuelUIProvider({
       // Dialog only
       dialog: {
         route: dialogRoute,
-        setRoute,
+        setRoute: setDialogRoute,
         connector,
         isOpen,
         connect: handleSelectConnector,
@@ -245,7 +241,6 @@ export function FuelUIProvider({
       isOpen,
       handleCancel,
       handleStartConnection,
-      setRoute,
       handleSelectConnector,
       handleConnect,
       handleRetryConnect,

@@ -18,8 +18,8 @@ import { DialogFuel } from './components/Core/DialogFuel';
 import { PredicateAddressDisclaimer } from './components/PredicateAddressDisclaimer/PredicateAddressDisclaimer';
 import { PredicateExternalDisclaimer } from './components/PredicateExternalDisclaimer/PredicateExternalDisclaimer';
 
-const ConnectRoutes = ({ state }: { state: Routes }) => {
-  switch (state) {
+const ConnectRoutes = ({ route }: { route: Routes }) => {
+  switch (route) {
     case Routes.List:
       return <Connectors />;
     case Routes.Install:
@@ -39,7 +39,7 @@ export function Connect() {
   const {
     theme,
     cancel,
-    dialog: { isOpen, route: state, connector, back },
+    dialog: { isOpen, route, connector, back },
   } = useConnectUI();
 
   const handleOpenChange = (openState: boolean) => {
@@ -58,7 +58,7 @@ export function Connect() {
         </DialogHeader>
         <Divider />
         <DialogMain>
-          <ConnectRoutes state={state} />
+          <ConnectRoutes route={route} />
         </DialogMain>
       </DialogContent>
     </DialogFuel>
