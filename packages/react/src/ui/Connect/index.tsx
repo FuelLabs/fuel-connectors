@@ -17,8 +17,8 @@ import { DialogContent } from './components/Core/DialogContent';
 import { DialogFuel } from './components/Core/DialogFuel';
 import { ExternalDisclaimer } from './components/ExternalDisclaimer/ExternalDisclaimer';
 
-const ConnectRoutes = ({ state }: { state: Routes }) => {
-  switch (state) {
+const ConnectRoutes = ({ route }: { route: Routes }) => {
+  switch (route) {
     case Routes.LIST:
       return <Connectors />;
     case Routes.INSTALL:
@@ -36,7 +36,7 @@ export function Connect() {
   const {
     theme,
     cancel,
-    dialog: { isOpen, route: state, connector, back },
+    dialog: { isOpen, route, connector, back },
   } = useConnectUI();
 
   const handleOpenChange = (openState: boolean) => {
@@ -55,7 +55,7 @@ export function Connect() {
         </DialogHeader>
         <Divider />
         <DialogMain>
-          <ConnectRoutes state={state} />
+          <ConnectRoutes route={route} />
         </DialogMain>
       </DialogContent>
     </DialogFuel>
