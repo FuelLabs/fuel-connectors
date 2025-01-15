@@ -7,6 +7,7 @@ import {
   FuelConnector,
   FuelConnectorEventType,
   FuelConnectorEventTypes,
+  type FuelConnectorSendTxParams,
   type Network,
   Provider,
   type SelectNetworkArguments,
@@ -193,12 +194,18 @@ export class FuelWalletConnector extends FuelConnector {
   async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
+    params?: FuelConnectorSendTxParams,
   ): Promise<string> {
     if (!transaction) {
       throw new Error('Transaction is required');
     }
+    let txRequest = transactionRequestify(transaction);
+
+    if (params?.onBeforeSend) {
+      txRequest = await params.onBeforeSend(txRequest);
+    }
+
     // Transform transaction object to a transaction request
-    const txRequest = transactionRequestify(transaction);
 
     /**
      * @todo We should remove this once the chainId standard start to be used and chainId is required
@@ -213,6 +220,7 @@ export class FuelWalletConnector extends FuelConnector {
       address,
       transaction: JSON.stringify(txRequest),
       provider,
+      skipCustomFee: params?.skipCustomFee,
     });
   }
 

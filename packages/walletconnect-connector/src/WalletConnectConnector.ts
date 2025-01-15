@@ -20,6 +20,7 @@ import {
   type ConnectorEvent,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
+  type FuelConnectorSendTxParams,
   Provider as FuelProvider,
   LocalStorage,
   type StorageAbstract,
@@ -40,7 +41,7 @@ import {
 } from '@fuel-connectors/common';
 import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
 import { ApiController } from '@web3modal/core';
-import { stringToHex } from 'viem';
+import { type TransactionRequest, stringToHex } from 'viem';
 import {
   ETHEREUM_ICON,
   HAS_WINDOW,
@@ -402,10 +403,24 @@ export class WalletConnectConnector extends PredicateConnector {
   public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
+    params?: FuelConnectorSendTxParams,
   ): Promise<string> {
     const { ethProvider, fuelProvider } = await this.getProviders();
+    console.log('asd inputs BEFORE prepare', transaction.inputs?.toString());
+    console.log(
+      'asd witnesses BEFORE prepare',
+      transaction.witnesses?.toString(),
+    );
     const { request, transactionId, account, transactionRequest } =
       await this.prepareTransaction(address, transaction);
+    console.log(
+      'asd inputs AFTER prepare',
+      transactionRequest.inputs?.toString(),
+    );
+    console.log(
+      'asd witnesses AFTER prepare',
+      transactionRequest.witnesses?.toString(),
+    );
 
     const signature = (await ethProvider?.request({
       method: 'personal_sign',
@@ -418,15 +433,27 @@ export class WalletConnectConnector extends PredicateConnector {
 
     // Transform the signature into compact form for Sway to understand
     const compactSignature = splitSignature(hexToBytes(signature)).compact;
+
+    console.log('asd predicateSignatureIndex', predicateSignatureIndex);
+    console.log(
+      'asd transactionRequest.witnesses',
+      transactionRequest.witnesses?.toString(),
+    );
+    console.log('asd compactSignature', compactSignature);
     transactionRequest.witnesses[predicateSignatureIndex] = compactSignature;
 
     const transactionWithPredicateEstimated =
       await fuelProvider.estimatePredicates(request);
 
+    let txAfterUserCallback = transactionWithPredicateEstimated;
+    if (params?.onBeforeSend) {
+      txAfterUserCallback = await params.onBeforeSend(
+        transactionWithPredicateEstimated,
+      );
+    }
+
     const response = await fuelProvider.operations.submit({
-      encodedTransaction: hexlify(
-        transactionWithPredicateEstimated.toTransactionBytes(),
-      ),
+      encodedTransaction: hexlify(txAfterUserCallback.toTransactionBytes()),
     });
 
     return response.submit.id;
