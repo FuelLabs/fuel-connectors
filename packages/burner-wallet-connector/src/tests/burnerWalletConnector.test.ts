@@ -288,7 +288,7 @@ describe('Burner Wallet Connector', () => {
 
       const network = await connector.currentNetwork();
 
-      expect(network.chainId).to.be.equal(fuelProvider.getChainId());
+      expect(network.chainId).to.be.equal(await fuelProvider.getChainId());
       expect(network.url).to.be.equal(fuelProvider.url);
     });
   });
