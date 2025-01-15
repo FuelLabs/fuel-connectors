@@ -84,7 +84,7 @@ describe('WalletConnect Connector', () => {
     });
 
     test('can construct a WalletConnectConnector with a non default Promise Provider', async () => {
-      const nonDefaultProvider = Provider.create(fuelProvider.url);
+      const nonDefaultProvider = new Provider(fuelProvider.url);
       const walletWalletConnector = connectorFactory({
         fuelProvider: nonDefaultProvider,
       });

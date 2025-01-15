@@ -43,7 +43,11 @@ export const useTransactionReceipts = <TTransactionType = void>({
       try {
         if (!provider) return null;
 
-        const response = new TransactionResponse(txId || '', provider);
+        const response = new TransactionResponse(
+          txId || '',
+          provider,
+          await provider.getChainId(),
+        );
         if (!response) return null;
 
         const { receipts } = await response.waitForResult();

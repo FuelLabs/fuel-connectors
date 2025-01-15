@@ -293,7 +293,7 @@ configs
 WSL
 WalletUnlocked
 WalletLocked
-AbstractAddress
+Address
 ContractFactory
 ScriptTransactionRequest
 CDN

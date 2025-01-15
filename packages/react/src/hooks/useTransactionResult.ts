@@ -66,7 +66,11 @@ export const useTransactionResult = <
     queryFn: async () => {
       if (!provider) return null;
 
-      const txResult = new TransactionResponse(txId, provider);
+      const txResult = new TransactionResponse(
+        txId,
+        provider,
+        await provider.getChainId(),
+      );
       const data = await txResult.waitForResult<TTransactionType>();
 
       return data || null;
