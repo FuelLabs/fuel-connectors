@@ -1,5 +1,11 @@
 # @fuels/connectors
 
+## 0.37.0
+
+### Minor Changes
+
+- [#450](https://github.com/FuelLabs/fuel-connectors/pull/450) [`dd2c3e0`](https://github.com/FuelLabs/fuel-connectors/commit/dd2c3e0a12c90f220a442aef6b1098e82e0b78c1) Thanks [@helciofranco](https://github.com/helciofranco)! - Set mainnet as default chain if no chain ID is specified.
+
 ## 0.36.1
 
 ## 0.36.0

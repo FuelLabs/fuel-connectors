@@ -77,10 +77,6 @@ const wagmiConfig = createConfig({
   ],
 });
 
-if (!PROVIDER_URL) {
-  throw new Error(`PROVIDER_URL is not set: ${PROVIDER_URL}`);
-}
-
 const FUEL_CONFIG = {
   connectors: defaultConnectors({
     devMode: true,

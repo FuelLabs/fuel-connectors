@@ -17,7 +17,9 @@ export type Connector = {
   installed: boolean;
 };
 
-export type NetworkConfig = Partial<Network & { bridgeURL?: string }>;
+export interface NetworkConfig extends Partial<Network> {
+  bridgeURL?: string;
+}
 
 export type UIConfig = {
   suggestBridge?: boolean;

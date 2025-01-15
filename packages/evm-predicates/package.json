@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/evm-predicates",
-  "version": "0.36.1",
+  "version": "0.37.0",
   "private": true,
   "type": "module",
   "exports": {
@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",
+    "dotenv": "16.4.5",
     "fuels": "0.96.1",
     "tsx": "4.9.3",
     "typescript": "5.4.5"

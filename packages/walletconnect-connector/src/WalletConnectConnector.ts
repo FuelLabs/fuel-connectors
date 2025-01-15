@@ -17,6 +17,7 @@ import {
 import type { Web3Modal } from '@web3modal/wagmi';
 import {
   CHAIN_IDS,
+  type ConnectorEvent,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
@@ -43,10 +44,10 @@ import { stringToHex } from 'viem';
 import {
   ETHEREUM_ICON,
   HAS_WINDOW,
-  SINGATURE_VALIDATION_TIMEOUT,
+  SIGNATURE_VALIDATION_TIMEOUT,
   WINDOW,
 } from './constants';
-import type { WalletConnectConfig } from './types';
+import type { CustomCurrentConnectorEvent, WalletConnectConfig } from './types';
 import { subscribeAndEnforceChain } from './utils';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
@@ -169,7 +170,7 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   protected async configProviders(config: WalletConnectConfig = {}) {
-    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.testnet);
+    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || FuelProvider.create(network),
     });
@@ -193,7 +194,7 @@ export class WalletConnectConnector extends PredicateConnector {
   protected async getAccountAddresses(): Promise<Maybe<readonly string[]>> {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) return null;
-    const addresses = getAccount(wagmiConfig).addresses || [];
+    const { addresses = [] } = getAccount(wagmiConfig);
     const accountsValidations = await this.getAccountValidations(
       addresses as `0x${string}`[],
     );
@@ -240,53 +241,61 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   public async connect(): Promise<boolean> {
-    this.createModal();
-    const result = await new Promise<boolean>((resolve, reject) => {
-      this.web3Modal.open();
-      const wagmiConfig = this.getWagmiConfig();
-      const unsub = this.web3Modal.subscribeEvents(async (event) => {
-        const requestValidations = () => {
-          this.requestValidations()
-            .then(() => resolve(true))
-            .catch((err) => reject(err))
-            .finally(() => unsub());
-        };
+    const wagmiConfig = this.getWagmiConfig();
+    if (!wagmiConfig) throw new Error('Wagmi config not found');
 
-        switch (event.data.event) {
-          case 'MODAL_OPEN':
-            if (wagmiConfig) {
-              const account = getAccount(wagmiConfig);
-              if (account?.isConnected) {
-                unsub();
-                this.web3Modal.close();
-                requestValidations();
-                break;
-              }
+    // User might have connected already, now let's ask for the signatures
+    const state = await this.requestSignatures(wagmiConfig);
+    if (state === 'validated') {
+      return true;
+    }
+
+    // User not connected, let's show the WalletConnect modal
+    this.createModal();
+    this.web3Modal.open();
+    const unsub = this.web3Modal.subscribeEvents(async (event) => {
+      switch (event.data.event) {
+        case 'MODAL_OPEN':
+          // Ensures that the WC Web3Modal config is applied over pre-existing states (e.g. Solana Connect Web3Modal)
+          this.createModal();
+          break;
+        case 'CONNECT_SUCCESS': {
+          const { addresses = [] } = getAccount(wagmiConfig);
+
+          let hasAccountToSign = false;
+          for (const address of addresses) {
+            if (await this.accountHasValidation(address)) {
+              continue;
             }
-            // Ensures that the WC Web3Modal config is applied over pre-existing states (e.g. Solan Connect Web3Modal)
-            this.createModal();
-            break;
-          case 'CONNECT_SUCCESS': {
-            requestValidations();
-            break;
+
+            hasAccountToSign = true;
+            this.storage.setItem(`SIGNATURE_VALIDATION_${address}`, 'pending');
           }
-          case 'MODAL_CLOSE':
-          case 'CONNECT_ERROR': {
-            if (wagmiConfig) {
-              const account = getAccount(wagmiConfig);
-              if (account) {
-                requestValidations();
-                break;
-              }
-            }
-            resolve(false);
-            unsub();
-            break;
+
+          if (hasAccountToSign) {
+            const currentConnectorEvent: CustomCurrentConnectorEvent = {
+              type: this.events.currentConnector,
+              data: this,
+              metadata: {
+                pendingSignature: true,
+              },
+            };
+
+            // Workaround to tell Connecting dialog that now we'll request signature
+            this.emit(this.events.currentConnector, currentConnectorEvent);
           }
+
+          unsub();
+          break;
         }
-      });
+        case 'MODAL_CLOSE':
+        case 'CONNECT_ERROR': {
+          unsub();
+          break;
+        }
+      }
     });
-    return result;
+    return false;
   }
 
   private async getAccountValidations(
@@ -310,38 +319,49 @@ export class WalletConnectConnector extends PredicateConnector {
     return hasValidate;
   }
 
-  async requestValidations() {
-    const wagmiConfig = this.getWagmiConfig();
-    if (!wagmiConfig) {
-      throw new Error('Wagmi config not found');
-    }
+  private async requestSignatures(
+    wagmiConfig: Config,
+  ): Promise<'validated' | 'pending'> {
     const account = getAccount(wagmiConfig);
-    const { addresses } = account;
-    for (const address of addresses || []) {
-      await this.requestValidation(address)
-        .then(() => {
-          this.handleConnect(account);
-        })
-        .catch((err) => {
-          this.disconnect();
-          throw err;
-        });
+
+    const { addresses = [], isConnected } = account;
+    for (const address of addresses) {
+      try {
+        await this.requestSignature(address);
+      } catch (err) {
+        this.disconnect();
+        throw err;
+      }
     }
+
+    if (isConnected) {
+      try {
+        await this.handleConnect(account);
+        return 'validated';
+      } catch (err) {
+        this.disconnect();
+        throw err;
+      }
+    }
+
+    return 'pending';
   }
 
-  async requestValidation(address?: string) {
+  private async requestSignature(address?: string) {
     return new Promise(async (resolve, reject) => {
-      // Disconnect if user dosen't provide signature in time
+      const hasSignature = await this.accountHasValidation(address);
+      if (hasSignature) return resolve(true);
+
+      // Disconnect if user doesn't provide signature in time
       const validationTimeout = setTimeout(() => {
         reject(
           new Error("User didn't provide signature in less than 1 minute"),
         );
-      }, SINGATURE_VALIDATION_TIMEOUT);
+      }, SIGNATURE_VALIDATION_TIMEOUT);
       const { ethProvider } = await this.getProviders();
 
       if (!ethProvider) return;
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
       this.signAndValidate(ethProvider, address)
         .then(() => {
           clearTimeout(validationTimeout);
@@ -350,6 +370,18 @@ export class WalletConnectConnector extends PredicateConnector {
         })
         .catch((err) => {
           clearTimeout(validationTimeout);
+          this.storage.removeItem(`SIGNATURE_VALIDATION_${address}`);
+
+          const currentConnectorEvent: CustomCurrentConnectorEvent = {
+            type: this.events.currentConnector,
+            data: this,
+            metadata: {
+              pendingSignature: false,
+            },
+          };
+
+          // Workaround to tell Connecting dialog that now we'll request connection again
+          this.emit(this.events.currentConnector, currentConnectorEvent);
           reject(err);
         });
     });
@@ -359,11 +391,11 @@ export class WalletConnectConnector extends PredicateConnector {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
 
-    const { addresses, connector, isConnected } = getAccount(wagmiConfig);
+    const { connector, isConnected } = getAccount(wagmiConfig);
     await disconnect(wagmiConfig, {
       connector,
     });
-    addresses?.map((a) => this.storage.removeItem(`SIGNATURE_VALIDATION_${a}`));
+
     return isConnected || false;
   }
 

@@ -84,7 +84,7 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   private providerFactory(config?: SolanaConfig) {
-    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.testnet);
+    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
     return config?.fuelProvider || FuelProvider.create(network);
   }
 
@@ -153,7 +153,7 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   protected async configProviders(config: SolanaConfig = {}) {
-    const network = getProviderUrl(config.chainId ?? CHAIN_IDS.fuel.testnet);
+    const network = getProviderUrl(config.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || FuelProvider.create(network),
     });
