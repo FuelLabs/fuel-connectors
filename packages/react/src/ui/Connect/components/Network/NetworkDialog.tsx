@@ -41,8 +41,8 @@ export function NetworkDialog({
     queryKey: ['chainName', networks[0]],
     queryFn: async () => {
       if (networks[0].url) {
-        const provider = await Provider.create(networks[0].url);
-        return provider.getChain().name;
+        const provider = new Provider(networks[0].url);
+        return (await provider.getChain()).name;
       }
       return '';
     },

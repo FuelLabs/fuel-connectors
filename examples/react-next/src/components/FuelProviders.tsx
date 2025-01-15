@@ -27,7 +27,7 @@ const FUEL_CONFIG = createConfig(() => {
       wcProjectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID,
       ethWagmiConfig: DEFAULT_WAGMI_CONFIG,
       chainId: NETWORKS[0].chainId,
-      fuelProvider: Provider.create(NETWORKS[0].url),
+      fuelProvider: new Provider(NETWORKS[0].url),
     }),
   };
 });

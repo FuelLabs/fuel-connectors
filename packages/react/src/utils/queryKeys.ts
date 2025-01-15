@@ -38,13 +38,12 @@ export const QUERY_KEYS = {
   balance: (
     address?: string,
     assetId?: BytesLike,
-    provider?: Provider | null,
+    chainId?: number | undefined,
   ): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('balance');
     if (address) queryKey.push(address);
     if (assetId) queryKey.push(assetId);
-    if (provider?.getChainId?.() !== undefined)
-      queryKey.push(provider.getChainId());
+    if (chainId !== undefined) queryKey.push(chainId);
     return queryKey;
   },
   wallet: (address?: string | null, providerUrl?: string | null): QueryKey => {

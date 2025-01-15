@@ -135,7 +135,7 @@ export class EVMWalletConnector extends PredicateConnector {
   protected async configProviders(config: EVMWalletConnectorConfig = {}) {
     const network = getProviderUrl(config.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || Provider.create(network),
+      fuelProvider: config.fuelProvider || new Provider(network),
       ethProvider: config.ethProvider || WINDOW?.ethereum,
     });
   }

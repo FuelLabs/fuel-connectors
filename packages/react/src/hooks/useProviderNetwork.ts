@@ -9,7 +9,7 @@ export const useProviderNetwork = () => {
   useEffect(() => {
     async function createProvider() {
       if (network?.url) {
-        const fuelProvider = await Provider.create(network?.url);
+        const fuelProvider = new Provider(network?.url);
         setProvider(fuelProvider);
       }
     }
