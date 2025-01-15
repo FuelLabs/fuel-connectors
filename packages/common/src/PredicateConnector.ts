@@ -191,39 +191,17 @@ export abstract class PredicateConnector extends FuelConnector {
     ]);
     predicate.connect(fuelProvider);
 
-    console.log(
-      'asd --- PREPARE predicateSignatureIndex',
-      predicateSignatureIndex,
-    );
-    console.log(
-      'asd --- PREPARE transactionRequest.toJSON',
-      transactionRequest.toJSON(),
-    );
-
-    // remove witness so the SDK doesnt remove it (why you remove??)
-    const prevWitnesses = transactionRequest.witnesses;
-    transactionRequest.witnesses = [];
     // To each input of the request, attach the predicate and its data
     const requestWithPredicateAttached =
       predicate.populateTransactionPredicateData(transactionRequest);
 
-    // needs to set witness again
-    // sdk also mess up witnessIndex of first input, so lets fix it
-    requestWithPredicateAttached.witnesses = prevWitnesses;
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    (requestWithPredicateAttached.inputs[2] as any).witnessIndex = 1;
-
-    console.log(
-      'asd --- after AFTER PREPARE requestWithPredicateAttached.toJson()',
-      requestWithPredicateAttached.toJSON(),
-    );
     const maxGasUsed =
       await this.predicateAccount.getMaxPredicateGasUsed(fuelProvider);
 
     let predictedGasUsedPredicate = bn(0);
     requestWithPredicateAttached.inputs.forEach((input) => {
       if ('predicate' in input && input.predicate) {
-        input.witnessIndex = predicateSignatureIndex;
+        input.witnessIndex = 0;
         predictedGasUsedPredicate = predictedGasUsedPredicate.add(maxGasUsed);
       }
     });
@@ -233,12 +211,6 @@ export abstract class PredicateConnector extends FuelConnector {
       ZeroBytes32,
       ZeroBytes32,
     ]);
-
-    console.log('asd --- predicateSignatureIndex', predicateSignatureIndex);
-    console.log(
-      'asd --- requestWithPredicateAttached',
-      requestWithPredicateAttached.toJSON(),
-    );
 
     const { gasPriceFactor } = await predicate.provider.getGasConfig();
     const { maxFee, gasPrice } = await predicate.provider.estimateTxGasAndFee({
@@ -259,19 +231,9 @@ export abstract class PredicateConnector extends FuelConnector {
       requestWithPredicateAttached.maxFee = feeWithFat.add(10);
     }
 
-    console.log(
-      'asd --- BEFORE  estimateTxDependencies requestWithPredicateAttached',
-      requestWithPredicateAttached.toJSON(),
-    );
-
     // Attach missing inputs (including estimated predicate gas usage) / outputs to the request
     await predicate.provider.estimateTxDependencies(
       requestWithPredicateAttached,
-    );
-
-    console.log(
-      'asd --- AFTER estimateTxDependencies requestWithPredicateAttached',
-      requestWithPredicateAttached.toJSON(),
     );
 
     return {
