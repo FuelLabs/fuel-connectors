@@ -37,7 +37,6 @@
   },
   "devDependencies": {
     "@types/memoizee": "0.4.11",
-    "fuels": "0.98.0",
     "terser": "5.31.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5",

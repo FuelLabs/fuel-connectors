@@ -49,6 +49,7 @@
     "node": "20.x",
     "pnpm": "9.x"
   },
+  "packageManager": "pnpm@9.5.0",
   "pnpm": {
     "overrides": {
       "braces@<3.0.3": ">=3.0.3",
@@ -64,5 +65,7 @@
       "nanoid@<3.3.8": "3.3.8"
     }
   },
-  "packageManager": "pnpm@9.5.0"
+  "dependencies": {
+    "fuels": "0.98.0"
+  }
 }
