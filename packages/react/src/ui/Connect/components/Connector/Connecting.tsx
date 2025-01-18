@@ -5,6 +5,8 @@ import type { ConnectorEvent } from 'fuels';
 import { useEffect, useMemo, useState } from 'react';
 import { Spinner } from '../../../../icons/Spinner';
 import { useFuel } from '../../../../providers/FuelHooksProvider';
+import { isNativeConnector } from '../../../../utils/isNativeConnector';
+import { PREDICATE_DISCLAIMER_KEY } from '../PredicateAddressDisclaimer/PredicateAddressDisclaimer';
 import {
   ConnectorButton,
   ConnectorButtonPrimary,
@@ -37,7 +39,7 @@ export function Connecting({ className }: ConnectorProps) {
     isConnecting,
     theme,
     cancel,
-    dialog: { route, connector, retryConnect },
+    dialog: { route, setRoute, connector, retryConnect },
     isConnected,
   } = useConnectUI();
 
@@ -64,10 +66,23 @@ export function Connecting({ className }: ConnectorProps) {
 
   // Auto-close connecting
   useEffect(() => {
-    if (isConnected && route === Routes.CONNECTING && !isConnecting) {
-      cancel();
+    if (isConnected && route === Routes.Connecting && !isConnecting) {
+      // Connected to a native connector, we can close the dialog
+      if (connector && isNativeConnector(connector)) {
+        cancel();
+        return;
+      }
+
+      // If the connector is not native, let's check if we have already displayed the disclaimer
+      if (localStorage.getItem(PREDICATE_DISCLAIMER_KEY)) {
+        cancel();
+        return;
+      }
+
+      // So we need to show the disclaimer about predicates
+      setRoute(Routes.PredicateAddressDisclaimer);
     }
-  }, [isConnected, route, isConnecting, cancel]);
+  }, [isConnected, connector, route, setRoute, isConnecting, cancel]);
 
   // Switching to signing ownership mode
   useEffect(() => {

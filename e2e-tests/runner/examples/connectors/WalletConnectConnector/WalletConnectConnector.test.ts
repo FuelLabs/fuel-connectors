@@ -49,9 +49,10 @@ test.describe('WalletConnectConnector', () => {
     await commonConnect(page);
     await page.getByText('Sign', { exact: true }).click();
     await metamask.confirmSignature();
+    await page.getByText('Continue to application').click();
   };
 
-  // From here on, we'll skip the signature step
+  // From here on, we'll skip the signature step and predicate address warning disclaimer
   const secondConnect: ConnectorFunctions['connect'] = commonConnect;
 
   const approveTransfer: ConnectorFunctions['approveTransfer'] = async () => {
