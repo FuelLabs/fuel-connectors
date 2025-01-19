@@ -26,7 +26,7 @@ export function Connector() {
   useEffect(() => {
     const ping = async () => {
       const isInstalled = await connector.ping();
-      if (isInstalled) setRoute(Routes.CONNECTING);
+      if (isInstalled) setRoute(Routes.Connecting);
     };
 
     ping();
