@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/solana-connector",
-  "version": "0.38.0",
+  "version": "0.38.1",
   "private": true,
   "type": "module",
   "files": ["dist"],
