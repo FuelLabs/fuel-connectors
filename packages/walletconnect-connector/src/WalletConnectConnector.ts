@@ -503,21 +503,22 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   static getFuelPredicateAddresses(ethAddress: string) {
-    const predicateConfig = Object.entries(PREDICATE_VERSIONS).map(
-      ([evmPredicateAddress, { predicate, generatedAt }]) => ({
+    const predicateConfig = Object.entries(PREDICATE_VERSIONS)
+      .sort(([, a], [, b]) => b.generatedAt - a.generatedAt)
+      .map(([evmPredicateAddress, { predicate, generatedAt }]) => ({
         abi: predicate.abi,
         bin: predicate.bin,
         evmPredicate: {
           generatedAt,
           address: evmPredicateAddress,
         },
-      }),
-    );
+      }));
 
+    const address = new EthereumWalletAdapter().convertAddress(ethAddress);
     const predicateAddresses = predicateConfig.map(
       ({ abi, bin, evmPredicate }) => ({
         fuelAddress: getFuelPredicateAddresses({
-          signerAddress: new EthereumWalletAdapter().convertAddress(ethAddress),
+          signerAddress: address,
           predicate: { abi, bin },
         }),
         evmPredicate,
