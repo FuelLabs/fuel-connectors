@@ -27,6 +27,7 @@ jobs:
 
       - name: Build
         run: pnpm build
+        env:
           NEXT_PUBLIC_PROVIDER_URL: "http://localhost:4000/v1/graphql"
           NEXT_PUBLIC_WC_PROJECT_ID: e01471314fc69cc4efba6dce12dfd710
           NEXT_PUBLIC_CHAIN_ID_NAME: testnet
