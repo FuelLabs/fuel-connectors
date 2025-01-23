@@ -16,6 +16,7 @@ import {
 import memoize from 'memoizee';
 import type { PredicateWalletAdapter } from './PredicateWalletAdapter';
 import type { Maybe, PredicateConfig } from './types';
+import { getFuelPredicateAddresses } from './utils';
 
 export class PredicateFactory {
   private abi: JsonAbi;
@@ -40,15 +41,11 @@ export class PredicateFactory {
   getRoot = (): string => this.root;
 
   getPredicateAddress = memoize((address: string | B256Address): string => {
-    // @ts-expect-error processPredicateData is only available in the Predicate class
-    const { predicateBytes } = Predicate.processPredicateData(
-      this.bytecode,
-      this.abi,
-      {
-        SIGNER: this.adapter.convertAddress(address),
-      },
-    );
-    return Address.fromB256(getPredicateRoot(predicateBytes)).toString();
+    const predicateAddress = getFuelPredicateAddresses({
+      signerAddress: this.adapter.convertAddress(address),
+      predicate: { abi: this.abi, bin: this.bytecode },
+    });
+    return predicateAddress;
   });
 
   build = memoize(

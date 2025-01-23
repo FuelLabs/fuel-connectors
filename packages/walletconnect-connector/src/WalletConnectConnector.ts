@@ -17,7 +17,6 @@ import {
 import type { Web3Modal } from '@web3modal/wagmi';
 import {
   CHAIN_IDS,
-  type ConnectorEvent,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
@@ -34,6 +33,7 @@ import {
   type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
+  getFuelPredicateAddresses,
   getMockedSignatureIndex,
   getOrThrow,
   getProviderUrl,
@@ -500,5 +500,30 @@ export class WalletConnectConnector extends PredicateConnector {
       curve: 'secp256k1',
       signature: signature as string,
     };
+  }
+
+  static getFuelPredicateAddresses(ethAddress: string) {
+    const predicateConfig = Object.entries(PREDICATE_VERSIONS).map(
+      ([evmPredicateAddress, { predicate, generatedAt }]) => ({
+        abi: predicate.abi,
+        bin: predicate.bin,
+        evmPredicate: {
+          generatedAt,
+          address: evmPredicateAddress,
+        },
+      }),
+    );
+
+    const predicateAddresses = predicateConfig.map(
+      ({ abi, bin, evmPredicate }) => ({
+        fuelAddress: getFuelPredicateAddresses({
+          signerAddress: new EthereumWalletAdapter().convertAddress(ethAddress),
+          predicate: { abi, bin },
+        }),
+        evmPredicate,
+      }),
+    );
+
+    return predicateAddresses;
   }
 }
