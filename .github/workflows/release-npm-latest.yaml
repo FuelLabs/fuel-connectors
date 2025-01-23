@@ -25,7 +25,7 @@ jobs:
           pnpm-version: 9.5.0
       - uses: FuelLabs/github-actions/setups/npm@master
         with:
-          npm-token: ${{ secrets.NPM_TOKEN }}
+          npm-token: ${{ secrets.NPM_TOKEN_CONNECTORS }}
 
       - name: Collect current version
         run: |

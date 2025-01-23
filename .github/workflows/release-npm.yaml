@@ -27,7 +27,7 @@ jobs:
           pnpm-version: 9.5.0
       - uses: FuelLabs/github-actions/setups/npm@master
         with:
-          npm-token: ${{ secrets.NPM_TOKEN }}
+          npm-token: ${{ secrets.NPM_TOKEN_CONNECTORS }}
 
       - name: Bump and Collect Version
         run: |
@@ -57,7 +57,7 @@ jobs:
           githubTagName: v${{ env.BUILD_VERSION }}
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN_CONNECTORS }}
 
       - name: Release to @main tag
         if: steps.changesets.outputs.published != 'true'
@@ -66,5 +66,5 @@ jobs:
           pnpm changeset version --snapshot main
           pnpm changeset publish --tag main
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN_CONNECTORS }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
