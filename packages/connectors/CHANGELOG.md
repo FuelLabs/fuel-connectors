@@ -1,5 +1,7 @@
 # @fuels/connectors
 
+## 0.38.1
+
 ## 0.38.0
 
 ### Minor Changes

@@ -1,5 +1,7 @@
 # @fuel-connectors/fuel-development-wallet
 
+## 0.38.1
+
 ## 0.38.0
 
 ## 0.37.0
