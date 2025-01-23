@@ -1,5 +1,13 @@
 # @fuels/react
 
+## 0.38.0
+
+### Minor Changes
+
+- [#455](https://github.com/FuelLabs/fuel-connectors/pull/455) [`1896a80`](https://github.com/FuelLabs/fuel-connectors/commit/1896a804404947a140d40964b71d1fc4d67c21f0) Thanks [@helciofranco](https://github.com/helciofranco)! - Add a post-connection warning for EVM/SVM about Fuel predicate address difference.
+
+- [#454](https://github.com/FuelLabs/fuel-connectors/pull/454) [`71256d8`](https://github.com/FuelLabs/fuel-connectors/commit/71256d8c0df3170bfdafac9710556af3d32eabc3) Thanks [@helciofranco](https://github.com/helciofranco)! - Added a pre-signature dialog to the `WalletConnectConnector` to inform users about the signature purpose.
+
 ## 0.37.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @fuel-connectors/e2e-tests
 
+## 0.38.0
+
+### Minor Changes
+
+- [#455](https://github.com/FuelLabs/fuel-connectors/pull/455) [`1896a80`](https://github.com/FuelLabs/fuel-connectors/commit/1896a804404947a140d40964b71d1fc4d67c21f0) Thanks [@helciofranco](https://github.com/helciofranco)! - Add a post-connection warning for EVM/SVM about Fuel predicate address difference.
+
 ## 0.37.0
 
 ### Minor Changes
