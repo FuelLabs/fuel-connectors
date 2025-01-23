@@ -1,7 +1,7 @@
 <!--
 List the issues this PR closes in a bullet list format, e.g.:
 - Closes #X
-- Closes `FE-Z`
+- Closes FE-Z
 -->
 
 # Summary
@@ -12,14 +12,10 @@ Many times this section is not needed as the closed issues themselves explains t
 
 # Checklist
 
-- [ ] I've added error handling for all actions/requests, and verified how this error will show on UI.
-- [ ] I've reviewed all the copies changed/added in this PR (use AI if needs help)
-- [ ] I've included the reference to the issues being closed (Github and/or Linear)
-- [ ] I've changed the Docs to reflect my changes (project setup, run commands, etc…)
-- [ ] I've put docs links where it may be helpful.
-- [ ] 
-- [ ] I've added error handling for all actions/requests, and verified how it will show on UI (or verifying error handling was needed)
-- [ ] I've reviewed all the copies changed/added in this PR, using AI if needed (or no copy changes were made)
-- [ ] I've included the reference to the Github and/or Linear issues being closed (or no issues to reference)
-- [ ] I've changed the Docs to reflect my changes (or no doc updates were needed)
-- [ ] I've put docs links where it may be helpful (or no doc links were needed)
+- [ ] I've added error handling for all actions/requests, and verified how this error will show on UI. (or there was no error handling)
+- [ ] I've reviewed all the copy changed/added in this PR, using AI if needed. (or there was no copy changes)
+- [ ] I've included the reference to the issues being closed from Github and/or Linear (or there was no issues)
+- [ ] I've changed the Docs to reflect my changes (or it was not needed)
+- [ ] I've put docs links where it may be helpful (or it was not needed)
+- [ ] I checked the resulting UI both in Light and Dark mode (or no UI changes were made)
+- [ ] I **reviewed** the **entire PR** myself (preferably, on GH UI)
