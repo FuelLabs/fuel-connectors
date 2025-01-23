@@ -1,5 +1,21 @@
 # @fuel-connectors/walletconnect-connector
 
+## 0.38.1
+
+### Patch Changes
+
+- [#463](https://github.com/FuelLabs/fuel-connectors/pull/463) [`2d83af7`](https://github.com/FuelLabs/fuel-connectors/commit/2d83af76a78de31748fa0b78ba68e67227e54c98) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - fix: sort evm/svm predicates by most recent first on the new helper methods
+
+## 0.38.0
+
+### Minor Changes
+
+- [#454](https://github.com/FuelLabs/fuel-connectors/pull/454) [`71256d8`](https://github.com/FuelLabs/fuel-connectors/commit/71256d8c0df3170bfdafac9710556af3d32eabc3) Thanks [@helciofranco](https://github.com/helciofranco)! - Added a pre-signature dialog to the `WalletConnectConnector` to inform users about the signature purpose.
+
+### Patch Changes
+
+- [#460](https://github.com/FuelLabs/fuel-connectors/pull/460) [`0268e0f`](https://github.com/FuelLabs/fuel-connectors/commit/0268e0fe0e5c44864c660579954594f008f6a779) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: add `getFuelPredicateAddresses` to get fuel predicate account address from a evm address
+
 ## 0.37.0
 
 ### Minor Changes

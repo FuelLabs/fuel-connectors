@@ -5,6 +5,7 @@ import {
   type PredicateWalletAdapter,
   type ProviderDictionary,
   SolanaWalletAdapter,
+  getFuelPredicateAddresses,
   getMockedSignatureIndex,
   getOrThrow,
   getProviderUrl,
@@ -280,5 +281,31 @@ export class SolanaConnector extends PredicateConnector {
       curve: 'edDSA',
       signature: hexlify(signedMessage),
     };
+  }
+
+  static getFuelPredicateAddresses(svmAddress: string) {
+    const predicateConfig = Object.entries(PREDICATE_VERSIONS)
+      .sort(([, a], [, b]) => b.generatedAt - a.generatedAt)
+      .map(([svmPredicateAddress, { predicate, generatedAt }]) => ({
+        abi: predicate.abi,
+        bin: predicate.bin,
+        svmPredicate: {
+          generatedAt,
+          address: svmPredicateAddress,
+        },
+      }));
+
+    const address = new SolanaWalletAdapter().convertAddress(svmAddress);
+    const predicateAddresses = predicateConfig.map(
+      ({ abi, bin, svmPredicate }) => ({
+        fuelAddress: getFuelPredicateAddresses({
+          signerAddress: address,
+          predicate: { abi, bin },
+        }),
+        svmPredicate,
+      }),
+    );
+
+    return predicateAddresses;
   }
 }

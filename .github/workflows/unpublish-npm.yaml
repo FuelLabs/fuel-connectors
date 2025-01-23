@@ -16,6 +16,7 @@ jobs:
   clean-npm-versions:
     name: Unpublish versions next, preview, main...
     runs-on: buildjet-4vcpu-ubuntu-2204
+    environment: npm-deploy
     steps:
       - uses: actions/checkout@v3
       - uses: FuelLabs/github-actions/setups/node@master
@@ -24,7 +25,7 @@ jobs:
           pnpm-version: 9.5.0
       - uses: FuelLabs/github-actions/setups/npm@master
         with:
-          npm-token: ${{ secrets.NPM_TOKEN }}
+          npm-token: ${{ secrets.NPM_TOKEN_CONNECTORS }}
       - run: |
           node ./scripts/unpublish.js
         env:
