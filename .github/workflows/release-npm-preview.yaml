@@ -14,6 +14,7 @@ jobs:
   release-changesets:
     name: Release to @preview tag on npm
     runs-on: buildjet-4vcpu-ubuntu-2204
+    environment: npm-deploy
     permissions:
       pull-requests: write
     steps:

@@ -35,4 +35,4 @@ jobs:
           packages: fuels,@fuels/react,@fuels/ts-config,@fuels/tsup-config
           npm-tag: ${{ matrix.tag }}
         env:
-          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
