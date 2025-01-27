@@ -3,7 +3,9 @@
   "version": "0.38.1",
   "private": true,
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/wallet-connector-evm.umd.cjs",
   "module": "./dist/wallet-connector-evm.js",
   "exports": {
@@ -31,7 +33,7 @@
     "@fuel-connectors/common": "workspace:*",
     "@fuel-connectors/evm-predicates": "workspace:*",
     "@types/memoizee": "0.4.11",
-    "fuels": "0.96.1",
+    "fuels": "0.98.0",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
