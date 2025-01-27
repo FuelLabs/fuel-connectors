@@ -409,8 +409,6 @@ export class WalletConnectConnector extends PredicateConnector {
 
     const signature = (await ethProvider?.request({
       method: 'personal_sign',
-      // @TODO: We need to pass always a hex-encoded value, but it changes the signature
-      // So the predicate will also need to be updated to work with hex-encoded values
       params: [stringToHex(transactionId), account],
     })) as string;
 
@@ -494,9 +492,6 @@ export class WalletConnectConnector extends PredicateConnector {
     if (!ethProvider) throw new Error('Eth provider not found');
     const accountAddress = await this.getAccountAddress();
     if (!accountAddress) throw new Error('No connected accounts');
-
-    console.log('accountAddress', accountAddress);
-    console.log('message', message);
 
     const signature = await ethProvider.request({
       method: 'personal_sign',

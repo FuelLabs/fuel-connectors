@@ -52,7 +52,7 @@ type UseTransactionResultParams<
  */
 export const useTransactionResult = <
   TTransactionType extends TransactionType,
-  TName extends string = string,
+  TName extends string = 'transactionResult',
   TData = TransactionResult<TTransactionType> | null,
 >({
   txId = '',
