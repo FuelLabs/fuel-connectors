@@ -1,10 +1,9 @@
-import type { EIP1193Provider } from './types';
-
 declare global {
   interface Window {
-    ethereum: EIP1193Provider | null;
+    ethereum?: Record<string, unknown>;
   }
 }
+
 const HAS_WINDOW = typeof window !== 'undefined';
 export const WINDOW = HAS_WINDOW ? window : null;
 export const TESTNET_URL = 'https://testnet.fuel.network/v1/graphql';

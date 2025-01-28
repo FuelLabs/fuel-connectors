@@ -12,6 +12,7 @@ import {
 } from 'fuels';
 
 import {
+  type EIP1193Provider,
   EthereumWalletAdapter,
   type Maybe,
   type MaybeAsync,
@@ -24,9 +25,8 @@ import {
   getProviderUrl,
 } from '@fuel-connectors/common';
 import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
-import { METAMASK_ICON, TESTNET_URL, WINDOW } from './constants';
+import { METAMASK_ICON, WINDOW } from './constants';
 import {
-  type EIP1193Provider,
   type EVMWalletConnectorConfig,
   EVMWalletConnectorEvents,
 } from './types';
@@ -41,8 +41,8 @@ export class EVMWalletConnector extends PredicateConnector {
       link: 'https://metamask.io/download/',
     },
   };
-  ethProvider: EIP1193Provider | null = null;
   fuelProvider: Provider | null = null;
+  ethProvider?: EIP1193Provider;
   events = {
     ...FuelConnectorEventTypes,
     ...EVMWalletConnectorEvents,
@@ -67,7 +67,7 @@ export class EVMWalletConnector extends PredicateConnector {
       return this.config.ethProvider;
     }
     if (WINDOW?.ethereum) {
-      return WINDOW.ethereum;
+      return WINDOW.ethereum as unknown as EIP1193Provider;
     }
 
     return null;

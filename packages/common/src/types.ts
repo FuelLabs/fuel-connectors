@@ -38,7 +38,6 @@ export type ConnectorConfig = {
 export type ProviderDictionary = {
   fuelProvider: FuelProvider;
   ethProvider?: EIP1193Provider;
-  [key: string]: Maybe<Option<FuelProvider, EIP1193Provider>>;
 };
 
 export type PreparedTransaction = {
