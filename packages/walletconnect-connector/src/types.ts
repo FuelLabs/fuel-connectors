@@ -1,5 +1,5 @@
 import type { PredicateConfig } from '@fuel-connectors/common';
-import type { Config as WagmiConfig } from '@wagmi/core';
+import type { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import type {
   ConnectorEvent,
   Provider as FuelProvider,
@@ -9,7 +9,7 @@ import type {
 export type WalletConnectConfig = {
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
   projectId?: string;
-  wagmiConfig?: WagmiConfig;
+  wagmiAdapter?: WagmiAdapter;
   predicateConfig?: PredicateConfig;
   storage?: StorageAbstract;
   chainId?: number;

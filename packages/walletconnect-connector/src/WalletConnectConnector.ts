@@ -14,7 +14,6 @@ import {
   reconnect,
   watchAccount,
 } from '@wagmi/core';
-import type { Web3Modal } from '@web3modal/wagmi';
 import {
   CHAIN_IDS,
   type ConnectorMetadata,
@@ -39,8 +38,10 @@ import {
   getProviderUrl,
 } from '@fuel-connectors/common';
 import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
-import { ApiController } from '@web3modal/core';
+import type { AppKit } from '@reown/appkit';
+import type { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { stringToHex } from 'viem';
+import { createAppkitInstance, createDefaultWagmiAdapter } from './appkitModal';
 import {
   ETHEREUM_ICON,
   HAS_WINDOW,
@@ -49,7 +50,6 @@ import {
 } from './constants';
 import type { CustomCurrentConnectorEvent, WalletConnectConfig } from './types';
 import { subscribeAndEnforceChain } from './utils';
-import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
 export class WalletConnectConnector extends PredicateConnector {
   name = 'Ethereum Wallets';
@@ -65,8 +65,9 @@ export class WalletConnectConnector extends PredicateConnector {
   };
 
   private fuelProvider!: FuelProvider;
-  private ethProvider!: EIP1193Provider;
-  private web3Modal!: Web3Modal;
+  private ethProvider: EIP1193Provider | null = null;
+  private wagmiAdapter: WagmiAdapter;
+  private appkit: AppKit | null = null;
   private storage: StorageAbstract;
   private config: WalletConnectConfig = {} as WalletConnectConfig;
 
@@ -74,15 +75,20 @@ export class WalletConnectConnector extends PredicateConnector {
     super();
     this.storage =
       config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
-    const wagmiConfig = config?.wagmiConfig ?? createWagmiConfig();
 
-    if (wagmiConfig._internal.syncConnectedChain !== false) {
+    const defaultAdapter = createDefaultWagmiAdapter({
+      projectId: config.projectId,
+    });
+    this.wagmiAdapter = config.wagmiAdapter ?? defaultAdapter;
+    const wagmiConfig = this.wagmiAdapter.wagmiConfig;
+
+    if (wagmiConfig && wagmiConfig?._internal.syncConnectedChain !== false) {
       subscribeAndEnforceChain(wagmiConfig);
     }
 
     this.customPredicate = config.predicateConfig || null;
     if (HAS_WINDOW) {
-      this.configProviders({ ...config, wagmiConfig });
+      this.configProviders(config);
     }
     this.loadPersistedConnection();
   }
@@ -99,18 +105,18 @@ export class WalletConnectConnector extends PredicateConnector {
     );
   }
 
-  // createModal re-instanciates the modal to update singletons from web3modal
+  // createModal re-instanciates the modal to update singletons from @reown/appkit
   private createModal() {
     this.clearSubscriptions();
-    this.web3Modal = this.modalFactory(this.config);
-    ApiController.prefetch();
+    this.appkit = this.modalFactory(this.config);
+    // ApiController.prefetch(); // @TODO: Put it back
     this.setupWatchers();
   }
 
   private modalFactory(config: WalletConnectConfig) {
-    return createWeb3ModalInstance({
+    return createAppkitInstance({
       projectId: config.projectId,
-      wagmiConfig: config.wagmiConfig,
+      wagmiAdapter: this.wagmiAdapter,
     });
   }
 
@@ -158,7 +164,7 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   protected getWagmiConfig(): Maybe<Config> {
-    return this.config?.wagmiConfig;
+    return this.config?.wagmiAdapter?.wagmiConfig;
   }
 
   protected getWalletAdapter(): PredicateWalletAdapter {
@@ -203,7 +209,7 @@ export class WalletConnectConnector extends PredicateConnector {
 
   protected async requireConnection() {
     const wagmiConfig = this.getWagmiConfig();
-    if (!this.web3Modal) this.createModal();
+    if (!this.appkit) this.createModal();
 
     if (this.config.skipAutoReconnect || !wagmiConfig) return;
 
@@ -252,8 +258,8 @@ export class WalletConnectConnector extends PredicateConnector {
 
     // User not connected, let's show the WalletConnect modal
     this.createModal();
-    this.web3Modal.open();
-    const unsub = this.web3Modal.subscribeEvents(async (event) => {
+    this.appkit?.open();
+    const unsub = this.appkit?.subscribeEvents(async (event) => {
       switch (event.data.event) {
         case 'MODAL_OPEN':
           // Ensures that the WC Web3Modal config is applied over pre-existing states (e.g. Solana Connect Web3Modal)
@@ -285,12 +291,12 @@ export class WalletConnectConnector extends PredicateConnector {
             this.emit(this.events.currentConnector, currentConnectorEvent);
           }
 
-          unsub();
+          unsub?.();
           break;
         }
         case 'MODAL_CLOSE':
         case 'CONNECT_ERROR': {
-          unsub();
+          unsub?.();
           break;
         }
       }
