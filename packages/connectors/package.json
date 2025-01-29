@@ -18,6 +18,8 @@
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
+    "@reown/appkit": ">=1.6.5",
+    "@reown/appkit-adapter-wagmi": ">=1.6.5",
     "fuels": ">=0.96.1"
   },
   "dependencies": {
@@ -26,7 +28,6 @@
     "@solana/web3.js": "1.93.1",
     "@wagmi/core": "2.13.4",
     "@web3modal/core": "5.0.0",
-    "@web3modal/scaffold": "5.0.0",
     "@web3modal/solana": "5.0.0",
     "@web3modal/wagmi": "5.0.0",
     "rpc-websockets": "7.11.0",
@@ -42,6 +43,8 @@
     "@fuel-connectors/fuelet-wallet": "workspace:*",
     "@fuel-connectors/solana-connector": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
+    "@reown/appkit": "1.6.5",
+    "@reown/appkit-adapter-wagmi": "1.6.5",
     "fuels": "0.96.1",
     "terser": "5.31.0",
     "tsup": "8.0.2",

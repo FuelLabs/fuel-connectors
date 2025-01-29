@@ -20,23 +20,23 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "@web3modal/core": ">=5.0.0",
-    "@web3modal/scaffold": ">=5.0.0",
+    "@reown/appkit": ">=1.6.5",
+    "@reown/appkit-adapter-wagmi": ">=1.6.5",
     "fuels": ">=0.96.1"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
     "@wagmi/core": "2.13.4",
-    "@web3modal/wagmi": "5.0.0",
     "memoizee": "0.4.15",
     "viem": "2.20.1"
   },
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",
     "@fuel-connectors/evm-predicates": "workspace:*",
+    "@reown/appkit": "1.6.5",
+    "@reown/appkit-adapter-wagmi": "1.6.5",
     "@types/memoizee": "0.4.11",
-    "@web3modal/core": "5.0.0",
     "fuels": "0.96.1",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",

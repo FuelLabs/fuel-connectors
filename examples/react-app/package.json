@@ -14,13 +14,14 @@
     "@fuels/connectors": "workspace:*",
     "@fuels/react": "workspace:*",
     "@radix-ui/react-toast": "1.1.5",
+    "@reown/appkit": "1.6.5",
+    "@reown/appkit-adapter-wagmi": "1.6.5",
     "@tanstack/react-query": "5.35.1",
-    "@wagmi/connectors": "5.1.7",
-    "@wagmi/core": "2.13.4",
     "clsx": "2.1.1",
     "fuels": "0.96.1",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "wagmi": "2.12.7"
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "5.35.1",
