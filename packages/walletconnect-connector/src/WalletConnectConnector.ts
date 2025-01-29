@@ -262,7 +262,7 @@ export class WalletConnectConnector extends PredicateConnector {
     const unsub = this.appkit?.subscribeEvents(async (event) => {
       switch (event.data.event) {
         case 'MODAL_OPEN':
-          // Ensures that the WC Web3Modal config is applied over pre-existing states (e.g. Solana Connect Web3Modal)
+          // Ensures that the Reown Appkit config is applied over pre-existing states (e.g. Solana Connect Web3Modal)
           this.createModal();
           break;
         case 'CONNECT_SUCCESS': {
