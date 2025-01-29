@@ -7,24 +7,6 @@ import {
 } from '@ethereumjs/util';
 import { hexlify, splitSignature } from '@ethersproject/bytes';
 import {
-  type Config,
-  type GetAccountReturnType,
-  disconnect,
-  getAccount,
-  reconnect,
-  watchAccount,
-} from '@wagmi/core';
-import {
-  CHAIN_IDS,
-  type ConnectorMetadata,
-  FuelConnectorEventTypes,
-  Provider as FuelProvider,
-  LocalStorage,
-  type StorageAbstract,
-  type TransactionRequestLike,
-} from 'fuels';
-
-import {
   type EIP1193Provider,
   EthereumWalletAdapter,
   type Maybe,
@@ -40,7 +22,24 @@ import {
 import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
 import type { AppKit } from '@reown/appkit';
 import type { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
+import {
+  CHAIN_IDS,
+  type ConnectorMetadata,
+  FuelConnectorEventTypes,
+  Provider as FuelProvider,
+  LocalStorage,
+  type StorageAbstract,
+  type TransactionRequestLike,
+} from 'fuels';
 import { stringToHex } from 'viem';
+import type { Config } from 'wagmi';
+import {
+  type GetAccountReturnType,
+  disconnect,
+  getAccount,
+  reconnect,
+  watchAccount,
+} from 'wagmi/actions';
 import { createAppkitInstance, createDefaultWagmiAdapter } from './appkitModal';
 import {
   ETHEREUM_ICON,
@@ -108,8 +107,11 @@ export class WalletConnectConnector extends PredicateConnector {
   // createModal re-instanciates the modal to update singletons from @reown/appkit
   private createModal() {
     this.clearSubscriptions();
+    this.storage.removeItem('@appkit/active_namespace');
+    this.storage.removeItem('@appkit/active_caip_network_id');
+    this.storage.removeItem('@appkit/active_namespace');
+    this.storage.removeItem('wagmi.recentConnectorId');
     this.appkit = this.modalFactory(this.config);
-    // ApiController.prefetch(); // @TODO: Put it back
     this.setupWatchers();
   }
 
@@ -209,7 +211,6 @@ export class WalletConnectConnector extends PredicateConnector {
 
   protected async requireConnection() {
     const wagmiConfig = this.getWagmiConfig();
-    if (!this.appkit) this.createModal();
 
     if (this.config.skipAutoReconnect || !wagmiConfig) return;
 
@@ -256,14 +257,18 @@ export class WalletConnectConnector extends PredicateConnector {
       return true;
     }
 
-    // User not connected, let's show the WalletConnect modal
-    this.createModal();
-    this.appkit?.open();
+    // @reown/appkit instance is not created, let's create it
+    if (!this.appkit) {
+      this.createModal();
+    } else {
+      this.appkit.open();
+    }
+
+    // User not connected, let's show the @reown/appkit modal
     const unsub = this.appkit?.subscribeEvents(async (event) => {
       switch (event.data.event) {
-        case 'MODAL_OPEN':
-          // Ensures that the Reown Appkit config is applied over pre-existing states (e.g. Solana Connect Web3Modal)
-          this.createModal();
+        case 'INITIALIZE':
+          this.appkit?.open();
           break;
         case 'CONNECT_SUCCESS': {
           const { addresses = [] } = getAccount(wagmiConfig);

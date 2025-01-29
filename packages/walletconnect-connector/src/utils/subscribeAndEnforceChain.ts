@@ -1,10 +1,5 @@
-import {
-  type Config,
-  type State,
-  disconnect,
-  getChains,
-  switchChain,
-} from '@wagmi/core';
+import type { Config, State } from 'wagmi';
+import { disconnect, getChains, switchChain } from 'wagmi/actions';
 
 function getCurrentChainId(state: Pick<State, 'connections' | 'current'>) {
   return state.current

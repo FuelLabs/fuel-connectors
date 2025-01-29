@@ -10,23 +10,27 @@ import {
   getOrThrow,
   getProviderUrl,
 } from '@fuel-connectors/common';
-import { ApiController } from '@web3modal/core';
-import type { Web3Modal } from '@web3modal/solana';
-import type { Provider as SolanaProvider } from '@web3modal/solana/dist/types/src/utils/scaffold';
+import type { AppKit } from '@reown/appkit';
+import type { Provider as SolanaProvider } from '@reown/appkit-utils/solana';
 import {
   CHAIN_IDS,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
+  LocalStorage,
+  type StorageAbstract,
   type TransactionRequestLike,
   hexlify,
   toUtf8Bytes,
 } from 'fuels';
+import {
+  createAppkitInstance,
+  createDefaultSolanaAdapter,
+} from './appkitModal';
 import { HAS_WINDOW, SOLANA_ICON } from './constants';
 import { PREDICATE_VERSIONS } from './generated/predicates';
 import type { SolanaConfig } from './types';
 import { type SolanaPredicateRoot, txIdEncoders } from './utils';
-import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
 
 export class SolanaConnector extends PredicateConnector {
   name = 'Solana Wallets';
@@ -42,13 +46,17 @@ export class SolanaConnector extends PredicateConnector {
 
   protected fuelProvider!: FuelProvider;
 
-  private web3Modal!: Web3Modal;
+  private appkit: AppKit | null = null;
+  private storage: StorageAbstract;
   private config: SolanaConfig = {};
   private svmAddress: string | null = null;
 
   constructor(config: SolanaConfig) {
     super();
+
     this.customPredicate = config.predicateConfig || null;
+    this.storage = new LocalStorage(window.localStorage as Storage);
+
     if (HAS_WINDOW) {
       this.configProviders(config);
     }
@@ -64,7 +72,7 @@ export class SolanaConnector extends PredicateConnector {
 
   private async _emitConnected() {
     await this.setupPredicate();
-    const address = this.web3Modal.getAddress();
+    const address = this.appkit?.getAddress();
     if (!address || !this.predicateAccount) return;
     this.svmAddress = address;
     this.emit(this.events.connection, true);
@@ -75,12 +83,13 @@ export class SolanaConnector extends PredicateConnector {
     this.emit(this.events.accounts, _accounts);
   }
 
-  private modalFactory(config?: SolanaConfig) {
-    const solanaConfig = createSolanaConfig(config?.projectId);
+  private modalFactory(config: SolanaConfig) {
+    const defaultAdapter = createDefaultSolanaAdapter();
+    const solanaAdapter = config.solanaAdapter ?? defaultAdapter;
 
-    return createSolanaWeb3ModalInstance({
-      projectId: config?.projectId,
-      solanaConfig,
+    return createAppkitInstance({
+      projectId: config.projectId,
+      solanaAdapter,
     });
   }
 
@@ -89,18 +98,16 @@ export class SolanaConnector extends PredicateConnector {
     return config?.fuelProvider || FuelProvider.create(network);
   }
 
-  // Solana Web3Modal is Canary and not yet stable
-  // It shares the same events as WalletConnect, hence validations must be made in order to avoid running connections with EVM Addresses instead of Solana Addresses
   private setupWatchers() {
+    if (!this.appkit) {
+      return;
+    }
+
     this.subscribe(
-      this.web3Modal.subscribeEvents((event) => {
+      this.appkit.subscribeEvents((event) => {
         switch (event.data.event) {
-          case 'MODAL_OPEN':
-            // Ensures that the Solana Web3Modal config is applied over pre-existing states (e.g. WC Connect Web3Modal)
-            this.createModal();
-            break;
           case 'CONNECT_SUCCESS': {
-            const address = this.web3Modal.getAddress() || '';
+            const address = this.appkit?.getAddress() || '';
             if (!address || address.startsWith('0x')) {
               return;
             }
@@ -117,10 +124,10 @@ export class SolanaConnector extends PredicateConnector {
 
     // Poll for account changes due a problem with the event listener not firing on account changes
     const interval = setInterval(async () => {
-      if (!this.web3Modal) {
+      if (!this.appkit) {
         return;
       }
-      const address = this.web3Modal.getAddress();
+      const address = this.appkit.getAddress();
       if (address && address !== this.svmAddress) {
         this._emitConnected();
       }
@@ -132,17 +139,18 @@ export class SolanaConnector extends PredicateConnector {
     this.subscribe(() => clearInterval(interval));
   }
 
-  // createModal re-instanciates the modal to update singletons from web3modal
+  // createModal re-instanciates the modal to update singletons from @reown/appkit
   private createModal() {
     this.clearSubscriptions();
-    const web3Modal = this.modalFactory(this.config);
-    this.web3Modal = web3Modal;
-    ApiController.prefetch();
+    this.storage.removeItem('@appkit/active_namespace');
+    this.storage.removeItem('@appkit/active_caip_network_id');
+    this.storage.removeItem('@appkit/active_namespace');
+    this.appkit = this.modalFactory(this.config);
     this.setupWatchers();
   }
 
   protected async requireConnection() {
-    if (!this.web3Modal) this.createModal();
+    if (!this.appkit) this.createModal();
   }
 
   protected getWalletAdapter(): PredicateWalletAdapter {
@@ -161,19 +169,19 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   protected walletAccounts(): Promise<Array<string>> {
-    if (!this.web3Modal) {
+    if (!this.appkit) {
       return Promise.resolve([]);
     }
+
     return new Promise((resolve) => {
-      const acc = this.web3Modal.getAddress();
+      const acc = this.appkit?.getAddress();
       resolve(acc ? [acc] : []);
     });
   }
 
   protected getAccountAddress(): Maybe<string> {
-    if (!this.web3Modal) return null;
-
-    return this.web3Modal.getAddress();
+    if (!this.appkit) return null;
+    return this.appkit.getAddress();
   }
 
   protected async getProviders(): Promise<ProviderDictionary> {
@@ -182,6 +190,7 @@ export class SolanaConnector extends PredicateConnector {
         fuelProvider: this.providerFactory(this.config),
       });
     }
+
     if (!this.fuelProvider) {
       this.fuelProvider = getOrThrow(
         await this.config.fuelProvider,
@@ -195,20 +204,19 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   public async connect(): Promise<boolean> {
-    this.createModal();
     return new Promise((resolve) => {
-      this.web3Modal.open();
-      const unsub = this.web3Modal.subscribeEvents(async (event) => {
+      this.appkit?.open();
+      const unsub = this.appkit?.subscribeEvents(async (event) => {
         switch (event.data.event) {
           case 'CONNECT_SUCCESS': {
             resolve(true);
-            unsub();
+            unsub?.();
             break;
           }
           case 'MODAL_CLOSE':
           case 'CONNECT_ERROR': {
             resolve(false);
-            unsub();
+            unsub?.();
             break;
           }
         }
@@ -217,7 +225,7 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   public async disconnect(): Promise<boolean> {
-    this.web3Modal.disconnect();
+    this.appkit?.disconnect();
     this._emitDisconnect();
     return this.isConnected();
   }
@@ -250,7 +258,7 @@ export class SolanaConnector extends PredicateConnector {
 
     const txId = await this.encodeTxId(transactionId);
     const provider: Maybe<SolanaProvider> =
-      this.web3Modal.getWalletProvider() as SolanaProvider;
+      this.appkit?.getWalletProvider() as SolanaProvider;
     if (!provider) {
       throw new Error('No provider found');
     }
@@ -270,7 +278,7 @@ export class SolanaConnector extends PredicateConnector {
 
   async signMessageCustomCurve(message: string) {
     const provider: Maybe<SolanaProvider> =
-      this.web3Modal.getWalletProvider() as SolanaProvider;
+      this.appkit?.getWalletProvider() as SolanaProvider;
     if (!provider) {
       throw new Error('No provider found');
     }

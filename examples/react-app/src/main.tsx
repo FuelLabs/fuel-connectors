@@ -16,12 +16,12 @@ import { FuelProvider, type NetworkConfig } from '@fuels/react';
 
 import * as Toast from '@radix-ui/react-toast';
 
-import App from './App.tsx';
-import ScreenSizeIndicator from './components/screensize-indicator.tsx';
-import './index.css';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { CHAIN_IDS, type FuelConfig, Provider, bn } from 'fuels';
+import App from './App.tsx';
+import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import { ConfigProvider } from './context/ConfigContext.tsx';
+import './index.css';
 
 const queryClient = new QueryClient();
 const isDev = process.env.NODE_ENV === 'development';

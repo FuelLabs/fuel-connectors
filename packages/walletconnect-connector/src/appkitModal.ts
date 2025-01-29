@@ -1,7 +1,8 @@
 import { type AppKit, createAppKit } from '@reown/appkit';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { mainnet, sepolia } from '@reown/appkit/networks';
-import { http, injected } from '@wagmi/core';
+import { http } from 'wagmi';
+import { injected } from 'wagmi/connectors';
 import { DEFAULT_PROJECT_ID } from './constants';
 
 interface CreateAppkitProps {
@@ -44,7 +45,7 @@ export function createAppkitInstance({
     adapters: [wagmiAdapter],
     enableWalletConnect: !!projectId,
     projectId,
-    networks: [sepolia, mainnet],
+    networks: [sepolia, mainnet], // @TODO: Should we receive it from the application? as the wagmi adapter config
     allowUnsupportedChain: true,
     allWallets: 'ONLY_MOBILE',
     features: {

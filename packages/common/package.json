@@ -33,7 +33,7 @@
     "bs58": "6.0.0",
     "memoizee": "0.4.15",
     "tweetnacl": "1.0.3",
-    "viem": "2.20.1"
+    "viem": "2.22.17"
   },
   "devDependencies": {
     "@types/memoizee": "0.4.11",

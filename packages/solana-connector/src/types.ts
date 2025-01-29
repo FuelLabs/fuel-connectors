@@ -1,12 +1,12 @@
 import type { PredicateConfig } from '@fuel-connectors/common';
-import type { ProviderType } from '@web3modal/solana/dist/types/src/utils/scaffold';
+import type { SolanaAdapter } from '@reown/appkit-adapter-solana';
 import type { Provider as FuelProvider } from 'fuels';
 
 export type SolanaConfig = {
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
   projectId?: string;
   predicateConfig?: PredicateConfig;
-  solanaConfig?: ProviderType;
+  solanaAdapter?: SolanaAdapter;
   chainId?: number;
 };
 
