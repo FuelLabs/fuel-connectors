@@ -47,9 +47,6 @@
     "tsx": "4.9.3",
     "typescript": "5.4.5",
     "viem": "2.22.17",
-    "vite": "5.2.11",
-    "vite-plugin-dts": "3.9.1",
-    "vitest": "2.0.2",
     "wagmi": "2.14.9"
   }
 }
