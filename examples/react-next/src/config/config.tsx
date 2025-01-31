@@ -12,6 +12,7 @@ export const APP = {
   name: 'Fuel Connectors Example APP',
   description: 'SSR Example app of Fuel Connectors',
 };
+
 export const CHAINS_TO_CONNECT = [sepolia] as [Chain, ...Chain[]];
 
 export const TRANSPORTS = {
@@ -25,6 +26,7 @@ export const TRANSPORTS = {
     { rank: false },
   ),
 };
+
 export const DEFAULT_WAGMI_CONFIG = createConfig({
   chains: CHAINS_TO_CONNECT,
   connectors: generateETHConnectors(APP.name),

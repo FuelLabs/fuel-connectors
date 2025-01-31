@@ -2,25 +2,23 @@
 
 import { ConnectKitProvider } from 'connectkit';
 import type { ReactNode } from 'react';
-import type { State } from 'wagmi';
+import type { Config, State } from 'wagmi';
 
-import { DEFAULT_WAGMI_CONFIG } from '@/config/config';
 import { WagmiProvider } from 'wagmi';
 
 type ProvidersProps = {
   children: ReactNode;
+  wagmiConfig: Config;
   wagmiInitialState: State | undefined;
 };
 
 export function ConnectProvider({
   children,
+  wagmiConfig,
   wagmiInitialState,
 }: ProvidersProps) {
   return (
-    <WagmiProvider
-      config={DEFAULT_WAGMI_CONFIG}
-      initialState={wagmiInitialState}
-    >
+    <WagmiProvider config={wagmiConfig} initialState={wagmiInitialState}>
       <ConnectKitProvider>{children}</ConnectKitProvider>
     </WagmiProvider>
   );
