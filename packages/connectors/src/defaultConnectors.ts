@@ -8,6 +8,7 @@ import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
 import { FueletWalletConnector } from '@fuel-connectors/fuelet-wallet';
 import { ReownConnector } from '@fuel-connectors/reown-connector';
 import type { AppKit } from '@reown/appkit';
+
 import type { FuelConnector } from 'fuels';
 import type { Provider as FuelProvider } from 'fuels';
 

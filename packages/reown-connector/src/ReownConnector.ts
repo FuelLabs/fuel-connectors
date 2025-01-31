@@ -18,7 +18,7 @@ import {
 import { PredicateEvm } from './predicates/evm/PredicateEvm';
 import { ETHEREUM_ICON } from './predicates/evm/constants';
 import { PredicateSvm } from './predicates/svm/PredicateSvm';
-import type { PredicatesInstance, ReownConnectorConfig } from './types';
+import type { ReownChain, ReownConnectorConfig } from './types';
 
 export class ReownConnector extends FuelConnector {
   name = 'Ethereum / Solana Wallets';
@@ -33,29 +33,30 @@ export class ReownConnector extends FuelConnector {
     },
   };
 
-  private predicatesInstance: PredicatesInstance;
-  private predicateInstance!: PredicateConnector;
+  private predicatesInstance: Record<ReownChain, PredicateConnector>;
+  private activeChain!: ReownChain;
   private config: ReownConnectorConfig;
+  private account: string | undefined;
 
   constructor(config: ReownConnectorConfig) {
     super();
 
     this.config = config;
 
+    this.setPredicateInstance();
     this.predicatesInstance = {
-      eip55: new PredicateEvm(this.config),
+      ethereum: new PredicateEvm(this.config),
       solana: new PredicateSvm(this.config),
     };
-    this.setPredicateInstance();
   }
 
   private setPredicateInstance() {
     if (this.config.appkit.getActiveChainNamespace() === 'eip155') {
-      this.predicateInstance = this.predicatesInstance.eip55;
+      this.activeChain = 'ethereum';
       return;
     }
 
-    this.predicateInstance = this.predicatesInstance.solana;
+    this.activeChain = 'solana';
   }
 
   /**
@@ -64,84 +65,134 @@ export class ReownConnector extends FuelConnector {
    * ============================================================
    */
   async ping(): Promise<boolean> {
-    return this.predicateInstance.ping();
+    return this.predicatesInstance[this.activeChain].ping();
   }
 
   async isConnected(): Promise<boolean> {
-    return this.predicateInstance.isConnected();
+    return this.predicatesInstance[this.activeChain].isConnected();
   }
 
   async connect(): Promise<boolean> {
-    this.setPredicateInstance();
-    return this.predicateInstance.connect();
+    // If we already have an account, we don't need to open the appkit modal
+    if (this.config.appkit.getAddress()) {
+      this.setPredicateInstance();
+      return this.predicatesInstance[this.activeChain].connect();
+    }
+
+    // New connection
+    await this.config.appkit.open();
+
+    return new Promise((resolve) => {
+      this.config.appkit.subscribeAccount(async (account) => {
+        // User has just connected (this is a good approach to handle any chain)
+        // We need to update the predicate instance to the correct chain
+        // Since some wallets allow to switch between chains (e.g. Phantom)
+        if (account.address && account.address !== this.account) {
+          this.setPredicateInstance();
+          this.account = account.address;
+          await this.predicatesInstance[this.activeChain].connect();
+          resolve(true);
+          return;
+        }
+
+        // User/wallet has disconnected during connection flow
+        if (!account.address && this.account) {
+          this.account = undefined;
+          resolve(false);
+          return;
+        }
+      });
+
+      // Just to monitoring close modal and connection is not established yet
+      // So we disable "connecting" state and allow user to connect again
+      const unsub = this.config.appkit.subscribeEvents(async (event) => {
+        switch (event.data.event) {
+          case 'MODAL_CLOSE':
+          case 'CONNECT_ERROR': {
+            if (this.account) {
+              return;
+            }
+
+            resolve(false);
+            unsub?.();
+            break;
+          }
+        }
+      });
+    });
   }
 
   async disconnect(): Promise<boolean> {
-    this.setPredicateInstance();
-    return this.predicateInstance.disconnect();
+    return this.predicatesInstance[this.activeChain].disconnect();
   }
 
   async accounts(): Promise<Array<string>> {
-    return this.predicateInstance.accounts();
+    return this.predicatesInstance[this.activeChain].accounts();
   }
 
   async currentAccount(): Promise<string | null> {
-    return this.predicateInstance.currentAccount();
+    return this.predicatesInstance[this.activeChain].currentAccount();
   }
 
   async signMessage(address: string, message: string): Promise<string> {
-    return this.predicateInstance.signMessage(address, message);
+    return this.predicatesInstance[this.activeChain].signMessage(
+      address,
+      message,
+    );
   }
 
   async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
   ): Promise<string> {
-    return this.predicateInstance.sendTransaction(address, transaction);
+    return this.predicatesInstance[this.activeChain].sendTransaction(
+      address,
+      transaction,
+    );
   }
 
   async assets(): Promise<Array<Asset>> {
-    return this.predicateInstance.assets();
+    return this.predicatesInstance[this.activeChain].assets();
   }
 
   async addAsset(asset: Asset): Promise<boolean> {
-    return this.predicateInstance.addAsset(asset);
+    return this.predicatesInstance[this.activeChain].addAsset(asset);
   }
 
   async addAssets(assets: Asset[]): Promise<boolean> {
-    return this.predicateInstance.addAssets(assets);
+    return this.predicatesInstance[this.activeChain].addAssets(assets);
   }
 
   async addAbi(contractId: string, abi: FuelABI): Promise<boolean> {
-    return this.predicateInstance.addAbi(contractId, abi);
+    return this.predicatesInstance[this.activeChain].addAbi(contractId, abi);
   }
 
   async getABI(contractId: string): Promise<FuelABI> {
-    return this.predicateInstance.getAbi(contractId);
+    return this.predicatesInstance[this.activeChain].getAbi(contractId);
   }
 
   async hasABI(contractId: string): Promise<boolean> {
-    return this.predicateInstance.hasAbi(contractId);
+    return this.predicatesInstance[this.activeChain].hasAbi(contractId);
   }
 
   async currentNetwork(): Promise<Network> {
-    return this.predicateInstance.currentNetwork();
+    return this.predicatesInstance[this.activeChain].currentNetwork();
   }
 
   async selectNetwork(network: SelectNetworkArguments): Promise<boolean> {
-    return this.predicateInstance.selectNetwork(network);
+    return this.predicatesInstance[this.activeChain].selectNetwork(network);
   }
 
   async networks(): Promise<Network[]> {
-    return this.predicateInstance.networks();
+    return this.predicatesInstance[this.activeChain].networks();
   }
 
   async addNetwork(networkUrl: string): Promise<boolean> {
-    return this.predicateInstance.addNetwork(networkUrl);
+    return this.predicatesInstance[this.activeChain].addNetwork(networkUrl);
   }
 
   async version(): Promise<Version> {
-    return this.predicateInstance.version();
+    return this.predicatesInstance[this.activeChain].version();
   }
 
   /**
@@ -149,6 +200,9 @@ export class ReownConnector extends FuelConnector {
    * Predicate Utilities
    * ============================================================
    */
+
+  // @TODO: Put back solana fuel predicate address
+  // Receive address + chain name (ethereum or solana)
   static getFuelPredicateAddresses(ethAddress: string) {
     const predicateConfig = Object.entries(PREDICATE_VERSIONS)
       .sort(([, a], [, b]) => b.generatedAt - a.generatedAt)

@@ -48,10 +48,11 @@ export class PredicateSvm extends PredicateConnector {
     const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.fuelProvider = FuelProvider.create(network);
 
+    // Recovering connection
     this.requireConnection();
   }
 
-  private async _emitDisconnect() {
+  private _emitDisconnect() {
     this.emit(this.events.connection, false);
     this.emit(this.events.accounts, []);
     this.emit(this.events.currentAccount, null);
@@ -75,12 +76,14 @@ export class PredicateSvm extends PredicateConnector {
         return;
       }
 
+      // Restablishing connection
       if (account.address && account.address !== this.svmAddress) {
         this.svmAddress = account.address;
         this._emitConnected();
         return;
       }
 
+      // Disconnecting
       if (!account.address && this.svmAddress) {
         this.svmAddress = null;
         this._emitDisconnect();
@@ -114,31 +117,14 @@ export class PredicateSvm extends PredicateConnector {
     };
   }
 
+  // Watcher will handle everything
   public async connect(): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.config.appkit.open();
-      const unsub = this.config.appkit.subscribeEvents(async (event) => {
-        switch (event.data.event) {
-          case 'CONNECT_SUCCESS': {
-            resolve(true);
-            unsub?.();
-            break;
-          }
-          case 'MODAL_CLOSE':
-          case 'CONNECT_ERROR': {
-            resolve(false);
-            unsub?.();
-            break;
-          }
-        }
-      });
-    });
+    return true;
   }
 
   public async disconnect(): Promise<boolean> {
-    await this._emitDisconnect();
     await this.config.appkit.disconnect();
-    return this.isConnected();
+    return false;
   }
 
   private isValidPredicateAddress(
