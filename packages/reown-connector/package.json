@@ -21,8 +21,6 @@
   },
   "peerDependencies": {
     "@reown/appkit": ">=1.6.5",
-    "@reown/appkit-adapter-solana": ">=1.6.5",
-    "@reown/appkit-adapter-wagmi": ">=1.6.5",
     "fuels": ">=0.96.1",
     "viem": ">=2.22.17",
     "wagmi": ">=2.14.9"
@@ -38,7 +36,6 @@
     "@fuel-connectors/evm-predicates": "workspace:*",
     "@fuel-connectors/svm-predicates": "workspace:*",
     "@reown/appkit": "1.6.5",
-    "@reown/appkit-adapter-solana": "1.6.5",
     "@reown/appkit-adapter-wagmi": "1.6.5",
     "@reown/appkit-utils": "1.6.5",
     "@types/memoizee": "0.4.11",

@@ -399,12 +399,6 @@ importers:
       '@reown/appkit':
         specifier: 1.6.5
         version: 1.6.5(@types/react@18.3.1)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
-      '@reown/appkit-adapter-solana':
-        specifier: 1.6.5
-        version: 1.6.5(@types/react@18.3.1)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
-      '@reown/appkit-adapter-wagmi':
-        specifier: 1.6.5
-        version: 1.6.5(fmcmju7em7ae3mdbrfr7tw3t3e)
       fuels:
         specifier: 0.96.1
         version: 0.96.1
@@ -675,9 +669,6 @@ importers:
         specifier: workspace:*
         version: link:../svm-predicates
       '@reown/appkit':
-        specifier: 1.6.5
-        version: 1.6.5(@types/react@18.3.1)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
-      '@reown/appkit-adapter-solana':
         specifier: 1.6.5
         version: 1.6.5(@types/react@18.3.1)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
       '@reown/appkit-adapter-wagmi':

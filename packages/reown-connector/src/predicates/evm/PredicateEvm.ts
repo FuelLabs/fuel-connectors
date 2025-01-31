@@ -35,6 +35,7 @@ import {
   disconnect,
   getAccount,
   reconnect,
+  watchAccount,
 } from 'wagmi/actions';
 import {
   ETHEREUM_ICON,
@@ -42,6 +43,7 @@ import {
   WINDOW,
 } from './constants';
 import { isWagmiAdapter } from './isWagmiAdapter';
+import { subscribeAndEnforceChain } from './subscribeAndEnforceChain';
 import type { CustomCurrentConnectorEvent, PredicateEvmConfig } from './types';
 
 export class PredicateEvm extends PredicateConnector {
@@ -72,10 +74,10 @@ export class PredicateEvm extends PredicateConnector {
     const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.fuelProvider = FuelProvider.create(network);
 
-    // @TODO: Put it back
-    // if (wagmiConfig && wagmiConfig?._internal.syncConnectedChain !== false) {
-    //   subscribeAndEnforceChain(wagmiConfig);
-    // }
+    const wagmiConfig = this.getWagmiConfig();
+    if (wagmiConfig && wagmiConfig?._internal.syncConnectedChain !== false) {
+      subscribeAndEnforceChain(wagmiConfig);
+    }
 
     this.loadPersistedConnection();
   }
@@ -83,6 +85,7 @@ export class PredicateEvm extends PredicateConnector {
   private async loadPersistedConnection() {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) return;
+    this.setupWatchers(wagmiConfig);
     await this.fuelProvider;
     await this.requireConnection();
     await this.handleConnect(
@@ -111,29 +114,25 @@ export class PredicateEvm extends PredicateConnector {
     );
   }
 
-  private setupWatchers() {
-    const wagmiConfig = this.getWagmiConfig();
-    if (!wagmiConfig) throw new Error('Wagmi config not found');
-
-    // @TODO: Put it back if needed
-    // this.subscribe(
-    //   watchAccount(wagmiConfig, {
-    //     onChange: async (account) => {
-    //       switch (account.status) {
-    //         case 'connected': {
-    //           await this.handleConnect(account);
-    //           break;
-    //         }
-    //         case 'disconnected': {
-    //           this.emit(this.events.connection, false);
-    //           this.emit(this.events.currentAccount, null);
-    //           this.emit(this.events.accounts, []);
-    //           break;
-    //         }
-    //       }
-    //     },
-    //   }),
-    // );
+  private setupWatchers(wagmiConfig: Config) {
+    this.subscribe(
+      watchAccount(wagmiConfig, {
+        onChange: async (account) => {
+          switch (account.status) {
+            case 'connected': {
+              await this.handleConnect(account);
+              break;
+            }
+            case 'disconnected': {
+              this.emit(this.events.connection, false);
+              this.emit(this.events.currentAccount, null);
+              this.emit(this.events.accounts, []);
+              break;
+            }
+          }
+        },
+      }),
+    );
   }
 
   protected getWagmiConfig(): Maybe<Config> {
