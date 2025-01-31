@@ -1,15 +1,15 @@
 {
-  "name": "@fuel-connectors/solana-connector",
-  "version": "0.38.1",
+  "name": "@fuel-connectors/reown-connector",
   "private": true,
+  "version": "0.38.1",
   "type": "module",
   "files": ["dist"],
-  "main": "./dist/wallet-connector-solana.umd.cjs",
-  "module": "./dist/wallet-connector-solana.js",
+  "main": "./dist/reown-connector.umd.cjs",
+  "module": "./dist/reown-connector.js",
   "exports": {
     ".": {
-      "import": "./dist/wallet-connector-solana.js",
-      "require": "./dist/wallet-connector-solana.umd.cjs"
+      "import": "./dist/reown-connector.js",
+      "require": "./dist/reown-connector.umd.cjs"
     }
   },
   "types": "./dist/index.d.ts",
@@ -17,30 +17,31 @@
     "build": "tsup --dts-only",
     "build:watch": "tsup --watch --dts-only",
     "ts:check": "tsc --noEmit",
-    "test": "vitest",
-    "versions:generate": "pnpm fuels build && pnpm fuels deploy && tsx ./scripts/versions.ts"
+    "test": "vitest"
   },
   "peerDependencies": {
     "@reown/appkit": ">=1.6.5",
     "@reown/appkit-adapter-solana": ">=1.6.5",
-    "fuels": ">=0.96.1"
+    "@reown/appkit-adapter-wagmi": ">=1.6.5",
+    "fuels": ">=0.96.1",
+    "viem": ">=2.22.17",
+    "wagmi": ">=2.14.9"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
-    "@solana/wallet-adapter-phantom": "0.9.23",
     "@solana/web3.js": "1.98.0",
-    "bs58": "6.0.0",
-    "memoizee": "0.4.15",
-    "tweetnacl": "1.0.3"
+    "memoizee": "0.4.15"
   },
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",
+    "@fuel-connectors/evm-predicates": "workspace:*",
+    "@fuel-connectors/svm-predicates": "workspace:*",
     "@reown/appkit": "1.6.5",
     "@reown/appkit-adapter-solana": "1.6.5",
+    "@reown/appkit-adapter-wagmi": "1.6.5",
     "@reown/appkit-utils": "1.6.5",
     "@types/memoizee": "0.4.11",
-    "dotenv": "16.4.5",
     "fuels": "0.96.1",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
@@ -48,8 +49,10 @@
     "tsup": "8.0.2",
     "tsx": "4.9.3",
     "typescript": "5.4.5",
+    "viem": "2.22.17",
     "vite": "5.2.11",
     "vite-plugin-dts": "3.9.1",
-    "vitest": "2.0.2"
+    "vitest": "2.0.2",
+    "wagmi": "2.14.9"
   }
 }

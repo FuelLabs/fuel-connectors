@@ -1,12 +1,11 @@
 import {
-  type AbiMap,
   Address,
   type Asset,
   type BytesLike,
   type ConnectorMetadata,
+  type FuelABI,
   FuelConnector,
   FuelConnectorEventTypes,
-  type JsonAbi,
   type Network,
   type SelectNetworkArguments,
   type TransactionRequestLike,
@@ -54,7 +53,6 @@ export abstract class PredicateConnector extends FuelConnector {
   public abstract connect(): Promise<boolean>;
   public abstract disconnect(): Promise<boolean>;
 
-  protected abstract configProviders(config: ConnectorConfig): MaybeAsync<void>;
   protected abstract getWalletAdapter(): PredicateWalletAdapter;
   protected abstract getPredicateVersions(): Record<string, PredicateVersion>;
   protected abstract getAccountAddress(): MaybeAsync<Maybe<string>>;
@@ -335,11 +333,11 @@ export abstract class PredicateConnector extends FuelConnector {
     throw new Error('Method not implemented.');
   }
 
-  public async addAbi(_abiMap: AbiMap): Promise<boolean> {
+  public async addAbi(_contractId: string, _abi: FuelABI): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
 
-  public async getAbi(_contractId: string): Promise<JsonAbi> {
+  public async getAbi(_contractId: string): Promise<FuelABI> {
     throw Error('Cannot get contractId ABI for a predicate');
   }
 

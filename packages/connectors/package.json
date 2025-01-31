@@ -28,7 +28,6 @@
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
-    "@solana/wallet-adapter-phantom": "0.9.23",
     "@solana/web3.js": "1.98.0",
     "rpc-websockets": "7.11.0",
     "socket.io-client": "4.7.2"
@@ -40,8 +39,7 @@
     "@fuel-connectors/fuel-development-wallet": "workspace:*",
     "@fuel-connectors/fuel-wallet": "workspace:*",
     "@fuel-connectors/fuelet-wallet": "workspace:*",
-    "@fuel-connectors/solana-connector": "workspace:*",
-    "@fuel-connectors/walletconnect-connector": "workspace:*",
+    "@fuel-connectors/reown-connector": "workspace:*",
     "@reown/appkit": "1.6.5",
     "@reown/appkit-adapter-solana": "1.6.5",
     "@reown/appkit-adapter-wagmi": "1.6.5",

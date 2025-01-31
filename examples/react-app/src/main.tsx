@@ -4,15 +4,19 @@ import { counter as COUNTER_CONTRACT_ID_LOCAL } from './types/contract-ids-local
 import { counter as COUNTER_CONTRACT_ID_MAINNET } from './types/contract-ids-mainnet.json';
 import { counter as COUNTER_CONTRACT_ID_TESTNET } from './types/contract-ids-testnet.json';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
-import { mainnet, sepolia } from '@reown/appkit/networks';
-import { http } from 'wagmi';
-import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors';
-
 import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider, type NetworkConfig } from '@fuels/react';
+import {
+  type AppKitNetwork,
+  mainnet,
+  sepolia,
+  solana,
+  solanaDevnet,
+  solanaTestnet,
+} from '@reown/appkit/networks';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors';
 
 import * as Toast from '@radix-ui/react-toast';
 
@@ -22,6 +26,8 @@ import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import { ConfigProvider } from './context/ConfigContext.tsx';
 import './index.css';
+import { createAppKit } from '@reown/appkit';
+import { SolanaAdapter } from '@reown/appkit-adapter-solana';
 
 const queryClient = new QueryClient();
 const isDev = process.env.NODE_ENV === 'development';
@@ -38,13 +44,16 @@ const METADATA = {
   url: location.href,
   icons: ['https://connectors.fuel.network/logo_white.png'],
 };
+const networks: [AppKitNetwork, ...AppKitNetwork[]] = [
+  mainnet,
+  sepolia,
+  solana,
+  solanaTestnet,
+  solanaDevnet,
+];
 
 const wagmiAdapter = new WagmiAdapter({
-  networks: [mainnet, sepolia],
-  transports: {
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
-  },
+  networks,
   syncConnectedChain: true,
   projectId: WC_PROJECT_ID,
   connectors: [
@@ -61,6 +70,22 @@ const wagmiAdapter = new WagmiAdapter({
       reloadOnDisconnect: true,
     }),
   ],
+});
+
+const solanaWeb3JsAdapter = new SolanaAdapter();
+
+const appkit = createAppKit({
+  adapters: [wagmiAdapter, solanaWeb3JsAdapter],
+  enableWalletConnect: !!WC_PROJECT_ID,
+  projectId: WC_PROJECT_ID,
+  networks,
+  allowUnsupportedChain: false,
+  allWallets: 'ONLY_MOBILE',
+  features: {
+    email: false,
+    socials: false,
+    analytics: false,
+  },
 });
 
 const CHAIN_ID_NAME = import.meta.env
@@ -84,7 +109,7 @@ const FUEL_CONFIG: FuelConfig = {
   connectors: defaultConnectors({
     devMode: true,
     wcProjectId: WC_PROJECT_ID,
-    ethWagmiAdapter: wagmiAdapter,
+    appkit,
     chainId: CHAIN_ID,
     fuelProvider: Provider.create(PROVIDER_URL),
   }),

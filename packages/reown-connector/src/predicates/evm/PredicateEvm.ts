@@ -16,12 +16,9 @@ import {
   type ProviderDictionary,
   getFuelPredicateAddresses,
   getMockedSignatureIndex,
-  getOrThrow,
   getProviderUrl,
 } from '@fuel-connectors/common';
 import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
-import type { AppKit } from '@reown/appkit';
-import type { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import {
   CHAIN_IDS,
   type ConnectorMetadata,
@@ -38,19 +35,16 @@ import {
   disconnect,
   getAccount,
   reconnect,
-  watchAccount,
 } from 'wagmi/actions';
-import { createAppkitInstance, createDefaultWagmiAdapter } from './appkitModal';
 import {
   ETHEREUM_ICON,
-  HAS_WINDOW,
   SIGNATURE_VALIDATION_TIMEOUT,
   WINDOW,
 } from './constants';
-import type { CustomCurrentConnectorEvent, WalletConnectConfig } from './types';
-import { subscribeAndEnforceChain } from './utils';
+import { isWagmiAdapter } from './isWagmiAdapter';
+import type { CustomCurrentConnectorEvent, PredicateEvmConfig } from './types';
 
-export class WalletConnectConnector extends PredicateConnector {
+export class PredicateEvm extends PredicateConnector {
   name = 'Ethereum Wallets';
   installed = true;
   events = FuelConnectorEventTypes;
@@ -63,63 +57,39 @@ export class WalletConnectConnector extends PredicateConnector {
     },
   };
 
-  private fuelProvider!: FuelProvider;
+  private fuelProvider: FuelProvider | Promise<FuelProvider>;
   private ethProvider: EIP1193Provider | null = null;
-  private wagmiAdapter: WagmiAdapter;
-  private appkit: AppKit | null = null;
+  private config: PredicateEvmConfig;
   private storage: StorageAbstract;
-  private config: WalletConnectConfig = {} as WalletConnectConfig;
 
-  constructor(config: WalletConnectConfig) {
+  constructor(config: PredicateEvmConfig) {
     super();
     this.storage =
       config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
 
-    const defaultAdapter = createDefaultWagmiAdapter({
-      projectId: config.projectId,
-    });
-    this.wagmiAdapter = config.wagmiAdapter ?? defaultAdapter;
-    const wagmiConfig = this.wagmiAdapter.wagmiConfig;
-
-    if (wagmiConfig && wagmiConfig?._internal.syncConnectedChain !== false) {
-      subscribeAndEnforceChain(wagmiConfig);
-    }
-
+    this.config = config;
     this.customPredicate = config.predicateConfig || null;
-    if (HAS_WINDOW) {
-      this.configProviders(config);
-    }
+    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
+    this.fuelProvider = FuelProvider.create(network);
+
+    // @TODO: Put it back
+    // if (wagmiConfig && wagmiConfig?._internal.syncConnectedChain !== false) {
+    //   subscribeAndEnforceChain(wagmiConfig);
+    // }
+
     this.loadPersistedConnection();
   }
 
   private async loadPersistedConnection() {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) return;
-
-    await this.config?.fuelProvider;
+    await this.fuelProvider;
     await this.requireConnection();
     await this.handleConnect(
       getAccount(wagmiConfig),
       await this.getAccountAddress(),
     );
-  }
-
-  // createModal re-instanciates the modal to update singletons from @reown/appkit
-  private createModal() {
-    this.clearSubscriptions();
-    this.storage.removeItem('@appkit/active_namespace');
-    this.storage.removeItem('@appkit/active_caip_network_id');
-    this.storage.removeItem('@appkit/active_namespace');
-    this.storage.removeItem('wagmi.recentConnectorId');
-    this.appkit = this.modalFactory(this.config);
-    this.setupWatchers();
-  }
-
-  private modalFactory(config: WalletConnectConfig) {
-    return createAppkitInstance({
-      projectId: config.projectId,
-      wagmiAdapter: this.wagmiAdapter,
-    });
+    return;
   }
 
   private async handleConnect(
@@ -145,28 +115,33 @@ export class WalletConnectConnector extends PredicateConnector {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
 
-    this.subscribe(
-      watchAccount(wagmiConfig, {
-        onChange: async (account) => {
-          switch (account.status) {
-            case 'connected': {
-              await this.handleConnect(account);
-              break;
-            }
-            case 'disconnected': {
-              this.emit(this.events.connection, false);
-              this.emit(this.events.currentAccount, null);
-              this.emit(this.events.accounts, []);
-              break;
-            }
-          }
-        },
-      }),
-    );
+    // @TODO: Put it back if needed
+    // this.subscribe(
+    //   watchAccount(wagmiConfig, {
+    //     onChange: async (account) => {
+    //       switch (account.status) {
+    //         case 'connected': {
+    //           await this.handleConnect(account);
+    //           break;
+    //         }
+    //         case 'disconnected': {
+    //           this.emit(this.events.connection, false);
+    //           this.emit(this.events.currentAccount, null);
+    //           this.emit(this.events.accounts, []);
+    //           break;
+    //         }
+    //       }
+    //     },
+    //   }),
+    // );
   }
 
   protected getWagmiConfig(): Maybe<Config> {
-    return this.config?.wagmiAdapter?.wagmiConfig;
+    if (isWagmiAdapter(this.config.appkit.chainAdapters?.eip155)) {
+      return this.config.appkit.chainAdapters.eip155.wagmiConfig;
+    }
+
+    return null;
   }
 
   protected getWalletAdapter(): PredicateWalletAdapter {
@@ -177,18 +152,11 @@ export class WalletConnectConnector extends PredicateConnector {
     return PREDICATE_VERSIONS;
   }
 
-  protected async configProviders(config: WalletConnectConfig = {}) {
-    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
-    this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(network),
-    });
-  }
-
   protected async walletAccounts(): Promise<Array<string>> {
     return Promise.resolve((await this.getAccountAddresses()) as Array<string>);
   }
 
-  protected async getAccountAddress(): Promise<Maybe<string>> {
+  public async getAccountAddress(): Promise<Maybe<string>> {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) return null;
     const addresses = await this.getAccountAddresses();
@@ -223,15 +191,9 @@ export class WalletConnectConnector extends PredicateConnector {
   protected async getProviders(): Promise<ProviderDictionary> {
     if (this.fuelProvider && this.ethProvider) {
       return {
-        fuelProvider: this.fuelProvider,
+        fuelProvider: await this.fuelProvider,
         ethProvider: this.ethProvider,
       };
-    }
-    if (!this.fuelProvider) {
-      this.fuelProvider = getOrThrow(
-        await this.config.fuelProvider,
-        'Fuel provider is not available',
-      );
     }
 
     const wagmiConfig = this.getWagmiConfig();
@@ -242,7 +204,7 @@ export class WalletConnectConnector extends PredicateConnector {
       : undefined;
 
     return {
-      fuelProvider: this.fuelProvider,
+      fuelProvider: await this.fuelProvider,
       ethProvider,
     };
   }
@@ -257,18 +219,12 @@ export class WalletConnectConnector extends PredicateConnector {
       return true;
     }
 
-    // @reown/appkit instance is not created, let's create it
-    if (!this.appkit) {
-      this.createModal();
-    } else {
-      this.appkit.open();
-    }
-
     // User not connected, let's show the @reown/appkit modal
-    const unsub = this.appkit?.subscribeEvents(async (event) => {
+    this.config.appkit.open();
+    const unsub = this.config.appkit.subscribeEvents(async (event) => {
       switch (event.data.event) {
         case 'INITIALIZE':
-          this.appkit?.open();
+          this.config.appkit.open();
           break;
         case 'CONNECT_SUCCESS': {
           const { addresses = [] } = getAccount(wagmiConfig);
@@ -306,6 +262,7 @@ export class WalletConnectConnector extends PredicateConnector {
         }
       }
     });
+
     return false;
   }
 

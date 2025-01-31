@@ -1,4 +1,4 @@
-import type { PREDICATE_VERSIONS } from './generated';
+import type { PREDICATE_VERSIONS } from '@fuel-connectors/svm-predicates';
 
 export type SolanaPredicateRoot = keyof typeof PREDICATE_VERSIONS;
 type TxIdEncoder = {

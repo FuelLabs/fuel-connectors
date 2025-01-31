@@ -6,8 +6,8 @@ import {
 import { FuelWalletDevelopmentConnector } from '@fuel-connectors/fuel-development-wallet';
 import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
 import { FueletWalletConnector } from '@fuel-connectors/fuelet-wallet';
-import { SolanaConnector } from '@fuel-connectors/solana-connector';
-import { WalletConnectConnector } from '@fuel-connectors/walletconnect-connector';
+import { ReownConnector } from '@fuel-connectors/reown-connector';
+import type { AppKit } from '@reown/appkit';
 import type { SolanaAdapter } from '@reown/appkit-adapter-solana';
 import type { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import type { FuelConnector } from 'fuels';
@@ -17,9 +17,8 @@ type DefaultConnectors = {
   devMode?: boolean;
   wcProjectId?: string;
   burnerWalletConfig?: BurnerWalletConfig;
-  ethWagmiAdapter?: WagmiAdapter;
   ethSkipAutoReconnect?: boolean;
-  solanaAdapter?: SolanaAdapter;
+  appkit: AppKit;
   chainId?: number;
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
 };
@@ -28,28 +27,21 @@ export function defaultConnectors({
   devMode,
   wcProjectId,
   burnerWalletConfig,
-  ethWagmiAdapter,
   ethSkipAutoReconnect,
-  solanaAdapter,
+  appkit,
   chainId,
   fuelProvider,
-}: DefaultConnectors = {}): Array<FuelConnector> {
+}: DefaultConnectors): Array<FuelConnector> {
   const connectors: Array<FuelConnector> = [
     new FuelWalletConnector(),
     new BakoSafeConnector(),
     new FueletWalletConnector(),
-    new WalletConnectConnector({
+    new ReownConnector({
       projectId: wcProjectId,
-      wagmiAdapter: ethWagmiAdapter,
+      appkit,
       chainId,
       fuelProvider,
       skipAutoReconnect: ethSkipAutoReconnect,
-    }),
-    new SolanaConnector({
-      projectId: wcProjectId,
-      chainId,
-      fuelProvider,
-      solanaAdapter,
     }),
   ];
 

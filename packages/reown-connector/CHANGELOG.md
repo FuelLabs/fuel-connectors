@@ -1,4 +1,4 @@
-# @fuel-connectors/walletconnect-connector
+# @fuel-connectors/reown-connector
 
 ## 0.38.1
 

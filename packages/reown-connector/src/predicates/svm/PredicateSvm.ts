@@ -7,32 +7,24 @@ import {
   SolanaWalletAdapter,
   getFuelPredicateAddresses,
   getMockedSignatureIndex,
-  getOrThrow,
   getProviderUrl,
 } from '@fuel-connectors/common';
-import type { AppKit } from '@reown/appkit';
+import { PREDICATE_VERSIONS } from '@fuel-connectors/svm-predicates';
 import type { Provider as SolanaProvider } from '@reown/appkit-utils/solana';
 import {
   CHAIN_IDS,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
-  LocalStorage,
-  type StorageAbstract,
   type TransactionRequestLike,
   hexlify,
   toUtf8Bytes,
 } from 'fuels';
-import {
-  createAppkitInstance,
-  createDefaultSolanaAdapter,
-} from './appkitModal';
-import { HAS_WINDOW, SOLANA_ICON } from './constants';
-import { PREDICATE_VERSIONS } from './generated/predicates';
-import type { SolanaConfig } from './types';
+import { SOLANA_ICON } from './constants';
+import type { PredicateSvmConfig } from './types';
 import { type SolanaPredicateRoot, txIdEncoders } from './utils';
 
-export class SolanaConnector extends PredicateConnector {
+export class PredicateSvm extends PredicateConnector {
   name = 'Solana Wallets';
   events = FuelConnectorEventTypes;
   metadata: ConnectorMetadata = {
@@ -44,22 +36,19 @@ export class SolanaConnector extends PredicateConnector {
     },
   };
 
-  protected fuelProvider!: FuelProvider;
-
-  private appkit: AppKit | null = null;
-  private storage: StorageAbstract;
-  private config: SolanaConfig = {};
+  private fuelProvider: FuelProvider | Promise<FuelProvider>;
+  private config: PredicateSvmConfig;
   private svmAddress: string | null = null;
 
-  constructor(config: SolanaConfig) {
+  constructor(config: PredicateSvmConfig) {
     super();
 
+    this.config = config;
     this.customPredicate = config.predicateConfig || null;
-    this.storage = new LocalStorage(window.localStorage as Storage);
+    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
+    this.fuelProvider = FuelProvider.create(network);
 
-    if (HAS_WINDOW) {
-      this.configProviders(config);
-    }
+    this.requireConnection();
   }
 
   private async _emitDisconnect() {
@@ -72,7 +61,7 @@ export class SolanaConnector extends PredicateConnector {
 
   private async _emitConnected() {
     await this.setupPredicate();
-    const address = this.appkit?.getAddress();
+    const address = this.config.appkit.getAddress();
     if (!address || !this.predicateAccount) return;
     this.svmAddress = address;
     this.emit(this.events.connection, true);
@@ -83,31 +72,12 @@ export class SolanaConnector extends PredicateConnector {
     this.emit(this.events.accounts, _accounts);
   }
 
-  private modalFactory(config: SolanaConfig) {
-    const defaultAdapter = createDefaultSolanaAdapter();
-    const solanaAdapter = config.solanaAdapter ?? defaultAdapter;
-
-    return createAppkitInstance({
-      projectId: config.projectId,
-      solanaAdapter,
-    });
-  }
-
-  private providerFactory(config?: SolanaConfig) {
-    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
-    return config?.fuelProvider || FuelProvider.create(network);
-  }
-
   private setupWatchers() {
-    if (!this.appkit) {
-      return;
-    }
-
     this.subscribe(
-      this.appkit.subscribeEvents((event) => {
+      this.config.appkit.subscribeEvents((event) => {
         switch (event.data.event) {
           case 'CONNECT_SUCCESS': {
-            const address = this.appkit?.getAddress() || '';
+            const address = this.config.appkit.getAddress() || '';
             if (!address || address.startsWith('0x')) {
               return;
             }
@@ -124,10 +94,7 @@ export class SolanaConnector extends PredicateConnector {
 
     // Poll for account changes due a problem with the event listener not firing on account changes
     const interval = setInterval(async () => {
-      if (!this.appkit) {
-        return;
-      }
-      const address = this.appkit.getAddress();
+      const address = this.config.appkit.getAddress();
       if (address && address !== this.svmAddress) {
         this._emitConnected();
       }
@@ -139,18 +106,8 @@ export class SolanaConnector extends PredicateConnector {
     this.subscribe(() => clearInterval(interval));
   }
 
-  // createModal re-instanciates the modal to update singletons from @reown/appkit
-  private createModal() {
-    this.clearSubscriptions();
-    this.storage.removeItem('@appkit/active_namespace');
-    this.storage.removeItem('@appkit/active_caip_network_id');
-    this.storage.removeItem('@appkit/active_namespace');
-    this.appkit = this.modalFactory(this.config);
+  protected requireConnection() {
     this.setupWatchers();
-  }
-
-  protected async requireConnection() {
-    if (!this.appkit) this.createModal();
   }
 
   protected getWalletAdapter(): PredicateWalletAdapter {
@@ -161,52 +118,27 @@ export class SolanaConnector extends PredicateConnector {
     return PREDICATE_VERSIONS;
   }
 
-  protected async configProviders(config: SolanaConfig = {}) {
-    const network = getProviderUrl(config.chainId ?? CHAIN_IDS.fuel.mainnet);
-    this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(network),
-    });
-  }
-
   protected walletAccounts(): Promise<Array<string>> {
-    if (!this.appkit) {
-      return Promise.resolve([]);
-    }
-
     return new Promise((resolve) => {
-      const acc = this.appkit?.getAddress();
+      const acc = this.config.appkit.getAddress();
       resolve(acc ? [acc] : []);
     });
   }
 
   protected getAccountAddress(): Maybe<string> {
-    if (!this.appkit) return null;
-    return this.appkit.getAddress();
+    return this.config.appkit.getAddress();
   }
 
   protected async getProviders(): Promise<ProviderDictionary> {
-    if (!this.config?.fuelProvider) {
-      this.config = Object.assign(this.config, {
-        fuelProvider: this.providerFactory(this.config),
-      });
-    }
-
-    if (!this.fuelProvider) {
-      this.fuelProvider = getOrThrow(
-        await this.config.fuelProvider,
-        'Fuel provider not found',
-      );
-    }
-
     return {
-      fuelProvider: this.fuelProvider,
+      fuelProvider: await this.fuelProvider,
     };
   }
 
   public async connect(): Promise<boolean> {
     return new Promise((resolve) => {
-      this.appkit?.open();
-      const unsub = this.appkit?.subscribeEvents(async (event) => {
+      this.config.appkit.open();
+      const unsub = this.config.appkit.subscribeEvents(async (event) => {
         switch (event.data.event) {
           case 'CONNECT_SUCCESS': {
             resolve(true);
@@ -225,7 +157,7 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   public async disconnect(): Promise<boolean> {
-    this.appkit?.disconnect();
+    this.config.appkit.disconnect();
     this._emitDisconnect();
     return this.isConnected();
   }
@@ -258,7 +190,7 @@ export class SolanaConnector extends PredicateConnector {
 
     const txId = await this.encodeTxId(transactionId);
     const provider: Maybe<SolanaProvider> =
-      this.appkit?.getWalletProvider() as SolanaProvider;
+      this.config.appkit.getWalletProvider() as SolanaProvider;
     if (!provider) {
       throw new Error('No provider found');
     }
@@ -278,7 +210,7 @@ export class SolanaConnector extends PredicateConnector {
 
   async signMessageCustomCurve(message: string) {
     const provider: Maybe<SolanaProvider> =
-      this.appkit?.getWalletProvider() as SolanaProvider;
+      this.config.appkit.getWalletProvider() as SolanaProvider;
     if (!provider) {
       throw new Error('No provider found');
     }
