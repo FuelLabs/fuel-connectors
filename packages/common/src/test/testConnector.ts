@@ -1,7 +1,6 @@
 import type { TransactionRequestLike } from 'fuels';
 
 import {
-  type ConnectorConfig,
   type Maybe,
   type MaybeAsync,
   PredicateConnector,
@@ -23,10 +22,6 @@ export class TestPredicatedConnector extends PredicateConnector {
       link: '',
     },
   };
-
-  protected configProviders(_config: ConnectorConfig): MaybeAsync<void> {
-    throw new Error('Method not implemented.');
-  }
 
   protected getWalletAdapter(): PredicateWalletAdapter {
     return new SolanaWalletAdapter();

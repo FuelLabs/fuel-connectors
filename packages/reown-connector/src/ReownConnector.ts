@@ -18,7 +18,7 @@ import {
 import { PredicateEvm } from './predicates/evm/PredicateEvm';
 import { ETHEREUM_ICON } from './predicates/evm/constants';
 import { PredicateSvm } from './predicates/svm/PredicateSvm';
-import type { ReownConnectorConfig } from './types';
+import type { PredicatesInstance, ReownConnectorConfig } from './types';
 
 export class ReownConnector extends FuelConnector {
   name = 'Ethereum / Solana Wallets';
@@ -33,6 +33,7 @@ export class ReownConnector extends FuelConnector {
     },
   };
 
+  private predicatesInstance: PredicatesInstance;
   private predicateInstance!: PredicateConnector;
   private config: ReownConnectorConfig;
 
@@ -40,16 +41,21 @@ export class ReownConnector extends FuelConnector {
     super();
 
     this.config = config;
+
+    this.predicatesInstance = {
+      eip55: new PredicateEvm(this.config),
+      solana: new PredicateSvm(this.config),
+    };
     this.setPredicateInstance();
   }
 
   private setPredicateInstance() {
     if (this.config.appkit.getActiveChainNamespace() === 'eip155') {
-      this.predicateInstance = new PredicateEvm(this.config);
+      this.predicateInstance = this.predicatesInstance.eip55;
       return;
     }
 
-    this.predicateInstance = new PredicateSvm(this.config);
+    this.predicateInstance = this.predicatesInstance.solana;
   }
 
   /**

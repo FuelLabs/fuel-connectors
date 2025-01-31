@@ -30,11 +30,6 @@ export interface EIP1193Provider extends EventEmitter {
   }): Promise<unknown | unknown[]>;
 }
 
-export type ConnectorConfig = {
-  [key: string]: unknown;
-  predicateConfig?: PredicateConfig;
-};
-
 export type ProviderDictionary = {
   fuelProvider: FuelProvider;
   ethProvider?: EIP1193Provider;

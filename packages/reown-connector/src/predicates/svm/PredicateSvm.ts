@@ -48,17 +48,10 @@ export class PredicateSvm extends PredicateConnector {
     const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.fuelProvider = FuelProvider.create(network);
 
-    this.loadPersistedConnection();
-  }
-
-  private async loadPersistedConnection() {
-    await this.fuelProvider;
     this.requireConnection();
   }
 
   private async _emitDisconnect() {
-    this.svmAddress = null;
-    await this.setupPredicate();
     this.emit(this.events.connection, false);
     this.emit(this.events.accounts, []);
     this.emit(this.events.currentAccount, null);
@@ -68,7 +61,6 @@ export class PredicateSvm extends PredicateConnector {
     await this.setupPredicate();
     const address = this.config.appkit.getAddress();
     if (!address || !this.predicateAccount) return;
-    this.svmAddress = address;
     this.emit(this.events.connection, true);
     const predicate = this.predicateAccount.getPredicateAddress(address);
     this.emit(this.events.currentAccount, predicate);
@@ -79,13 +71,20 @@ export class PredicateSvm extends PredicateConnector {
 
   protected requireConnection() {
     this.config.appkit.subscribeAccount((account) => {
+      if (this.config.appkit.getActiveChainNamespace() !== 'solana') {
+        return;
+      }
+
       if (account.address && account.address !== this.svmAddress) {
+        this.svmAddress = account.address;
         this._emitConnected();
         return;
       }
 
       if (!account.address && this.svmAddress) {
+        this.svmAddress = null;
         this._emitDisconnect();
+        return;
       }
     });
   }
@@ -121,7 +120,6 @@ export class PredicateSvm extends PredicateConnector {
       const unsub = this.config.appkit.subscribeEvents(async (event) => {
         switch (event.data.event) {
           case 'CONNECT_SUCCESS': {
-            await this._emitConnected();
             resolve(true);
             unsub?.();
             break;

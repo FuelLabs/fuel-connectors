@@ -20,7 +20,6 @@ import {
 import { PredicateFactory, getMockedSignatureIndex } from './PredicateFactory';
 import type { PredicateWalletAdapter } from './PredicateWalletAdapter';
 import type {
-  ConnectorConfig,
   Maybe,
   MaybeAsync,
   PredicateConfig,
@@ -254,7 +253,6 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   public async isConnected(): Promise<boolean> {
-    await this.requireConnection();
     const accounts = await this.accounts();
     return accounts.length > 0;
   }
