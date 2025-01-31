@@ -115,24 +115,22 @@ export class PredicateEvm extends PredicateConnector {
   }
 
   private setupWatchers(wagmiConfig: Config) {
-    this.subscribe(
-      watchAccount(wagmiConfig, {
-        onChange: async (account) => {
-          switch (account.status) {
-            case 'connected': {
-              await this.handleConnect(account);
-              break;
-            }
-            case 'disconnected': {
-              this.emit(this.events.connection, false);
-              this.emit(this.events.currentAccount, null);
-              this.emit(this.events.accounts, []);
-              break;
-            }
+    watchAccount(wagmiConfig, {
+      onChange: async (account) => {
+        switch (account.status) {
+          case 'connected': {
+            await this.handleConnect(account);
+            break;
           }
-        },
-      }),
-    );
+          case 'disconnected': {
+            this.emit(this.events.connection, false);
+            this.emit(this.events.currentAccount, null);
+            this.emit(this.events.accounts, []);
+            break;
+          }
+        }
+      },
+    });
   }
 
   protected getWagmiConfig(): Maybe<Config> {

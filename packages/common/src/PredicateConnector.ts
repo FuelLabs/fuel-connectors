@@ -38,7 +38,6 @@ export abstract class PredicateConnector extends FuelConnector {
   protected predicateAddress!: string;
   protected customPredicate: Maybe<PredicateConfig>;
   protected predicateAccount: Maybe<PredicateFactory> = null;
-  protected subscriptions: Array<() => void> = [];
   protected hasProviderSucceeded = true;
 
   private _predicateVersions!: Array<PredicateFactory>;
@@ -150,10 +149,6 @@ export abstract class PredicateConnector extends FuelConnector {
     return this.predicateAccount;
   }
 
-  protected subscribe(listener: () => void) {
-    this.subscriptions.push(listener);
-  }
-
   protected async prepareTransaction(
     address: string,
     transaction: TransactionRequestLike,
@@ -241,14 +236,6 @@ export abstract class PredicateConnector extends FuelConnector {
       account: walletAccount,
       transactionRequest,
     };
-  }
-
-  public clearSubscriptions() {
-    if (!this.subscriptions) {
-      return;
-    }
-    this.subscriptions.forEach((listener) => listener());
-    this.subscriptions = [];
   }
 
   public async ping(): Promise<boolean> {

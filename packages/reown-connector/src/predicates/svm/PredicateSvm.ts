@@ -48,6 +48,11 @@ export class PredicateSvm extends PredicateConnector {
     const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.fuelProvider = FuelProvider.create(network);
 
+    this.loadPersistedConnection();
+  }
+
+  private async loadPersistedConnection() {
+    await this.fuelProvider;
     this.requireConnection();
   }
 
@@ -72,42 +77,17 @@ export class PredicateSvm extends PredicateConnector {
     this.emit(this.events.accounts, _accounts);
   }
 
-  private setupWatchers() {
-    this.subscribe(
-      this.config.appkit.subscribeEvents((event) => {
-        switch (event.data.event) {
-          case 'CONNECT_SUCCESS': {
-            const address = this.config.appkit.getAddress() || '';
-            if (!address || address.startsWith('0x')) {
-              return;
-            }
-            this._emitConnected();
-            break;
-          }
-          case 'DISCONNECT_SUCCESS': {
-            this._emitDisconnect();
-            break;
-          }
-        }
-      }),
-    );
-
-    // Poll for account changes due a problem with the event listener not firing on account changes
-    const interval = setInterval(async () => {
-      const address = this.config.appkit.getAddress();
-      if (address && address !== this.svmAddress) {
+  protected requireConnection() {
+    this.config.appkit.subscribeAccount((account) => {
+      if (account.address && account.address !== this.svmAddress) {
         this._emitConnected();
+        return;
       }
-      if (!address && this.svmAddress) {
+
+      if (!account.address && this.svmAddress) {
         this._emitDisconnect();
       }
-    }, 300);
-
-    this.subscribe(() => clearInterval(interval));
-  }
-
-  protected requireConnection() {
-    this.setupWatchers();
+    });
   }
 
   protected getWalletAdapter(): PredicateWalletAdapter {
@@ -141,6 +121,7 @@ export class PredicateSvm extends PredicateConnector {
       const unsub = this.config.appkit.subscribeEvents(async (event) => {
         switch (event.data.event) {
           case 'CONNECT_SUCCESS': {
+            await this._emitConnected();
             resolve(true);
             unsub?.();
             break;
@@ -157,8 +138,8 @@ export class PredicateSvm extends PredicateConnector {
   }
 
   public async disconnect(): Promise<boolean> {
-    this.config.appkit.disconnect();
-    this._emitDisconnect();
+    await this._emitDisconnect();
+    await this.config.appkit.disconnect();
     return this.isConnected();
   }
 
