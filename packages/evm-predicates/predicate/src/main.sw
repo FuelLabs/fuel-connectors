@@ -16,7 +16,7 @@ use std::{
 ///
 /// # Additional Information
 ///
-/// Take "\x19Ethereum Signed Message:\n32" and converted to hex.
+/// Take "\x19Ethereum Signed Message:\n64" and converted to hex.
 /// The 00000000 at the end is the padding added by Sway to fill the word.
 const ETHEREUM_PREFIX = 0x19457468657265756d205369676e6564204d6573736167653a0a363400000000;
 
