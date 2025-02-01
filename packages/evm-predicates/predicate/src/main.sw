@@ -94,7 +94,7 @@ fn personal_sign_hash(transaction_id: b256) -> b256 {
     };
 
     // The Ethereum prefix is 28 bytes (plus padding we exclude).
-    // The Tx ID is 32 bytes at the end of the prefix.
+    // The Tx ID is 64 bytes at the end of the prefix.
     let len_to_hash = 28 + 64;
 
     // Create a buffer in memory to overwrite with the result being the hash.
