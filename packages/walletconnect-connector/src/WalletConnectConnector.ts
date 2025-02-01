@@ -406,10 +406,11 @@ export class WalletConnectConnector extends PredicateConnector {
     const { ethProvider, fuelProvider } = await this.getProviders();
     const { request, transactionId, account, transactionRequest } =
       await this.prepareTransaction(address, transaction);
-
+    const messageBytes = new TextEncoder().encode(transactionId.slice(2));
+    const utf8TxId = hexlify(messageBytes);
     const signature = (await ethProvider?.request({
       method: 'personal_sign',
-      params: [transactionId, account],
+      params: [utf8TxId, account],
     })) as string;
 
     const predicateSignatureIndex = getMockedSignatureIndex(
