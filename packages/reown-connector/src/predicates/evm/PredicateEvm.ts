@@ -22,6 +22,7 @@ import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
 import {
   CHAIN_IDS,
   type ConnectorMetadata,
+  type FuelConnector,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
   LocalStorage,
@@ -59,17 +60,19 @@ export class PredicateEvm extends PredicateConnector {
     },
   };
 
+  private connector: FuelConnector;
   private fuelProvider: FuelProvider | Promise<FuelProvider>;
   private ethProvider: EIP1193Provider | null = null;
   private config: PredicateEvmConfig;
   private storage: StorageAbstract;
   private shouldAskSignature = false;
 
-  constructor(config: PredicateEvmConfig) {
+  constructor(config: PredicateEvmConfig, connector: FuelConnector) {
     super();
     this.storage =
       config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
 
+    this.connector = connector;
     this.config = config;
     this.customPredicate = config.predicateConfig || null;
     const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
@@ -225,8 +228,8 @@ export class PredicateEvm extends PredicateConnector {
 
       if (hasAccountToSign) {
         const currentConnectorEvent: CustomCurrentConnectorEvent = {
-          type: this.events.currentConnector,
-          data: this,
+          type: this.connector.events.currentConnector,
+          data: this.connector,
           metadata: {
             pendingSignature: true,
           },
@@ -287,6 +290,7 @@ export class PredicateEvm extends PredicateConnector {
       try {
         await this.requestSignature(address);
       } catch (err) {
+        this.shouldAskSignature = false;
         this.disconnect();
         throw err;
       }
@@ -297,6 +301,7 @@ export class PredicateEvm extends PredicateConnector {
         await this.handleConnect(account);
         return 'validated';
       } catch (err) {
+        this.shouldAskSignature = false;
         this.disconnect();
         throw err;
       }
@@ -312,6 +317,7 @@ export class PredicateEvm extends PredicateConnector {
 
       // Disconnect if user doesn't provide signature in time
       const validationTimeout = setTimeout(() => {
+        this.storage.removeItem(`SIGNATURE_VALIDATION_${address}`);
         reject(
           new Error("User didn't provide signature in less than 1 minute"),
         );
@@ -331,8 +337,8 @@ export class PredicateEvm extends PredicateConnector {
           this.storage.removeItem(`SIGNATURE_VALIDATION_${address}`);
 
           const currentConnectorEvent: CustomCurrentConnectorEvent = {
-            type: this.events.currentConnector,
-            data: this,
+            type: this.connector.events.currentConnector,
+            data: this.connector,
             metadata: {
               pendingSignature: false,
             },

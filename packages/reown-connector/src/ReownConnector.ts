@@ -45,7 +45,7 @@ export class ReownConnector extends FuelConnector {
 
     this.setPredicateInstance();
     this.predicatesInstance = {
-      ethereum: new PredicateEvm(this.config),
+      ethereum: new PredicateEvm(this.config, this),
       solana: new PredicateSvm(this.config),
     };
   }
@@ -76,22 +76,31 @@ export class ReownConnector extends FuelConnector {
     // If we already have an account, we don't need to open the appkit modal
     if (this.config.appkit.getAddress()) {
       this.setPredicateInstance();
-      return this.predicatesInstance[this.activeChain].connect();
+      const res = await this.predicatesInstance[this.activeChain].connect();
+      return res;
     }
 
     // New connection
     await this.config.appkit.open();
 
     return new Promise((resolve) => {
-      this.config.appkit.subscribeAccount(async (account) => {
+      this.config.appkit.subscribeAccount((account) => {
         // User has just connected (this is a good approach to handle any chain)
         // We need to update the predicate instance to the correct chain
         // Since some wallets allow to switch between chains (e.g. Phantom)
         if (account.address && account.address !== this.account) {
           this.setPredicateInstance();
           this.account = account.address;
-          await this.predicatesInstance[this.activeChain].connect();
-          resolve(true);
+
+          const connector = this.predicatesInstance[this.activeChain];
+          connector
+            .connect()
+            .then((res) => {
+              resolve(res);
+            })
+            .catch(() => {
+              resolve(false);
+            });
           return;
         }
 
@@ -105,7 +114,7 @@ export class ReownConnector extends FuelConnector {
 
       // Just to monitoring close modal and connection is not established yet
       // So we disable "connecting" state and allow user to connect again
-      const unsub = this.config.appkit.subscribeEvents(async (event) => {
+      const unsub = this.config.appkit.subscribeEvents((event) => {
         switch (event.data.event) {
           case 'MODAL_CLOSE':
           case 'CONNECT_ERROR': {
@@ -200,7 +209,6 @@ export class ReownConnector extends FuelConnector {
    * Predicate Utilities
    * ============================================================
    */
-
   // @TODO: Put back solana fuel predicate address
   // Receive address + chain name (ethereum or solana)
   static getFuelPredicateAddresses(ethAddress: string) {
