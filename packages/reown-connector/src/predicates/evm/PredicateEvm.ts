@@ -31,13 +31,7 @@ import {
 } from 'fuels';
 import { stringToHex } from 'viem';
 import type { Config } from 'wagmi';
-import {
-  type GetAccountReturnType,
-  disconnect,
-  getAccount,
-  reconnect,
-  watchAccount,
-} from 'wagmi/actions';
+import { getAccount, reconnect, watchAccount } from 'wagmi/actions';
 import {
   ETHEREUM_ICON,
   SIGNATURE_VALIDATION_TIMEOUT,
@@ -61,10 +55,10 @@ export class PredicateEvm extends PredicateConnector {
   };
 
   private connector: FuelConnector;
-  private fuelProvider: FuelProvider | Promise<FuelProvider>;
-  private ethProvider: EIP1193Provider | null = null;
+  private fuelProvider: FuelProvider | null = null;
   private config: PredicateEvmConfig;
   private storage: StorageAbstract;
+  private evmAddress: string | null = null;
   private shouldAskSignature = false;
 
   constructor(config: PredicateEvmConfig, connector: FuelConnector) {
@@ -75,8 +69,6 @@ export class PredicateEvm extends PredicateConnector {
     this.connector = connector;
     this.config = config;
     this.customPredicate = config.predicateConfig || null;
-    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
-    this.fuelProvider = FuelProvider.create(network);
 
     const wagmiConfig = this.getWagmiConfig();
     if (wagmiConfig._internal.syncConnectedChain !== false) {
@@ -87,22 +79,15 @@ export class PredicateEvm extends PredicateConnector {
   }
 
   private async loadPersistedConnection() {
-    const wagmiConfig = this.getWagmiConfig();
-    this.setupWatchers(wagmiConfig);
-    await this.fuelProvider;
+    await this.getProviders();
+    this.setupWatchers();
     await this.requireConnection();
-    await this.handleConnect(
-      getAccount(wagmiConfig),
-      await this.getAccountAddress(),
-    );
-    return;
+    await this.handleConnect(await this.getAccountAddress());
   }
 
-  private async handleConnect(
-    account: NonNullable<GetAccountReturnType<Config>>,
-    defaultAccount: string | null = null,
-  ) {
-    const address = defaultAccount ?? (account?.address as string);
+  private async handleConnect(defaultAccount: string | null = null) {
+    const account = this.config.appkit.getAddress('eip155');
+    const address = defaultAccount ?? (account as string);
     if (!(await this.accountHasValidation(address))) return;
     if (!address) return;
     await this.setupPredicate();
@@ -117,26 +102,31 @@ export class PredicateEvm extends PredicateConnector {
     );
   }
 
-  private setupWatchers(wagmiConfig: Config) {
-    watchAccount(wagmiConfig, {
-      onChange: async (account) => {
-        if (this.config.appkit.getActiveChainNamespace() !== 'eip155') {
-          return;
-        }
+  private setupWatchers() {
+    this.config.appkit.subscribeAccount(async (account) => {
+      if (this.config.appkit.getActiveChainNamespace() !== 'eip155') {
+        return;
+      }
 
-        switch (account.status) {
-          case 'connected': {
-            await this.handleConnect(account);
-            break;
-          }
-          case 'disconnected': {
-            this.emit(this.events.connection, false);
-            this.emit(this.events.currentAccount, null);
-            this.emit(this.events.accounts, []);
-            break;
-          }
-        }
-      },
+      // Restablishing connection
+      if (
+        account.status === 'connected' &&
+        account.address &&
+        account.address !== this.evmAddress
+      ) {
+        this.evmAddress = account.address;
+        await this.handleConnect();
+        return;
+      }
+
+      // Disconnecting
+      if (account.status === 'disconnected' && this.evmAddress) {
+        this.evmAddress = null;
+        this.emit(this.events.connection, false);
+        this.emit(this.events.currentAccount, null);
+        this.emit(this.events.accounts, []);
+        return;
+      }
     });
   }
 
@@ -190,23 +180,20 @@ export class PredicateEvm extends PredicateConnector {
   }
 
   protected async getProviders(): Promise<ProviderDictionary> {
-    if (this.fuelProvider && this.ethProvider) {
+    if (this.fuelProvider) {
       return {
-        fuelProvider: await this.fuelProvider,
-        ethProvider: this.ethProvider,
+        fuelProvider: this.fuelProvider,
       };
     }
 
-    const wagmiConfig = this.getWagmiConfig();
-    const ethProvider = wagmiConfig
-      ? ((await getAccount(
-          wagmiConfig,
-        ).connector?.getProvider?.()) as EIP1193Provider)
-      : undefined;
+    const network = getProviderUrl(
+      this.config?.chainId ?? CHAIN_IDS.fuel.mainnet,
+    );
+    const provider = this.config.fuelProvider || FuelProvider.create(network);
+    this.fuelProvider = await provider;
 
     return {
-      fuelProvider: await this.fuelProvider,
-      ethProvider,
+      fuelProvider: this.fuelProvider,
     };
   }
 
@@ -227,6 +214,7 @@ export class PredicateEvm extends PredicateConnector {
       }
 
       if (hasAccountToSign) {
+        console.log('asking for signature');
         const currentConnectorEvent: CustomCurrentConnectorEvent = {
           type: this.connector.events.currentConnector,
           data: this.connector,
@@ -241,20 +229,26 @@ export class PredicateEvm extends PredicateConnector {
         return false;
       }
 
+      console.log('no accounts to sign, establishing connection');
+
       // No accounts to sign, we can establish connection
       return true;
     }
 
     // 2. Now let's ask for the signatures
     if (this.shouldAskSignature) {
+      console.log('asking for signatures');
       const state = await this.requestSignatures(wagmiConfig);
 
       // Everything went well, we can establish connection
       if (state === 'validated') {
+        console.log('signatures validated, establishing connection');
         this.shouldAskSignature = false;
         return true;
       }
     }
+
+    console.log('no signatures validated, returning false');
 
     return false;
   }
@@ -290,7 +284,6 @@ export class PredicateEvm extends PredicateConnector {
       try {
         await this.requestSignature(address);
       } catch (err) {
-        this.shouldAskSignature = false;
         this.disconnect();
         throw err;
       }
@@ -298,10 +291,9 @@ export class PredicateEvm extends PredicateConnector {
 
     if (isConnected) {
       try {
-        await this.handleConnect(account);
+        await this.handleConnect();
         return 'validated';
       } catch (err) {
-        this.shouldAskSignature = false;
         this.disconnect();
         throw err;
       }
@@ -322,7 +314,8 @@ export class PredicateEvm extends PredicateConnector {
           new Error("User didn't provide signature in less than 1 minute"),
         );
       }, SIGNATURE_VALIDATION_TIMEOUT);
-      const { ethProvider } = await this.getProviders();
+      const ethProvider =
+        this.config.appkit.getProvider<EIP1193Provider>('eip155');
 
       if (!ethProvider) return;
 
@@ -353,6 +346,7 @@ export class PredicateEvm extends PredicateConnector {
 
   public async disconnect(): Promise<boolean> {
     await this.config.appkit.disconnect();
+    this.shouldAskSignature = false;
     return false;
   }
 
@@ -360,7 +354,9 @@ export class PredicateEvm extends PredicateConnector {
     address: string,
     transaction: TransactionRequestLike,
   ): Promise<string> {
-    const { ethProvider, fuelProvider } = await this.getProviders();
+    const { fuelProvider } = await this.getProviders();
+    const ethProvider =
+      this.config.appkit.getProvider<EIP1193Provider>('eip155');
     const { request, transactionId, account, transactionRequest } =
       await this.prepareTransaction(address, transaction);
 
@@ -445,7 +441,8 @@ export class PredicateEvm extends PredicateConnector {
   }
 
   async signMessageCustomCurve(message: string) {
-    const { ethProvider } = await this.getProviders();
+    const ethProvider =
+      this.config.appkit.getProvider<EIP1193Provider>('eip155');
     if (!ethProvider) throw new Error('Eth provider not found');
     const accountAddress = await this.getAccountAddress();
     if (!accountAddress) throw new Error('No connected accounts');

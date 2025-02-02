@@ -77,6 +77,7 @@ export class ReownConnector extends FuelConnector {
     if (this.config.appkit.getAddress()) {
       this.setPredicateInstance();
       const res = await this.predicatesInstance[this.activeChain].connect();
+      console.log('connect after address', res);
       return res;
     }
 
@@ -92,10 +93,13 @@ export class ReownConnector extends FuelConnector {
           this.setPredicateInstance();
           this.account = account.address;
 
+          console.log('connect after subscribeAccount', this.account);
+
           const connector = this.predicatesInstance[this.activeChain];
           connector
             .connect()
             .then((res) => {
+              console.log('connect', res);
               resolve(res);
             })
             .catch(() => {

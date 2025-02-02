@@ -61,22 +61,6 @@ export abstract class PredicateConnector extends FuelConnector {
     _message: string,
   ): Promise<SignedMessageCustomCurve>;
 
-  protected async emitAccountChange(
-    address: string,
-    connected = true,
-  ): Promise<void> {
-    await this.setupPredicate();
-    this.emit(this.events.connection, connected);
-    this.emit(
-      this.events.currentAccount,
-      this.predicateAccount?.getPredicateAddress(address),
-    );
-    this.emit(
-      this.events.accounts,
-      this.predicateAccount?.getPredicateAddresses(await this.walletAccounts()),
-    );
-  }
-
   protected get predicateVersions(): Array<PredicateFactory> {
     if (!this._predicateVersions) {
       this._predicateVersions = Object.entries(this.getPredicateVersions())

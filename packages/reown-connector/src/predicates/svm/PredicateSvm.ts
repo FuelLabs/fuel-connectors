@@ -77,14 +77,18 @@ export class PredicateSvm extends PredicateConnector {
       }
 
       // Restablishing connection
-      if (account.address && account.address !== this.svmAddress) {
+      if (
+        account.status === 'connected' &&
+        account.address &&
+        account.address !== this.svmAddress
+      ) {
         this.svmAddress = account.address;
         this._emitConnected();
         return;
       }
 
       // Disconnecting
-      if (!account.address && this.svmAddress) {
+      if (account.status === 'disconnected' && this.svmAddress) {
         this.svmAddress = null;
         this._emitDisconnect();
         return;
