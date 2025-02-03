@@ -49,15 +49,18 @@ export class PredicateSvm extends PredicateConnector {
   }
 
   public async emitConnect() {
-    await this.setupPredicate();
     const address = this.config.appkit.getAddress('solana');
-    if (!address || !this.predicateAccount) return;
+    if (!address) return;
+    await this.setupPredicate();
     this.emit(this.events.connection, true);
-    const predicate = this.predicateAccount.getPredicateAddress(address);
-    this.emit(this.events.currentAccount, predicate);
-    const accounts = await this.walletAccounts();
-    const _accounts = this.predicateAccount?.getPredicateAddresses(accounts);
-    this.emit(this.events.accounts, _accounts);
+    this.emit(
+      this.events.currentAccount,
+      this.predicateAccount?.getPredicateAddress(address),
+    );
+    this.emit(
+      this.events.accounts,
+      this.predicateAccount?.getPredicateAddresses(await this.walletAccounts()),
+    );
   }
 
   protected getWalletAdapter(): PredicateWalletAdapter {
