@@ -1,10 +1,8 @@
 import { Routes, useConnectUI } from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../Core/ConnectorIcon';
 
-import type { ConnectorEvent } from 'fuels';
 import { useEffect, useMemo, useState } from 'react';
 import { Spinner } from '../../../../icons/Spinner';
-import { useFuel } from '../../../../providers/FuelHooksProvider';
 import { isNativeConnector } from '../../../../utils/isNativeConnector';
 import { PREDICATE_DISCLAIMER_KEY } from '../PredicateAddressDisclaimer/PredicateAddressDisclaimer';
 import {
@@ -21,19 +19,14 @@ type ConnectorProps = {
   className?: string;
 };
 
-export interface CustomCurrentConnectorEvent extends ConnectorEvent {
-  metadata?: {
-    pendingSignature: boolean;
-  };
-}
-
 enum ConnectStep {
   CONNECT = 'connect',
   SIGN = 'sign',
 }
 
+const SIGNATURE_PENDING_ERROR = 'Signature is pending';
+
 export function Connecting({ className }: ConnectorProps) {
-  const { fuel } = useFuel();
   const {
     error,
     isConnecting,
@@ -64,6 +57,10 @@ export function Connecting({ className }: ConnectorProps) {
     };
   }, [connectStep]);
 
+  const disableError = useMemo<boolean>(() => {
+    return Boolean(error?.message.includes(SIGNATURE_PENDING_ERROR));
+  }, [error]);
+
   // Auto-close connecting
   useEffect(() => {
     if (isConnected && route === Routes.Connecting && !isConnecting) {
@@ -86,20 +83,10 @@ export function Connecting({ className }: ConnectorProps) {
 
   // Switching to signing ownership mode
   useEffect(() => {
-    const onCurrentConnectorChange = (e: CustomCurrentConnectorEvent) => {
-      if (e.metadata && 'pendingSignature' in e.metadata) {
-        setConnectStep(
-          e.metadata.pendingSignature ? ConnectStep.SIGN : ConnectStep.CONNECT,
-        );
-      }
-    };
-
-    fuel.on(fuel.events.currentConnector, onCurrentConnectorChange);
-
-    return () => {
-      fuel.off(fuel.events.currentConnector, onCurrentConnectorChange);
-    };
-  }, [fuel]);
+    if (error?.message.includes(SIGNATURE_PENDING_ERROR)) {
+      setConnectStep(ConnectStep.SIGN);
+    }
+  }, [error]);
 
   if (!connector) return null;
 
@@ -122,7 +109,7 @@ export function Connecting({ className }: ConnectorProps) {
         ) : (
           <ConnectorDescription>{description}</ConnectorDescription>
         )}
-        {error && (
+        {error && !disableError && (
           <ConnectorDescriptionError>{error.message}</ConnectorDescriptionError>
         )}
       </ConnectorContent>

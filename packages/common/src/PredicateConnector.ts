@@ -50,12 +50,12 @@ export abstract class PredicateConnector extends FuelConnector {
   ): Promise<string>;
   public abstract connect(): Promise<boolean>;
   public abstract disconnect(): Promise<boolean>;
+  public abstract emitConnect(): Promise<void>;
 
   protected abstract getWalletAdapter(): PredicateWalletAdapter;
   protected abstract getPredicateVersions(): Record<string, PredicateVersion>;
   protected abstract getAccountAddress(): MaybeAsync<Maybe<string>>;
   protected abstract getProviders(): Promise<ProviderDictionary>;
-  protected abstract requireConnection(): MaybeAsync<void>;
   protected abstract walletAccounts(): Promise<Array<string>>;
   abstract signMessageCustomCurve(
     _message: string,

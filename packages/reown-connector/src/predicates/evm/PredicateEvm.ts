@@ -22,24 +22,17 @@ import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
 import {
   CHAIN_IDS,
   type ConnectorMetadata,
-  type FuelConnector,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
-  LocalStorage,
   type StorageAbstract,
   type TransactionRequestLike,
 } from 'fuels';
 import { stringToHex } from 'viem';
 import type { Config } from 'wagmi';
-import { getAccount, reconnect, watchAccount } from 'wagmi/actions';
-import {
-  ETHEREUM_ICON,
-  SIGNATURE_VALIDATION_TIMEOUT,
-  WINDOW,
-} from './constants';
+import { ETHEREUM_ICON, SIGNATURE_VALIDATION_TIMEOUT } from './constants';
 import { isWagmiAdapter } from './isWagmiAdapter';
 import { subscribeAndEnforceChain } from './subscribeAndEnforceChain';
-import type { CustomCurrentConnectorEvent, PredicateEvmConfig } from './types';
+import type { PredicateEvmConfig } from './types';
 
 export class PredicateEvm extends PredicateConnector {
   name = 'Ethereum Wallets';
@@ -54,42 +47,28 @@ export class PredicateEvm extends PredicateConnector {
     },
   };
 
-  private connector: FuelConnector;
   private fuelProvider: FuelProvider | null = null;
   private config: PredicateEvmConfig;
   private storage: StorageAbstract;
-  private evmAddress: string | null = null;
-  private shouldAskSignature = false;
 
-  constructor(config: PredicateEvmConfig, connector: FuelConnector) {
+  constructor(config: PredicateEvmConfig, storage: StorageAbstract) {
     super();
-    this.storage =
-      config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
 
-    this.connector = connector;
     this.config = config;
+    this.storage = storage;
+
     this.customPredicate = config.predicateConfig || null;
 
     const wagmiConfig = this.getWagmiConfig();
     if (wagmiConfig._internal.syncConnectedChain !== false) {
       subscribeAndEnforceChain(wagmiConfig);
     }
-
-    this.loadPersistedConnection();
   }
 
-  private async loadPersistedConnection() {
-    await this.getProviders();
-    this.setupWatchers();
-    await this.requireConnection();
-    await this.handleConnect(await this.getAccountAddress());
-  }
-
-  private async handleConnect(defaultAccount: string | null = null) {
-    const account = this.config.appkit.getAddress('eip155');
-    const address = defaultAccount ?? (account as string);
-    if (!(await this.accountHasValidation(address))) return;
+  public async emitConnect() {
+    const address = this.config.appkit.getAddress('eip155');
     if (!address) return;
+    if (!(await this.accountHasValidation(address))) return;
     await this.setupPredicate();
     this.emit(this.events.connection, true);
     this.emit(
@@ -100,34 +79,6 @@ export class PredicateEvm extends PredicateConnector {
       this.events.accounts,
       this.predicateAccount?.getPredicateAddresses(await this.walletAccounts()),
     );
-  }
-
-  private setupWatchers() {
-    this.config.appkit.subscribeAccount(async (account) => {
-      if (this.config.appkit.getActiveChainNamespace() !== 'eip155') {
-        return;
-      }
-
-      // Restablishing connection
-      if (
-        account.status === 'connected' &&
-        account.address &&
-        account.address !== this.evmAddress
-      ) {
-        this.evmAddress = account.address;
-        await this.handleConnect();
-        return;
-      }
-
-      // Disconnecting
-      if (account.status === 'disconnected' && this.evmAddress) {
-        this.evmAddress = null;
-        this.emit(this.events.connection, false);
-        this.emit(this.events.currentAccount, null);
-        this.emit(this.events.accounts, []);
-        return;
-      }
-    });
   }
 
   protected getWagmiConfig(): Config {
@@ -151,32 +102,17 @@ export class PredicateEvm extends PredicateConnector {
   }
 
   public async getAccountAddress(): Promise<Maybe<string>> {
-    const addresses = await this.getAccountAddresses();
-    if (!addresses) return null;
-    const address = addresses[0];
+    const address = this.config.appkit.getAddress('eip155');
     if (!address) return null;
     if (!(await this.accountHasValidation(address))) return null;
     return address;
   }
 
   protected async getAccountAddresses(): Promise<Maybe<readonly string[]>> {
-    const wagmiConfig = this.getWagmiConfig();
-    const { addresses = [] } = getAccount(wagmiConfig);
-    const accountsValidations = await this.getAccountValidations(
-      addresses as `0x${string}`[],
-    );
-    return addresses.filter((_, i) => accountsValidations[i]);
-  }
-
-  protected async requireConnection() {
-    const wagmiConfig = this.getWagmiConfig();
-
-    if (this.config.skipAutoReconnect) return;
-
-    const { status, connections } = wagmiConfig.state;
-    if (status === 'disconnected' && connections.size > 0) {
-      await reconnect(wagmiConfig);
-    }
+    const address = this.config.appkit.getAddress('eip155');
+    if (!address) return null;
+    if (!(await this.accountHasValidation(address))) return [];
+    return [address];
   }
 
   protected async getProviders(): Promise<ProviderDictionary> {
@@ -198,108 +134,51 @@ export class PredicateEvm extends PredicateConnector {
   }
 
   public async connect(): Promise<boolean> {
-    const wagmiConfig = this.getWagmiConfig();
-
     // 1. Trigger signing step (only if needed – user might have signed already)
-    const account = getAccount(wagmiConfig);
-    if (account.address && !this.shouldAskSignature) {
-      let hasAccountToSign = false;
-      for (const address of account.addresses ?? []) {
-        if (await this.accountHasValidation(address)) {
-          continue;
-        }
-
-        this.storage.setItem(`SIGNATURE_VALIDATION_${address}`, 'pending');
-        hasAccountToSign = true;
-      }
-
-      if (hasAccountToSign) {
-        console.log('asking for signature');
-        const currentConnectorEvent: CustomCurrentConnectorEvent = {
-          type: this.connector.events.currentConnector,
-          data: this.connector,
-          metadata: {
-            pendingSignature: true,
-          },
-        };
-
-        // Workaround to tell Connecting dialog that now we'll request signature
-        this.emit(this.events.currentConnector, currentConnectorEvent);
-        this.shouldAskSignature = true;
-        return false;
-      }
-
-      console.log('no accounts to sign, establishing connection');
-
-      // No accounts to sign, we can establish connection
-      return true;
+    const account = this.config.appkit.getAddress('eip155');
+    const signatureState = await this.getAccountValidation(account);
+    if (signatureState === 'idle') {
+      this.storage.setItem(`SIGNATURE_VALIDATION_${account}`, 'pending');
+      throw new Error('Signature is pending');
     }
 
-    // 2. Now let's ask for the signatures
-    if (this.shouldAskSignature) {
-      console.log('asking for signatures');
-      const state = await this.requestSignatures(wagmiConfig);
-
-      // Everything went well, we can establish connection
-      if (state === 'validated') {
-        console.log('signatures validated, establishing connection');
-        this.shouldAskSignature = false;
-        return true;
-      }
-    }
-
-    console.log('no signatures validated, returning false');
-
-    return false;
+    // 2. Now let's ask for the signatures if it's pending
+    await this.requestSignatures(account);
+    return true;
   }
 
-  private async getAccountValidations(
-    accounts: `0x${string}`[] | string[],
-  ): Promise<boolean[]> {
-    return Promise.all(
-      accounts.map(async (a) => {
-        const isValidated = await this.storage.getItem(
-          `SIGNATURE_VALIDATION_${a}`,
-        );
-        return isValidated === 'true';
-      }),
-    );
+  private async getAccountValidation(
+    account: `0x${string}` | string | undefined,
+  ): Promise<'true' | 'pending' | 'idle'> {
+    const state = (await this.storage.getItem(
+      `SIGNATURE_VALIDATION_${account}`,
+    )) as 'true' | 'pending' | null;
+
+    if (!state) {
+      return 'idle';
+    }
+
+    return state;
   }
 
   private async accountHasValidation(
     account: `0x${string}` | string | undefined,
   ) {
     if (!account) return false;
-    const [hasValidate] = await this.getAccountValidations([account]);
-    return hasValidate;
+    const state = await this.getAccountValidation(account);
+    return state === 'true';
   }
 
   private async requestSignatures(
-    wagmiConfig: Config,
-  ): Promise<'validated' | 'pending'> {
-    const account = getAccount(wagmiConfig);
-
-    const { addresses = [], isConnected } = account;
-    for (const address of addresses) {
-      try {
-        await this.requestSignature(address);
-      } catch (err) {
-        this.disconnect();
-        throw err;
-      }
+    account: string | undefined,
+  ): Promise<'validated'> {
+    try {
+      await this.requestSignature(account);
+      return 'validated';
+    } catch (err) {
+      this.disconnect();
+      throw err;
     }
-
-    if (isConnected) {
-      try {
-        await this.handleConnect();
-        return 'validated';
-      } catch (err) {
-        this.disconnect();
-        throw err;
-      }
-    }
-
-    return 'pending';
   }
 
   private async requestSignature(address?: string) {
@@ -328,17 +207,6 @@ export class PredicateEvm extends PredicateConnector {
         .catch((err) => {
           clearTimeout(validationTimeout);
           this.storage.removeItem(`SIGNATURE_VALIDATION_${address}`);
-
-          const currentConnectorEvent: CustomCurrentConnectorEvent = {
-            type: this.connector.events.currentConnector,
-            data: this.connector,
-            metadata: {
-              pendingSignature: false,
-            },
-          };
-
-          // Workaround to tell Connecting dialog that now we'll request connection again
-          this.emit(this.events.currentConnector, currentConnectorEvent);
           reject(err);
         });
     });
@@ -346,7 +214,6 @@ export class PredicateEvm extends PredicateConnector {
 
   public async disconnect(): Promise<boolean> {
     await this.config.appkit.disconnect();
-    this.shouldAskSignature = false;
     return false;
   }
 

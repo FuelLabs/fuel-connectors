@@ -1,4 +1,5 @@
 import {
+  CONNECTOR_KEY,
   EthereumWalletAdapter,
   type PredicateConnector,
   getFuelPredicateAddresses,
@@ -10,11 +11,14 @@ import {
   type FuelABI,
   FuelConnector,
   FuelConnectorEventTypes,
+  LocalStorage,
   type Network,
   type SelectNetworkArguments,
+  type StorageAbstract,
   type TransactionRequestLike,
   type Version,
 } from 'fuels';
+import { WINDOW } from './constants';
 import { PredicateEvm } from './predicates/evm/PredicateEvm';
 import { ETHEREUM_ICON } from './predicates/evm/constants';
 import { PredicateSvm } from './predicates/svm/PredicateSvm';
@@ -36,16 +40,20 @@ export class ReownConnector extends FuelConnector {
   private predicatesInstance: Record<ReownChain, PredicateConnector>;
   private activeChain!: ReownChain;
   private config: ReownConnectorConfig;
+  private storage: StorageAbstract;
+  private isConnecting = false;
   private account: string | undefined;
 
   constructor(config: ReownConnectorConfig) {
     super();
 
+    this.storage =
+      config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
     this.config = config;
 
-    this.setPredicateInstance();
+    this.watchCurrentAccount();
     this.predicatesInstance = {
-      ethereum: new PredicateEvm(this.config, this),
+      ethereum: new PredicateEvm(this.config, this.storage),
       solana: new PredicateSvm(this.config),
     };
   }
@@ -59,13 +67,48 @@ export class ReownConnector extends FuelConnector {
     this.activeChain = 'solana';
   }
 
+  private watchCurrentAccount() {
+    this.config.appkit.subscribeAccount(async (account) => {
+      // If we are already connecting, we don't want to do anything
+      // This is mainly for reconnecting (e.g. page reload)
+      if (this.isConnecting) {
+        return;
+      }
+
+      const currentConnector = await this.storage.getItem(CONNECTOR_KEY);
+      const isSameConnector = currentConnector === this.name;
+
+      // We don't want to reconnect if we are using a different connector
+      if (!isSameConnector) {
+        return;
+      }
+
+      // Reconnecting
+      if (account.status === 'connected' && account.address !== this.account) {
+        this.setPredicateInstance();
+        this.account = account.address;
+        await this.predicatesInstance[this.activeChain].emitConnect();
+        return;
+      }
+
+      // Disconnecting
+      if (account.status === 'disconnected' && this.account) {
+        this.account = undefined;
+        this.emit(this.events.connection, false);
+        this.emit(this.events.accounts, []);
+        this.emit(this.events.currentAccount, null);
+        return;
+      }
+    });
+  }
+
   /**
    * ============================================================
    * Connector methods
    * ============================================================
    */
   async ping(): Promise<boolean> {
-    return this.predicatesInstance[this.activeChain].ping();
+    return true;
   }
 
   async isConnected(): Promise<boolean> {
@@ -73,19 +116,31 @@ export class ReownConnector extends FuelConnector {
   }
 
   async connect(): Promise<boolean> {
+    this.isConnecting = true;
+
     // If we already have an account, we don't need to open the appkit modal
     if (this.config.appkit.getAddress()) {
       this.setPredicateInstance();
-      const res = await this.predicatesInstance[this.activeChain].connect();
-      console.log('connect after address', res);
-      return res;
+      try {
+        const res = await this.predicatesInstance[this.activeChain].connect();
+        if (res) {
+          const connector = this.predicatesInstance[this.activeChain];
+          await connector.emitConnect();
+        }
+
+        this.isConnecting = false;
+        return res;
+      } catch (err) {
+        this.isConnecting = false;
+        throw err;
+      }
     }
 
     // New connection
     await this.config.appkit.open();
 
-    return new Promise((resolve) => {
-      this.config.appkit.subscribeAccount((account) => {
+    return new Promise((resolve, reject) => {
+      this.config.appkit.subscribeAccount(async (account) => {
         // User has just connected (this is a good approach to handle any chain)
         // We need to update the predicate instance to the correct chain
         // Since some wallets allow to switch between chains (e.g. Phantom)
@@ -93,24 +148,23 @@ export class ReownConnector extends FuelConnector {
           this.setPredicateInstance();
           this.account = account.address;
 
-          console.log('connect after subscribeAccount', this.account);
-
           const connector = this.predicatesInstance[this.activeChain];
-          connector
-            .connect()
-            .then((res) => {
-              console.log('connect', res);
-              resolve(res);
-            })
-            .catch(() => {
-              resolve(false);
-            });
-          return;
+
+          try {
+            await connector.connect();
+            await connector.emitConnect();
+            this.isConnecting = false;
+            resolve(true);
+          } catch (err) {
+            this.isConnecting = false;
+            reject(err);
+          }
         }
 
         // User/wallet has disconnected during connection flow
         if (!account.address && this.account) {
           this.account = undefined;
+          this.isConnecting = false;
           resolve(false);
           return;
         }
@@ -126,6 +180,7 @@ export class ReownConnector extends FuelConnector {
               return;
             }
 
+            this.isConnecting = false;
             resolve(false);
             unsub?.();
             break;

@@ -16,7 +16,6 @@ type DefaultConnectors = {
   devMode?: boolean;
   wcProjectId?: string;
   burnerWalletConfig?: BurnerWalletConfig;
-  ethSkipAutoReconnect?: boolean;
   appkit: AppKit;
   chainId?: number;
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
@@ -26,7 +25,6 @@ export function defaultConnectors({
   devMode,
   wcProjectId,
   burnerWalletConfig,
-  ethSkipAutoReconnect,
   appkit,
   chainId,
   fuelProvider,
@@ -40,7 +38,6 @@ export function defaultConnectors({
       appkit,
       chainId,
       fuelProvider,
-      skipAutoReconnect: ethSkipAutoReconnect,
     }),
   ];
 

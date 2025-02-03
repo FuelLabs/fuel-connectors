@@ -38,7 +38,6 @@ export class PredicateSvm extends PredicateConnector {
 
   private fuelProvider: FuelProvider | Promise<FuelProvider>;
   private config: PredicateSvmConfig;
-  private svmAddress: string | null = null;
 
   constructor(config: PredicateSvmConfig) {
     super();
@@ -47,18 +46,9 @@ export class PredicateSvm extends PredicateConnector {
     this.customPredicate = config.predicateConfig || null;
     const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.fuelProvider = FuelProvider.create(network);
-
-    // Recovering connection
-    this.requireConnection();
   }
 
-  private _emitDisconnect() {
-    this.emit(this.events.connection, false);
-    this.emit(this.events.accounts, []);
-    this.emit(this.events.currentAccount, null);
-  }
-
-  private async _emitConnected() {
+  public async emitConnect() {
     await this.setupPredicate();
     const address = this.config.appkit.getAddress();
     if (!address || !this.predicateAccount) return;
@@ -68,32 +58,6 @@ export class PredicateSvm extends PredicateConnector {
     const accounts = await this.walletAccounts();
     const _accounts = this.predicateAccount?.getPredicateAddresses(accounts);
     this.emit(this.events.accounts, _accounts);
-  }
-
-  protected requireConnection() {
-    this.config.appkit.subscribeAccount((account) => {
-      if (this.config.appkit.getActiveChainNamespace() !== 'solana') {
-        return;
-      }
-
-      // Restablishing connection
-      if (
-        account.status === 'connected' &&
-        account.address &&
-        account.address !== this.svmAddress
-      ) {
-        this.svmAddress = account.address;
-        this._emitConnected();
-        return;
-      }
-
-      // Disconnecting
-      if (account.status === 'disconnected' && this.svmAddress) {
-        this.svmAddress = null;
-        this._emitDisconnect();
-        return;
-      }
-    });
   }
 
   protected getWalletAdapter(): PredicateWalletAdapter {

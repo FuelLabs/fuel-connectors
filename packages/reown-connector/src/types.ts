@@ -12,8 +12,6 @@ export type ReownConnectorConfig = {
   predicateConfig?: PredicateConfig;
   storage?: StorageAbstract;
   chainId?: number;
-  // if the dapp already has wagmi from eth connectors, it's better to skip auto reconnection as it can lead to session loss when refreshing the page
-  skipAutoReconnect?: boolean;
 };
 
 export type ReownChain = 'ethereum' | 'solana';

@@ -1,3 +1,4 @@
+export * from './constants';
 export * from './PredicateFactory';
 export * from './PredicateWalletAdapter';
 export * from './FakeAccount';
