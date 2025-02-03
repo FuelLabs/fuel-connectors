@@ -63,7 +63,7 @@ export function Connecting({ className }: ConnectorProps) {
 
   // Auto-close connecting
   useEffect(() => {
-    if (isConnected && route === Routes.Connecting && !isConnecting) {
+    if (isConnected && route === Routes.Connecting) {
       // Connected to a native connector, we can close the dialog
       if (connector && isNativeConnector(connector)) {
         cancel();
@@ -79,7 +79,7 @@ export function Connecting({ className }: ConnectorProps) {
       // So we need to show the disclaimer about predicates
       setRoute(Routes.PredicateAddressDisclaimer);
     }
-  }, [isConnected, connector, route, setRoute, isConnecting, cancel]);
+  }, [isConnected, connector, route, setRoute, cancel]);
 
   // Switching to signing ownership mode
   useEffect(() => {

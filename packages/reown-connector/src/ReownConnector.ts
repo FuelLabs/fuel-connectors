@@ -122,12 +122,9 @@ export class ReownConnector extends FuelConnector {
     if (this.config.appkit.getAddress()) {
       this.setPredicateInstance();
       try {
-        const res = await this.predicatesInstance[this.activeChain].connect();
-        if (res) {
-          const connector = this.predicatesInstance[this.activeChain];
-          await connector.emitConnect();
-        }
-
+        const connector = this.predicatesInstance[this.activeChain];
+        const res = await connector.connect();
+        await connector.emitConnect();
         this.isConnecting = false;
         return res;
       } catch (err) {
