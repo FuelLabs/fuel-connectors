@@ -50,7 +50,7 @@ export class PredicateSvm extends PredicateConnector {
 
   public async emitConnect() {
     await this.setupPredicate();
-    const address = this.config.appkit.getAddress();
+    const address = this.config.appkit.getAddress('solana');
     if (!address || !this.predicateAccount) return;
     this.emit(this.events.connection, true);
     const predicate = this.predicateAccount.getPredicateAddress(address);
@@ -70,13 +70,13 @@ export class PredicateSvm extends PredicateConnector {
 
   protected walletAccounts(): Promise<Array<string>> {
     return new Promise((resolve) => {
-      const acc = this.config.appkit.getAddress();
+      const acc = this.config.appkit.getAddress('solana');
       resolve(acc ? [acc] : []);
     });
   }
 
   protected getAccountAddress(): Maybe<string> {
-    return this.config.appkit.getAddress();
+    return this.config.appkit.getAddress('solana');
   }
 
   protected async getProviders(): Promise<ProviderDictionary> {

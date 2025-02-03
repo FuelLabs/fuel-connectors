@@ -37,7 +37,6 @@ export abstract class PredicateConnector extends FuelConnector {
   protected predicateAddress!: string;
   protected customPredicate: Maybe<PredicateConfig>;
   protected predicateAccount: Maybe<PredicateFactory> = null;
-  protected hasProviderSucceeded = true;
 
   private _predicateVersions!: Array<PredicateFactory>;
 
@@ -222,14 +221,7 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   public async ping(): Promise<boolean> {
-    this.getProviders()
-      .catch(() => {
-        this.hasProviderSucceeded = false;
-      })
-      .then(() => {
-        this.hasProviderSucceeded = true;
-      });
-    return this.hasProviderSucceeded;
+    return true;
   }
 
   public async version(): Promise<Version> {

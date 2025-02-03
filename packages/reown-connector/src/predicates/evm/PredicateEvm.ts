@@ -59,6 +59,8 @@ export class PredicateEvm extends PredicateConnector {
 
     this.customPredicate = config.predicateConfig || null;
 
+    // @TODO: We can replace it with appkit.switchNetwork()
+    // Which works better with some wallets.
     const wagmiConfig = this.getWagmiConfig();
     if (wagmiConfig._internal.syncConnectedChain !== false) {
       subscribeAndEnforceChain(wagmiConfig);
