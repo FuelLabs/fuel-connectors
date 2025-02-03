@@ -204,6 +204,10 @@ export class EVMWalletConnector extends PredicateConnector {
     return this.connected;
   }
 
+  public async emitConnect(): Promise<void> {
+    return Promise.resolve();
+  }
+
   public async disconnect(): Promise<boolean> {
     if (await this.isConnected()) {
       const { ethProvider } = await this.getProviders();

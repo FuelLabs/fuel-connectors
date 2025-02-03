@@ -39,8 +39,6 @@ export class TestPredicatedConnector extends PredicateConnector {
     throw new Error('Method not implemented.');
   }
 
-  protected requireConnection(): MaybeAsync<void> {}
-
   protected walletAccounts(): Promise<Array<string>> {
     return Promise.resolve([]);
   }
@@ -53,6 +51,10 @@ export class TestPredicatedConnector extends PredicateConnector {
   }
 
   public connect(): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
+  public emitConnect(): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
