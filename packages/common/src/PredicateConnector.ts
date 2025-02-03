@@ -85,7 +85,7 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   protected async getCurrentUserPredicate(): Promise<Maybe<PredicateFactory>> {
-    const oldFirstPredicateVersions = [...this.predicateVersions].reverse();
+    const oldFirstPredicateVersions = this.predicateVersions.reverse();
     for (const predicateInstance of oldFirstPredicateVersions) {
       const address = await this.getAccountAddress();
       if (!address) {
@@ -102,10 +102,6 @@ export abstract class PredicateConnector extends FuelConnector {
       }
     }
 
-    return null;
-  }
-
-  protected getNewestPredicate(): Maybe<PredicateFactory> {
     return this.predicateVersions[0];
   }
 
@@ -121,8 +117,7 @@ export abstract class PredicateConnector extends FuelConnector {
       return this.predicateAccount;
     }
 
-    const predicate =
-      (await this.getCurrentUserPredicate()) ?? this.getNewestPredicate();
+    const predicate = await this.getCurrentUserPredicate();
     if (!predicate) throw new Error('No predicate found');
 
     this.predicateAddress = predicate.getRoot();
