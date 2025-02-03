@@ -32,6 +32,7 @@ export interface EIP1193Provider extends EventEmitter {
 
 export type ProviderDictionary = {
   fuelProvider: FuelProvider;
+  ethProvider?: EIP1193Provider;
 };
 
 export type PreparedTransaction = {

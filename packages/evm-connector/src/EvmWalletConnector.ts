@@ -1,5 +1,4 @@
 import { hexToBytes } from '@ethereumjs/util';
-// External libraries
 import { hexlify, splitSignature } from '@ethersproject/bytes';
 
 import {
