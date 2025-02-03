@@ -137,53 +137,44 @@ export class ReownConnector extends FuelConnector {
     await this.config.appkit.open();
 
     return new Promise((resolve, reject) => {
-      this.config.appkit.subscribeAccount(async (account) => {
-        // User has just connected (this is a good approach to handle any chain)
-        // We need to update the predicate instance to the correct chain
-        // Since some wallets allow to switch between chains (e.g. Phantom)
-        if (account.address && account.address !== this.account) {
-          this.setPredicateInstance();
-          this.account = account.address;
+      const interval = setInterval(async () => {
+        const address = this.config.appkit.getAddress();
+        const isModalOpen = this.config.appkit.isOpen();
 
+        // Idle state
+        if (!isModalOpen && !address) {
+          this.isConnecting = false;
+          clearInterval(interval);
+          resolve(false);
+          return;
+        }
+
+        // Connected something
+        if (address && address !== this.account) {
+          this.setPredicateInstance();
           const connector = this.predicatesInstance[this.activeChain];
+          this.account = address;
 
           try {
             await connector.connect();
             await connector.emitConnect();
-            this.isConnecting = false;
             resolve(true);
           } catch (err) {
-            this.isConnecting = false;
             reject(err);
+          } finally {
+            this.isConnecting = false;
+            clearInterval(interval);
           }
         }
 
-        // User/wallet has disconnected during connection flow
-        if (!account.address && this.account) {
+        // Disconnected somehow
+        if (!address && this.account) {
           this.account = undefined;
           this.isConnecting = false;
+          clearInterval(interval);
           resolve(false);
-          return;
         }
-      });
-
-      // Just to monitoring close modal and connection is not established yet
-      // So we disable "connecting" state and allow user to connect again
-      const unsub = this.config.appkit.subscribeEvents((event) => {
-        switch (event.data.event) {
-          case 'MODAL_CLOSE':
-          case 'CONNECT_ERROR': {
-            if (this.account) {
-              return;
-            }
-
-            this.isConnecting = false;
-            resolve(false);
-            unsub?.();
-            break;
-          }
-        }
-      });
+      }, 300);
     });
   }
 

@@ -70,7 +70,8 @@ export class PredicateEvm extends PredicateConnector {
   public async emitConnect() {
     const address = this.config.appkit.getAddress('eip155');
     if (!address) return;
-    if (!(await this.accountHasValidation(address))) return;
+    const hasSignature = await this.accountHasValidation(address);
+    if (!hasSignature) return;
     await this.setupPredicate();
     this.emit(this.events.connection, true);
     this.emit(
@@ -136,8 +137,10 @@ export class PredicateEvm extends PredicateConnector {
   }
 
   public async connect(): Promise<boolean> {
-    // 1. Trigger signing step (only if needed – user might have signed already)
     const account = this.config.appkit.getAddress('eip155');
+    if (!account) return false;
+
+    // 1. Trigger signing step (only if needed – user might have signed already)
     const signatureState = await this.getAccountValidation(account);
     if (signatureState === 'idle') {
       this.storage.setItem(`SIGNATURE_VALIDATION_${account}`, 'pending');
@@ -178,7 +181,7 @@ export class PredicateEvm extends PredicateConnector {
       await this.requestSignature(account);
       return 'validated';
     } catch (err) {
-      this.disconnect();
+      await this.disconnect();
       throw err;
     }
   }
@@ -304,7 +307,7 @@ export class PredicateEvm extends PredicateConnector {
 
       return true;
     } catch (error) {
-      this.disconnect();
+      await this.disconnect();
       throw error;
     }
   }
