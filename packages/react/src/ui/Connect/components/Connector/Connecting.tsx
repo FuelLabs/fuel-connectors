@@ -6,12 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Spinner } from '../../../../icons/Spinner';
 import { isNativeConnector } from '../../../../utils/isNativeConnector';
 import { PREDICATE_DISCLAIMER_KEY } from '../PredicateAddressDisclaimer/PredicateAddressDisclaimer';
-import {
-  ETHEREUM_ICON,
-  REOWN_APPKIT_CONNECTION_STATUS,
-  SIGNATURE_PENDING_ERROR,
-} from './constants';
-import { REOWN_APPKIT_NAMESPACE } from './constants';
+import { ETHEREUM_ICON, SIGNATURE_PENDING_ERROR } from './constants';
 import {
   ConnectorButton,
   ConnectorButtonPrimary,
@@ -58,37 +53,12 @@ export function Connecting({ className }: ConnectorProps) {
       };
     }
 
-    const getCustomData = () => {
-      const appkit = window.localStorage.getItem(
-        REOWN_APPKIT_CONNECTION_STATUS,
-      );
-      const namespace = window.localStorage.getItem(REOWN_APPKIT_NAMESPACE);
-      const isAppkitConnected = appkit === 'connected';
-      const isSolanaNamespace = namespace === 'solana';
-
-      if (isAppkitConnected) {
-        return {
-          customName: isSolanaNamespace ? 'Solana Wallets' : 'Ethereum Wallets',
-          customMetadata: isSolanaNamespace
-            ? (connector?.metadata as ConnectorMetadata)
-            : ({
-                image: ETHEREUM_ICON,
-                ...connector?.metadata,
-              } as ConnectorMetadata),
-        };
-      }
-
-      return {
-        customName: actualName,
-        customMetadata: connector?.metadata as ConnectorMetadata,
-      };
-    };
-
-    const { customName, customMetadata } = getCustomData();
-
     return {
-      name: customName,
-      metadata: customMetadata,
+      name: 'Ethereum Wallets',
+      metadata: {
+        image: ETHEREUM_ICON,
+        ...connector?.metadata,
+      } as ConnectorMetadata,
       description:
         'Sign this message to prove you own this wallet and proceed. Canceling will disconnect you.',
       operation: 'signature',
