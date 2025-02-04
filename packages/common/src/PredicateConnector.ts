@@ -24,6 +24,7 @@ import type {
   Maybe,
   MaybeAsync,
   PredicateConfig,
+  PredicateCurrentState,
   PredicateVersion,
   PreparedTransaction,
   ProviderDictionary,
@@ -50,7 +51,7 @@ export abstract class PredicateConnector extends FuelConnector {
   ): Promise<string>;
   public abstract connect(): Promise<boolean>;
   public abstract disconnect(): Promise<boolean>;
-  public abstract emitConnect(): Promise<void>;
+  public abstract getCurrentState(): Promise<PredicateCurrentState>;
 
   protected abstract getWalletAdapter(): PredicateWalletAdapter;
   protected abstract getPredicateVersions(): Record<string, PredicateVersion>;

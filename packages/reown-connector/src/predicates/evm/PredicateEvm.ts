@@ -12,6 +12,7 @@ import {
   type FuelPredicateAddress,
   type Maybe,
   PredicateConnector,
+  type PredicateCurrentState,
   type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
@@ -58,21 +59,39 @@ export class PredicateEvm extends PredicateConnector {
     this.customPredicate = config.predicateConfig || null;
   }
 
-  public async emitConnect() {
+  public async getCurrentState(): Promise<PredicateCurrentState> {
     const address = this.config.appkit.getAddress('eip155');
-    if (!address) return;
+    if (!address) {
+      return {
+        connection: false,
+      };
+    }
+
     const hasSignature = await this.accountHasValidation(address);
-    if (!hasSignature) return;
+    if (!hasSignature) {
+      return {
+        connection: false,
+      };
+    }
     await this.setupPredicate();
-    this.emit(this.events.connection, true);
-    this.emit(
-      this.events.currentAccount,
-      this.predicateAccount?.getPredicateAddress(address),
-    );
-    this.emit(
-      this.events.accounts,
-      this.predicateAccount?.getPredicateAddresses(await this.walletAccounts()),
-    );
+
+    return {
+      connection: true,
+      account: this.predicateAccount?.getPredicateAddress(address),
+      accounts: this.predicateAccount?.getPredicateAddresses(
+        await this.walletAccounts(),
+      ),
+    };
+
+    // this.emit(this.events.connection, true);
+    // this.emit(
+    //   this.events.currentAccount,
+    //   this.predicateAccount?.getPredicateAddress(address),
+    // );
+    // this.emit(
+    //   this.events.accounts,
+    //   this.predicateAccount?.getPredicateAddresses(await this.walletAccounts()),
+    // );
   }
 
   protected getWalletAdapter(): PredicateWalletAdapter {

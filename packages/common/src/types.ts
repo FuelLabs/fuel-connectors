@@ -55,3 +55,9 @@ export type FuelPredicateAddress = {
     address: string;
   };
 };
+
+export type PredicateCurrentState = {
+  connection: boolean;
+  account?: string;
+  accounts?: string[];
+};

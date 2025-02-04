@@ -15,7 +15,7 @@ import {
   type TransactionRequestLike,
   type Version,
 } from 'fuels';
-import { REOWN_ICON, WINDOW } from './constants';
+import { HAS_WINDOW, REOWN_ICON, WINDOW } from './constants';
 import { PredicateEvm } from './predicates/evm/PredicateEvm';
 import { PredicateSvm } from './predicates/svm/PredicateSvm';
 import type {
@@ -68,6 +68,7 @@ export class ReownConnector extends FuelConnector {
   }
 
   private watchCurrentAccount() {
+    if (!HAS_WINDOW) return;
     this.config.appkit.subscribeAccount(async (account) => {
       // If we are already connecting, we don't want to do anything
       // This is mainly for reconnecting (e.g. page reload)
@@ -84,15 +85,35 @@ export class ReownConnector extends FuelConnector {
       }
 
       // Reconnecting
-      if (account.status === 'connected' && account.address !== this.account) {
+      if (
+        account.status === 'connected' &&
+        account.address &&
+        account.address !== this.account
+      ) {
         this.setPredicateInstance();
         this.account = account.address;
-        await this.predicatesInstance[this.activeChain].emitConnect();
+
+        const state =
+          await this.predicatesInstance[this.activeChain].getCurrentState();
+        this.emit(this.events.connection, state.connection);
+        this.emit(this.events.currentAccount, state.account);
+        this.emit(this.events.accounts, state.accounts);
+
+        // console.log('Reconnecting', this.account, account.address);
         return;
       }
 
       // Disconnecting
-      if (account.status === 'disconnected' && this.account) {
+      if (
+        account.status === 'disconnected' &&
+        this.account &&
+        this.account !== account.address
+      ) {
+        console.log(
+          'Disconnecting',
+          this.account,
+          this.config.appkit.getIsConnectedState(),
+        );
         this.account = undefined;
         this.emit(this.events.connection, false);
         this.emit(this.events.accounts, []);
@@ -127,7 +148,10 @@ export class ReownConnector extends FuelConnector {
       try {
         const connector = this.predicatesInstance[this.activeChain];
         const res = await connector.connect();
-        await connector.emitConnect();
+        const state = await connector.getCurrentState();
+        this.emit(this.events.connection, state.connection);
+        this.emit(this.events.currentAccount, state.account);
+        this.emit(this.events.accounts, state.accounts);
         this.isConnecting = false;
         return res;
       } catch (err) {
@@ -160,7 +184,10 @@ export class ReownConnector extends FuelConnector {
 
           try {
             await connector.connect();
-            await connector.emitConnect();
+            const state = await connector.getCurrentState();
+            this.emit(this.events.connection, state.connection);
+            this.emit(this.events.currentAccount, state.account);
+            this.emit(this.events.accounts, state.accounts);
             resolve(true);
           } catch (err) {
             reject(err);

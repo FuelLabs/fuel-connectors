@@ -2,6 +2,7 @@ import {
   type FuelPredicateAddress,
   type Maybe,
   PredicateConnector,
+  type PredicateCurrentState,
   type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
@@ -47,19 +48,23 @@ export class PredicateSvm extends PredicateConnector {
     this.fuelProvider = FuelProvider.create(network);
   }
 
-  public async emitConnect() {
+  public async getCurrentState(): Promise<PredicateCurrentState> {
     const address = this.config.appkit.getAddress('solana');
-    if (!address) return;
+    if (!address) {
+      return {
+        connection: false,
+      };
+    }
+
     await this.setupPredicate();
-    this.emit(this.events.connection, true);
-    this.emit(
-      this.events.currentAccount,
-      this.predicateAccount?.getPredicateAddress(address),
-    );
-    this.emit(
-      this.events.accounts,
-      this.predicateAccount?.getPredicateAddresses(await this.walletAccounts()),
-    );
+
+    return {
+      connection: true,
+      account: this.predicateAccount?.getPredicateAddress(address),
+      accounts: this.predicateAccount?.getPredicateAddresses(
+        await this.walletAccounts(),
+      ),
+    };
   }
 
   protected getWalletAdapter(): PredicateWalletAdapter {
