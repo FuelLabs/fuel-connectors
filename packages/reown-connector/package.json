@@ -16,8 +16,7 @@
   "scripts": {
     "build": "tsup --dts-only",
     "build:watch": "tsup --watch --dts-only",
-    "ts:check": "tsc --noEmit",
-    "test": "vitest"
+    "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
     "@reown/appkit": ">=1.6.5",
