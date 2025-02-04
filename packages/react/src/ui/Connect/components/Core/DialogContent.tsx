@@ -28,10 +28,10 @@ export const DialogContent = (props: Dialog.DialogContentProps) => {
       style={dialogContentStyle}
       {...props}
       className="fuel-connectors-dialog-content"
-      // Workaround to prevent closing dialog when interacting with WalletConnect Modal
+      // Workaround to prevent closing dialog when interacting with @reown/appkit Modal
       onPointerDownOutside={(e) => {
-        const walletConnectDialog = document.querySelector('w3m-modal');
-        if (walletConnectDialog?.classList.contains('open')) {
+        const reownAppkitModal = document.querySelector('w3m-modal');
+        if (reownAppkitModal?.classList.contains('open')) {
           e.preventDefault();
         }
       }}
