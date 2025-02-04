@@ -29,10 +29,7 @@ import {
   type TransactionRequestLike,
 } from 'fuels';
 import { stringToHex } from 'viem';
-import type { Config } from 'wagmi';
 import { SIGNATURE_VALIDATION_TIMEOUT } from './constants';
-import { isWagmiAdapter } from './isWagmiAdapter';
-import { subscribeAndEnforceChain } from './subscribeAndEnforceChain';
 import type { PredicateEvmConfig } from './types';
 
 export class PredicateEvm extends PredicateConnector {
@@ -59,13 +56,6 @@ export class PredicateEvm extends PredicateConnector {
     this.storage = storage;
 
     this.customPredicate = config.predicateConfig || null;
-
-    // @TODO: We can replace it with appkit.switchNetwork()
-    // Which works better with some wallets.
-    const wagmiConfig = this.getWagmiConfig();
-    if (wagmiConfig._internal.syncConnectedChain !== false) {
-      subscribeAndEnforceChain(wagmiConfig);
-    }
   }
 
   public async emitConnect() {
@@ -83,14 +73,6 @@ export class PredicateEvm extends PredicateConnector {
       this.events.accounts,
       this.predicateAccount?.getPredicateAddresses(await this.walletAccounts()),
     );
-  }
-
-  protected getWagmiConfig(): Config {
-    if (isWagmiAdapter(this.config.appkit.chainAdapters?.eip155)) {
-      return this.config.appkit.chainAdapters.eip155.wagmiConfig;
-    }
-
-    throw new Error('Wagmi adapter not found');
   }
 
   protected getWalletAdapter(): PredicateWalletAdapter {
