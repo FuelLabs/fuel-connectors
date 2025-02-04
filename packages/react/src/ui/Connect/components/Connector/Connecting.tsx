@@ -1,10 +1,17 @@
 import { Routes, useConnectUI } from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../Core/ConnectorIcon';
 
+import type { ConnectorMetadata } from 'fuels';
 import { useEffect, useMemo, useState } from 'react';
 import { Spinner } from '../../../../icons/Spinner';
 import { isNativeConnector } from '../../../../utils/isNativeConnector';
 import { PREDICATE_DISCLAIMER_KEY } from '../PredicateAddressDisclaimer/PredicateAddressDisclaimer';
+import {
+  ETHEREUM_ICON,
+  REOWN_APPKIT_CONNECTION_STATUS,
+  SIGNATURE_PENDING_ERROR,
+} from './constants';
+import { REOWN_APPKIT_NAMESPACE } from './constants';
 import {
   ConnectorButton,
   ConnectorButtonPrimary,
@@ -24,8 +31,6 @@ enum ConnectStep {
   SIGN = 'sign',
 }
 
-const SIGNATURE_PENDING_ERROR = 'Signature is pending';
-
 export function Connecting({ className }: ConnectorProps) {
   const {
     error,
@@ -40,22 +45,56 @@ export function Connecting({ className }: ConnectorProps) {
     ConnectStep.CONNECT,
   );
 
-  const { description, operation, cta } = useMemo(() => {
+  const { name, description, operation, cta, metadata } = useMemo(() => {
+    const actualName = connector?.name || 'Unknown';
+
     if (connectStep === ConnectStep.CONNECT) {
       return {
+        name: actualName,
+        metadata: connector?.metadata as ConnectorMetadata,
         description: `Click on the button below to connect to ${location.origin}.`,
         operation: 'connection',
         cta: 'Connect',
       };
     }
 
+    const getCustomData = () => {
+      const appkit = window.localStorage.getItem(
+        REOWN_APPKIT_CONNECTION_STATUS,
+      );
+      const namespace = window.localStorage.getItem(REOWN_APPKIT_NAMESPACE);
+      const isAppkitConnected = appkit === 'connected';
+      const isSolanaNamespace = namespace === 'solana';
+
+      if (isAppkitConnected) {
+        return {
+          customName: isSolanaNamespace ? 'Solana Wallets' : 'Ethereum Wallets',
+          customMetadata: isSolanaNamespace
+            ? (connector?.metadata as ConnectorMetadata)
+            : ({
+                image: ETHEREUM_ICON,
+                ...connector?.metadata,
+              } as ConnectorMetadata),
+        };
+      }
+
+      return {
+        customName: actualName,
+        customMetadata: connector?.metadata as ConnectorMetadata,
+      };
+    };
+
+    const { customName, customMetadata } = getCustomData();
+
     return {
+      name: customName,
+      metadata: customMetadata,
       description:
         'Sign this message to prove you own this wallet and proceed. Canceling will disconnect you.',
       operation: 'signature',
       cta: 'Sign',
     };
-  }, [connectStep]);
+  }, [connector, connectStep]);
 
   const disableError = useMemo<boolean>(() => {
     return Boolean(error?.message.includes(SIGNATURE_PENDING_ERROR));
@@ -94,17 +133,17 @@ export function Connecting({ className }: ConnectorProps) {
     <div className={className}>
       <ConnectorImage>
         <ConnectorIcon
-          connectorMetadata={connector.metadata}
-          connectorName={connector.name}
+          connectorMetadata={metadata}
+          connectorName={name}
           size={100}
           theme={theme}
         />
       </ConnectorImage>
       <ConnectorContent>
-        <ConnectorTitle>{connector.name}</ConnectorTitle>
+        <ConnectorTitle>{name}</ConnectorTitle>
         {isConnecting ? (
           <ConnectorDescription>
-            Requesting {operation} to <br /> {connector.name}.
+            Requesting {operation} to <br /> {name}.
           </ConnectorDescription>
         ) : (
           <ConnectorDescription>{description}</ConnectorDescription>
