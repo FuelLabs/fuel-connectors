@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@fuel-connectors/fuel-wallet": "workspace:*",
+    "bech32": "2.0.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5",
     "undici": "6.16.0",
