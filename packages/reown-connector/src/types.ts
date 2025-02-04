@@ -16,3 +16,8 @@ export type ReownConnectorConfig = {
 
 export type ReownChain = 'ethereum' | 'solana';
 export type PredicatesInstance = Record<ReownChain, PredicateConnector>;
+
+export type GetFuelPredicateAddressesParams = {
+  address: string;
+  chain: ReownChain;
+};

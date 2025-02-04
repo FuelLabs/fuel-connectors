@@ -20,6 +20,7 @@ import {
 import { PredicateFactory, getMockedSignatureIndex } from './PredicateFactory';
 import type { PredicateWalletAdapter } from './PredicateWalletAdapter';
 import type {
+  FuelPredicateAddress,
   Maybe,
   MaybeAsync,
   PredicateConfig,
@@ -299,5 +300,11 @@ export abstract class PredicateConnector extends FuelConnector {
 
   public async hasAbi(_contractId: string): Promise<boolean> {
     throw Error('A predicate account cannot have an ABI');
+  }
+
+  public static getFuelPredicateAddresses(
+    _address: string,
+  ): FuelPredicateAddress[] {
+    throw new Error('Method not implemented.');
   }
 }

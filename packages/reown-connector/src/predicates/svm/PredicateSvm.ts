@@ -1,4 +1,5 @@
 import {
+  type FuelPredicateAddress,
   type Maybe,
   PredicateConnector,
   type PredicateVersion,
@@ -159,7 +160,7 @@ export class PredicateSvm extends PredicateConnector {
     };
   }
 
-  static getFuelPredicateAddresses(svmAddress: string) {
+  static getFuelPredicateAddresses(svmAddress: string): FuelPredicateAddress[] {
     const predicateConfig = Object.entries(PREDICATE_VERSIONS)
       .sort(([, a], [, b]) => b.generatedAt - a.generatedAt)
       .map(([svmPredicateAddress, { predicate, generatedAt }]) => ({
@@ -178,7 +179,7 @@ export class PredicateSvm extends PredicateConnector {
           signerAddress: address,
           predicate: { abi, bin },
         }),
-        svmPredicate,
+        predicate: svmPredicate,
       }),
     );
 

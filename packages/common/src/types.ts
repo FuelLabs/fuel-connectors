@@ -47,3 +47,11 @@ export type SignedMessageCustomCurve = {
   curve: string;
   signature: string;
 };
+
+export type FuelPredicateAddress = {
+  fuelAddress: string;
+  predicate: {
+    generatedAt: number;
+    address: string;
+  };
+};

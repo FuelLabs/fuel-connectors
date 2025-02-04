@@ -9,6 +9,7 @@ import { hexlify, splitSignature } from '@ethersproject/bytes';
 import {
   type EIP1193Provider,
   EthereumWalletAdapter,
+  type FuelPredicateAddress,
   type Maybe,
   PredicateConnector,
   type PredicateVersion,
@@ -328,7 +329,7 @@ export class PredicateEvm extends PredicateConnector {
     };
   }
 
-  static getFuelPredicateAddresses(ethAddress: string) {
+  static getFuelPredicateAddresses(ethAddress: string): FuelPredicateAddress[] {
     const predicateConfig = Object.entries(PREDICATE_VERSIONS)
       .sort(([, a], [, b]) => b.generatedAt - a.generatedAt)
       .map(([evmPredicateAddress, { predicate, generatedAt }]) => ({
@@ -347,7 +348,7 @@ export class PredicateEvm extends PredicateConnector {
           signerAddress: address,
           predicate: { abi, bin },
         }),
-        evmPredicate,
+        predicate: evmPredicate,
       }),
     );
 

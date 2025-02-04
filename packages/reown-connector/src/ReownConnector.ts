@@ -1,10 +1,7 @@
 import {
   CONNECTOR_KEY,
-  EthereumWalletAdapter,
   type PredicateConnector,
-  getFuelPredicateAddresses,
 } from '@fuel-connectors/common';
-import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
 import {
   type Asset,
   type ConnectorMetadata,
@@ -22,7 +19,11 @@ import { WINDOW } from './constants';
 import { PredicateEvm } from './predicates/evm/PredicateEvm';
 import { ETHEREUM_ICON } from './predicates/evm/constants';
 import { PredicateSvm } from './predicates/svm/PredicateSvm';
-import type { ReownChain, ReownConnectorConfig } from './types';
+import type {
+  GetFuelPredicateAddressesParams,
+  ReownChain,
+  ReownConnectorConfig,
+} from './types';
 
 export class ReownConnector extends FuelConnector {
   name = 'Ethereum / Solana Wallets';
@@ -259,31 +260,14 @@ export class ReownConnector extends FuelConnector {
    * Predicate Utilities
    * ============================================================
    */
-  // @TODO: Put back solana fuel predicate address
-  // Receive address + chain name (ethereum or solana)
-  static getFuelPredicateAddresses(ethAddress: string) {
-    const predicateConfig = Object.entries(PREDICATE_VERSIONS)
-      .sort(([, a], [, b]) => b.generatedAt - a.generatedAt)
-      .map(([evmPredicateAddress, { predicate, generatedAt }]) => ({
-        abi: predicate.abi,
-        bin: predicate.bin,
-        evmPredicate: {
-          generatedAt,
-          address: evmPredicateAddress,
-        },
-      }));
+  public static getFuelPredicateAddresses({
+    address,
+    chain,
+  }: GetFuelPredicateAddressesParams) {
+    if (chain === 'ethereum') {
+      return PredicateEvm.getFuelPredicateAddresses(address);
+    }
 
-    const address = new EthereumWalletAdapter().convertAddress(ethAddress);
-    const predicateAddresses = predicateConfig.map(
-      ({ abi, bin, evmPredicate }) => ({
-        fuelAddress: getFuelPredicateAddresses({
-          signerAddress: address,
-          predicate: { abi, bin },
-        }),
-        evmPredicate,
-      }),
-    );
-
-    return predicateAddresses;
+    return PredicateSvm.getFuelPredicateAddresses(address);
   }
 }
