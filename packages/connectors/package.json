@@ -23,6 +23,14 @@
     "viem": ">=2.22.17",
     "wagmi": ">=2.14.9"
   },
+  "peerDependenciesMeta": {
+    "@reown/appkit": {
+      "optional": true
+    },
+    "wagmi": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
