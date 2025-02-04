@@ -30,7 +30,7 @@ import {
 } from 'fuels';
 import { stringToHex } from 'viem';
 import type { Config } from 'wagmi';
-import { ETHEREUM_ICON, SIGNATURE_VALIDATION_TIMEOUT } from './constants';
+import { SIGNATURE_VALIDATION_TIMEOUT } from './constants';
 import { isWagmiAdapter } from './isWagmiAdapter';
 import { subscribeAndEnforceChain } from './subscribeAndEnforceChain';
 import type { PredicateEvmConfig } from './types';
@@ -40,11 +40,11 @@ export class PredicateEvm extends PredicateConnector {
   installed = true;
   events = FuelConnectorEventTypes;
   metadata: ConnectorMetadata = {
-    image: ETHEREUM_ICON,
+    image: '',
     install: {
-      action: 'Install',
-      description: 'Install Ethereum Wallet to connect to Fuel',
-      link: 'https://ethereum.org/en/wallets/find-wallet/',
+      action: '',
+      description: '',
+      link: '',
     },
   };
 

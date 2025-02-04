@@ -15,9 +15,8 @@ import {
   type TransactionRequestLike,
   type Version,
 } from 'fuels';
-import { WINDOW } from './constants';
+import { REOWN_ICON, WINDOW } from './constants';
 import { PredicateEvm } from './predicates/evm/PredicateEvm';
-import { ETHEREUM_ICON } from './predicates/evm/constants';
 import { PredicateSvm } from './predicates/svm/PredicateSvm';
 import type {
   GetFuelPredicateAddressesParams,
@@ -30,11 +29,11 @@ export class ReownConnector extends FuelConnector {
   installed = true;
   events = FuelConnectorEventTypes;
   metadata: ConnectorMetadata = {
-    image: ETHEREUM_ICON, // @TODO: Put a better icon to match Solana and ETH
+    image: REOWN_ICON,
     install: {
-      action: 'Install',
-      description: 'Install Ethereum or Solana Wallet to connect to Fuel',
-      link: 'https://ethereum.org/en/wallets/find-wallet/', // @TODO: Put a better link
+      action: '',
+      description: '',
+      link: '',
     },
   };
 

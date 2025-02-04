@@ -21,7 +21,6 @@ import {
   hexlify,
   toUtf8Bytes,
 } from 'fuels';
-import { SOLANA_ICON } from './constants';
 import type { PredicateSvmConfig } from './types';
 import { type SolanaPredicateRoot, txIdEncoders } from './utils';
 
@@ -29,11 +28,10 @@ export class PredicateSvm extends PredicateConnector {
   name = 'Solana Wallets';
   events = FuelConnectorEventTypes;
   metadata: ConnectorMetadata = {
-    image: SOLANA_ICON,
     install: {
-      action: 'Install',
-      description: 'Install Solana Wallet to connect to Fuel',
-      link: 'https://solana.com/ecosystem/explore?categories=wallet',
+      action: '',
+      description: '',
+      link: '',
     },
   };
 
