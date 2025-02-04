@@ -12,12 +12,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type React from 'react';
-import {
-  type State,
-  cookieStorage,
-  cookieToInitialState,
-  createStorage,
-} from 'wagmi';
+import { cookieStorage, cookieToInitialState, createStorage } from 'wagmi';
 import { ConnectProvider } from './ConnectProvider';
 import { FuelProviders } from './FuelProviders';
 
