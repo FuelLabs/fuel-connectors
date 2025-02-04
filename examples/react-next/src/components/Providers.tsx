@@ -1,5 +1,5 @@
 'use client';
-import { APP, DEFAULT_WAGMI_CONFIG, TRANSPORTS } from '@/config/config';
+import { APP, TRANSPORTS } from '@/config/config';
 import { generateETHConnectors } from '@/utils/connectors';
 import { createAppKit } from '@reown/appkit';
 import { SolanaAdapter } from '@reown/appkit-adapter-solana';
@@ -12,7 +12,12 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type React from 'react';
-import type { State } from 'wagmi';
+import {
+  type State,
+  cookieStorage,
+  cookieToInitialState,
+  createStorage,
+} from 'wagmi';
 import { ConnectProvider } from './ConnectProvider';
 import { FuelProviders } from './FuelProviders';
 
@@ -24,10 +29,11 @@ const solanaWeb3JsAdapter = new SolanaAdapter();
 const wagmiAdapter = new WagmiAdapter({
   networks,
   transports: TRANSPORTS,
-  syncConnectedChain: true,
   projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID as string,
   connectors: generateETHConnectors(APP.name),
-  storage: DEFAULT_WAGMI_CONFIG.storage,
+  storage: createStorage({
+    storage: cookieStorage,
+  }),
   ssr: true,
 });
 
@@ -45,17 +51,21 @@ const appkit = createAppKit({
   },
 });
 
+const wagmiConfig = wagmiAdapter.wagmiConfig;
+
 interface ProvidersProps {
   children: React.ReactNode;
-  initialState?: State;
+  cookie: string | null;
 }
 
-export function Providers({ children, initialState }: ProvidersProps) {
+export function Providers({ children, cookie }: ProvidersProps) {
+  const wagmiInitialState = cookieToInitialState(wagmiConfig, cookie);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ConnectProvider
-        wagmiConfig={DEFAULT_WAGMI_CONFIG}
-        wagmiInitialState={initialState}
+        wagmiConfig={wagmiConfig}
+        wagmiInitialState={wagmiInitialState}
       >
         <FuelProviders appkit={appkit}>{children}</FuelProviders>
       </ConnectProvider>
