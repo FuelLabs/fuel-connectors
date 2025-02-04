@@ -16,7 +16,7 @@ type DefaultConnectors = {
   devMode?: boolean;
   wcProjectId?: string;
   burnerWalletConfig?: BurnerWalletConfig;
-  appkit: AppKit;
+  appkit?: AppKit;
   chainId?: number;
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
 };
@@ -33,13 +33,18 @@ export function defaultConnectors({
     new FuelWalletConnector(),
     new BakoSafeConnector(),
     new FueletWalletConnector(),
-    new ReownConnector({
-      projectId: wcProjectId,
-      appkit,
-      chainId,
-      fuelProvider,
-    }),
   ];
+
+  if (appkit) {
+    connectors.push(
+      new ReownConnector({
+        projectId: wcProjectId,
+        appkit,
+        chainId,
+        fuelProvider,
+      }),
+    );
+  }
 
   if (devMode) {
     connectors.push(
