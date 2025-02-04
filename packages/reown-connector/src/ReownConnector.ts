@@ -119,7 +119,10 @@ export class ReownConnector extends FuelConnector {
     this.isConnecting = true;
 
     // If we already have an account, we don't need to open the appkit modal
-    if (this.config.appkit.getAddress()) {
+    if (
+      this.config.appkit.getAddress() &&
+      this.config.appkit.getIsConnectedState()
+    ) {
       this.setPredicateInstance();
       try {
         const connector = this.predicatesInstance[this.activeChain];
