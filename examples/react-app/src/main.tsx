@@ -30,7 +30,6 @@ import { createAppKit } from '@reown/appkit';
 import { SolanaAdapter } from '@reown/appkit-adapter-solana';
 
 const queryClient = new QueryClient();
-const isDev = process.env.NODE_ENV === 'development';
 
 // ============================================================
 // ReOwn Custom Connectors configurations
@@ -162,7 +161,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <ScreenSizeIndicator />
       </FuelProvider>
 
-      {isDev && <ReactQueryDevtools initialIsOpen={false} />}
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </React.StrictMode>,
 );

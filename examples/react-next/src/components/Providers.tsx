@@ -10,6 +10,7 @@ import {
   solanaTestnet,
 } from '@reown/appkit/networks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type React from 'react';
 import type { State } from 'wagmi';
 import { ConnectProvider } from './ConnectProvider';
@@ -58,6 +59,8 @@ export function Providers({ children, initialState }: ProvidersProps) {
       >
         <FuelProviders appkit={appkit}>{children}</FuelProviders>
       </ConnectProvider>
+
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

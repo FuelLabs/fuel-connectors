@@ -1,15 +1,8 @@
 import { Providers } from '@/components/Providers';
-import { APP, DEFAULT_WAGMI_CONFIG, TRANSPORTS } from '@/config/config';
-import { generateETHConnectors } from '@/utils/connectors';
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
-import {
-  type AppKitNetwork,
-  sepolia,
-  solanaTestnet,
-} from '@reown/appkit/networks';
+import { DEFAULT_WAGMI_CONFIG } from '@/config/config';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
-import { cookieStorage, cookieToInitialState, createStorage } from 'wagmi';
+import { cookieToInitialState } from 'wagmi';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
