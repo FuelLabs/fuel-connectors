@@ -82,16 +82,6 @@ export class PredicateEvm extends PredicateConnector {
         await this.walletAccounts(),
       ),
     };
-
-    // this.emit(this.events.connection, true);
-    // this.emit(
-    //   this.events.currentAccount,
-    //   this.predicateAccount?.getPredicateAddress(address),
-    // );
-    // this.emit(
-    //   this.events.accounts,
-    //   this.predicateAccount?.getPredicateAddresses(await this.walletAccounts()),
-    // );
   }
 
   protected getWalletAdapter(): PredicateWalletAdapter {
