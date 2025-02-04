@@ -16,6 +16,7 @@ import {
   type Maybe,
   type MaybeAsync,
   PredicateConnector,
+  type PredicateCurrentState,
   type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
@@ -204,8 +205,16 @@ export class EVMWalletConnector extends PredicateConnector {
     return this.connected;
   }
 
-  public async emitConnect(): Promise<void> {
-    return Promise.resolve();
+  public async getCurrentState(): Promise<PredicateCurrentState> {
+    const connection = await this.isConnected();
+    const account = this._currentAccount;
+    const accounts = await this.accounts();
+
+    return {
+      connection,
+      account: account || undefined,
+      accounts,
+    };
   }
 
   public async disconnect(): Promise<boolean> {

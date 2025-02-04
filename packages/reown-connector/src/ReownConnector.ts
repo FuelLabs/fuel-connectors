@@ -98,8 +98,6 @@ export class ReownConnector extends FuelConnector {
         this.emit(this.events.connection, state.connection);
         this.emit(this.events.currentAccount, state.account);
         this.emit(this.events.accounts, state.accounts);
-
-        // console.log('Reconnecting', this.account, account.address);
         return;
       }
 
@@ -109,11 +107,6 @@ export class ReownConnector extends FuelConnector {
         this.account &&
         this.account !== account.address
       ) {
-        console.log(
-          'Disconnecting',
-          this.account,
-          this.config.appkit.getIsConnectedState(),
-        );
         this.account = undefined;
         this.emit(this.events.connection, false);
         this.emit(this.events.accounts, []);

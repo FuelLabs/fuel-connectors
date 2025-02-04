@@ -50,7 +50,6 @@ export default function PageContent() {
         <button
           type="button"
           onClick={() => {
-            console.log('connect');
             connect();
           }}
         >

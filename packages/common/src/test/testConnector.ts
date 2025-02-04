@@ -4,6 +4,7 @@ import {
   type Maybe,
   type MaybeAsync,
   PredicateConnector,
+  type PredicateCurrentState,
   type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
@@ -54,7 +55,7 @@ export class TestPredicatedConnector extends PredicateConnector {
     throw new Error('Method not implemented.');
   }
 
-  public emitConnect(): Promise<void> {
+  public getCurrentState(): Promise<PredicateCurrentState> {
     throw new Error('Method not implemented.');
   }
 
