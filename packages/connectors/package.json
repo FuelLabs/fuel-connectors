@@ -20,14 +20,10 @@
   "peerDependencies": {
     "@reown/appkit": ">=1.6.5",
     "fuels": ">=0.96.1",
-    "viem": ">=2.22.17",
-    "wagmi": ">=2.14.9"
+    "viem": ">=2.22.17"
   },
   "peerDependenciesMeta": {
     "@reown/appkit": {
-      "optional": true
-    },
-    "wagmi": {
       "optional": true
     }
   },

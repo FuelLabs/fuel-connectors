@@ -689,9 +689,6 @@ importers:
       '@reown/appkit':
         specifier: 1.6.5
         version: 1.6.5(@types/react@18.3.1)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
-      '@reown/appkit-adapter-wagmi':
-        specifier: 1.6.5
-        version: 1.6.5(fmcmju7em7ae3mdbrfr7tw3t3e)
       '@reown/appkit-utils':
         specifier: 1.6.5
         version: 1.6.5(@types/react@18.3.1)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(valtio@1.11.2(@types/react@18.3.1)(react@18.3.1))(zod@3.22.4)
@@ -722,9 +719,6 @@ importers:
       viem:
         specifier: 2.22.17
         version: 2.22.17(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
-      wagmi:
-        specifier: 2.14.9
-        version: 2.14.9(@tanstack/query-core@5.35.1)(@tanstack/react-query@5.35.1(react@18.3.1))(@types/react@18.3.1)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.22.17(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
 
   packages/svm-predicates:
     devDependencies:
