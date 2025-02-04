@@ -1,5 +1,5 @@
 import type { BN } from 'fuels';
-import React, { createContext, useContext, type ReactNode } from 'react';
+import { type ReactNode, createContext, useContext } from 'react';
 
 interface Config {
   explorerUrl: string;

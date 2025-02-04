@@ -4,16 +4,15 @@ import { FuelProvider } from '@fuels/react';
 import { createAppKit } from '@reown/appkit';
 import { SolanaAdapter } from '@reown/appkit-adapter-solana';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
-import { type AppKitNetwork, solanaTestnet } from '@reown/appkit/networks';
-import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
-import { http, createConfig, injected } from '@wagmi/core';
-import { mainnet, sepolia } from '@wagmi/core/chains';
+import { type AppKitNetwork, mainnet, sepolia } from '@reown/appkit/networks';
 import { CHAIN_IDS, Provider, bn } from 'fuels';
 import App from 'react-app/src/App';
 import { ConfigProvider } from 'react-app/src/context/ConfigContext';
 import COUNTER_CONTRACT_ID_LOCAL from 'react-app/src/types/contract-ids-local.json';
 import COUNTER_CONTRACT_ID_MAINNET from 'react-app/src/types/contract-ids-mainnet.json';
 import COUNTER_CONTRACT_ID_TESTNET from 'react-app/src/types/contract-ids-testnet.json';
+import { http } from 'wagmi';
+import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors';
 
 const CHAIN_ID_NAME = process.env
   .NEXT_PUBLIC_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel;
@@ -58,7 +57,7 @@ const NETWORKS = [
 
 const WC_PROJECT_ID = process.env.NEXT_PUBLIC_WC_PROJECT_ID || '';
 
-const networks: [AppKitNetwork, ...AppKitNetwork[]] = [sepolia, solanaTestnet];
+const networks: [AppKitNetwork, ...AppKitNetwork[]] = [sepolia, mainnet];
 
 const solanaWeb3JsAdapter = new SolanaAdapter();
 const wagmiAdapter = new WagmiAdapter({
