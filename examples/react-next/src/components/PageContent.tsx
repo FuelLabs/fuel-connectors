@@ -36,16 +36,7 @@ export default function PageContent() {
 
   return (
     <div>
-      <button
-        type="button"
-        onClick={() => {
-          console.log('connect');
-          connect();
-        }}
-      >
-        {isConnecting ? 'Connecting' : 'Connect'}
-      </button>
-      {isConnected && (
+      {isConnected ? (
         <button
           type="button"
           onClick={() => {
@@ -54,6 +45,16 @@ export default function PageContent() {
           }}
         >
           Disconnect
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={() => {
+            console.log('connect');
+            connect();
+          }}
+        >
+          {isConnecting ? 'Connecting' : 'Connect'}
         </button>
       )}
 

@@ -14,7 +14,6 @@
     "@reown/appkit-adapter-solana": "1.6.5",
     "@reown/appkit-adapter-wagmi": "1.6.5",
     "@tanstack/react-query": "5.35.1",
-    "connectkit": "1.8.2",
     "fuels": "0.96.1",
     "next": "14.2.22",
     "react": "18.3.1",

@@ -1,6 +1,5 @@
 'use client';
 
-import { ConnectKitProvider } from 'connectkit';
 import type { ReactNode } from 'react';
 import type { Config, State } from 'wagmi';
 
@@ -19,7 +18,7 @@ export function ConnectProvider({
 }: ProvidersProps) {
   return (
     <WagmiProvider config={wagmiConfig} initialState={wagmiInitialState}>
-      <ConnectKitProvider>{children}</ConnectKitProvider>
+      {children}
     </WagmiProvider>
   );
 }
