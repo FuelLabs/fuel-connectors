@@ -287,7 +287,7 @@ export class EVMWalletConnector extends PredicateConnector {
 
   private encodeTxId(txId: string): string {
     if (!this.isValidPredicateAddress(this.predicateAddress)) {
-      throw new Error(`Unknown predicate root ${this.predicateAddress}`);
+      return txId;
     }
 
     const encoder = txIdEncoders[this.predicateAddress];
