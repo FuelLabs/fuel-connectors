@@ -57,7 +57,7 @@ const NETWORKS = [
 
 const WC_PROJECT_ID = process.env.NEXT_PUBLIC_WC_PROJECT_ID || '';
 
-const networks: [AppKitNetwork, ...AppKitNetwork[]] = [sepolia, mainnet];
+const networks: [AppKitNetwork, ...AppKitNetwork[]] = [mainnet, sepolia];
 
 const solanaWeb3JsAdapter = new SolanaAdapter();
 const wagmiAdapter = new WagmiAdapter({
