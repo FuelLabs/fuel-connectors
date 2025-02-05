@@ -48,7 +48,11 @@ import {
   WINDOW,
 } from './constants';
 import type { CustomCurrentConnectorEvent, WalletConnectConfig } from './types';
-import { subscribeAndEnforceChain } from './utils';
+import {
+  type EvmPredicateRoot,
+  subscribeAndEnforceChain,
+  txIdEncoders,
+} from './utils';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
 export class WalletConnectConnector extends PredicateConnector {
@@ -406,11 +410,10 @@ export class WalletConnectConnector extends PredicateConnector {
     const { ethProvider, fuelProvider } = await this.getProviders();
     const { request, transactionId, account, transactionRequest } =
       await this.prepareTransaction(address, transaction);
-    const messageBytes = new TextEncoder().encode(transactionId.slice(2));
-    const utf8TxId = hexlify(messageBytes);
+    const txId = this.encodeTxId(transactionId);
     const signature = (await ethProvider?.request({
       method: 'personal_sign',
-      params: [utf8TxId, account],
+      params: [txId, account],
     })) as string;
 
     const predicateSignatureIndex = getMockedSignatureIndex(
@@ -431,6 +434,21 @@ export class WalletConnectConnector extends PredicateConnector {
     });
 
     return response.submit.id;
+  }
+
+  private isValidPredicateAddress(
+    address: string,
+  ): address is EvmPredicateRoot {
+    return address in txIdEncoders;
+  }
+
+  private encodeTxId(txId: string): string {
+    if (!this.isValidPredicateAddress(this.predicateAddress)) {
+      throw new Error(`Unknown predicate root ${this.predicateAddress}`);
+    }
+
+    const encoder = txIdEncoders[this.predicateAddress];
+    return encoder.encodeTxId(txId);
   }
 
   private validateSignature(
