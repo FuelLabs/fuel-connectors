@@ -28,7 +28,7 @@ import {
   PREDICATE_VERSIONS,
   txIdEncoders,
 } from '@fuel-connectors/evm-predicates';
-import { METAMASK_ICON, TESTNET_URL, WINDOW } from './constants';
+import { METAMASK_ICON, WINDOW } from './constants';
 import {
   type EIP1193Provider,
   type EVMWalletConnectorConfig,
