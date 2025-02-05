@@ -38,7 +38,11 @@ import {
   getOrThrow,
   getProviderUrl,
 } from '@fuel-connectors/common';
-import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
+import {
+  type EvmPredicateRoot,
+  PREDICATE_VERSIONS,
+  txIdEncoders,
+} from '@fuel-connectors/evm-predicates';
 import { ApiController } from '@web3modal/core';
 import { stringToHex } from 'viem';
 import {
@@ -48,11 +52,7 @@ import {
   WINDOW,
 } from './constants';
 import type { CustomCurrentConnectorEvent, WalletConnectConfig } from './types';
-import {
-  type EvmPredicateRoot,
-  subscribeAndEnforceChain,
-  txIdEncoders,
-} from './utils';
+import { subscribeAndEnforceChain } from './utils';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
 export class WalletConnectConnector extends PredicateConnector {

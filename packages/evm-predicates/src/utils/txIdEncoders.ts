@@ -1,5 +1,5 @@
-import type { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
 import { stringToHex } from 'viem';
+import type { PREDICATE_VERSIONS } from '../generated';
 
 export type EvmPredicateRoot = keyof typeof PREDICATE_VERSIONS;
 
