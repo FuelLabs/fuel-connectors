@@ -12,7 +12,7 @@
   },
   "peerDependencies": {
     "fuels": ">=0.94.0",
-    "viem": ">=2.20.1"
+    "viem": ">=2.22.17"
   },
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",
@@ -20,6 +20,6 @@
     "fuels": "0.96.1",
     "tsx": "4.9.3",
     "typescript": "5.4.5",
-    "viem": "2.20.1"
+    "viem": "2.22.17"
   }
 }
