@@ -23,7 +23,6 @@ import {
   toUtf8Bytes,
 } from 'fuels';
 import type { PredicateSvmConfig } from './types';
-import { type SolanaPredicateRoot, txIdEncoders } from './utils';
 
 export class PredicateSvm extends PredicateConnector {
   name = 'Solana Wallets';
@@ -102,19 +101,9 @@ export class PredicateSvm extends PredicateConnector {
     return false;
   }
 
-  private isValidPredicateAddress(
-    address: string,
-  ): address is SolanaPredicateRoot {
-    return address in txIdEncoders;
-  }
-
-  private async encodeTxId(txId: string): Promise<Uint8Array> {
-    if (!this.isValidPredicateAddress(this.predicateAddress)) {
-      throw new Error(`Unknown predicate address ${this.predicateAddress}`);
-    }
-
-    const encoder = txIdEncoders[this.predicateAddress];
-    return encoder.encodeTxId(txId);
+  private encodeTxId(txId: string): Uint8Array {
+    const txIdNo0x = txId.slice(2);
+    return new TextEncoder().encode(txIdNo0x);
   }
 
   public async sendTransaction(
@@ -128,7 +117,7 @@ export class PredicateSvm extends PredicateConnector {
       transactionRequest.witnesses,
     );
 
-    const txId = await this.encodeTxId(transactionId);
+    const txId = this.encodeTxId(transactionId);
     const provider: Maybe<SolanaProvider> =
       this.config.appkit.getWalletProvider() as SolanaProvider;
     if (!provider) {

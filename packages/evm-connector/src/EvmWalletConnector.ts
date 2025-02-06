@@ -24,7 +24,11 @@ import {
   getOrThrow,
   getProviderUrl,
 } from '@fuel-connectors/common';
-import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
+import {
+  type EvmPredicateRoot,
+  PREDICATE_VERSIONS,
+  txIdEncoders,
+} from '@fuel-connectors/evm-predicates';
 import { METAMASK_ICON, WINDOW } from './constants';
 import {
   type EVMWalletConnectorConfig,
@@ -246,9 +250,10 @@ export class EVMWalletConnector extends PredicateConnector {
     const { request, transactionId, account, transactionRequest } =
       await this.prepareTransaction(address, transaction);
 
+    const txId = this.encodeTxId(transactionId);
     const signature = (await ethProvider?.request({
       method: 'personal_sign',
-      params: [transactionId, account],
+      params: [txId, account],
     })) as string;
 
     const predicateSignatureIndex = getMockedSignatureIndex(
@@ -284,5 +289,20 @@ export class EVMWalletConnector extends PredicateConnector {
       curve: 'secp256k1',
       signature: signature as string,
     };
+  }
+
+  private isValidPredicateAddress(
+    address: string,
+  ): address is EvmPredicateRoot {
+    return address in txIdEncoders;
+  }
+
+  private encodeTxId(txId: string): string {
+    if (!this.isValidPredicateAddress(this.predicateAddress)) {
+      return txId;
+    }
+
+    const encoder = txIdEncoders[this.predicateAddress];
+    return encoder.encodeTxId(txId);
   }
 }

@@ -9,6 +9,10 @@ An object containing:
 - `provider`: The provider data or `null`.
 - [`...queryProps`](https://tanstack.com/query/latest/docs/framework/react/reference/useQuery): Destructured properties from `useQuery` result.
 
+| Name | Type |
+| :------ | :------ |
+| `provider` | `undefined` \| `default` |
+
 #### Examples
 
 To get the current provider:
