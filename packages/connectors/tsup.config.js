@@ -14,7 +14,7 @@ export default defineConfig((options) => ({
     '@fuel-connectors/reown-connector',
     '@fuel-connectors/bako-safe',
   ],
-  minify: 'terser',
+  minify: false,
   dts: {
     resolve: [
       '@fuel-connectors/fuel-development-wallet',
@@ -26,6 +26,6 @@ export default defineConfig((options) => ({
       '@fuel-connectors/bako-safe',
     ],
   },
-  splitting: true,
-  metafile: true,
+  splitting: false,
+  metafile: false,
 }));
