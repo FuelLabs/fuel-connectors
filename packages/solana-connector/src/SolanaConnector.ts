@@ -39,6 +39,7 @@ export class SolanaConnector extends PredicateConnector {
       link: 'https://solana.com/ecosystem/explore?categories=wallet',
     },
   };
+  usePrepareForSend = true;
 
   protected fuelProvider!: FuelProvider;
 
@@ -241,6 +242,7 @@ export class SolanaConnector extends PredicateConnector {
     address: string,
     transaction: TransactionRequestLike,
   ): Promise<string> {
+    console.log('sendTransaction 2', address, transaction);
     const { predicate, transactionId, transactionRequest } =
       await this.prepareTransaction(address, transaction);
 
@@ -266,6 +268,35 @@ export class SolanaConnector extends PredicateConnector {
     const response = await predicate.sendTransaction(transactionRequest);
 
     return response.id;
+  }
+
+  public async prepareForSend(
+    address: string,
+    transaction: TransactionRequestLike,
+  ): Promise<TransactionRequestLike> {
+    console.log('prepareForSend 2', address, transaction);
+    const { predicate, transactionId, transactionRequest } =
+      await this.prepareTransaction(address, transaction);
+
+    const predicateSignatureIndex = getMockedSignatureIndex(
+      transactionRequest.witnesses,
+    );
+
+    const txId = await this.encodeTxId(transactionId);
+    const provider: Maybe<SolanaProvider> =
+      this.web3Modal.getWalletProvider() as SolanaProvider;
+    if (!provider) {
+      throw new Error('No provider found');
+    }
+
+    const signedMessage: Uint8Array = (await provider.signMessage(
+      txId,
+    )) as Uint8Array;
+    transactionRequest.witnesses[predicateSignatureIndex] = signedMessage;
+
+    await predicate.provider.estimatePredicates(transactionRequest);
+
+    return transactionRequest;
   }
 
   async signMessageCustomCurve(message: string) {
