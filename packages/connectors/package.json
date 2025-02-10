@@ -36,7 +36,6 @@
   "devDependencies": {
     "@fuel-connectors/bako-safe": "workspace:*",
     "@fuel-connectors/burner-wallet-connector": "workspace:*",
-    "@fuel-connectors/evm-connector": "workspace:*",
     "@fuel-connectors/fuel-development-wallet": "workspace:*",
     "@fuel-connectors/fuel-wallet": "workspace:*",
     "@fuel-connectors/fuelet-wallet": "workspace:*",
