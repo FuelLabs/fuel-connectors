@@ -32,6 +32,7 @@ import {
   PredicateConnector,
   type PredicateVersion,
   type PredicateWalletAdapter,
+  type PreparedTransaction,
   type ProviderDictionary,
   getFuelPredicateAddresses,
   getMockedSignatureIndex,
@@ -67,6 +68,7 @@ export class WalletConnectConnector extends PredicateConnector {
       link: 'https://ethereum.org/en/wallets/find-wallet/',
     },
   };
+  usePrepareForSend = true;
 
   private fuelProvider!: FuelProvider;
   private ethProvider!: EIP1193Provider;
@@ -407,9 +409,39 @@ export class WalletConnectConnector extends PredicateConnector {
     address: string,
     transaction: TransactionRequestLike,
   ): Promise<string> {
+    const { fuelProvider } = await this.getProviders();
+    const { transactionRequest } = await this.prepareAndSignTransaction(
+      address,
+      transaction,
+    );
+
+    const response = await fuelProvider.operations.submit({
+      encodedTransaction: hexlify(transactionRequest.toTransactionBytes()),
+    });
+
+    return response.submit.id;
+  }
+
+  public async prepareForSend(
+    address: string,
+    transaction: TransactionRequestLike,
+  ): Promise<TransactionRequestLike> {
+    const { transactionRequest } = await this.prepareAndSignTransaction(
+      address,
+      transaction,
+    );
+
+    return transactionRequest;
+  }
+
+  private async prepareAndSignTransaction(
+    address: string,
+    transaction: TransactionRequestLike,
+  ): Promise<PreparedTransaction> {
     const { ethProvider, fuelProvider } = await this.getProviders();
-    const { request, transactionId, account, transactionRequest } =
+    const { request, transactionId, account, transactionRequest, predicate } =
       await this.prepareTransaction(address, transaction);
+
     const txId = this.encodeTxId(transactionId);
     const signature = (await ethProvider?.request({
       method: 'personal_sign',
@@ -427,13 +459,13 @@ export class WalletConnectConnector extends PredicateConnector {
     const transactionWithPredicateEstimated =
       await fuelProvider.estimatePredicates(request);
 
-    const response = await fuelProvider.operations.submit({
-      encodedTransaction: hexlify(
-        transactionWithPredicateEstimated.toTransactionBytes(),
-      ),
-    });
-
-    return response.submit.id;
+    return {
+      predicate,
+      transactionId,
+      transactionRequest: transactionWithPredicateEstimated,
+      request,
+      account: address,
+    };
   }
 
   private isValidPredicateAddress(
