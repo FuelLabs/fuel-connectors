@@ -3,6 +3,7 @@ import {
   PredicateConnector,
   type PredicateVersion,
   type PredicateWalletAdapter,
+  type PreparedTransaction,
   type ProviderDictionary,
   SolanaWalletAdapter,
   getFuelPredicateAddresses,
@@ -38,6 +39,7 @@ export class SolanaConnector extends PredicateConnector {
       link: 'https://solana.com/ecosystem/explore?categories=wallet',
     },
   };
+  usePrepareForSend = true;
 
   protected fuelProvider!: FuelProvider;
 
@@ -85,7 +87,7 @@ export class SolanaConnector extends PredicateConnector {
 
   private providerFactory(config?: SolanaConfig) {
     const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
-    return config?.fuelProvider || FuelProvider.create(network);
+    return config?.fuelProvider || new FuelProvider(network);
   }
 
   // Solana Web3Modal is Canary and not yet stable
@@ -230,6 +232,30 @@ export class SolanaConnector extends PredicateConnector {
     address: string,
     transaction: TransactionRequestLike,
   ): Promise<string> {
+    const { predicate, transactionRequest } =
+      await this.prepareAndSignTransaction(address, transaction);
+
+    const response = await predicate.sendTransaction(transactionRequest);
+
+    return response.id;
+  }
+
+  public async prepareForSend(
+    address: string,
+    transaction: TransactionRequestLike,
+  ): Promise<TransactionRequestLike> {
+    const { transactionRequest } = await this.prepareAndSignTransaction(
+      address,
+      transaction,
+    );
+
+    return transactionRequest;
+  }
+
+  private async prepareAndSignTransaction(
+    address: string,
+    transaction: TransactionRequestLike,
+  ): Promise<PreparedTransaction> {
     const { predicate, transactionId, transactionRequest } =
       await this.prepareTransaction(address, transaction);
 
@@ -237,7 +263,7 @@ export class SolanaConnector extends PredicateConnector {
       transactionRequest.witnesses,
     );
 
-    const txId = this.encodeTxId(transactionId);
+    const txId = await this.encodeTxId(transactionId);
     const provider: Maybe<SolanaProvider> =
       this.web3Modal.getWalletProvider() as SolanaProvider;
     if (!provider) {
@@ -249,12 +275,15 @@ export class SolanaConnector extends PredicateConnector {
     )) as Uint8Array;
     transactionRequest.witnesses[predicateSignatureIndex] = signedMessage;
 
-    // Send transaction
     await predicate.provider.estimatePredicates(transactionRequest);
 
-    const response = await predicate.sendTransaction(transactionRequest);
-
-    return response.id;
+    return {
+      predicate,
+      transactionId,
+      transactionRequest,
+      request: transactionRequest,
+      account: address,
+    };
   }
 
   async signMessageCustomCurve(message: string) {
