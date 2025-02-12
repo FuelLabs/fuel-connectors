@@ -14,7 +14,6 @@ import type { Provider as FuelProvider } from 'fuels';
 
 type DefaultConnectors = {
   devMode?: boolean;
-  wcProjectId?: string;
   burnerWalletConfig?: BurnerWalletConfig;
   appkit?: AppKit;
   chainId?: number;
@@ -23,7 +22,6 @@ type DefaultConnectors = {
 
 export function defaultConnectors({
   devMode,
-  wcProjectId,
   burnerWalletConfig,
   appkit,
   chainId,
@@ -38,7 +36,6 @@ export function defaultConnectors({
   if (appkit) {
     connectors.push(
       new ReownConnector({
-        projectId: wcProjectId,
         appkit,
         chainId,
         fuelProvider,

@@ -7,7 +7,6 @@ import type { Provider as FuelProvider, StorageAbstract } from 'fuels';
 
 export type ReownConnectorConfig = {
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
-  projectId?: string;
   appkit: AppKit;
   predicateConfig?: PredicateConfig;
   storage?: StorageAbstract;

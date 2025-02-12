@@ -29,7 +29,6 @@ export const FuelProviders = ({ children, appkit }: FuelProvidersProps) => {
       return {
         connectors: defaultConnectors({
           devMode: true,
-          wcProjectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID,
           appkit,
           chainId: NETWORKS[0].chainId,
           fuelProvider: Provider.create(NETWORKS[0].url),

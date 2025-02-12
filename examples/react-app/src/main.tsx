@@ -107,7 +107,6 @@ const NETWORKS: NetworkConfig[] = [
 const FUEL_CONFIG: FuelConfig = {
   connectors: defaultConnectors({
     devMode: true,
-    wcProjectId: WC_PROJECT_ID,
     appkit,
     chainId: CHAIN_ID,
     fuelProvider: Provider.create(PROVIDER_URL),
