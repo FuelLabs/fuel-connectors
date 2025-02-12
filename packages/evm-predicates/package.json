@@ -11,12 +11,14 @@
     "versions:generate": "pnpm fuels build && pnpm fuels deploy && tsx ./scripts/versions.ts"
   },
   "peerDependencies": {
-    "fuels": "0.98.0"
+    "fuels": "0.98.0",
+    "viem": ">=2.20.1"
   },
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",
     "dotenv": "16.4.5",
     "tsx": "4.9.3",
-    "typescript": "5.4.5"
+    "typescript": "5.4.5",
+    "viem": "2.20.1"
   }
 }
