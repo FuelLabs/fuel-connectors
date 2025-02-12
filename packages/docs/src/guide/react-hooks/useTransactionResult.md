@@ -26,6 +26,6 @@ console.log(transactionResult);
 ```
 
 #### Defined in
-[packages/react/src/hooks/useTransactionResult.ts:53](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useTransactionResult.ts#L53)
+[packages/react/src/hooks/useTransactionResult.ts:55](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useTransactionResult.ts#L55)
 
 ___
