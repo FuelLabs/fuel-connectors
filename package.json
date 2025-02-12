@@ -39,6 +39,7 @@
     "@types/node": "20.12.11",
     "@vitest/coverage-v8": "2.0.2",
     "compare-versions": "6.1.0",
+    "fuels": "0.98.0",
     "husky": "9.0.11",
     "lint-staged": "15.2.2",
     "tsx": "^4.16.2",
@@ -65,8 +66,5 @@
       "nanoid@<3.3.8": "3.3.8",
       "vite@>=5.2.0 <5.4.6": ">=5.4.6"
     }
-  },
-  "dependencies": {
-    "fuels": "0.98.0"
   }
 }
