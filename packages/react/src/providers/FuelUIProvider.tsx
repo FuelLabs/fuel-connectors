@@ -25,10 +25,11 @@ export type FuelUIProviderProps = {
 };
 
 export enum Routes {
-  LIST = 'list',
-  INSTALL = 'install',
-  CONNECTING = 'connecting',
-  EXTERNAL_DISCLAIMER = 'disclaimer',
+  List = 'LIST',
+  Install = 'INSTALL',
+  Connecting = 'CONNECTING',
+  PredicateExternalDisclaimer = 'PREDICATE_EXTERNAL_DISCLAIMER',
+  PredicateAddressDisclaimer = 'PREDICATE_ADDRESS_DISCLAIMER',
 }
 
 export type FuelUIContextType = {
@@ -107,7 +108,7 @@ export function FuelUIProvider({
   });
   const { isConnected } = useIsConnected();
   const [connector, setConnector] = useState<FuelConnector | null>(null);
-  const [dialogRoute, setDialogRoute] = useState<Routes>(Routes.LIST);
+  const [dialogRoute, setDialogRoute] = useState<Routes>(Routes.List);
   const [isOpen, setOpen] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -127,7 +128,7 @@ export function FuelUIProvider({
   const handleBack = useCallback(() => {
     setError(null);
     setConnector(null);
-    setDialogRoute(Routes.LIST);
+    setDialogRoute(Routes.List);
   }, []);
 
   const handleRetryConnect = useCallback(
@@ -144,7 +145,7 @@ export function FuelUIProvider({
 
   const handleStartConnection = useCallback(
     async (connector: FuelConnector) => {
-      setDialogRoute(Routes.CONNECTING);
+      setDialogRoute(Routes.Connecting);
       await handleRetryConnect(connector);
     },
     [handleRetryConnect],
@@ -154,19 +155,15 @@ export function FuelUIProvider({
     async (connector: FuelConnector) => {
       setConnector(connector);
       if (!connector.installed) {
-        setDialogRoute(Routes.INSTALL);
+        setDialogRoute(Routes.Install);
       } else if (isNativeConnector(connector)) {
         handleStartConnection(connector);
       } else {
-        setDialogRoute(Routes.EXTERNAL_DISCLAIMER);
+        setDialogRoute(Routes.PredicateExternalDisclaimer);
       }
     },
     [handleStartConnection],
   );
-
-  const setRoute = useCallback((state: Routes) => {
-    setDialogRoute(state);
-  }, []);
 
   const isLoading = useMemo(() => {
     const hasLoadedConnectors =
@@ -177,24 +174,20 @@ export function FuelUIProvider({
   const handleConnect = useCallback(() => {
     setConnector(null);
     setError(null);
-    setDialogRoute(Routes.LIST);
+    setDialogRoute(Routes.List);
     setOpen(true);
   }, []);
 
-  const handleCancel = useCallback(({ clean }: { clean?: boolean } = {}) => {
+  const handleCancel = useCallback(() => {
     setError(null);
     setOpen(false);
-    if (clean) {
-      setConnector(null);
-      setDialogRoute(Routes.LIST);
-    }
   }, []);
 
   useEffect(() => {
     const css = document.createElement('style');
     css.appendChild(
       document.createTextNode(
-        `@import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap"); .fuel-connectors * { box-sizing: border-box; } .fuel-connectors .fuel-connectors-dialog-content:focus { outline: none; } @media (max-width: 430px) { .fuel-connectors .fuel-connectors-dialog-content { top: 50%; width: 100%; border-radius: 36px; } } .fuel-connectors .fuel-connectors-connector-item { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-connector-background); } .fuel-connectors .fuel-connectors-connector-item:active { opacity: 0.8; } .fuel-connectors .fuel-connectors-connector-item:hover { background-color: var(--fuel-connector-hover); } .fuel-connectors .fuel-connectors-connector-button { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-button-background); color: var(--fuel-color-bold); } .fuel-connectors .fuel-connectors-connector-button:visited { color: var(--fuel-color-bold); } .fuel-connectors .fuel-connectors-connector-button:hover { background-color: var(--fuel-button-background-hover); } .fuel-connectors .fuel-connectors-connector-button-primary { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-green-11); color: var(--fuel-black-color); } .fuel-connectors .fuel-connectors-connector-button-primary:visited { color: var(--fuel-black-color); } .fuel-connectors .fuel-connectors-connector-button-primary:hover { background-color: var(--fuel-green-11); } .fuel-connectors .fuel-connectors-back-icon { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); } .fuel-connectors .fuel-connectors-back-icon[data-connector='false'] { visibility: hidden; } .fuel-connectors .fuel-connectors-back-icon:hover, .fuel-connectors .fuel-connectors-back-icon:active { opacity: 1; background-color: var(--fuel-connector-hover); } .fuel-connectors .fuel-connectors-close-icon { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); } .fuel-connectors .fuel-connectors-close-icon:hover, .fuel-connectors .fuel-connectors-close-icon:active { opacity: 1; background-color: var(--fuel-connector-hover); } .fuel-connectors .fuel-connectors-button-base { cursor: pointer; } .fuel-connectors .fuel-connectors-button:disabled { cursor: not-allowed; } .fuel-connectors .fuel-connectors-button { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-green-11); } .fuel-connectors .fuel-connectors-button:disabled { background-color: var(--fuel-border-color); } .fuel-connectors .fuel-connectors-button-disconnect { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-button-background); } .fuel-connectors .fuel-connectors-button-disconnect:hover { background-color: var(--fuel-button-background-hover); } @keyframes fuelOverlayShow { from { opacity: 0; } to { opacity: 1; } } @keyframes fuelSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes fuelContentShow { from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } } @keyframes fuelLoader { 0% { background-position: -468px 0 } 100% { background-position: 468px 0 } }`,
+        `@import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap"); .fuel-connectors * { box-sizing: border-box; } .fuel-connectors .fuel-connectors-dialog-content:focus { outline: none; } @media (max-width: 430px) { .fuel-connectors .fuel-connectors-dialog-content { top: 50%; width: 100%; border-radius: 36px; } } .fuel-connectors .fuel-connectors-connector-item { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-connector-background); } .fuel-connectors .fuel-connectors-connector-item:active { opacity: 0.8; } .fuel-connectors .fuel-connectors-connector-item:hover { background-color: var(--fuel-connector-hover); } .fuel-connectors .fuel-connectors-connector-button { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-button-background); color: var(--fuel-color-bold); } .fuel-connectors .fuel-connectors-connector-button:visited { color: var(--fuel-color-bold); } .fuel-connectors .fuel-connectors-connector-button:hover { background-color: var(--fuel-button-background-hover); } .fuel-connectors .fuel-connectors-connector-button-primary { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-green-11); color: var(--fuel-black-color); } .fuel-connectors .fuel-connectors-connector-button-primary:visited { color: var(--fuel-black-color); } .fuel-connectors .fuel-connectors-connector-button-primary:hover { background-color: var(--fuel-green-11); } .fuel-connectors .fuel-connectors-back-icon { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); } .fuel-connectors .fuel-connectors-back-icon[data-connector='false'] { visibility: hidden; } .fuel-connectors .fuel-connectors-back-icon:hover, .fuel-connectors .fuel-connectors-back-icon:active { opacity: 1; background-color: var(--fuel-connector-hover); } .fuel-connectors .fuel-connectors-close-icon { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); } .fuel-connectors .fuel-connectors-close-icon:hover, .fuel-connectors .fuel-connectors-close-icon:active { opacity: 1; background-color: var(--fuel-connector-hover); } .fuel-connectors .fuel-connectors-button-base { cursor: pointer; } .fuel-connectors .fuel-connectors-button:disabled { cursor: not-allowed; } .fuel-connectors .fuel-connectors-button { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-green-11); } .fuel-connectors .fuel-connectors-button:disabled { background-color: var(--fuel-border-color); } .fuel-connectors .fuel-connectors-button-disconnect { transition: background-color 50ms cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--fuel-button-background); } .fuel-connectors .fuel-connectors-button-disconnect:hover { background-color: var(--fuel-button-background-hover); } .fuel-connectors .fuel-connectors-link-underline:hover { text-decoration: underline; } @keyframes fuelOverlayShow { from { opacity: 0; } to { opacity: 1; } } @keyframes fuelSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes fuelContentShow { from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } } @keyframes fuelLoader { 0% { background-position: -468px 0 } 100% { background-position: 468px 0 } }`,
       ),
     );
     document.head.appendChild(css);
@@ -224,7 +217,7 @@ export function FuelUIProvider({
       // Dialog only
       dialog: {
         route: dialogRoute,
-        setRoute,
+        setRoute: setDialogRoute,
         connector,
         isOpen,
         connect: handleSelectConnector,
@@ -248,7 +241,6 @@ export function FuelUIProvider({
       isOpen,
       handleCancel,
       handleStartConnection,
-      setRoute,
       handleSelectConnector,
       handleConnect,
       handleRetryConnect,

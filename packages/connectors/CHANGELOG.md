@@ -1,5 +1,13 @@
 # @fuels/connectors
 
+## 0.38.1
+
+## 0.38.0
+
+### Minor Changes
+
+- [#454](https://github.com/FuelLabs/fuel-connectors/pull/454) [`71256d8`](https://github.com/FuelLabs/fuel-connectors/commit/71256d8c0df3170bfdafac9710556af3d32eabc3) Thanks [@helciofranco](https://github.com/helciofranco)! - Added a pre-signature dialog to the `WalletConnectConnector` to inform users about the signature purpose.
+
 ## 0.37.0
 
 ### Minor Changes

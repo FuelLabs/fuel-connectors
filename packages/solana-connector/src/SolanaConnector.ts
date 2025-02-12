@@ -5,6 +5,7 @@ import {
   type PredicateWalletAdapter,
   type ProviderDictionary,
   SolanaWalletAdapter,
+  getFuelPredicateAddresses,
   getMockedSignatureIndex,
   getOrThrow,
   getProviderUrl,
@@ -24,7 +25,6 @@ import {
 import { HAS_WINDOW, SOLANA_ICON } from './constants';
 import { PREDICATE_VERSIONS } from './generated/predicates';
 import type { SolanaConfig } from './types';
-import { type SolanaPredicateRoot, txIdEncoders } from './utils';
 import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
 
 export class SolanaConnector extends PredicateConnector {
@@ -221,19 +221,9 @@ export class SolanaConnector extends PredicateConnector {
     return this.isConnected();
   }
 
-  private isValidPredicateAddress(
-    address: string,
-  ): address is SolanaPredicateRoot {
-    return address in txIdEncoders;
-  }
-
-  private async encodeTxId(txId: string): Promise<Uint8Array> {
-    if (!this.isValidPredicateAddress(this.predicateAddress)) {
-      throw new Error(`Unknown predicate address ${this.predicateAddress}`);
-    }
-
-    const encoder = txIdEncoders[this.predicateAddress];
-    return encoder.encodeTxId(txId);
+  private encodeTxId(txId: string): Uint8Array {
+    const txIdNo0x = txId.slice(2);
+    return new TextEncoder().encode(txIdNo0x);
   }
 
   public async sendTransaction(
@@ -247,7 +237,7 @@ export class SolanaConnector extends PredicateConnector {
       transactionRequest.witnesses,
     );
 
-    const txId = await this.encodeTxId(transactionId);
+    const txId = this.encodeTxId(transactionId);
     const provider: Maybe<SolanaProvider> =
       this.web3Modal.getWalletProvider() as SolanaProvider;
     if (!provider) {
@@ -280,5 +270,31 @@ export class SolanaConnector extends PredicateConnector {
       curve: 'edDSA',
       signature: hexlify(signedMessage),
     };
+  }
+
+  static getFuelPredicateAddresses(svmAddress: string) {
+    const predicateConfig = Object.entries(PREDICATE_VERSIONS)
+      .sort(([, a], [, b]) => b.generatedAt - a.generatedAt)
+      .map(([svmPredicateAddress, { predicate, generatedAt }]) => ({
+        abi: predicate.abi,
+        bin: predicate.bin,
+        svmPredicate: {
+          generatedAt,
+          address: svmPredicateAddress,
+        },
+      }));
+
+    const address = new SolanaWalletAdapter().convertAddress(svmAddress);
+    const predicateAddresses = predicateConfig.map(
+      ({ abi, bin, svmPredicate }) => ({
+        fuelAddress: getFuelPredicateAddresses({
+          signerAddress: address,
+          predicate: { abi, bin },
+        }),
+        svmPredicate,
+      }),
+    );
+
+    return predicateAddresses;
   }
 }

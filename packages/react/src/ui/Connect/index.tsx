@@ -15,17 +15,20 @@ import {
 import { Connecting } from './components/Connector/Connecting';
 import { DialogContent } from './components/Core/DialogContent';
 import { DialogFuel } from './components/Core/DialogFuel';
-import { ExternalDisclaimer } from './components/ExternalDisclaimer/ExternalDisclaimer';
+import { PredicateAddressDisclaimer } from './components/PredicateAddressDisclaimer/PredicateAddressDisclaimer';
+import { PredicateExternalDisclaimer } from './components/PredicateExternalDisclaimer/PredicateExternalDisclaimer';
 
-const ConnectRoutes = ({ state }: { state: Routes }) => {
-  switch (state) {
-    case Routes.LIST:
+const ConnectRoutes = ({ route }: { route: Routes }) => {
+  switch (route) {
+    case Routes.List:
       return <Connectors />;
-    case Routes.INSTALL:
+    case Routes.Install:
       return <Connector />;
-    case Routes.EXTERNAL_DISCLAIMER:
-      return <ExternalDisclaimer />;
-    case Routes.CONNECTING:
+    case Routes.PredicateExternalDisclaimer:
+      return <PredicateExternalDisclaimer />;
+    case Routes.PredicateAddressDisclaimer:
+      return <PredicateAddressDisclaimer />;
+    case Routes.Connecting:
       return <Connecting />;
     default:
       return null;
@@ -36,7 +39,7 @@ export function Connect() {
   const {
     theme,
     cancel,
-    dialog: { isOpen, route: state, connector, back },
+    dialog: { isOpen, route, connector, back },
   } = useConnectUI();
 
   const handleOpenChange = (openState: boolean) => {
@@ -55,7 +58,7 @@ export function Connect() {
         </DialogHeader>
         <Divider />
         <DialogMain>
-          <ConnectRoutes state={state} />
+          <ConnectRoutes route={route} />
         </DialogMain>
       </DialogContent>
     </DialogFuel>
