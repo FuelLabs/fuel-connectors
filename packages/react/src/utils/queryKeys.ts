@@ -60,16 +60,14 @@ export const QUERY_KEYS = {
     if (id) queryKey.push(id);
     return queryKey;
   },
-  transactionReceipts: (id?: string, provider?: Provider | null): QueryKey => {
+  transactionReceipts: (id?: string, chainId?: number | null): QueryKey => {
     const queryKey = QUERY_KEYS.transaction(id).concat('receipts');
-    if (provider?.getChainId?.() !== undefined)
-      queryKey.push(provider.getChainId());
+    if (chainId !== undefined) queryKey.push(chainId);
     return queryKey;
   },
-  transactionResult: (id?: string, provider?: Provider | null): QueryKey => {
+  transactionResult: (id?: string, chainId?: number | null): QueryKey => {
     const queryKey = QUERY_KEYS.transaction(id).concat('result');
-    if (provider?.getChainId?.() !== undefined)
-      queryKey.push(provider.getChainId());
+    if (chainId !== undefined) queryKey.push(chainId);
     return queryKey;
   },
   nodeInfo: (url?: string): QueryKey => {

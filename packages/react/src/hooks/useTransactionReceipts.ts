@@ -5,6 +5,7 @@ import type { TransactionResult } from 'fuels';
 
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { QUERY_KEYS } from '../utils';
+import { useChainId } from './useChainId';
 import { useProvider } from './useProvider';
 
 type UseTransactionReceiptsParams<TTransactionType = void> = {
@@ -36,9 +37,10 @@ export const useTransactionReceipts = <TTransactionType = void>({
   query,
 }: UseTransactionReceiptsParams<TTransactionType>) => {
   const { provider } = useProvider();
+  const { chainId } = useChainId();
 
   return useNamedQuery('transactionReceipts', {
-    queryKey: QUERY_KEYS.transactionReceipts(txId, provider),
+    queryKey: QUERY_KEYS.transactionReceipts(txId, chainId),
     queryFn: async () => {
       try {
         if (!provider) return null;
