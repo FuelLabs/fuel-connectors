@@ -26,6 +26,9 @@ export const QUERY_KEYS = {
   chain: (): QueryKey => {
     return QUERY_KEYS.base.concat('chain');
   },
+  chainId: (): QueryKey => {
+    return QUERY_KEYS.base.concat('chain-id');
+  },
   isConnected: (): QueryKey => {
     return QUERY_KEYS.base.concat('isConnected');
   },
