@@ -84,7 +84,7 @@ describe('WalletConnect Connector', () => {
     });
 
     test('can construct a WalletConnectConnector with a non default Promise Provider', async () => {
-      const nonDefaultProvider = Provider.create(fuelProvider.url);
+      const nonDefaultProvider = new Provider(fuelProvider.url);
       const walletWalletConnector = connectorFactory({
         fuelProvider: nonDefaultProvider,
       });
@@ -220,11 +220,12 @@ describe('WalletConnect Connector', () => {
   describe('currentNetwork()', () => {
     test('returns fuel network', async () => {
       const network = await connector.currentNetwork();
+      // @ts-expect-error fuelProvider is private
+      const chainId = await connector.fuelProvider.getChainId();
 
       // @ts-expect-error fuelProvider is private
       expect(network.url).to.equal(connector.fuelProvider?.url);
-      // @ts-expect-error fuelProvider is private
-      expect(network.chainId).to.equal(connector.fuelProvider?.getChainId());
+      expect(network.chainId).to.equal(chainId);
     });
   });
 });

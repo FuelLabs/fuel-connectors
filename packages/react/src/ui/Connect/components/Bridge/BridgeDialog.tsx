@@ -1,5 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   useAccount,
   useBalance,
@@ -35,13 +35,27 @@ type BridgeProps = {
 export function BridgeDialog({ theme }: BridgeProps) {
   const { networks } = useNetworkConfigs();
   const { provider } = useProvider();
-  const bridgeHref = useMemo(() => {
-    const network = networks.find((n) => n.chainId === provider?.getChainId());
-    if (!network) return null;
-    if (!network.bridgeURL) return null;
-    const url = new URL(network.bridgeURL);
-    url.searchParams.set('', 'true');
-    return url.toString();
+  const [bridgeHref, setBridgeHref] = useState<string | null>(null);
+
+  useEffect(() => {
+    let abort = false;
+    const fetchBridgeHref = async () => {
+      if (abort) return;
+      const chainId = await provider?.getChainId();
+      const network = networks.find((n) => n.chainId === chainId);
+      if (abort) return;
+      if (network?.bridgeURL) {
+        const url = new URL(network.bridgeURL);
+        url.searchParams.set('', 'true');
+        setBridgeHref(url.toString());
+      } else {
+        setBridgeHref(null);
+      }
+    };
+    fetchBridgeHref();
+    return () => {
+      abort = true;
+    };
   }, [networks, provider]);
   const {
     isConnected,

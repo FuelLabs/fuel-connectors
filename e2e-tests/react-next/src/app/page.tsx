@@ -83,7 +83,7 @@ const FUEL_CONFIG = {
     wcProjectId: WC_PROJECT_ID,
     ethWagmiConfig: wagmiConfig,
     chainId: CHAIN_ID,
-    fuelProvider: Provider.create(PROVIDER_URL),
+    fuelProvider: new Provider(PROVIDER_URL),
   }),
 };
 

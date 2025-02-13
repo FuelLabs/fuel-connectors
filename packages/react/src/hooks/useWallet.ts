@@ -78,7 +78,7 @@ export function useWallet(
 
         if (configuredNetwork?.url && configuredNetwork.url !== network.url) {
           // if the user configured a different network for the same chainId, we connect to the configured network instead
-          const provider = await Provider.create(configuredNetwork.url);
+          const provider = new Provider(configuredNetwork.url);
           wallet.connect(provider);
         }
 
