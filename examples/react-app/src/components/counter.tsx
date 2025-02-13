@@ -18,6 +18,7 @@ interface Props {
 
 export default function ContractCounter({ isSigning, setIsSigning }: Props) {
   const { balance, wallet, refetchBalance } = useWallet();
+
   const { defaultAmount, counterContractId, explorerUrl } = useConfig();
 
   const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
@@ -66,9 +67,15 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
       setIsSigning(true);
       const contract = new Counter(counterContractId, wallet);
       try {
-        const { waitForResult } = await contract.functions
+        const txRequest = await contract.functions
           .increment_counter()
-          .call();
+          .getTransactionRequest();
+
+        await txRequest.estimateAndFund(wallet);
+
+        const { waitForResult } = await wallet.sendTransaction(txRequest, {
+          skipCustomFee: true,
+        });
 
         setToast({
           open: true,

@@ -1,4 +1,4 @@
-import { Address } from 'fuels';
+import { Address, type TransactionRequestLike } from 'fuels';
 import { useState } from 'react';
 import { useConfig } from '../context/ConfigContext';
 import { useWallet } from '../hooks/useWallet';
@@ -38,11 +38,15 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
       const receiverAddress = Address.fromString(receiver);
       const asset_id = await wallet?.provider.getBaseAssetId();
 
-      const resp = await wallet?.transfer(
+      const tx = await wallet?.createTransfer(
         receiverAddress,
         defaultAmount,
         asset_id,
       );
+
+      const resp = await wallet?.sendTransaction(tx as TransactionRequestLike, {
+        skipCustomFee: true,
+      });
 
       setToast({
         open: true,
