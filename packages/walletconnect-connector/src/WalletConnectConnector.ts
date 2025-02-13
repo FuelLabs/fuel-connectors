@@ -19,6 +19,7 @@ import {
   CHAIN_IDS,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
+  type FuelConnectorSendTxParams,
   Provider as FuelProvider,
   LocalStorage,
   type StorageAbstract,
@@ -38,9 +39,13 @@ import {
   getOrThrow,
   getProviderUrl,
 } from '@fuel-connectors/common';
-import { PREDICATE_VERSIONS } from '@fuel-connectors/evm-predicates';
+import {
+  type EvmPredicateRoot,
+  PREDICATE_VERSIONS,
+  txIdEncoders,
+} from '@fuel-connectors/evm-predicates';
 import { ApiController } from '@web3modal/core';
-import { stringToHex } from 'viem';
+import { type TransactionRequest, stringToHex } from 'viem';
 import {
   ETHEREUM_ICON,
   HAS_WINDOW,
@@ -172,7 +177,7 @@ export class WalletConnectConnector extends PredicateConnector {
   protected async configProviders(config: WalletConnectConfig = {}) {
     const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(network),
+      fuelProvider: config.fuelProvider || new FuelProvider(network),
     });
   }
 
@@ -402,14 +407,29 @@ export class WalletConnectConnector extends PredicateConnector {
   public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
+    params?: FuelConnectorSendTxParams,
   ): Promise<string> {
     const { ethProvider, fuelProvider } = await this.getProviders();
+    console.log('asd inputs BEFORE prepare', transaction.inputs?.toString());
+    console.log(
+      'asd witnesses BEFORE prepare',
+      transaction.witnesses?.toString(),
+    );
     const { request, transactionId, account, transactionRequest } =
       await this.prepareTransaction(address, transaction);
+    console.log(
+      'asd inputs AFTER prepare',
+      transactionRequest.inputs?.toString(),
+    );
+    console.log(
+      'asd witnesses AFTER prepare',
+      transactionRequest.witnesses?.toString(),
+    );
 
+    const txId = this.encodeTxId(transactionId);
     const signature = (await ethProvider?.request({
       method: 'personal_sign',
-      params: [transactionId, account],
+      params: [txId, account],
     })) as string;
 
     const predicateSignatureIndex = getMockedSignatureIndex(
@@ -418,18 +438,45 @@ export class WalletConnectConnector extends PredicateConnector {
 
     // Transform the signature into compact form for Sway to understand
     const compactSignature = splitSignature(hexToBytes(signature)).compact;
+
+    console.log('asd predicateSignatureIndex', predicateSignatureIndex);
+    console.log(
+      'asd transactionRequest.witnesses',
+      transactionRequest.witnesses?.toString(),
+    );
+    console.log('asd compactSignature', compactSignature);
     transactionRequest.witnesses[predicateSignatureIndex] = compactSignature;
 
     const transactionWithPredicateEstimated =
       await fuelProvider.estimatePredicates(request);
 
+    let txAfterUserCallback = transactionWithPredicateEstimated;
+    if (params?.onBeforeSend) {
+      txAfterUserCallback = await params.onBeforeSend(
+        transactionWithPredicateEstimated,
+      );
+    }
+
     const response = await fuelProvider.operations.submit({
-      encodedTransaction: hexlify(
-        transactionWithPredicateEstimated.toTransactionBytes(),
-      ),
+      encodedTransaction: hexlify(txAfterUserCallback.toTransactionBytes()),
     });
 
     return response.submit.id;
+  }
+
+  private isValidPredicateAddress(
+    address: string,
+  ): address is EvmPredicateRoot {
+    return address in txIdEncoders;
+  }
+
+  private encodeTxId(txId: string): string {
+    if (!this.isValidPredicateAddress(this.predicateAddress)) {
+      return txId;
+    }
+
+    const encoder = txIdEncoders[this.predicateAddress];
+    return encoder.encodeTxId(txId);
   }
 
   private validateSignature(

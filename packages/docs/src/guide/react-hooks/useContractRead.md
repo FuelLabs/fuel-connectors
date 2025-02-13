@@ -29,6 +29,6 @@ console.log(data);
 ```
 
 #### Defined in
-[packages/react/src/hooks/useContractRead.ts:63](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useContractRead.ts#L63)
+[packages/react/src/hooks/useContractRead.ts:64](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useContractRead.ts#L64)
 
 ___

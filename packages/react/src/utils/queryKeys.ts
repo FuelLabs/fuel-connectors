@@ -26,6 +26,9 @@ export const QUERY_KEYS = {
   chain: (): QueryKey => {
     return QUERY_KEYS.base.concat('chain');
   },
+  chainId: (): QueryKey => {
+    return QUERY_KEYS.base.concat('chain-id');
+  },
   isConnected: (): QueryKey => {
     return QUERY_KEYS.base.concat('isConnected');
   },
@@ -38,13 +41,12 @@ export const QUERY_KEYS = {
   balance: (
     address?: string,
     assetId?: BytesLike,
-    provider?: Provider | null,
+    chainId?: number | undefined,
   ): QueryKey => {
     const queryKey = QUERY_KEYS.base.concat('balance');
     if (address) queryKey.push(address);
     if (assetId) queryKey.push(assetId);
-    if (provider?.getChainId?.() !== undefined)
-      queryKey.push(provider.getChainId());
+    if (chainId !== undefined) queryKey.push(chainId);
     return queryKey;
   },
   wallet: (address?: string | null, providerUrl?: string | null): QueryKey => {
@@ -58,16 +60,14 @@ export const QUERY_KEYS = {
     if (id) queryKey.push(id);
     return queryKey;
   },
-  transactionReceipts: (id?: string, provider?: Provider | null): QueryKey => {
+  transactionReceipts: (id?: string, chainId?: number | null): QueryKey => {
     const queryKey = QUERY_KEYS.transaction(id).concat('receipts');
-    if (provider?.getChainId?.() !== undefined)
-      queryKey.push(provider.getChainId());
+    if (chainId !== undefined) queryKey.push(chainId);
     return queryKey;
   },
-  transactionResult: (id?: string, provider?: Provider | null): QueryKey => {
+  transactionResult: (id?: string, chainId?: number | null): QueryKey => {
     const queryKey = QUERY_KEYS.transaction(id).concat('result');
-    if (provider?.getChainId?.() !== undefined)
-      queryKey.push(provider.getChainId());
+    if (chainId !== undefined) queryKey.push(chainId);
     return queryKey;
   },
   nodeInfo: (url?: string): QueryKey => {

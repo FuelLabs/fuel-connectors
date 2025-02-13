@@ -85,7 +85,7 @@ describe('Solana Connector', () => {
     });
 
     test('can construct a SolanaConnector with a non default Promise Provider', async () => {
-      const nonDefaultProvider = Provider.create(fuelProvider.url);
+      const nonDefaultProvider = new Provider(fuelProvider.url);
       const solanaConnector = connectorFactory({
         fuelProvider: nonDefaultProvider,
       });

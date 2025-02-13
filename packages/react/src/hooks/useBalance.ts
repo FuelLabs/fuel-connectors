@@ -4,6 +4,7 @@ import { Address } from 'fuels';
 import { type UseNamedQueryParams, useNamedQuery } from '../core';
 import { QUERY_KEYS } from '../utils';
 
+import { useEffect, useState } from 'react';
 import { useProvider } from './useProvider';
 
 type UseBalanceParams = {
@@ -52,14 +53,23 @@ export const useBalance = ({
 }: UseBalanceParams) => {
   const { provider } = useProvider();
   const _address = account ?? address ?? undefined;
+  const [chainId, setChainId] = useState<number | undefined>();
+
+  useEffect(() => {
+    const getChainId = async () => {
+      const chainId = await provider?.getChainId();
+      setChainId(chainId);
+    };
+    getChainId();
+  }, [provider]);
 
   return useNamedQuery('balance', {
-    queryKey: QUERY_KEYS.balance(_address, assetId, provider),
+    queryKey: QUERY_KEYS.balance(_address, assetId, chainId),
     queryFn: async () => {
       try {
         if (!provider) throw new Error('Provider is needed');
 
-        const baseAssetId = assetId || provider.getBaseAssetId();
+        const baseAssetId = assetId || (await provider.getBaseAssetId());
         const currentFuelBalance = await provider.getBalance(
           Address.fromString(_address || ''),
           baseAssetId,

@@ -1,17 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
-import {
-  type AbstractAddress,
-  Address,
-  type TransactionRequestLike,
-} from 'fuels';
+import { Address, type TransactionRequestLike } from 'fuels';
 
 import { useFuel } from '../providers';
 
 type MutationParams = {
   /**
-   * The address to send the transaction to. Can be a string or an AbstractAddress.
+   * The address to send the transaction to. Can be a string or an Address.
    */
-  address: string | AbstractAddress;
+  address: string | Address;
   /**
    * The transaction request object that defines the transaction details.
    */

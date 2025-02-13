@@ -78,7 +78,7 @@ export class PredicateFactory {
 
   getMaxPredicateGasUsed = memoize(async (provider: Provider): Promise<BN> => {
     const fakeAccount = this.adapter.generateFakeAccount();
-    const chainId = provider.getChainId();
+    const chainId = await provider.getChainId();
     const fakePredicate = this.build(fakeAccount.getAddress(), provider, [0]);
     const request = new ScriptTransactionRequest();
     request.addCoinInput({
@@ -121,13 +121,13 @@ export class PredicateFactory {
  * predicate with the correct witness index argument.
  */
 export const getMockedSignatureIndex = (witnesses: BytesLike[]) => {
-  const hasPlaceholderWitness = witnesses.some(
+  const placeholderWitnessIndex = witnesses.findIndex(
     (item) =>
       item instanceof Uint8Array &&
       item.length === 64 &&
       item.every((value) => value === 0),
   );
-
+  const hasPlaceholderWitness = placeholderWitnessIndex !== -1;
   // if it is a placeholder witness, we can safely replace it, otherwise we will consider a new element.
-  return hasPlaceholderWitness ? witnesses.length - 1 : witnesses.length;
+  return hasPlaceholderWitness ? placeholderWitnessIndex : witnesses.length;
 };

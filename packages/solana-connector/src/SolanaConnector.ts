@@ -25,7 +25,6 @@ import {
 import { HAS_WINDOW, SOLANA_ICON } from './constants';
 import { PREDICATE_VERSIONS } from './generated/predicates';
 import type { SolanaConfig } from './types';
-import { type SolanaPredicateRoot, txIdEncoders } from './utils';
 import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
 
 export class SolanaConnector extends PredicateConnector {
@@ -86,7 +85,7 @@ export class SolanaConnector extends PredicateConnector {
 
   private providerFactory(config?: SolanaConfig) {
     const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
-    return config?.fuelProvider || FuelProvider.create(network);
+    return config?.fuelProvider || new FuelProvider(network);
   }
 
   // Solana Web3Modal is Canary and not yet stable
@@ -156,7 +155,7 @@ export class SolanaConnector extends PredicateConnector {
   protected async configProviders(config: SolanaConfig = {}) {
     const network = getProviderUrl(config.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || FuelProvider.create(network),
+      fuelProvider: config.fuelProvider || new FuelProvider(network),
     });
   }
 
@@ -222,19 +221,9 @@ export class SolanaConnector extends PredicateConnector {
     return this.isConnected();
   }
 
-  private isValidPredicateAddress(
-    address: string,
-  ): address is SolanaPredicateRoot {
-    return address in txIdEncoders;
-  }
-
-  private async encodeTxId(txId: string): Promise<Uint8Array> {
-    if (!this.isValidPredicateAddress(this.predicateAddress)) {
-      throw new Error(`Unknown predicate address ${this.predicateAddress}`);
-    }
-
-    const encoder = txIdEncoders[this.predicateAddress];
-    return encoder.encodeTxId(txId);
+  private encodeTxId(txId: string): Uint8Array {
+    const txIdNo0x = txId.slice(2);
+    return new TextEncoder().encode(txIdNo0x);
   }
 
   public async sendTransaction(
@@ -248,7 +237,7 @@ export class SolanaConnector extends PredicateConnector {
       transactionRequest.witnesses,
     );
 
-    const txId = await this.encodeTxId(transactionId);
+    const txId = this.encodeTxId(transactionId);
     const provider: Maybe<SolanaProvider> =
       this.web3Modal.getWalletProvider() as SolanaProvider;
     if (!provider) {
