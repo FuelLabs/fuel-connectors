@@ -54,15 +54,3 @@ export type SignedMessageCustomCurve = {
   curve: string;
   signature: string;
 };
-
-// export interface PaymasterParams {
-//   paymasterAddress: string;
-//   maxFeePerGas?: BN;
-//   deadline?: number;
-// }
-
-// export interface SendTransactionParams {
-//   skipCustomFee?: boolean;
-//   onBeforeSend?: (txRequest: TransactionRequest) => Promise<TransactionRequest>;
-//   paymaster?: PaymasterParams;
-// }
