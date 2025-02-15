@@ -22,15 +22,15 @@ RUN git clone \
     https://github.com/FuelLabs/chain-configuration.git \
     /chain-configuration && \
     cd /chain-configuration && \
-    git checkout b2a9fd7ae37a33b45b2407eadf9c870ef2027c07
+    git checkout b77704477886d4bec04175622143278eceb179b6
 
 # Copy the base local configuration
 RUN cp -R /chain-configuration/local/* ./
 
 # Copy the testnet consensus parameters and state transition bytecode
-RUN cp /chain-configuration/upgradelog/ignition-devnet/consensus_parameters/14.json \
+RUN cp /chain-configuration/upgradelog/ignition-devnet/consensus_parameters/15.json \
     ./latest_consensus_parameters.json
-RUN cp /chain-configuration/upgradelog/ignition-devnet/state_transition_function/17.wasm \
+RUN cp /chain-configuration/upgradelog/ignition-devnet/state_transition_function/21.wasm \
     ./state_transition_bytecode.wasm
 
 # update local state_config with custom genesis coins config
