@@ -4,15 +4,15 @@
   "private": true,
   "type": "module",
   "files": ["dist"],
+  "types": "./dist/index.d.ts",
   "main": "./dist/wallet-connector-evm.umd.cjs",
   "module": "./dist/wallet-connector-evm.js",
   "exports": {
     ".": {
-      "import": "./dist/wallet-connector-evm.js",
-      "require": "./dist/wallet-connector-evm.umd.cjs"
+      "require": "./dist/wallet-connector-evm.umd.cjs",
+      "import": "./dist/wallet-connector-evm.js"
     }
   },
-  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsup --dts-only",
     "build:watch": "tsup --watch --dts-only",
