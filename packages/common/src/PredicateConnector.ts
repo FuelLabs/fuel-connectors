@@ -63,19 +63,30 @@ export abstract class PredicateConnector extends FuelConnector {
   ): Promise<SignedMessageCustomCurve>;
 
   protected get predicateVersions(): Array<PredicateFactory> {
-    if (!this._predicateVersions) {
-      this._predicateVersions = Object.entries(this.getPredicateVersions())
-        .map(
-          ([key, pred]) =>
-            new PredicateFactory(
-              this.getWalletAdapter(),
-              pred.predicate,
-              key,
-              pred.generatedAt,
-            ),
-        )
-        .sort((a, b) => a.sort(b));
+    if (this._predicateVersions) {
+      return this._predicateVersions;
     }
+
+    const sortedPredicateConfigs = Object.entries(this.getPredicateVersions())
+      .map(([root, { predicate, generatedAt }]) => {
+        return {
+          root,
+          predicate,
+          generatedAt,
+        };
+      })
+      .sort((a, b) => b.generatedAt - a.generatedAt);
+
+    this._predicateVersions = sortedPredicateConfigs.map((config) => {
+      const predicateInstance = new PredicateFactory(
+        this.getWalletAdapter(),
+        config.predicate,
+        config.root,
+        config.generatedAt,
+      );
+
+      return predicateInstance;
+    });
 
     return this._predicateVersions;
   }
@@ -87,7 +98,7 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   protected async getCurrentUserPredicate(): Promise<Maybe<PredicateFactory>> {
-    const oldFirstPredicateVersions = this.predicateVersions.reverse();
+    const oldFirstPredicateVersions = [...this.predicateVersions].reverse();
     for (const predicateInstance of oldFirstPredicateVersions) {
       const address = await this.getAccountAddress();
       if (!address) {
@@ -121,6 +132,8 @@ export abstract class PredicateConnector extends FuelConnector {
 
     const predicate = await this.getCurrentUserPredicate();
     if (!predicate) throw new Error('No predicate found');
+
+    console.log('root selected', predicate.getRoot());
 
     this.predicateAddress = predicate.getRoot();
     this.predicateAccount = predicate;
