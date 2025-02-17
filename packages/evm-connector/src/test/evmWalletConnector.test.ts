@@ -51,7 +51,7 @@ async function createTransaction(
 
     const coins = await predicate.getResourcesToSpend([
       {
-        assetId: provider.getBaseAssetId(),
+        assetId: await provider.getBaseAssetId(),
         amount: bn.parseUnits('0.001'),
       },
       {
@@ -74,7 +74,7 @@ async function createTransaction(
     tx.addCoinOutput(
       Address.fromString(address),
       bn.parseUnits('0.0001'),
-      provider.getBaseAssetId(),
+      await provider.getBaseAssetId(),
     );
 
     tx.addCoinOutput(
@@ -122,7 +122,7 @@ describe('EVM Wallet Connector', () => {
     });
 
     fuelProvider = provider;
-    baseAssetId = fuelProvider.getBaseAssetId();
+    baseAssetId = await fuelProvider.getBaseAssetId();
 
     stopProvider = cleanup;
   });
@@ -648,7 +648,7 @@ describe('EVM Wallet Connector', () => {
       const network = await connector.currentNetwork();
 
       expect(network.chainId.toString()).to.be.equal(
-        fuelProvider.getChainId().toString(),
+        (await fuelProvider.getChainId()).toString(),
       );
       expect(network.url).to.be.equal(fuelProvider.url);
     });
@@ -665,7 +665,7 @@ describe('EVM Wallet Connector', () => {
       const network = networks.pop();
 
       const networkChainId = network?.chainId.toString();
-      const expectedChainId = fuelProvider.getChainId().toString();
+      const expectedChainId = (await fuelProvider.getChainId()).toString();
       expect(networkChainId).to.be.equal(expectedChainId);
 
       expect(network?.url).to.be.equal(fuelProvider.url);

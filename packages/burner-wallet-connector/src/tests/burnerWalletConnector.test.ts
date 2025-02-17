@@ -147,7 +147,7 @@ describe('Burner Wallet Connector', () => {
     });
 
     test('Creates a new BurnerWalletConnector instance with non default Provider url', async () => {
-      const nonDefaultProvider = await Provider.create(TESTNET_NETWORK.url);
+      const nonDefaultProvider = new Provider(TESTNET_NETWORK.url);
 
       const config: BurnerWalletConfig = {
         fuelProvider: nonDefaultProvider,
@@ -161,7 +161,7 @@ describe('Burner Wallet Connector', () => {
     });
 
     test('Creates a new BurnerWalletConnector instance with non default Promise Provider url', async () => {
-      const nonDefaultProvider = Provider.create(TESTNET_NETWORK.url);
+      const nonDefaultProvider = new Provider(TESTNET_NETWORK.url);
 
       const config: BurnerWalletConfig = {
         fuelProvider: nonDefaultProvider,
@@ -288,7 +288,7 @@ describe('Burner Wallet Connector', () => {
 
       const network = await connector.currentNetwork();
 
-      expect(network.chainId).to.be.equal(fuelProvider.getChainId());
+      expect(network.chainId).to.be.equal(await fuelProvider.getChainId());
       expect(network.url).to.be.equal(fuelProvider.url);
     });
   });
@@ -304,7 +304,7 @@ describe('Burner Wallet Connector', () => {
       const network = networks.pop();
 
       const networkChainId = network?.chainId;
-      const expectedChainId = fuelProvider.getChainId();
+      const expectedChainId = await fuelProvider.getChainId();
 
       expect(networks).to.be.an('array');
 

@@ -31,7 +31,7 @@ export const FuelProviders = ({ children, appkit }: FuelProvidersProps) => {
           devMode: true,
           appkit,
           chainId: NETWORKS[0].chainId,
-          fuelProvider: Provider.create(NETWORKS[0].url),
+          fuelProvider: new Provider(NETWORKS[0].url),
         }),
       };
     });

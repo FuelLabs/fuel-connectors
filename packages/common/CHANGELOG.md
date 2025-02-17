@@ -1,5 +1,11 @@
 # @fuel-connectors/common
 
+## 0.39.0
+
+### Minor Changes
+
+- [#458](https://github.com/FuelLabs/fuel-connectors/pull/458) [`b21855f`](https://github.com/FuelLabs/fuel-connectors/commit/b21855feaf6275b16f626156ba7d1c74262f3a5b) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Upgrade Fuel SDK to 0.98.0
+
 ## 0.38.1
 
 ## 0.38.0

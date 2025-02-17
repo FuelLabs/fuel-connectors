@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/evm-connector",
-  "version": "0.38.1",
+  "version": "0.39.0",
   "private": true,
   "type": "module",
   "files": ["dist"],
@@ -20,7 +20,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.96.1",
+    "fuels": ">=0.98.0",
     "viem": ">=2.22.17"
   },
   "dependencies": {
@@ -32,7 +32,6 @@
     "@fuel-connectors/common": "workspace:*",
     "@fuel-connectors/evm-predicates": "workspace:*",
     "@types/memoizee": "0.4.11",
-    "fuels": "0.96.1",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",

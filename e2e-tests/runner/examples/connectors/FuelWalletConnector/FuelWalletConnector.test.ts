@@ -16,7 +16,7 @@ import type { ConnectorFunctions } from '../../../common/types';
 import { testSetup, transferMaxBalance } from '../setup';
 dotenv.config();
 
-const fuelPathToExtension = await downloadFuel('0.41.1');
+const fuelPathToExtension = await downloadFuel('0.49.0');
 
 test.use({
   pathToExtension: fuelPathToExtension,

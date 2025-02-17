@@ -103,7 +103,7 @@ const FUEL_CONFIG = {
     devMode: true,
     appkit,
     chainId: CHAIN_ID,
-    fuelProvider: Provider.create(PROVIDER_URL),
+    fuelProvider: new Provider(PROVIDER_URL),
   }),
 };
 

@@ -35,7 +35,7 @@ export class PredicateSvm extends PredicateConnector {
     },
   };
 
-  private fuelProvider: FuelProvider | Promise<FuelProvider>;
+  private fuelProvider: FuelProvider;
   private config: PredicateSvmConfig;
 
   constructor(config: PredicateSvmConfig) {
@@ -44,7 +44,7 @@ export class PredicateSvm extends PredicateConnector {
     this.config = config;
     this.customPredicate = config.predicateConfig || null;
     const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
-    this.fuelProvider = FuelProvider.create(network);
+    this.fuelProvider = new FuelProvider(network);
   }
 
   public async getCurrentState(): Promise<PredicateCurrentState> {

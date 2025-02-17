@@ -36,7 +36,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
       }
 
       const receiverAddress = Address.fromString(receiver);
-      const asset_id = wallet?.provider.getBaseAssetId();
+      const asset_id = await wallet?.provider.getBaseAssetId();
 
       const resp = await wallet?.transfer(
         receiverAddress,

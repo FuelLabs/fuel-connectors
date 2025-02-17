@@ -25,7 +25,6 @@ import {
   getProviderUrl,
 } from '@fuel-connectors/common';
 import {
-  type EvmPredicateRoot,
   PREDICATE_VERSIONS,
   txIdEncoders,
 } from '@fuel-connectors/evm-predicates';
@@ -139,7 +138,7 @@ export class EVMWalletConnector extends PredicateConnector {
   protected async configProviders(config: EVMWalletConnectorConfig = {}) {
     const network = getProviderUrl(config.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || Provider.create(network),
+      fuelProvider: config.fuelProvider || new Provider(network),
       ethProvider: config.ethProvider || WINDOW?.ethereum,
     });
   }
@@ -291,18 +290,12 @@ export class EVMWalletConnector extends PredicateConnector {
     };
   }
 
-  private isValidPredicateAddress(
-    address: string,
-  ): address is EvmPredicateRoot {
-    return address in txIdEncoders;
-  }
-
   private encodeTxId(txId: string): string {
-    if (!this.isValidPredicateAddress(this.predicateAddress)) {
+    const encoder = txIdEncoders[this.predicateAddress];
+    if (!encoder) {
       return txId;
     }
 
-    const encoder = txIdEncoders[this.predicateAddress];
     return encoder.encodeTxId(txId);
   }
 }

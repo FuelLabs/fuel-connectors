@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/evm-predicates",
-  "version": "0.38.1",
+  "version": "0.39.0",
   "private": true,
   "type": "module",
   "exports": {
@@ -11,13 +11,12 @@
     "versions:generate": "pnpm fuels build && pnpm fuels deploy && tsx ./scripts/versions.ts"
   },
   "peerDependencies": {
-    "fuels": ">=0.94.0",
+    "fuels": ">=0.98.0",
     "viem": ">=2.22.17"
   },
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",
     "dotenv": "16.4.5",
-    "fuels": "0.96.1",
     "tsx": "4.9.3",
     "typescript": "5.4.5",
     "viem": "2.22.17"

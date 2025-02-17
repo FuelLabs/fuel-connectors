@@ -21,7 +21,6 @@ import {
   getProviderUrl,
 } from '@fuel-connectors/common';
 import {
-  type EvmPredicateRoot,
   PREDICATE_VERSIONS,
   txIdEncoders,
 } from '@fuel-connectors/evm-predicates';
@@ -29,6 +28,7 @@ import {
   CHAIN_IDS,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
+  type FuelConnectorSendTxParams,
   Provider as FuelProvider,
   type StorageAbstract,
   type TransactionRequestLike,
@@ -124,7 +124,7 @@ export class PredicateEvm extends PredicateConnector {
     const network = getProviderUrl(
       this.config?.chainId ?? CHAIN_IDS.fuel.mainnet,
     );
-    const provider = this.config.fuelProvider || FuelProvider.create(network);
+    const provider = this.config.fuelProvider || new FuelProvider(network);
     this.fuelProvider = await provider;
 
     return {
@@ -221,6 +221,7 @@ export class PredicateEvm extends PredicateConnector {
   public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
+    params?: FuelConnectorSendTxParams,
   ): Promise<string> {
     const { fuelProvider } = await this.getProviders();
     const ethProvider =
@@ -245,27 +246,26 @@ export class PredicateEvm extends PredicateConnector {
     const transactionWithPredicateEstimated =
       await fuelProvider.estimatePredicates(request);
 
+    let txAfterUserCallback = transactionWithPredicateEstimated;
+    if (params?.onBeforeSend) {
+      txAfterUserCallback = await params.onBeforeSend(
+        transactionWithPredicateEstimated,
+      );
+    }
+
     const response = await fuelProvider.operations.submit({
-      encodedTransaction: hexlify(
-        transactionWithPredicateEstimated.toTransactionBytes(),
-      ),
+      encodedTransaction: hexlify(txAfterUserCallback.toTransactionBytes()),
     });
 
     return response.submit.id;
   }
 
-  private isValidPredicateAddress(
-    address: string,
-  ): address is EvmPredicateRoot {
-    return address in txIdEncoders;
-  }
-
   private encodeTxId(txId: string): string {
-    if (!this.isValidPredicateAddress(this.predicateAddress)) {
+    const encoder = txIdEncoders[this.predicateAddress];
+    if (!encoder) {
       return txId;
     }
 
-    const encoder = txIdEncoders[this.predicateAddress];
     return encoder.encodeTxId(txId);
   }
 

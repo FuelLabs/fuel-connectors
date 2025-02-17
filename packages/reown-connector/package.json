@@ -1,7 +1,7 @@
 {
   "name": "@fuel-connectors/reown-connector",
   "private": true,
-  "version": "0.38.1",
+  "version": "0.39.0",
   "type": "module",
   "files": ["dist"],
   "main": "./dist/reown-connector.umd.cjs",
@@ -20,7 +20,7 @@
   },
   "peerDependencies": {
     "@reown/appkit": ">=1.6.5",
-    "fuels": ">=0.96.1",
+    "fuels": ">=0.98.0",
     "viem": ">=2.22.17"
   },
   "dependencies": {
@@ -36,7 +36,6 @@
     "@reown/appkit": "1.6.5",
     "@reown/appkit-utils": "1.6.5",
     "@types/memoizee": "0.4.11",
-    "fuels": "0.96.1",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",

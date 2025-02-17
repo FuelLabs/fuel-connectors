@@ -1,4 +1,5 @@
 import { type Address, Contract, type JsonAbi, type Provider } from 'fuels';
+import { useEffect, useState } from 'react';
 import { type UseNamedQueryParams, useNamedQuery } from '../core/useNamedQuery';
 import { QUERY_KEYS } from '../utils';
 
@@ -70,7 +71,14 @@ export const useContractRead = <
   args,
 }: ContractReadProps<A, C, F>) => {
   const isContractInstance = isContract(_contract);
-  const chainId = _contract?.provider?.getChainId();
+  const [chainId, setChainId] = useState<number | undefined>(undefined);
+  useEffect(() => {
+    const getChainId = async () => {
+      const chainId = await _contract?.provider?.getChainId();
+      setChainId(chainId);
+    };
+    getChainId();
+  }, [_contract]);
 
   return useNamedQuery('contractRead', {
     queryKey: QUERY_KEYS.contract(

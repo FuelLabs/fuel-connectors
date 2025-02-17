@@ -12,8 +12,8 @@
 
 import { Contract, Interface } from 'fuels';
 import type {
-  AbstractAddress,
   Account,
+  Address,
   BN,
   BigNumberish,
   FunctionFragment,
@@ -93,10 +93,7 @@ export class Counter extends Contract {
     increment_counter: InvokeFunction<[], BN>;
   };
 
-  constructor(
-    id: string | AbstractAddress,
-    accountOrProvider: Account | Provider,
-  ) {
+  constructor(id: string | Address, accountOrProvider: Account | Provider) {
     super(id, abi, accountOrProvider);
   }
 }
