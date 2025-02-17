@@ -1,5 +1,13 @@
 # docs
 
+## 0.30.0
+
+### Minor Changes
+
+- [#458](https://github.com/FuelLabs/fuel-connectors/pull/458) [`b21855f`](https://github.com/FuelLabs/fuel-connectors/commit/b21855feaf6275b16f626156ba7d1c74262f3a5b) Thanks [@arthurgeron](https://github.com/arthurgeron)! - Upgrade Fuel SDK to 0.98.0
+
+- [#473](https://github.com/FuelLabs/fuel-connectors/pull/473) [`5f9794e`](https://github.com/FuelLabs/fuel-connectors/commit/5f9794e17520411129610290366759fe326bae58) Thanks [@luizstacio](https://github.com/luizstacio)! - Introduce custom `encodeTxId` methods for different predicate versions in EVM Connectors to fix wallet-specific signing limitations by using UTF-8 encoding.
+
 ## 0.29.1
 
 ### Patch Changes

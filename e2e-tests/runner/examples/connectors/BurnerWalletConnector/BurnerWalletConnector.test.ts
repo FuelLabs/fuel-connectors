@@ -78,7 +78,7 @@ test.describe('BurnerWalletConnector', async () => {
     }
 
     const burnerWallet = Wallet.fromPrivateKey(privateKey);
-    const fuelProvider = await Provider.create(VITE_FUEL_PROVIDER_URL);
+    const fuelProvider = new Provider(VITE_FUEL_PROVIDER_URL);
     burnerWallet.connect(fuelProvider);
     await transferMaxBalance({
       fromWallet: burnerWallet,
