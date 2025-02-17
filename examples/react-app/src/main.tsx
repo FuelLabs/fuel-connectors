@@ -80,6 +80,10 @@ const appkit = createAppKit({
   networks,
   allowUnsupportedChain: false,
   allWallets: 'ONLY_MOBILE',
+  featuredWalletIds: [
+    '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0', // Trust Wallet
+    'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase Wallet
+  ],
   features: {
     email: false,
     socials: false,
