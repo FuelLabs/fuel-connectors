@@ -26,7 +26,7 @@
   },
   "peerDependencies": {
     "fuels": ">=0.98.0",
-    "viem": ">=2.22.17"
+    "viem": ">=2.23.2"
   },
   "dependencies": {
     "@ethersproject/bytes": "5.7.0",
@@ -40,7 +40,7 @@
     "terser": "5.31.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5",
-    "viem": "2.22.17",
+    "viem": "2.23.2",
     "vitest": "2.1.9"
   }
 }

@@ -18,9 +18,9 @@
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@reown/appkit": ">=1.6.5",
+    "@reown/appkit": ">=1.6.8",
     "fuels": ">=0.98.0",
-    "viem": ">=2.22.17"
+    "viem": ">=2.23.2"
   },
   "peerDependenciesMeta": {
     "@reown/appkit": {
@@ -42,10 +42,10 @@
     "@fuel-connectors/fuel-wallet": "workspace:*",
     "@fuel-connectors/fuelet-wallet": "workspace:*",
     "@fuel-connectors/reown-connector": "workspace:*",
-    "@reown/appkit": "1.6.5",
+    "@reown/appkit": "1.6.8",
     "terser": "5.31.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5",
-    "viem": "2.22.17"
+    "viem": "2.23.2"
   }
 }

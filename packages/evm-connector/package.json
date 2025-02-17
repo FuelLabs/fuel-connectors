@@ -21,7 +21,7 @@
   },
   "peerDependencies": {
     "fuels": ">=0.98.0",
-    "viem": ">=2.22.17"
+    "viem": ">=2.23.2"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -38,7 +38,7 @@
     "tsup": "8.0.2",
     "tsx": "4.9.3",
     "typescript": "5.4.5",
-    "viem": "2.22.17",
+    "viem": "2.23.2",
     "vite": "5.2.11",
     "vite-plugin-dts": "3.9.1",
     "vite-tsconfig-paths": "4.3.2",

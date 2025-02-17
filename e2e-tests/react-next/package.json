@@ -11,15 +11,15 @@
     "@fuels/connectors": "workspace:*",
     "@fuels/react": "workspace:*",
     "@radix-ui/react-toast": "1.1.5",
-    "@reown/appkit": "1.6.5",
-    "@reown/appkit-adapter-solana": "1.6.5",
-    "@reown/appkit-adapter-wagmi": "1.6.5",
+    "@reown/appkit": "1.6.8",
+    "@reown/appkit-adapter-solana": "1.6.8",
+    "@reown/appkit-adapter-wagmi": "1.6.8",
     "@tanstack/react-query": "5.35.1",
     "fuels": "0.98.0",
     "clsx": "2.1.1",
     "next": "14.2.22",
-    "viem": "2.22.17",
-    "wagmi": "2.14.9"
+    "viem": "2.23.2",
+    "wagmi": "2.14.11"
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "5.35.1",
