@@ -56,6 +56,12 @@ export class ReownConnector extends FuelConnector {
       ethereum: new PredicateEvm(this.config, this.storage),
       solana: new PredicateSvm(this.config),
     };
+
+    const appkitAdapters = this.config.appkit.options?.adapters ?? [];
+    const namespaces = appkitAdapters.map((adapter) => adapter.namespace);
+    if (!namespaces.includes('eip155') || !namespaces.includes('solana')) {
+      throw new Error('ReownConnector requires Ethereum and Solana adapters');
+    }
   }
 
   private setPredicateInstance() {
