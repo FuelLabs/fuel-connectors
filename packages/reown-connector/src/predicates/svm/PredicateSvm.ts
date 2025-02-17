@@ -58,7 +58,7 @@ export class PredicateSvm extends PredicateConnector {
     await this.setupPredicate();
 
     return {
-      connection: true,
+      connection: this.config.appkit.getIsConnectedState(),
       account: this.predicateAccount?.getPredicateAddress(address),
       accounts: this.predicateAccount?.getPredicateAddresses(
         await this.walletAccounts(),
