@@ -31,11 +31,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MSG"
           FIRST_LINE=$(echo "$COMMIT_MSG" | head -n1)
+          echo "First line: $FIRST_LINE"
           if [[ "$FIRST_LINE" == "ci(changesets): versioning packages"* ]]; then
+            echo "Matches changeset pattern"
             PR_NUMBER=$(echo "$FIRST_LINE" | grep -o '#[0-9]\+' | head -n1 | tr -d '#')
+            echo "PR number: $PR_NUMBER"
             if [ -n "$PR_NUMBER" ]; then
               PR_TITLE=$(gh pr view "$PR_NUMBER" --json title -q .title)
+              echo "PR title: $PR_TITLE"
               if [[ "$PR_TITLE" == "ci(changesets): versioning packages" ]]; then
                 echo "is_changeset_pr=true" >> "$GITHUB_OUTPUT"
                 exit 0
