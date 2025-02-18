@@ -6,4 +6,4 @@
 "@fuel-connectors/common": patch
 ---
 
-Update depedencies.
+Update `vitest` dependencies.
