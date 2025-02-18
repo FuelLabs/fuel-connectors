@@ -11,7 +11,7 @@ concurrency:
 
 env:
   BUILD_VERSION: ''
- 
+
 jobs:
   check-commit:
     name: Check Commit Type
