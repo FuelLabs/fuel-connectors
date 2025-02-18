@@ -15,7 +15,12 @@ import {
   type TransactionRequestLike,
   type Version,
 } from 'fuels';
-import { HAS_WINDOW, REOWN_ICON, WINDOW } from './constants';
+import {
+  APPKIT_STORAGE_KEYS,
+  HAS_WINDOW,
+  REOWN_ICON,
+  WINDOW,
+} from './constants';
 import { PredicateEvm } from './predicates/evm/PredicateEvm';
 import { PredicateSvm } from './predicates/svm/PredicateSvm';
 import type {
@@ -71,6 +76,10 @@ export class ReownConnector extends FuelConnector {
     }
 
     this.activeChain = 'solana';
+  }
+
+  private async getConnectedNamespaces() {
+    return this.storage.getItem(APPKIT_STORAGE_KEYS.CONNECTED_NAMESPACES);
   }
 
   private watchCurrentAccount() {
@@ -177,6 +186,17 @@ export class ReownConnector extends FuelConnector {
 
         // Connected something
         if (address && address !== this.account) {
+          // If we don't have any connected namespaces, we need to disconnect
+          // For some reason, the appkit doesn't return the correct state after closing a wallet if there's something connected previously
+          const connectedNamespaces = await this.getConnectedNamespaces();
+          if (!connectedNamespaces) {
+            await this.config.appkit.disconnect();
+            this.isConnecting = false;
+            clearInterval(interval);
+            resolve(false);
+            return;
+          }
+
           this.setPredicateInstance();
           const connector = this.predicatesInstance[this.activeChain];
           this.account = address;
