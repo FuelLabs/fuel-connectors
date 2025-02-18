@@ -18,7 +18,6 @@ overrides:
   nanoid@<3.3.8: 3.3.8
   vite@>=5.2.0 <5.4.6: '>=5.4.6'
   esbuild@<=0.24.2: '>=0.25.0'
-  vitest@>=2.0.0 <2.1.9: 2.1.9
 
 importers:
 
@@ -2157,7 +2156,7 @@ packages:
     resolution: {integrity: sha512-jnU1318E70r/9vNP4tXO+EIIt3ruIfPwRcf+IApzJmn2NRgGUVGbIT1WBi289Ya1E/ZQPlAJt3qU3BSF/eDqcA==}
     engines: {node: ^18.20.3 || ^20.0.0 || ^22.0.0}
     peerDependencies:
-      vitest: 2.1.9
+      vitest: 2.0.5
 
   '@fuel-ts/versions@0.96.0':
     resolution: {integrity: sha512-uffrtpkCguzsVkCLW7tuZG1BwNu69LCjy8sO831VcpZsDRzIy3qO/om9X17W2HTJXxSS+25ok4t7fThIF+w6Gg==}
