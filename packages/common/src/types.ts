@@ -1,6 +1,5 @@
 import type EventEmitter from 'node:events';
 import type {
-  BN,
   BytesLike,
   Predicate as FuelPredicate,
   Provider as FuelProvider,
@@ -31,15 +30,9 @@ export interface EIP1193Provider extends EventEmitter {
   }): Promise<unknown | unknown[]>;
 }
 
-export type ConnectorConfig = {
-  [key: string]: unknown;
-  predicateConfig?: PredicateConfig;
-};
-
 export type ProviderDictionary = {
   fuelProvider: FuelProvider;
   ethProvider?: EIP1193Provider;
-  [key: string]: Maybe<Option<FuelProvider, EIP1193Provider>>;
 };
 
 export type PreparedTransaction = {
@@ -55,14 +48,16 @@ export type SignedMessageCustomCurve = {
   signature: string;
 };
 
-// export interface PaymasterParams {
-//   paymasterAddress: string;
-//   maxFeePerGas?: BN;
-//   deadline?: number;
-// }
+export type FuelPredicateAddress = {
+  fuelAddress: string;
+  predicate: {
+    generatedAt: number;
+    address: string;
+  };
+};
 
-// export interface SendTransactionParams {
-//   skipCustomFee?: boolean;
-//   onBeforeSend?: (txRequest: TransactionRequest) => Promise<TransactionRequest>;
-//   paymaster?: PaymasterParams;
-// }
+export type PredicateCurrentState = {
+  connection: boolean;
+  account?: string;
+  accounts?: string[];
+};

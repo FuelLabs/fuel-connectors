@@ -16,6 +16,8 @@ import phantomExtended from './phantom/phantom';
 import { test } from './setup';
 
 // @TODO: Phantom CRX is currently broken, so we're skipping this step for now
+// When someone fixes it, we should move it to "ReownConnector" because SolanaConnector doesn't exist anymore
+// Find this PR to see more details and understand better.
 test.skip('SolanaConnector', () => {
   test.slow();
 
