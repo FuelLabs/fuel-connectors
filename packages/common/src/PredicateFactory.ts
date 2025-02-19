@@ -1,6 +1,5 @@
 import { arrayify } from '@ethersproject/bytes';
 import {
-  Address,
   type B256Address,
   type BN,
   type BytesLike,
@@ -11,7 +10,6 @@ import {
   ScriptTransactionRequest,
   ZeroBytes32,
   bn,
-  getPredicateRoot,
 } from 'fuels';
 import memoize from 'memoizee';
 import type { PredicateWalletAdapter } from './PredicateWalletAdapter';

@@ -76,13 +76,13 @@ export const syncPredicate = async (__dirname: string) => {
       `import { abi as abi${v.date}, bin as bin${v.date}, generationDate as generationDate${v.date}} from './${v.version}';`,
   );
 
-  const code = `\n\nexport const PREDICATE_VERSIONS = {\n${versions
+  const code = `\n\nexport const PREDICATE_VERSIONS: Record<string, PredicateVersion> = {\n${versions
     .map(
       (v) =>
         `\t'${v.version}':{ predicate: {abi: abi${v.date}, bin: bin${v.date}}, generatedAt: generationDate${v.date} }`,
     )
     .join(',\n')}
-} as const satisfies Record<string, PredicateVersion>;\n`;
+};\n`;
   fs.appendFileSync(versionsDictionaryPath, `${headers.join('\n')}${code}`);
   console.info('Dictionary updated.');
 };

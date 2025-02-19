@@ -1,8 +1,6 @@
 import { stringToHex } from 'viem';
 import type { PREDICATE_VERSIONS } from '../generated';
 
-export type EvmPredicateRoot = keyof typeof PREDICATE_VERSIONS;
-
 type TxIdEncoder = {
   encodeTxId: (txId: string) => string;
 };
@@ -22,7 +20,7 @@ const encodeTxIdLegacy = (txId: string): string => {
   return txId;
 };
 
-export const txIdEncoders: Record<EvmPredicateRoot, TxIdEncoder> = {
+export const txIdEncoders: Record<string, TxIdEncoder> = {
   '0x3499b76bcb35d8bc68fb2fa74fbe1760461f64f0ac19890c0bacb69377ac19d2': {
     encodeTxId: encodeTxIdUtf8,
   },

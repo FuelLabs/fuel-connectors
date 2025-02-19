@@ -129,10 +129,10 @@ jobs:
         run: pnpm fuels build && pnpm fuels deploy
         working-directory: packages/evm-predicates
 
-      - name: Build & Deploy Solana Predicates
+      - name: Build & Deploy SVM Predicates
         run: pnpm fuels build && pnpm fuels deploy
         if: false # @TODO: Phantom CRX is currently broken, so we're skipping this step for now
-        working-directory: packages/solana-connector
+        working-directory: packages/svm-predicates
 
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
