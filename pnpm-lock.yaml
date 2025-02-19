@@ -15,9 +15,8 @@ overrides:
   next@>=10.0.0 <14.2.22: '>=14.2.22'
   cross-spawn@>=7.0.0 <7.0.5: '>=7.0.5'
   nanoid@<3.3.8: 3.3.8
-  vite@>=5.2.0 <5.2.14: '>=5.2.14'
+  vite@>=5.2.0 <5.4.6: '>=5.4.6'
   esbuild@<=0.24.2: '>=0.25.0'
-  vite@>=5.0.0 <=5.4.11: '>=5.4.12'
 
 importers:
 
@@ -133,7 +132,7 @@ importers:
         specifier: 5.4.5
         version: 5.4.5
       vite:
-        specifier: '>=5.4.12'
+        specifier: '>=5.4.6'
         version: 5.4.14(@types/node@22.7.5)(terser@5.34.1)
 
   e2e-tests/runner:
@@ -230,7 +229,7 @@ importers:
         specifier: 5.4.5
         version: 5.4.5
       vite:
-        specifier: '>=5.4.12'
+        specifier: '>=5.4.6'
         version: 5.4.14(@types/node@22.7.5)(terser@5.34.1)
 
   examples/react-next:
@@ -326,7 +325,7 @@ importers:
         specifier: 5.4.5
         version: 5.4.5
       vite:
-        specifier: '>=5.4.12'
+        specifier: '>=5.4.6'
         version: 5.4.14(@types/node@22.7.5)(terser@5.34.1)
       vite-plugin-dts:
         specifier: 3.9.1
@@ -528,7 +527,7 @@ importers:
         specifier: 2.23.2
         version: 2.23.2(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
       vite:
-        specifier: '>=5.4.12'
+        specifier: '>=5.4.6'
         version: 5.4.14(@types/node@22.7.5)(terser@5.34.1)
       vite-plugin-dts:
         specifier: 3.9.1
@@ -3369,13 +3368,13 @@ packages:
     resolution: {integrity: sha512-oojO9IDc4nCUUi8qIR11KoQm0XFFLIwsRBwHRR4d/88IWghn1y6ckz/bJ8GHDCsYEJee8mDzqtJxh15/cisJNQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
-      vite: '>=5.4.12'
+      vite: '>=5.4.6'
 
   '@vitejs/plugin-vue@5.1.2':
     resolution: {integrity: sha512-nY9IwH12qeiJqumTCLJLE7IiNx7HZ39cbHaysEUd+Myvbz9KAqd2yq+U01Kab1R/H1BmiyM2ShTYlNH32Fzo3A==}
     engines: {node: ^18.0.0 || >=20.0.0}
     peerDependencies:
-      vite: '>=5.4.12'
+      vite: '>=5.4.6'
       vue: ^3.2.25
 
   '@vitest/coverage-v8@2.1.9':
@@ -3394,7 +3393,7 @@ packages:
     resolution: {integrity: sha512-tVL6uJgoUdi6icpxmdrn5YNo3g3Dxv+IHJBr0GXHaEdTcw3F+cPKnsXFhli6nO+f/6SDKPHEK1UN+k+TQv0Ehg==}
     peerDependencies:
       msw: ^2.4.9
-      vite: '>=5.4.12'
+      vite: '>=5.4.6'
     peerDependenciesMeta:
       msw:
         optional: true
@@ -8702,7 +8701,7 @@ packages:
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       typescript: '*'
-      vite: '>=5.4.12'
+      vite: '>=5.4.6'
     peerDependenciesMeta:
       vite:
         optional: true
@@ -8710,7 +8709,7 @@ packages:
   vite-tsconfig-paths@4.3.2:
     resolution: {integrity: sha512-0Vd/a6po6Q+86rPlntHye7F31zA2URZMbH8M3saAZ/xR9QoGN/L21bxEGfXdWmFdNkqPpRdxFT7nmNe12e9/uA==}
     peerDependencies:
-      vite: '>=5.4.12'
+      vite: '>=5.4.6'
     peerDependenciesMeta:
       vite:
         optional: true
