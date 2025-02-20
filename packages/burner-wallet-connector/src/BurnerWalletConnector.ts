@@ -44,6 +44,8 @@ export class BurnerWalletConnector extends FuelConnector {
     },
   };
 
+  usePrepareForSend = true;
+
   private burnerWallet: WalletUnlocked | null = null;
   private fuelProvider: Provider | null = null;
   private storage: StorageAbstract | Storage;
@@ -228,6 +230,26 @@ export class BurnerWalletConnector extends FuelConnector {
       await this.burnerWallet.sendTransaction(transaction);
 
     return transactionRequest.id;
+  }
+
+  public async prepareForSend(
+    address: string,
+    transaction: TransactionRequestLike,
+  ): Promise<TransactionRequestLike> {
+    if (!this.burnerWallet) {
+      throw Error('Wallet not connected');
+    }
+
+    if (address !== this.burnerWallet.address.toString()) {
+      throw Error('Address not found for the connector');
+    }
+
+    const signedTranasctionRequest =
+      await this.burnerWallet.populateTransactionWitnessesSignature(
+        transaction,
+      );
+
+    return signedTranasctionRequest;
   }
 
   async currentAccount(): Promise<string | null> {
