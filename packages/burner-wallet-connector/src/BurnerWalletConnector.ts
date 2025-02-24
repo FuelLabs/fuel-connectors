@@ -244,12 +244,12 @@ export class BurnerWalletConnector extends FuelConnector {
       throw Error('Address not found for the connector');
     }
 
-    const signedTranasctionRequest =
+    const signedTransactionRequest =
       await this.burnerWallet.populateTransactionWitnessesSignature(
         transaction,
       );
 
-    return signedTranasctionRequest;
+    return signedTransactionRequest;
   }
 
   async currentAccount(): Promise<string | null> {
