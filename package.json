@@ -37,18 +37,20 @@
     "@fuels/ts-config": "0.20.0",
     "@fuels/tsup-config": "0.20.0",
     "@types/node": "20.12.11",
-    "@vitest/coverage-v8": "2.0.2",
+    "@vitest/coverage-v8": "2.1.9",
     "compare-versions": "6.1.0",
+    "fuels": "0.98.0",
     "husky": "9.0.11",
     "lint-staged": "15.2.2",
     "tsx": "^4.16.2",
     "turbo": "2.0.11",
-    "vitest": "2.0.2"
+    "vitest": "2.1.9"
   },
   "engines": {
     "node": "20.x",
     "pnpm": "9.x"
   },
+  "packageManager": "pnpm@9.5.0",
   "pnpm": {
     "overrides": {
       "braces@<3.0.3": ">=3.0.3",
@@ -61,8 +63,9 @@
       "elliptic@<6.6.0": ">=6.6.0",
       "next@>=10.0.0 <14.2.22": ">=14.2.22",
       "cross-spawn@>=7.0.0 <7.0.5": ">=7.0.5",
-      "nanoid@<3.3.8": "3.3.8"
+      "nanoid@<3.3.8": "3.3.8",
+      "vite@>=5.2.0 <5.4.6": ">=5.4.6",
+      "esbuild@<=0.24.2": ">=0.25.0"
     }
-  },
-  "packageManager": "pnpm@9.5.0"
+  }
 }

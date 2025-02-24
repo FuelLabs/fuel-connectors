@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FORC_VERSION: 0.63.3
-  CORE_VERSION: 0.35.0
+  FORC_VERSION: 0.66.5
+  CORE_VERSION: 0.40.2
 
 jobs:
   tests-vitest:

@@ -1,6 +1,6 @@
 [[package]]
 name = "core"
-source = "path+from-root-4BA3A18A2D620E67"
+source = "path+from-root-6A8836696D55BC6E"
 
 [[package]]
 name = "custom_asset"
@@ -23,7 +23,7 @@ dependencies = ["std"]
 
 [[package]]
 name = "std"
-source = "git+https://github.com/fuellabs/sway?tag=v0.64.0#2156bfbbee01ffb85bfca2aae8f185f8e7c715a4"
+source = "git+https://github.com/fuellabs/sway?tag=v0.66.5#94a066652468b4afa3bd396dacef482ed590976b"
 dependencies = ["core"]
 
 [[package]]

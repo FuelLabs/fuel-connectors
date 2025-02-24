@@ -63,7 +63,7 @@ export class BurnerWalletConnector extends FuelConnector {
   private configProvider(config: BurnerWalletConfig = {}) {
     const network = getProviderUrl(config.chainId ?? CHAIN_IDS.fuel.testnet);
     this.config = Object.assign(config, {
-      fuelProvider: config.fuelProvider || Provider.create(network),
+      fuelProvider: config.fuelProvider || new Provider(network),
     });
   }
 
@@ -286,7 +286,7 @@ export class BurnerWalletConnector extends FuelConnector {
 
   async currentNetwork(): Promise<Network> {
     const { fuelProvider } = await this.getProvider();
-    const chainId = fuelProvider.getChainId();
+    const chainId = await fuelProvider.getChainId();
 
     return {
       chainId,

@@ -46,7 +46,7 @@ export function useIsSupportedNetwork(params?: UseIsSupportedNetwork) {
       if (!network) return true;
       let chainId = network.chainId;
       if (chainId == null) {
-        chainId = (await Provider.create(network.url)).getChainId();
+        chainId = await new Provider(network.url).getChainId();
       }
       return !!networks.find((n) => n.chainId === chainId);
     },
