@@ -1,0 +1,63 @@
+name: PR Release
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  BUILD_VERSION: ""
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  pr-release:
+    name: Release PR to NPM
+    if: false
+    runs-on: buildjet-4vcpu-ubuntu-2204
+    environment: npm-deploy
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: FuelLabs/github-actions/setups/node@master
+        with:
+          node-version: 20.11.0
+          pnpm-version: 9.5.0
+
+      - uses: FuelLabs/github-actions/setups/npm@master
+        with:
+          npm-token: ${{ secrets.NPM_TOKEN_CONNECTORS }}
+
+      - name: Build Lib
+        run: pnpm build
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
+
+      - name: Release PR version
+        id: release
+        run: |
+          pnpm changeset version --snapshot pr-${{ github.event.pull_request.number }}
+          changetsets=$(pnpm changeset publish --tag pr-${{ github.event.pull_request.number }})
+          echo "BUILD_VERSION=$(pnpm -s packages:version)" >> $GITHUB_ENV
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_CONNECTORS }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment release package name to PR
+        uses: mshick/add-pr-comment@v2
+        with:
+          message: |
+            🎉 PR packages published to NPM with version **${{ env.BUILD_VERSION }}**
+
+            You can install it using:
+            ```bash
+            npm install @fuels/connectors@${{ env.BUILD_VERSION }}
+            # or
+            pnpm add @fuels/connectors@${{ env.BUILD_VERSION }}
+            ```
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   
