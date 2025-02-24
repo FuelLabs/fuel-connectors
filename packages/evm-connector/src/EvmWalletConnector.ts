@@ -1,5 +1,4 @@
 import { hexToBytes } from '@ethereumjs/util';
-// External libraries
 import { hexlify, splitSignature } from '@ethersproject/bytes';
 
 import {
@@ -12,10 +11,12 @@ import {
 } from 'fuels';
 
 import {
+  type EIP1193Provider,
   EthereumWalletAdapter,
   type Maybe,
   type MaybeAsync,
   PredicateConnector,
+  type PredicateCurrentState,
   type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
@@ -24,13 +25,11 @@ import {
   getProviderUrl,
 } from '@fuel-connectors/common';
 import {
-  type EvmPredicateRoot,
   PREDICATE_VERSIONS,
   txIdEncoders,
 } from '@fuel-connectors/evm-predicates';
 import { METAMASK_ICON, WINDOW } from './constants';
 import {
-  type EIP1193Provider,
   type EVMWalletConnectorConfig,
   EVMWalletConnectorEvents,
 } from './types';
@@ -45,8 +44,8 @@ export class EVMWalletConnector extends PredicateConnector {
       link: 'https://metamask.io/download/',
     },
   };
-  ethProvider: EIP1193Provider | null = null;
   fuelProvider: Provider | null = null;
+  ethProvider?: EIP1193Provider;
   events = {
     ...FuelConnectorEventTypes,
     ...EVMWalletConnectorEvents,
@@ -71,7 +70,7 @@ export class EVMWalletConnector extends PredicateConnector {
       return this.config.ethProvider;
     }
     if (WINDOW?.ethereum) {
-      return WINDOW.ethereum;
+      return WINDOW.ethereum as unknown as EIP1193Provider;
     }
 
     return null;
@@ -209,6 +208,18 @@ export class EVMWalletConnector extends PredicateConnector {
     return this.connected;
   }
 
+  public async getCurrentState(): Promise<PredicateCurrentState> {
+    const connection = await this.isConnected();
+    const account = this._currentAccount;
+    const accounts = await this.accounts();
+
+    return {
+      connection,
+      account: account || undefined,
+      accounts,
+    };
+  }
+
   public async disconnect(): Promise<boolean> {
     if (await this.isConnected()) {
       const { ethProvider } = await this.getProviders();
@@ -279,18 +290,12 @@ export class EVMWalletConnector extends PredicateConnector {
     };
   }
 
-  private isValidPredicateAddress(
-    address: string,
-  ): address is EvmPredicateRoot {
-    return address in txIdEncoders;
-  }
-
   private encodeTxId(txId: string): string {
-    if (!this.isValidPredicateAddress(this.predicateAddress)) {
+    const encoder = txIdEncoders[this.predicateAddress];
+    if (!encoder) {
       return txId;
     }
 
-    const encoder = txIdEncoders[this.predicateAddress];
     return encoder.encodeTxId(txId);
   }
 }

@@ -29,7 +29,6 @@ const fuelRootStyle: React.CSSProperties = {
   width: '100%',
   margin: 0,
   padding: 0,
-  zIndex: 99,
   fontFamily: 'var(--fuel-font-family)',
   fontSize: 'var(--fuel-font-size)',
 };
