@@ -18,6 +18,7 @@ import {
   PredicateConnector,
   type PredicateVersion,
   type PredicateWalletAdapter,
+  type PreparedTransaction,
   type ProviderDictionary,
   getMockedSignatureIndex,
   getOrThrow,
@@ -56,6 +57,7 @@ export class EVMWalletConnector extends PredicateConnector {
   private _currentAccount: string | null = null;
   private config: EVMWalletConnectorConfig = {};
   private _ethereumEvents = 0;
+  usePrepareForSend = true;
 
   constructor(config: EVMWalletConnectorConfig = {}) {
     super();
@@ -230,12 +232,12 @@ export class EVMWalletConnector extends PredicateConnector {
     return false;
   }
 
-  public async sendTransaction(
+  private async prepareAndSignTransaction(
     address: string,
     transaction: TransactionRequestLike,
-  ): Promise<string> {
+  ): Promise<PreparedTransaction> {
     const { ethProvider, fuelProvider } = await this.getProviders();
-    const { request, transactionId, account, transactionRequest } =
+    const { request, transactionId, account, transactionRequest, predicate } =
       await this.prepareTransaction(address, transaction);
 
     const txId = this.encodeTxId(transactionId);
@@ -255,13 +257,42 @@ export class EVMWalletConnector extends PredicateConnector {
     const transactionWithPredicateEstimated =
       await fuelProvider.estimatePredicates(request);
 
+    return {
+      predicate,
+      transactionId,
+      transactionRequest: transactionWithPredicateEstimated,
+      request,
+      account: address,
+    };
+  }
+
+  public async sendTransaction(
+    address: string,
+    transaction: TransactionRequestLike,
+  ): Promise<string> {
+    const { fuelProvider } = await this.getProviders();
+    const { transactionRequest } = await this.prepareAndSignTransaction(
+      address,
+      transaction,
+    );
+
     const response = await fuelProvider.operations.submit({
-      encodedTransaction: hexlify(
-        transactionWithPredicateEstimated.toTransactionBytes(),
-      ),
+      encodedTransaction: hexlify(transactionRequest.toTransactionBytes()),
     });
 
     return response.submit.id;
+  }
+
+  public async prepareForSend(
+    address: string,
+    transaction: TransactionRequestLike,
+  ): Promise<TransactionRequestLike> {
+    const { transactionRequest } = await this.prepareAndSignTransaction(
+      address,
+      transaction,
+    );
+
+    return transactionRequest;
   }
 
   async signMessageCustomCurve(message: string) {
