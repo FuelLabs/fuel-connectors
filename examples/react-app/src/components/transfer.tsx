@@ -82,7 +82,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
       };
     } catch (err) {
       const error = err as CustomError;
-      console.error(error.message);
+      console.error(error);
 
       setToast({
         open: true,
