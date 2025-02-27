@@ -196,6 +196,7 @@ export class FuelWalletConnector extends FuelConnector {
     transaction: TransactionRequestLike,
     params?: FuelConnectorSendTxParams,
   ): Promise<string> {
+    console.log('sendTransaction', params);
     if (!transaction) {
       throw new Error('Transaction is required');
     }
@@ -212,16 +213,24 @@ export class FuelWalletConnector extends FuelConnector {
      * to be correct according to the network the transaction wants to target.
      */
     const network = await this.currentNetwork();
+
+    // Use provider from params if available, or create one with just the URL
     const provider = {
-      url: network.url,
+      url: params?.provider?.url || network.url,
+      cache: params?.provider?.cache,
     };
 
-    return this.client.request('sendTransaction', {
+    // Create request object with all available data
+    const requestObj = {
       address,
       transaction: JSON.stringify(txRequest),
       provider,
       skipCustomFee: params?.skipCustomFee,
-    });
+      state: params?.state,
+      data: params?.data,
+    };
+
+    return this.client.request('sendTransaction', requestObj);
   }
 
   async assets(): Promise<Array<Asset>> {
