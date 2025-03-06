@@ -80,12 +80,9 @@ export class FueletWalletConnector extends FuelWalletConnector {
 
   async connect() {
     if (this.isMobile()) {
-      alert('isMobile installed??');
       const isInstalled = await this.isAppInstalled('fuelet');
-      alert(isInstalled);
       if (!isInstalled) {
         window.location.href = `app.fuelet://browser?url=${window.location.href}`;
-        alert('isMobile connected');
       }
     }
     return super.connect();
@@ -127,7 +124,6 @@ export class FueletWalletConnector extends FuelWalletConnector {
   async ping() {
     if (this.isMobile()) {
       const isInstalled = await this.isAppInstalled('fuelet');
-      alert(isInstalled);
       return isInstalled;
     }
     return super.ping();
