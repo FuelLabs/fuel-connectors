@@ -10,4 +10,7 @@ export default defineConfig({
       plugins: [tailwindcss()],
     },
   },
+  server: {
+    allowedHosts: ['localhost', 'your-ngrok-tunnel-link'],
+  },
 });

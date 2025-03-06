@@ -69,4 +69,67 @@ export class FueletWalletConnector extends FuelWalletConnector {
 
     return super.currentAccount();
   }
+
+  isMobile() {
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(
+        navigator.userAgent,
+      );
+    return isMobile;
+  }
+
+  async connect() {
+    if (this.isMobile()) {
+      alert('isMobile installed??');
+      const isInstalled = await this.isAppInstalled('fuelet');
+      alert(isInstalled);
+      if (!isInstalled) {
+        window.location.href = `app.fuelet://browser?url=${window.location.href}`;
+        alert('isMobile connected');
+      }
+    }
+    return super.connect();
+  }
+
+  async isAppInstalled(appScheme: string): Promise<boolean> {
+    // iOS & Android
+    return new Promise((resolve) => {
+      let attempts = 0;
+      const maxAttempts = 3;
+      const scheme = appScheme.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const callbackUrl = encodeURIComponent(window.location.href);
+
+      const tryCheck = () => {
+        const timeout = setTimeout(() => {
+          if (attempts < maxAttempts - 1) {
+            attempts++;
+            tryCheck();
+          } else {
+            resolve(false);
+          }
+        }, 2000);
+
+        window.addEventListener('message', (event) => {
+          // check the response with expect fuelet response from app
+          if (event.data?.fueletInstalled) {
+            clearTimeout(timeout);
+            resolve(true);
+          }
+        });
+
+        window.location.href = `${scheme}://browser?url=${callbackUrl}&action=check_installed`;
+      };
+
+      tryCheck();
+    });
+  }
+
+  async ping() {
+    if (this.isMobile()) {
+      const isInstalled = await this.isAppInstalled('fuelet');
+      alert(isInstalled);
+      return isInstalled;
+    }
+    return super.ping();
+  }
 }
