@@ -1,4 +1,5 @@
 packages:
   - 'examples/*'
   - 'packages/*'
-  - 'e2e-tests/*'
+  # Commented out as the install was not working using the custom registry
+  # - 'e2e-tests/*'
