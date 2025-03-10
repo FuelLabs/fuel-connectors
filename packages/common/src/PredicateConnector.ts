@@ -116,9 +116,8 @@ export abstract class PredicateConnector extends FuelConnector {
       const { fuelProvider } = await this.getProviders();
       const predicate = predicateInstance.build(address, fuelProvider, [1]);
 
-      const balance = await predicate.getBalance();
-
-      if (!balance.isZero()) {
+      const { balances } = await predicate.getBalances();
+      if (balances?.length > 0) {
         return predicateInstance;
       }
     }
