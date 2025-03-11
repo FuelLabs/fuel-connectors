@@ -1,5 +1,13 @@
 # @fuel-connectors/common
 
+## 0.39.1
+
+### Patch Changes
+
+- [#491](https://github.com/FuelLabs/fuel-connectors/pull/491) [`59b7b95`](https://github.com/FuelLabs/fuel-connectors/commit/59b7b95f83951064e58a178890eac04e097603e8) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - fix: predicate selection logic consider balances instead of eth balance only
+
+- [#484](https://github.com/FuelLabs/fuel-connectors/pull/484) [`455dacb`](https://github.com/FuelLabs/fuel-connectors/commit/455dacba761ca642cd784097bc50e6ef4a2586e4) Thanks [@nelitow](https://github.com/nelitow)! - Update `vitest` dependencies.
+
 ## 0.39.0
 
 ### Minor Changes
