@@ -1,5 +1,5 @@
 ---
-"@fuel-connectors/arcana-wallet": major
+"@fuel-connectors/arcana-wallet": minor
 ---
 
 feat: add Arcana Connector
