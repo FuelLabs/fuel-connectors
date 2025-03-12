@@ -27,10 +27,6 @@ jobs:
           node-version: 20.11.0
           pnpm-version: 9.5.0
 
-      - uses: FuelLabs/github-actions/setups/npm@master
-        with:
-          npm-token: ${{ secrets.NPM_TOKEN_CONNECTORS }}
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -62,7 +58,6 @@ jobs:
           changetsets=$(pnpm changeset publish --tag pr-${{ github.event.pull_request.number }})
           echo "BUILD_VERSION=$(pnpm -s packages:version)" >> $GITHUB_ENV
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_CONNECTORS }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HOME: ${{ github.workspace }}
           npm_config_registry: "https://fuel-024848458133.d.codeartifact.us-east-1.amazonaws.com/npm/npm/"
