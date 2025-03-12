@@ -1,5 +1,11 @@
 # @fuel-connectors/evm-predicates
 
+## 0.39.1
+
+### Patch Changes
+
+- [#480](https://github.com/FuelLabs/fuel-connectors/pull/480) [`3dea9f6`](https://github.com/FuelLabs/fuel-connectors/commit/3dea9f697ac8d5119f9b7611efc43551cbfd31c3) Thanks [@arthurgeron](https://github.com/arthurgeron)! - chore: align all fuel-core/forc versions
+
 ## 0.39.0
 
 ### Minor Changes

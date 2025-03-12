@@ -410,21 +410,8 @@ export class WalletConnectConnector extends PredicateConnector {
     params?: FuelConnectorSendTxParams,
   ): Promise<string> {
     const { ethProvider, fuelProvider } = await this.getProviders();
-    console.log('asd inputs BEFORE prepare', transaction.inputs?.toString());
-    console.log(
-      'asd witnesses BEFORE prepare',
-      transaction.witnesses?.toString(),
-    );
     const { request, transactionId, account, transactionRequest } =
       await this.prepareTransaction(address, transaction);
-    console.log(
-      'asd inputs AFTER prepare',
-      transactionRequest.inputs?.toString(),
-    );
-    console.log(
-      'asd witnesses AFTER prepare',
-      transactionRequest.witnesses?.toString(),
-    );
 
     const txId = this.encodeTxId(transactionId);
     const signature = (await ethProvider?.request({
@@ -439,12 +426,6 @@ export class WalletConnectConnector extends PredicateConnector {
     // Transform the signature into compact form for Sway to understand
     const compactSignature = splitSignature(hexToBytes(signature)).compact;
 
-    console.log('asd predicateSignatureIndex', predicateSignatureIndex);
-    console.log(
-      'asd transactionRequest.witnesses',
-      transactionRequest.witnesses?.toString(),
-    );
-    console.log('asd compactSignature', compactSignature);
     transactionRequest.witnesses[predicateSignatureIndex] = compactSignature;
 
     const transactionWithPredicateEstimated =
