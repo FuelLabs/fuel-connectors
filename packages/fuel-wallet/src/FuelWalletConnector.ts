@@ -201,11 +201,13 @@ export class FuelWalletConnector extends FuelConnector {
     }
     let txRequest = transactionRequestify(transaction);
 
-    console.log('asd params', params);
-
-    const { onBeforeSend, skipCustomFee, provider, transactionState, data } =
-      params || {};
-    const { transactionSummary } = data || {};
+    const {
+      onBeforeSend,
+      skipCustomFee,
+      provider,
+      transactionState,
+      transactionSummary,
+    } = params || {};
 
     if (onBeforeSend) {
       txRequest = await onBeforeSend(txRequest);
