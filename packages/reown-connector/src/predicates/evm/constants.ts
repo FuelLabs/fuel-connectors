@@ -1,0 +1,1 @@
+export const SIGNATURE_VALIDATION_TIMEOUT = 1000 * 60;
