@@ -54,11 +54,13 @@ jobs:
       - name: Release PR version
         id: release
         run: |
+          pnpm changeset:next
           pnpm changeset version --snapshot pr-${{ github.event.pull_request.number }}
           changetsets=$(pnpm changeset publish --tag pr-${{ github.event.pull_request.number }})
           echo "BUILD_VERSION=$(pnpm -s packages:version)" >> $GITHUB_ENV
         env:
           HOME: ${{ github.workspace }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           npm_config_registry: "https://fuel-024848458133.d.codeartifact.us-east-1.amazonaws.com/npm/npm/"
 
       - name: Comment release package name to PR
