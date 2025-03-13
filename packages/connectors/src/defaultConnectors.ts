@@ -1,3 +1,4 @@
+import { ArcanaWalletConnector } from '@fuel-connectors/arcana-wallet';
 import { BakoSafeConnector } from '@fuel-connectors/bako-safe';
 import {
   type BurnerWalletConfig,
@@ -38,6 +39,7 @@ export function defaultConnectors({
     new FuelWalletConnector(),
     new BakoSafeConnector(),
     new FueletWalletConnector(),
+    new ArcanaWalletConnector(),
     new WalletConnectConnector({
       projectId: wcProjectId,
       wagmiConfig: ethWagmiConfig,
