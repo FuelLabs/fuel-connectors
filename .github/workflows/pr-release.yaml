@@ -54,7 +54,6 @@ jobs:
       - name: Release PR version
         id: release
         run: |
-          pnpm changeset:next
           pnpm changeset version --snapshot pr-${{ github.event.pull_request.number }}
           changetsets=$(pnpm changeset publish --tag pr-${{ github.event.pull_request.number }})
           echo "BUILD_VERSION=$(pnpm -s packages:version)" >> $GITHUB_ENV
