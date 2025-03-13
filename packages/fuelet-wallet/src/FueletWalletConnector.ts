@@ -69,4 +69,31 @@ export class FueletWalletConnector extends FuelWalletConnector {
 
     return super.currentAccount();
   }
+
+  isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(
+      navigator.userAgent,
+    );
+  }
+
+  isFueletWebView() {
+    return /FueletMobileApp/i.test(navigator.userAgent);
+  }
+
+  isMobileNativeBrowser() {
+    return !this.isFueletWebView() && this.isMobile();
+  }
+
+  async connect() {
+    if (this.isMobileNativeBrowser()) {
+      window.location.href = `app.fuelet://browser?url=${window.location.href}&action=connect`;
+      // we don't connect the wallet in the browser but redirect to the mobile app
+      return false;
+    }
+    return super.connect();
+  }
+
+  async ping() {
+    return this.isMobileNativeBrowser() || (await super.ping());
+  }
 }
