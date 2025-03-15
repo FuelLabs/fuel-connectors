@@ -1,3 +1,5 @@
+[![Build](https://github.com/FuelLabs/fuel-connectors/actions/workflows/pr.yaml/badge.svg)](https://github.com/FuelLabs/fuel-connectors/actions/workflows/pr.yaml)
+
 # @fuels/connector
 
 Collection of connectors for `fuels` SDK.
