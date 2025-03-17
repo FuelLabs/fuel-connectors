@@ -11,7 +11,7 @@ import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
 import { http, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
 
-import { WalletConnectConnector, defaultConnectors } from '@fuels/connectors';
+import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider, type NetworkConfig } from '@fuels/react';
 
 import * as Toast from '@radix-ui/react-toast';
@@ -75,11 +75,6 @@ const NETWORKS: NetworkConfig[] = [
     url: PROVIDER_URL,
   },
 ];
-
-const fuelAddresses = WalletConnectConnector.getFuelPredicateAddresses(
-  '0x91eceD6149dd7b4711025689a63C1fDd1610C48D',
-);
-console.log('asd fuelAddresses', fuelAddresses);
 
 const FUEL_CONFIG: FuelConfig = {
   connectors: defaultConnectors({
