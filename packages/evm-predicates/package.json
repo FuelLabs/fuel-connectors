@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/evm-predicates",
-  "version": "0.39.1",
+  "version": "0.39.2",
   "private": true,
   "type": "module",
   "exports": {
