@@ -3,6 +3,11 @@ name = "core"
 source = "path+from-root-6A8836696D55BC6E"
 
 [[package]]
+name = "counter"
+source = "member"
+dependencies = ["std"]
+
+[[package]]
 name = "custom_asset"
 source = "member"
 dependencies = [
@@ -10,6 +15,16 @@ dependencies = [
     "std",
     "sway_libs",
 ]
+
+[[package]]
+name = "evm-verification-predicate"
+source = "member"
+dependencies = ["std"]
+
+[[package]]
+name = "sol-verification-predicate"
+source = "member"
+dependencies = ["std"]
 
 [[package]]
 name = "standards"
