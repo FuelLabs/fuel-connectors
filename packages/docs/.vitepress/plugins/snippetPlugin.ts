@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { ErrorCode, FuelError } from '@fuel-ts/errors';
+import { ErrorCode, FuelError } from 'fuels';
 import type MarkdownIt from 'markdown-it';
 import type { RuleBlock } from 'markdown-it/lib/parser_block';
 import { extractImports, validateSnippetContent } from './utils/extractImports';

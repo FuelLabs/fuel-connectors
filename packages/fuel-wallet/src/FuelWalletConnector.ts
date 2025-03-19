@@ -201,26 +201,27 @@ export class FuelWalletConnector extends FuelConnector {
     }
     let txRequest = transactionRequestify(transaction);
 
-    if (params?.onBeforeSend) {
-      txRequest = await params.onBeforeSend(txRequest);
+    const {
+      onBeforeSend,
+      skipCustomFee,
+      provider,
+      transactionState,
+      transactionSummary,
+    } = params || {};
+
+    if (onBeforeSend) {
+      txRequest = await onBeforeSend(txRequest);
     }
 
     // Transform transaction object to a transaction request
-
-    /**
-     * @todo We should remove this once the chainId standard start to be used and chainId is required
-     * to be correct according to the network the transaction wants to target.
-     */
-    const network = await this.currentNetwork();
-    const provider = {
-      url: network.url,
-    };
 
     return this.client.request('sendTransaction', {
       address,
       transaction: JSON.stringify(txRequest),
       provider,
-      skipCustomFee: params?.skipCustomFee,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
     });
   }
 
