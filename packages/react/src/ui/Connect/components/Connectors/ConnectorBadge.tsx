@@ -3,6 +3,20 @@ import { useMemo } from 'react';
 import { NATIVE_CONNECTORS } from '../../../../config';
 import { BadgeInfo, BadgeSuccess } from './styles';
 
+function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(
+    navigator.userAgent,
+  );
+}
+
+function isFueletWebView() {
+  return /FueletMobileApp/i.test(navigator.userAgent);
+}
+
+function isFueletConnectorOnMobileBrowser(connectorName: string) {
+  return connectorName === 'Fuelet Wallet' && isMobile() && !isFueletWebView();
+}
+
 interface ConnectorBadgeProps {
   name: FuelConnector['name'];
   connected: FuelConnector['connected'];
@@ -22,7 +36,7 @@ export function ConnectorBadge({
     return <BadgeSuccess>Connected</BadgeSuccess>;
   }
 
-  if (!isBlacklisted && installed) {
+  if (!isBlacklisted && installed && !isFueletConnectorOnMobileBrowser(name)) {
     return <BadgeInfo>Installed</BadgeInfo>;
   }
 
