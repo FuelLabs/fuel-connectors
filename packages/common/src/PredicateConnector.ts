@@ -8,8 +8,10 @@ import {
   FuelConnectorEventTypes,
   type JsonAbi,
   type Network,
+  type Predicate,
   type SelectNetworkArguments,
   type TransactionRequestLike,
+  type TransactionResponse,
   type Version,
   ZeroBytes32,
   bn,
@@ -50,7 +52,7 @@ export abstract class PredicateConnector extends FuelConnector {
   public abstract sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
-  ): Promise<string>;
+  ): Promise<TransactionResponse | string>;
   public abstract connect(): Promise<boolean>;
   public abstract disconnect(): Promise<boolean>;
 
@@ -144,7 +146,6 @@ export abstract class PredicateConnector extends FuelConnector {
     const predicate =
       (await this.getCurrentUserPredicate()) ?? this.getNewestPredicate();
     if (!predicate) throw new Error('No predicate found');
-
     this.predicateAddress = predicate.getRoot();
     this.predicateAccount = predicate;
 
@@ -153,6 +154,44 @@ export abstract class PredicateConnector extends FuelConnector {
 
   protected subscribe(listener: () => void) {
     this.subscriptions.push(listener);
+  }
+
+  protected async getPredicate(
+    address: string,
+    transaction: TransactionRequestLike,
+  ): Promise<Predicate> {
+    if (!(await this.isConnected())) {
+      throw Error('No connected accounts');
+    }
+
+    if (!this.predicateAccount) {
+      throw Error('No predicate account found');
+    }
+
+    const walletAccount = this.predicateAccount.getAccountAddress(
+      address,
+      await this.walletAccounts(),
+    );
+
+    if (!walletAccount) {
+      throw Error(`No account found for ${address}`);
+    }
+
+    const transactionRequest = transactionRequestify(transaction);
+
+    const predicateSignatureIndex = getMockedSignatureIndex(
+      transactionRequest.witnesses,
+    );
+
+    const { fuelProvider } = await this.getProviders();
+
+    const predicate = this.predicateAccount.build(walletAccount, fuelProvider, [
+      predicateSignatureIndex,
+    ]);
+
+    predicate.connect(fuelProvider);
+
+    return predicate;
   }
 
   protected async prepareTransaction(
