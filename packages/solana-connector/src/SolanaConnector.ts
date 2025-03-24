@@ -18,11 +18,13 @@ import {
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
+  LocalStorage,
+  type StorageAbstract,
   type TransactionRequestLike,
   hexlify,
   toUtf8Bytes,
 } from 'fuels';
-import { HAS_WINDOW, SOLANA_ICON } from './constants';
+import { HAS_WINDOW, SOLANA_ICON, WINDOW } from './constants';
 import { PREDICATE_VERSIONS } from './generated/predicates';
 import type { SolanaConfig } from './types';
 import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
@@ -44,9 +46,12 @@ export class SolanaConnector extends PredicateConnector {
   private web3Modal!: Web3Modal;
   private config: SolanaConfig = {};
   private svmAddress: string | null = null;
+  private storage: StorageAbstract;
 
   constructor(config: SolanaConfig) {
     super();
+    this.storage =
+      config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
     this.customPredicate = config.predicateConfig || null;
     if (HAS_WINDOW) {
       this.configProviders(config);
@@ -103,7 +108,6 @@ export class SolanaConnector extends PredicateConnector {
             if (!address || address.startsWith('0x')) {
               return;
             }
-            this._emitConnected();
             break;
           }
           case 'DISCONNECT_SUCCESS': {
@@ -200,11 +204,50 @@ export class SolanaConnector extends PredicateConnector {
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
         switch (event.data.event) {
           case 'CONNECT_SUCCESS': {
-            resolve(true);
+            const address = this.web3Modal.getAddress();
+            if (!address) {
+              resolve(false);
+              unsub();
+              break;
+            }
+
+            try {
+              // First emit connected to establish the connection properly
+              this._emitConnected();
+
+              // Check if this account has already been validated
+              const hasValidation = await this.accountHasValidation(address);
+
+              if (hasValidation) {
+                resolve(true);
+              } else {
+                // Request signature validation - do this after connection is established
+                try {
+                  await this.requestSignature(address);
+                  resolve(true);
+                } catch (signError) {
+                  console.error(
+                    '💜 SolanaConnector: signature rejected, but keeping connection:',
+                    signError,
+                  );
+                  // Allow connection even if signature is rejected
+                  resolve(true);
+                }
+              }
+            } catch (error) {
+              console.error('💜 SolanaConnector: connection failed:', error);
+              this.web3Modal.disconnect();
+              this._emitDisconnect();
+              resolve(false);
+            }
             unsub();
             break;
           }
-          case 'MODAL_CLOSE':
+          case 'MODAL_CLOSE': {
+            resolve(false);
+            unsub();
+            break;
+          }
           case 'CONNECT_ERROR': {
             resolve(false);
             unsub();
@@ -296,5 +339,45 @@ export class SolanaConnector extends PredicateConnector {
     );
 
     return predicateAddresses;
+  }
+
+  private async accountHasValidation(account: string | undefined) {
+    if (!account) return false;
+    const isValidated = await this.storage.getItem(
+      `SIGNATURE_VALIDATION_${account}`,
+    );
+    return isValidated === 'true';
+  }
+
+  private async requestSignature(address: string): Promise<boolean> {
+    const provider: Maybe<SolanaProvider> =
+      this.web3Modal.getWalletProvider() as SolanaProvider;
+
+    if (!provider) {
+      console.error(
+        'AHV SolanaConnector: no provider found for signature request',
+      );
+      throw new Error('No provider found');
+    }
+
+    try {
+      // Create verification message similar to WalletConnectConnector
+      const message = `Sign this message to verify the connected account: ${address}`;
+      const messageBytes = new TextEncoder().encode(message);
+
+      // Request signature
+      await provider.signMessage(messageBytes);
+
+      // Mark this account as validated - use storage if available
+      this.storage?.setItem(`SIGNATURE_VALIDATION_${address}`, 'true');
+      return true;
+    } catch (error) {
+      console.error(
+        'AHV SolanaConnector: user rejected signature request:',
+        error,
+      );
+      this.storage?.removeItem(`SIGNATURE_VALIDATION_${address}`);
+      throw error;
+    }
   }
 }
