@@ -373,8 +373,18 @@ export class SolanaConnector extends PredicateConnector {
       const message = `Sign this message to verify the connected account: ${address}`;
       const messageBytes = new TextEncoder().encode(message);
       await provider.signMessage(messageBytes);
-      this.storage?.setItem(SIGNATURE_VALIDATION_KEY(address), 'true');
+      const publicKey = provider.publicKey;
+      if (!publicKey) {
+        throw new Error('No public key available for signature verification');
+      }
 
+      const signatureAddress = publicKey.toBase58();
+      if (signatureAddress !== address) {
+        throw new Error(
+          'Invalid signature: signature does not match the address',
+        );
+      }
+      this.storage?.setItem(SIGNATURE_VALIDATION_KEY(address), 'true');
       return true;
     } catch (error) {
       this.storage?.removeItem(SIGNATURE_VALIDATION_KEY(address));
