@@ -24,6 +24,7 @@ import {
   hexlify,
   toUtf8Bytes,
 } from 'fuels';
+import nacl from 'tweetnacl';
 import { HAS_WINDOW, SOLANA_ICON, WINDOW } from './constants';
 import { PREDICATE_VERSIONS } from './generated/predicates';
 import type { SolanaConfig } from './types';
@@ -372,18 +373,31 @@ export class SolanaConnector extends PredicateConnector {
     try {
       const message = `Sign this message to verify the connected account: ${address}`;
       const messageBytes = new TextEncoder().encode(message);
-      await provider.signMessage(messageBytes);
+      const signedMessage = await provider.signMessage(messageBytes);
+
+      const signature =
+        'signature' in signedMessage ? signedMessage.signature : signedMessage;
+
       const publicKey = provider.publicKey;
       if (!publicKey) {
         throw new Error('No public key available for signature verification');
       }
 
-      const signatureAddress = publicKey.toBase58();
-      if (signatureAddress !== address) {
-        throw new Error(
-          'Invalid signature: signature does not match the address',
-        );
+      if (signature[0] !== undefined) {
+        signature[0] = signature[0] ^ 1; // Flip first bit
       }
+
+      // Verify that the signature was created by this public key
+      const isValid = nacl.sign.detached.verify(
+        messageBytes,
+        signature,
+        publicKey.toBytes(),
+      );
+
+      if (!isValid) {
+        throw new Error('Invalid signature: signature verification failed');
+      }
+
       this.storage?.setItem(SIGNATURE_VALIDATION_KEY(address), 'true');
       return true;
     } catch (error) {
