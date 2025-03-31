@@ -60,6 +60,106 @@ export class SolanaConnector extends PredicateConnector {
     if (HAS_WINDOW) {
       this.configProviders(config);
     }
+    this.on(this.events.currentConnector, async (event: unknown) => {
+      try {
+        if (
+          typeof event === 'object' &&
+          event !== null &&
+          'metadata' in event
+        ) {
+          const metadata = (event as { metadata?: unknown }).metadata;
+          if (
+            metadata &&
+            typeof metadata === 'object' &&
+            'pendingSignature' in metadata
+          ) {
+            if (
+              (metadata as { pendingSignature: boolean }).pendingSignature ===
+              true
+            ) {
+              return;
+            }
+          }
+        }
+
+        let isPendingSignature = false;
+        if (typeof event === 'object' && event !== null) {
+          // Case 1: {metadata: {pendingSignature: false}}
+          if (
+            'metadata' in event &&
+            typeof event.metadata === 'object' &&
+            event.metadata !== null
+          ) {
+            if (
+              'pendingSignature' in event.metadata &&
+              event.metadata.pendingSignature === false
+            ) {
+              isPendingSignature = true;
+            }
+          }
+
+          // Case 2: {pendingSignature: false}
+          if ('pendingSignature' in event && event.pendingSignature === false) {
+            isPendingSignature = true;
+          }
+        }
+
+        if (isPendingSignature) {
+          const address = this.web3Modal.getAddress();
+          if (!address) {
+            return;
+          }
+
+          try {
+            // Request and validate the signature
+            const provider: Maybe<SolanaProvider> =
+              this.web3Modal.getWalletProvider() as SolanaProvider;
+            if (!provider) {
+              throw new Error('No provider found for signature request');
+            }
+            const message = `Sign this message to verify the connected account: ${address}`;
+            const messageBytes = new TextEncoder().encode(message);
+
+            // Directly request signature from provider without opening modal
+            const signedMessage = await provider.signMessage(messageBytes);
+            const signature =
+              'signature' in signedMessage
+                ? signedMessage.signature
+                : signedMessage;
+
+            const publicKey = provider.publicKey;
+            if (!publicKey) {
+              throw new Error(
+                'No public key available for signature verification',
+              );
+            }
+
+            const isValid = nacl.sign.detached.verify(
+              messageBytes,
+              signature,
+              publicKey.toBytes(),
+            );
+
+            if (isValid) {
+              this.storage?.setItem(SIGNATURE_VALIDATION_KEY(address), 'true');
+              this._emitConnected();
+            } else {
+              this.web3Modal.disconnect();
+              this._emitDisconnect();
+            }
+          } catch (error) {
+            console.error(
+              'SolanaConnector: Error during signature validation:',
+              error,
+            );
+            this.web3Modal.disconnect();
+            this._emitDisconnect();
+          }
+        }
+      } catch (err) {
+        console.error('SolanaConnector: Error handling event:', err);
+      }
+    });
   }
 
   private async _emitDisconnect() {
@@ -205,9 +305,71 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   public async connect(): Promise<boolean> {
+    const currentAddress = this.web3Modal.getAddress();
+    if (currentAddress) {
+      const isPending =
+        (await this.storage.getItem(
+          SIGNATURE_VALIDATION_KEY(currentAddress),
+        )) === 'pending';
+      if (isPending) {
+        try {
+          const provider: Maybe<SolanaProvider> =
+            this.web3Modal.getWalletProvider() as SolanaProvider;
+          if (!provider) {
+            throw new Error('No provider found for signature request');
+          }
+
+          const message = `Sign this message to verify the connected account: ${currentAddress}`;
+          const messageBytes = new TextEncoder().encode(message);
+
+          // Directly request signature from provider without opening modal
+          const signedMessage = await provider.signMessage(messageBytes);
+          const signature =
+            'signature' in signedMessage
+              ? signedMessage.signature
+              : signedMessage;
+
+          const publicKey = provider.publicKey;
+          if (!publicKey) {
+            throw new Error(
+              'No public key available for signature verification',
+            );
+          }
+
+          const isValid = nacl.sign.detached.verify(
+            messageBytes,
+            signature,
+            publicKey.toBytes(),
+          );
+
+          if (isValid) {
+            this.storage?.setItem(
+              SIGNATURE_VALIDATION_KEY(currentAddress),
+              'true',
+            );
+            this._emitConnected();
+            return true;
+          }
+
+          this.web3Modal.disconnect();
+          this._emitDisconnect();
+          return false;
+        } catch (error) {
+          console.error(
+            'SolanaConnector: Error during signature validation:',
+            error,
+          );
+          this.web3Modal.disconnect();
+          this._emitDisconnect();
+          return false;
+        }
+      }
+    }
+
     this.createModal();
+    // Show modal and wait for connection
+    this.web3Modal.open();
     return new Promise((resolve) => {
-      this.web3Modal.open();
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
         switch (event.data.event) {
           case 'CONNECT_SUCCESS': {
@@ -220,41 +382,31 @@ export class SolanaConnector extends PredicateConnector {
 
             try {
               const hasValidation = await this.accountHasValidation(address);
-
               if (hasValidation) {
                 this._emitConnected();
                 resolve(true);
-              } else {
-                // Emit pending signature event to show signature UI
-                this.emit(this.events.currentConnector, {
-                  metadata: { pendingSignature: true },
-                });
-
-                try {
-                  await this.requestSignature(address);
-                  this._emitConnected();
-                  this.emit(this.events.currentConnector, {
-                    metadata: { pendingSignature: false },
-                  });
-                  resolve(true);
-                } catch (signError) {
-                  this.web3Modal.disconnect();
-                  this._emitDisconnect();
-                  this.emit(this.events.currentConnector, {
-                    metadata: { pendingSignature: false },
-                  });
-                  resolve(false);
-                  throw signError;
-                }
+                unsub();
+                break;
               }
+              this.storage.setItem(
+                SIGNATURE_VALIDATION_KEY(address),
+                'pending',
+              );
+
+              this.emit(this.events.currentConnector, {
+                metadata: { pendingSignature: true },
+              });
+
+              resolve(false);
+              unsub();
+              break;
             } catch (error) {
               this.web3Modal.disconnect();
               this._emitDisconnect();
               resolve(false);
+              unsub();
               throw error;
             }
-            unsub();
-            break;
           }
           case 'MODAL_CLOSE': {
             resolve(false);
@@ -360,49 +512,5 @@ export class SolanaConnector extends PredicateConnector {
       SIGNATURE_VALIDATION_KEY(account),
     );
     return isValidated === 'true';
-  }
-
-  private async requestSignature(address: string): Promise<boolean> {
-    const provider: Maybe<SolanaProvider> =
-      this.web3Modal.getWalletProvider() as SolanaProvider;
-
-    if (!provider) {
-      throw new Error('No provider found for signature request');
-    }
-
-    try {
-      const message = `Sign this message to verify the connected account: ${address}`;
-      const messageBytes = new TextEncoder().encode(message);
-      const signedMessage = await provider.signMessage(messageBytes);
-
-      const signature =
-        'signature' in signedMessage ? signedMessage.signature : signedMessage;
-
-      const publicKey = provider.publicKey;
-      if (!publicKey) {
-        throw new Error('No public key available for signature verification');
-      }
-
-      if (signature[0] !== undefined) {
-        signature[0] = signature[0] ^ 1; // Flip first bit
-      }
-
-      // Verify that the signature was created by this public key
-      const isValid = nacl.sign.detached.verify(
-        messageBytes,
-        signature,
-        publicKey.toBytes(),
-      );
-
-      if (!isValid) {
-        throw new Error('Invalid signature: signature verification failed');
-      }
-
-      this.storage?.setItem(SIGNATURE_VALIDATION_KEY(address), 'true');
-      return true;
-    } catch (error) {
-      this.storage?.removeItem(SIGNATURE_VALIDATION_KEY(address));
-      throw error;
-    }
   }
 }
