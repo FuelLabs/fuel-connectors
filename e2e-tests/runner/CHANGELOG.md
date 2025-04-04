@@ -1,5 +1,17 @@
 # @fuel-connectors/e2e-tests
 
+## 0.39.2
+
+### Patch Changes
+
+- [#492](https://github.com/FuelLabs/fuel-connectors/pull/492) [`15c6583`](https://github.com/FuelLabs/fuel-connectors/commit/15c6583ad7d07c2c511630b6413df18da1fdd083) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: update to fuels 0.100.0 + relay tx interface changes to fuel wallet
+
+## 0.39.1
+
+### Patch Changes
+
+- [#480](https://github.com/FuelLabs/fuel-connectors/pull/480) [`3dea9f6`](https://github.com/FuelLabs/fuel-connectors/commit/3dea9f697ac8d5119f9b7611efc43551cbfd31c3) Thanks [@arthurgeron](https://github.com/arthurgeron)! - chore: align all fuel-core/forc versions
+
 ## 0.39.0
 
 ### Minor Changes

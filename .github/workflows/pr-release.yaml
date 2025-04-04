@@ -14,9 +14,8 @@ concurrency:
 jobs:
   pr-release:
     name: Release PR to NPM
-    if: false
     runs-on: buildjet-4vcpu-ubuntu-2204
-    environment: npm-deploy
+    permissions: write-all
     steps:
       - uses: actions/checkout@v3
         with:
@@ -28,9 +27,43 @@ jobs:
           node-version: 20.11.0
           pnpm-version: 9.5.0
 
-      - uses: FuelLabs/github-actions/setups/npm@master
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          npm-token: ${{ secrets.NPM_TOKEN_CONNECTORS }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Create .npmrc
+        run: |
+          TOKEN=$(aws codeartifact get-authorization-token \
+            --domain fuel \
+            --domain-owner 024848458133 \
+            --query authorizationToken \
+            --output text)
+
+          echo "//fuel-024848458133.d.codeartifact.us-east-1.amazonaws.com/npm/npm/:always-auth=true" >> $HOME/.npmrc
+          echo "//fuel-024848458133.d.codeartifact.us-east-1.amazonaws.com/npm/npm/:_authToken=${TOKEN}" >> $HOME/.npmrc
+        env:
+          HOME: ${{ github.workspace }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_S3_REGION }}
+
+      - name: Create .npmrc
+        run: |
+          TOKEN=$(aws codeartifact get-authorization-token \
+            --domain fuel \
+            --domain-owner 024848458133 \
+            --query authorizationToken \
+            --output text)
+
+          echo "//fuel-024848458133.d.codeartifact.us-east-1.amazonaws.com/npm/npm/:always-auth=true" >> $HOME/.npmrc
+          echo "//fuel-024848458133.d.codeartifact.us-east-1.amazonaws.com/npm/npm/:_authToken=${TOKEN}" >> $HOME/.npmrc
+        env:
+          HOME: ${{ github.workspace }}
 
       - name: Build Lib
         run: pnpm build
@@ -40,12 +73,13 @@ jobs:
       - name: Release PR version
         id: release
         run: |
+          pnpm changeset:next
           pnpm changeset version --snapshot pr-${{ github.event.pull_request.number }}
           changetsets=$(pnpm changeset publish --tag pr-${{ github.event.pull_request.number }})
           echo "BUILD_VERSION=$(pnpm -s packages:version)" >> $GITHUB_ENV
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_CONNECTORS }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOME: ${{ github.workspace }}
+          npm_config_registry: "https://fuel-024848458133.d.codeartifact.us-east-1.amazonaws.com/npm/npm/"
 
       - name: Comment release package name to PR
         uses: mshick/add-pr-comment@v2
