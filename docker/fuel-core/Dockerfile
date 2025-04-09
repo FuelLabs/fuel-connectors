@@ -6,7 +6,7 @@
 
 # We should be supporting always the same fuel-core version as the fuels (ts-sdk)
 # https://github.com/FuelLabs/fuels-ts/blob/master/internal/fuel-core/VERSION
-FROM ghcr.io/fuellabs/fuel-core:v0.40.2
+FROM ghcr.io/fuellabs/fuel-core:v0.41.9
 
 # dependencies
 ENV DEBIAN_FRONTEND=noninteractive
@@ -17,12 +17,12 @@ WORKDIR /fuel
 
 COPY ./genesis_coins.json .
 
-#  Fuel Core 0.40.2, needs to be changed when core version is updated
+#  Fuel Core 0.41.9, needs to be changed when core version is updated
 RUN git clone \
     https://github.com/FuelLabs/chain-configuration.git \
     /chain-configuration && \
     cd /chain-configuration && \
-    git checkout b77704477886d4bec04175622143278eceb179b6
+    git checkout 6f9e154111ca6cdbe82c6d264a5fe73a7bfb85db
 
 # Copy the base local configuration
 RUN cp -R /chain-configuration/local/* ./
