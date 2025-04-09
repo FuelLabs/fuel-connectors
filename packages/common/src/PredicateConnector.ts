@@ -22,6 +22,7 @@ import { PredicateFactory, getMockedSignatureIndex } from './PredicateFactory';
 import type { PredicateWalletAdapter } from './PredicateWalletAdapter';
 import type {
   ConnectorConfig,
+  HashableMessage,
   Maybe,
   MaybeAsync,
   PredicateConfig,
@@ -307,7 +308,7 @@ export abstract class PredicateConnector extends FuelConnector {
 
   public async signMessage(
     _address: string,
-    _message: string,
+    _message: string | HashableMessage,
   ): Promise<string> {
     throw new Error('A predicate account cannot sign messages');
   }
