@@ -2,7 +2,6 @@ predicate;
 use std::{
     b512::B512,
     bytes::Bytes,
-    constants::ZERO_B256,
     tx::{
         tx_id,
         tx_witness_data,
@@ -32,7 +31,7 @@ struct SignedData {
 
 configurable {
     /// The Ethereum address that signed the transaction.
-    SIGNER: b256 = ZERO_B256,
+    SIGNER: b256 = b256::zero(),
 }
 
 fn main(witness_index: u64) -> bool {
@@ -44,7 +43,7 @@ fn main(witness_index: u64) -> bool {
 
     // If the signers match then the predicate has validated the Tx.
     if result.is_ok() {
-        if SIGNER == result.unwrap().into() {
+        if SIGNER.into() == result.unwrap().into() {
             return true;
         }
     }
@@ -85,7 +84,7 @@ fn personal_sign_hash(transaction_id: b256) -> b256 {
     let data = SignedData {
         transaction_id: transaction_id_utf8,
         ethereum_prefix: ETHEREUM_PREFIX,
-        empty: ZERO_B256,
+        empty: b256::zero(),
     };
 
     // Pointer to the data we have signed external to Sway.
