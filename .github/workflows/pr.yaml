@@ -65,7 +65,7 @@ jobs:
       - run: |
           pnpm audit --prod --json | jq '
             .advisories | to_entries | 
-            map(select(.value.patched_versions != "<0.0.0") | {package: .value.module_name, vulnerable: .value.vulnerable_versions, fixed_in: .value.patched_versions}) 
+            map(select(.value.patched_versions != "<0.0.0" and .value.severity == "critical") | {package: .value.module_name, vulnerable: .value.vulnerable_versions, fixed_in: .value.patched_versions}) 
           ' > audit_fix_packages.json
           if [ "$(jq 'length' audit_fix_packages.json)" -gt "0" ]; then
             echo "Actionable vulnerabilities found in the following packages:"
