@@ -1,5 +1,7 @@
 # @fuel-connectors/bako-safe
 
+## 0.39.3
+
 ## 0.39.2
 
 ### Patch Changes
