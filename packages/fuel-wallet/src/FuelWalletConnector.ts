@@ -189,6 +189,10 @@ export class FuelWalletConnector extends FuelConnector {
     if (typeof message === 'string' && !message.trim()) {
       throw new Error('Message is required');
     }
+    if (typeof message === 'object' && !message.personalSign) {
+      throw new Error('Message is required');
+    }
+
     return this.client.request('signMessage', {
       address,
       message,
