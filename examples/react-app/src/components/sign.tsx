@@ -1,5 +1,5 @@
 import type { HashableMessage } from 'fuels';
-import { getBytesCopy, hexlify } from 'fuels';
+import { arrayify, hexlify } from 'fuels';
 import { useState } from 'react';
 import { useWallet } from '../hooks/useWallet';
 import type { CustomError } from '../utils/customError';
@@ -13,7 +13,7 @@ const DEFAULT_MESSAGE = `Fuelum ipsum FuelVM sit amet, high-performance Ethereum
 
 Fuel Network tempor incididunt, powered by FuelVM ut labore et dolore magna aliqua. Ut enim ad minim veniam, scalable for all quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`;
 
-const DEFAULT_OBJECT: HashableMessage = {
+const DEFAULT_OBJECT = {
   personalSign: hexlify(
     new TextEncoder().encode(
       JSON.stringify({
@@ -91,8 +91,8 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
         ) : null
       }
     >
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-2 w-full">
+        <div className="flex items-center gap-2 justify-between">
           <input
             type="text"
             placeholder="Message to sign"
@@ -110,15 +110,13 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
             Sign Message
           </Button>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:p-2 dark:bg-transparent">
+        <div className="flex items-center gap-2 justify-between">
+          <div className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent">
             <pre className="text-xs">
               {JSON.stringify(
                 JSON.parse(
                   new TextDecoder().decode(
-                    typeof DEFAULT_OBJECT === 'string'
-                      ? new Uint8Array(new TextEncoder().encode(DEFAULT_OBJECT))
-                      : getBytesCopy(DEFAULT_OBJECT.personalSign),
+                    arrayify(DEFAULT_OBJECT.personalSign),
                   ),
                 ),
                 null,
