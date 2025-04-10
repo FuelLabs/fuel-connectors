@@ -201,7 +201,7 @@ export class BurnerWalletConnector extends FuelConnector {
 
   async signMessage(
     address: string,
-    message: string | HashableMessage,
+    message: HashableMessage,
   ): Promise<string> {
     if (!this.burnerWallet) {
       throw Error('Wallet not connected');

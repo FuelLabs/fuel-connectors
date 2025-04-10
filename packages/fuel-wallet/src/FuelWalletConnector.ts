@@ -184,7 +184,7 @@ export class FuelWalletConnector extends FuelConnector {
 
   async signMessage(
     address: string,
-    message: string | HashableMessage,
+    message: HashableMessage,
   ): Promise<string> {
     if (typeof message === 'string' && !message.trim()) {
       throw new Error('Message is required');
