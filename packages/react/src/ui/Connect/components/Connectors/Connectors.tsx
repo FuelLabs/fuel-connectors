@@ -21,11 +21,25 @@ export function Connectors() {
     dialog: { connect },
   } = useConnectUI();
 
+  const isMobile = useMemo(() => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(
+      navigator.userAgent,
+    );
+  }, []);
+
   const { native, external } = useMemo<GroupedConnectors>(() => {
-    const external = connectors.filter((conn) => {
+    let filteredConnectors = connectors;
+
+    if (isMobile) {
+      filteredConnectors = connectors.filter(
+        (conn) => conn.name === 'Fuelet Wallet',
+      );
+    }
+
+    const external = filteredConnectors.filter((conn) => {
       return !NATIVE_CONNECTORS.includes(conn.name);
     });
-    const native = connectors.filter((conn) => {
+    const native = filteredConnectors.filter((conn) => {
       return NATIVE_CONNECTORS.includes(conn.name);
     });
 
@@ -33,7 +47,7 @@ export function Connectors() {
       native,
       external,
     };
-  }, [connectors]);
+  }, [connectors, isMobile]);
 
   const shouldTitleGroups = !!native.length && !!external.length;
 
