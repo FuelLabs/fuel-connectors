@@ -8,6 +8,7 @@ import {
   FuelConnectorEventType,
   FuelConnectorEventTypes,
   type FuelConnectorSendTxParams,
+  type HashableMessage,
   type Network,
   Provider,
   type SelectNetworkArguments,
@@ -181,10 +182,17 @@ export class FuelWalletConnector extends FuelConnector {
     return Address.fromDynamicInput(account).toString();
   }
 
-  async signMessage(address: string, message: string): Promise<string> {
-    if (!message.trim()) {
+  async signMessage(
+    address: string,
+    message: HashableMessage,
+  ): Promise<string> {
+    if (typeof message === 'string' && !message.trim()) {
       throw new Error('Message is required');
     }
+    if (typeof message === 'object' && !message.personalSign) {
+      throw new Error('Message is required');
+    }
+
     return this.client.request('signMessage', {
       address,
       message,
