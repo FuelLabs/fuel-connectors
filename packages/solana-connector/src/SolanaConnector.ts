@@ -14,13 +14,17 @@ import { ApiController } from '@web3modal/core';
 import type { Web3Modal } from '@web3modal/solana';
 import type { Provider as SolanaProvider } from '@web3modal/solana/dist/types/src/utils/scaffold';
 import {
+  type AssembleTxParams,
   CHAIN_IDS,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
   type TransactionRequestLike,
+  type TransactionResponse,
+  bn,
   hexlify,
   toUtf8Bytes,
+  transactionRequestify,
 } from 'fuels';
 import { HAS_WINDOW, SOLANA_ICON } from './constants';
 import { PREDICATE_VERSIONS } from './generated/predicates';
@@ -226,12 +230,37 @@ export class SolanaConnector extends PredicateConnector {
     return new TextEncoder().encode(txIdNo0x);
   }
 
+  public async onBeforeAssembleTx(
+    params: AssembleTxParams,
+  ): Promise<AssembleTxParams> {
+    const { request } = params;
+    const solAddress = this.web3Modal.getAddress() || '';
+    const fuelAddress = this.predicateAccount?.getPredicateAddress(solAddress);
+
+    if (!fuelAddress) {
+      throw new Error('No address found');
+    }
+
+    const predicate = await this.getPredicate(fuelAddress, request);
+
+    return { ...params, feePayerAccount: predicate, estimatePredicates: false };
+  }
+
   public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
-  ): Promise<string> {
-    const { predicate, transactionId, transactionRequest } =
-      await this.prepareTransaction(address, transaction);
+  ): Promise<TransactionResponse | string> {
+    const { fuelProvider } = await this.getProviders();
+    const solAddress = this.web3Modal.getAddress() || '';
+    const fuelAddress = this.predicateAccount?.getPredicateAddress(solAddress);
+
+    if (!fuelAddress || address !== fuelAddress) {
+      throw new Error('No address found');
+    }
+
+    const transactionRequest = transactionRequestify(transaction);
+    const chainId = await fuelProvider.getChainId();
+    const transactionId = transactionRequest.getTransactionId(chainId);
 
     const predicateSignatureIndex = getMockedSignatureIndex(
       transactionRequest.witnesses,
@@ -249,13 +278,44 @@ export class SolanaConnector extends PredicateConnector {
     )) as Uint8Array;
     transactionRequest.witnesses[predicateSignatureIndex] = signedMessage;
 
-    // Send transaction
-    await predicate.provider.estimatePredicates(transactionRequest);
+    await this.fuelProvider.estimatePredicates(transactionRequest);
 
-    const response = await predicate.sendTransaction(transactionRequest);
+    const response =
+      await this.fuelProvider.sendTransaction(transactionRequest);
 
-    return response.id;
+    return response;
   }
+
+  // public async sendTransaction(
+  //   address: string,
+  //   transaction: TransactionRequestLike,
+  // ): Promise<string | TransactionResponse> {
+  //   const { predicate, transactionId, transactionRequest } =
+  //     await this.prepareTransaction(address, transaction);
+
+  //   const predicateSignatureIndex = getMockedSignatureIndex(
+  //     transactionRequest.witnesses,
+  //   );
+
+  //   const txId = this.encodeTxId(transactionId);
+  //   const provider: Maybe<SolanaProvider> =
+  //     this.web3Modal.getWalletProvider() as SolanaProvider;
+  //   if (!provider) {
+  //     throw new Error('No provider found');
+  //   }
+
+  //   const signedMessage: Uint8Array = (await provider.signMessage(
+  //     txId,
+  //   )) as Uint8Array;
+  //   transactionRequest.witnesses[predicateSignatureIndex] = signedMessage;
+
+  //   // Send transaction
+  //   await predicate.provider.estimatePredicates(transactionRequest);
+
+  //   const response = await predicate.sendTransaction(transactionRequest);
+
+  //   return response.id;
+  // }
 
   async signMessageCustomCurve(message: string) {
     const provider: Maybe<SolanaProvider> =
