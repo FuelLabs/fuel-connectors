@@ -12,6 +12,14 @@ interface GroupedConnectors {
   external: FuelConnector[];
 }
 
+// Allowed connectors for different mobile platforms
+const ALLOWED_MOBILE_CONNECTORS = [
+  'Fuelet Wallet',
+  'Burner Wallet',
+  'Ethereum Wallets',
+  'Solana Wallets',
+];
+
 export function Connectors() {
   const {
     fuelConfig,
@@ -26,13 +34,11 @@ export function Connectors() {
       navigator.userAgent,
     );
   }, []);
-
   const { native, external } = useMemo<GroupedConnectors>(() => {
     let filteredConnectors = connectors;
-
     if (isMobile) {
-      filteredConnectors = connectors.filter(
-        (conn) => conn.name === 'Fuelet Wallet',
+      filteredConnectors = connectors.filter((conn) =>
+        ALLOWED_MOBILE_CONNECTORS.some((name) => name === conn.name),
       );
     }
 
