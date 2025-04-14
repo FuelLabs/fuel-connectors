@@ -2,7 +2,6 @@ predicate;
 
 use std::{
     b512::B512,
-    constants::ZERO_B256,
     hash::{
         Hash,
         sha256,
@@ -38,7 +37,7 @@ pub fn b256_to_ascii_bytes(val: b256) -> Bytes {
 }
 
 configurable {
-    SIGNER: b256 = ZERO_B256,
+    SIGNER: b256 = b256::zero(),
 }
 
 fn main(witness_index: u64) -> bool {
