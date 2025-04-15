@@ -12,10 +12,6 @@ use std::{
         Hash,
         sha256,
     },
-    ecr::{
-        EcRecoverError,
-        ed_verify,
-    },
     tx::{
         tx_id,
         tx_witness_data,

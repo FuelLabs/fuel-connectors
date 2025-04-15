@@ -13,9 +13,6 @@ use std::{
         tx_id,
         tx_witness_data,
     },
-    vm::evm::{
-        ecr::ec_recover_evm_address,
-    },
 };
 
 /// Personal sign prefix for Ethereum inclusive of the 32 bytes for the length of the Tx ID.
