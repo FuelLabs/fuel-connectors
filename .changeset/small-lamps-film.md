@@ -5,4 +5,4 @@
 "@fuel-connectors/common": minor
 ---
 
-Enable the signature of HashableMessages
+feat: Enable the signature of HashableMessages
