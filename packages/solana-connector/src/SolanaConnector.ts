@@ -18,14 +18,20 @@ import {
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
+  LocalStorage,
+  type StorageAbstract,
   type TransactionRequestLike,
   hexlify,
   toUtf8Bytes,
 } from 'fuels';
-import { HAS_WINDOW, SOLANA_ICON } from './constants';
+import nacl from 'tweetnacl';
+import { HAS_WINDOW, SOLANA_ICON, WINDOW } from './constants';
 import { PREDICATE_VERSIONS } from './generated/predicates';
 import type { SolanaConfig } from './types';
 import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
+
+const SIGNATURE_VALIDATION_KEY = (address: string) =>
+  `SIGNATURE_VALIDATION_${address}`;
 
 export class SolanaConnector extends PredicateConnector {
   name = 'Solana Wallets';
@@ -44,13 +50,116 @@ export class SolanaConnector extends PredicateConnector {
   private web3Modal!: Web3Modal;
   private config: SolanaConfig = {};
   private svmAddress: string | null = null;
+  private storage: StorageAbstract;
 
   constructor(config: SolanaConfig) {
     super();
+    this.storage =
+      config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
     this.customPredicate = config.predicateConfig || null;
     if (HAS_WINDOW) {
       this.configProviders(config);
     }
+    this.on(this.events.currentConnector, async (event: unknown) => {
+      try {
+        if (
+          typeof event === 'object' &&
+          event !== null &&
+          'metadata' in event
+        ) {
+          const metadata = (event as { metadata?: unknown }).metadata;
+          if (
+            metadata &&
+            typeof metadata === 'object' &&
+            'pendingSignature' in metadata
+          ) {
+            if (
+              (metadata as { pendingSignature: boolean }).pendingSignature ===
+              true
+            ) {
+              return;
+            }
+          }
+        }
+
+        let isPendingSignature = false;
+        if (typeof event === 'object' && event !== null) {
+          // Case 1: {metadata: {pendingSignature: false}}
+          if (
+            'metadata' in event &&
+            typeof event.metadata === 'object' &&
+            event.metadata !== null
+          ) {
+            if (
+              'pendingSignature' in event.metadata &&
+              event.metadata.pendingSignature === false
+            ) {
+              isPendingSignature = true;
+            }
+          }
+
+          // Case 2: {pendingSignature: false}
+          if ('pendingSignature' in event && event.pendingSignature === false) {
+            isPendingSignature = true;
+          }
+        }
+
+        if (isPendingSignature) {
+          const address = this.web3Modal.getAddress();
+          if (!address) {
+            return;
+          }
+
+          try {
+            // Request and validate the signature
+            const provider: Maybe<SolanaProvider> =
+              this.web3Modal.getWalletProvider() as SolanaProvider;
+            if (!provider) {
+              throw new Error('No provider found for signature request');
+            }
+            const message = `Sign this message to verify the connected account: ${address}`;
+            const messageBytes = new TextEncoder().encode(message);
+
+            // Directly request signature from provider without opening modal
+            const signedMessage = await provider.signMessage(messageBytes);
+            const signature =
+              'signature' in signedMessage
+                ? signedMessage.signature
+                : signedMessage;
+
+            const publicKey = provider.publicKey;
+            if (!publicKey) {
+              throw new Error(
+                'No public key available for signature verification',
+              );
+            }
+
+            const isValid = nacl.sign.detached.verify(
+              messageBytes,
+              signature,
+              publicKey.toBytes(),
+            );
+
+            if (isValid) {
+              this.storage?.setItem(SIGNATURE_VALIDATION_KEY(address), 'true');
+              this._emitConnected();
+            } else {
+              this.web3Modal.disconnect();
+              this._emitDisconnect();
+            }
+          } catch (error) {
+            console.error(
+              'SolanaConnector: Error during signature validation:',
+              error,
+            );
+            this.web3Modal.disconnect();
+            this._emitDisconnect();
+          }
+        }
+      } catch (err) {
+        console.error('SolanaConnector: Error handling event:', err);
+      }
+    });
   }
 
   private async _emitDisconnect() {
@@ -103,7 +212,6 @@ export class SolanaConnector extends PredicateConnector {
             if (!address || address.startsWith('0x')) {
               return;
             }
-            this._emitConnected();
             break;
           }
           case 'DISCONNECT_SUCCESS': {
@@ -121,7 +229,10 @@ export class SolanaConnector extends PredicateConnector {
       }
       const address = this.web3Modal.getAddress();
       if (address && address !== this.svmAddress) {
-        this._emitConnected();
+        const hasValidation = await this.accountHasValidation(address);
+        if (hasValidation) {
+          this._emitConnected();
+        }
       }
       if (!address && this.svmAddress) {
         this._emitDisconnect();
@@ -194,17 +305,114 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   public async connect(): Promise<boolean> {
+    const currentAddress = this.web3Modal.getAddress();
+    if (currentAddress) {
+      const isPending =
+        (await this.storage.getItem(
+          SIGNATURE_VALIDATION_KEY(currentAddress),
+        )) === 'pending';
+      if (isPending) {
+        try {
+          const provider: Maybe<SolanaProvider> =
+            this.web3Modal.getWalletProvider() as SolanaProvider;
+          if (!provider) {
+            throw new Error('No provider found for signature request');
+          }
+
+          const message = `Sign this message to verify the connected account: ${currentAddress}`;
+          const messageBytes = new TextEncoder().encode(message);
+
+          // Directly request signature from provider without opening modal
+          const signedMessage = await provider.signMessage(messageBytes);
+          const signature =
+            'signature' in signedMessage
+              ? signedMessage.signature
+              : signedMessage;
+
+          const publicKey = provider.publicKey;
+          if (!publicKey) {
+            throw new Error(
+              'No public key available for signature verification',
+            );
+          }
+
+          const isValid = nacl.sign.detached.verify(
+            messageBytes,
+            signature,
+            publicKey.toBytes(),
+          );
+
+          if (isValid) {
+            this.storage?.setItem(
+              SIGNATURE_VALIDATION_KEY(currentAddress),
+              'true',
+            );
+            this._emitConnected();
+            return true;
+          }
+
+          this.web3Modal.disconnect();
+          this._emitDisconnect();
+          return false;
+        } catch (error) {
+          console.error(
+            'SolanaConnector: Error during signature validation:',
+            error,
+          );
+          this.web3Modal.disconnect();
+          this._emitDisconnect();
+          return false;
+        }
+      }
+    }
+
     this.createModal();
+    // Show modal and wait for connection
+    this.web3Modal.open();
     return new Promise((resolve) => {
-      this.web3Modal.open();
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
         switch (event.data.event) {
           case 'CONNECT_SUCCESS': {
-            resolve(true);
+            const address = this.web3Modal.getAddress();
+            if (!address) {
+              resolve(false);
+              unsub();
+              break;
+            }
+
+            try {
+              const hasValidation = await this.accountHasValidation(address);
+              if (hasValidation) {
+                this._emitConnected();
+                resolve(true);
+                unsub();
+                break;
+              }
+              this.storage.setItem(
+                SIGNATURE_VALIDATION_KEY(address),
+                'pending',
+              );
+
+              this.emit(this.events.currentConnector, {
+                metadata: { pendingSignature: true },
+              });
+
+              resolve(false);
+              unsub();
+              break;
+            } catch (error) {
+              this.web3Modal.disconnect();
+              this._emitDisconnect();
+              resolve(false);
+              unsub();
+              throw error;
+            }
+          }
+          case 'MODAL_CLOSE': {
+            resolve(false);
             unsub();
             break;
           }
-          case 'MODAL_CLOSE':
           case 'CONNECT_ERROR': {
             resolve(false);
             unsub();
@@ -296,5 +504,13 @@ export class SolanaConnector extends PredicateConnector {
     );
 
     return predicateAddresses;
+  }
+
+  private async accountHasValidation(account: string | undefined) {
+    if (!account) return false;
+    const isValidated = await this.storage.getItem(
+      SIGNATURE_VALIDATION_KEY(account),
+    );
+    return isValidated === 'true';
   }
 }
