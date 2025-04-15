@@ -2,4 +2,4 @@
 "@fuels/react": minor
 ---
 
-Improve connectors list on mobile.
+feat: when it's mobile, keep in the list only connectors that work on mobile env
