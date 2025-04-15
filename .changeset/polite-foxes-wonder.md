@@ -2,4 +2,4 @@
 "@fuel-connectors/solana-connector": minor
 ---
 
-Added signature validation
+feat: Added signature validation for the Solana Connector.
