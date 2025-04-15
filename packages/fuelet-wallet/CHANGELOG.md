@@ -1,5 +1,11 @@
 # @fuel-connectors/fuelet-wallet
 
+## 0.40.0
+
+### Patch Changes
+
+- [#495](https://github.com/FuelLabs/fuel-connectors/pull/495) [`3227c31`](https://github.com/FuelLabs/fuel-connectors/commit/3227c31baeb64e5bf0c0f3ccba5d42bb77be2c27) Thanks [@mpoplavkov](https://github.com/mpoplavkov)! - feat: support Fuelet deeplinks
+
 ## 0.39.2
 
 ### Patch Changes

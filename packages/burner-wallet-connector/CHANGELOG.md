@@ -1,5 +1,11 @@
 # @fuel-connectors/burner-wallet-connector
 
+## 0.40.0
+
+### Minor Changes
+
+- [#510](https://github.com/FuelLabs/fuel-connectors/pull/510) [`d09c74e`](https://github.com/FuelLabs/fuel-connectors/commit/d09c74eb5a28f5dfd85d8c612df6feeb15c609cc) Thanks [@nelitow](https://github.com/nelitow)! - chore: Update dependencies for security checks.
+
 ## 0.39.2
 
 ### Patch Changes
