@@ -12,7 +12,7 @@ interface GroupedConnectors {
   external: FuelConnector[];
 }
 
-// Allowed connectors for different mobile platforms
+// Allowed connectors for mobile platforms
 const ALLOWED_MOBILE_CONNECTORS = [
   'Fuelet Wallet',
   'Burner Wallet',
