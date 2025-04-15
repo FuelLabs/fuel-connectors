@@ -35,12 +35,11 @@ export function Connectors() {
     );
   }, []);
   const { native, external } = useMemo<GroupedConnectors>(() => {
-    let filteredConnectors = connectors;
-    if (isMobile) {
-      filteredConnectors = connectors.filter((conn) =>
-        ALLOWED_MOBILE_CONNECTORS.some((name) => name === conn.name),
-      );
-    }
+    const filteredConnectors = isMobile
+      ? connectors.filter((conn) =>
+          ALLOWED_MOBILE_CONNECTORS.some((name) => name === conn.name),
+        )
+      : connectors;
 
     const external = filteredConnectors.filter((conn) => {
       return !NATIVE_CONNECTORS.includes(conn.name);
