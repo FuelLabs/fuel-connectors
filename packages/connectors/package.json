@@ -18,7 +18,7 @@
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "fuels": "0.100.0"
+    "fuels": "pr-3747"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
