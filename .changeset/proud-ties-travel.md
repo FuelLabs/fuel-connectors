@@ -5,4 +5,4 @@
 "@fuel-connectors/evm-connector": minor
 ---
 
-Update dependencies for security checks.
+chore: Update dependencies for security checks.
