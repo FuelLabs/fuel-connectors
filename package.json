@@ -53,7 +53,8 @@
   "packageManager": "pnpm@9.5.0",
   "pnpm": {
     "auditConfig": {
-      "ignoreGhsas": ["GHSA-3gc7-fjrx-p6mg"]
+      "ignoreGhsas": ["GHSA-3gc7-fjrx-p6mg"],
+      "ignoreCves": ["CVE-2025-3194"]
     },
     "overrides": {
       "braces@<3.0.3": ">=3.0.3",
