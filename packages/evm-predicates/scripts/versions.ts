@@ -22,10 +22,9 @@ const encoderIds = Object.keys(txIdEncoders);
 const predicateIds = versions.map((v) => v.version);
 const missingIds = predicateIds.filter((id) => !encoderIds.includes(id));
 
-const rootDir = join(__dirname, '..', '..', '..');
 const txIdEncodersPath = join(
-  rootDir,
-  'evm-predicates',
+  __dirname,
+  '..',
   'src',
   'utils',
   'txIdEncoders.ts',
