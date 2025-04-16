@@ -20,6 +20,9 @@ yarn-error.log*
 .DS_Store
 .zed
 
+# Local history
+*.history
+
 # Sway
 **/out/release
 
