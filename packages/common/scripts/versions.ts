@@ -20,7 +20,7 @@ export const addPredicate = async (__dirname: string, prefix: string) => {
   // Import all predicates and resolve the correct one (Evm or Sol prefixes)
   const allPredicates = await import(tmpBuildPath);
   const predicateKey = `${prefix}VerificationPredicateLoader`;
-  const { [predicateKey]: predicate } = allPredicates;
+  const predicate = allPredicates[predicateKey];
 
   // Get the predicate root
   const version = getPredicateRoot(predicate.bytecode);
