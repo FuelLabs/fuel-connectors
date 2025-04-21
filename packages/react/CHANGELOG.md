@@ -1,5 +1,11 @@
 # @fuels/react
 
+## 0.40.0
+
+### Minor Changes
+
+- [#509](https://github.com/FuelLabs/fuel-connectors/pull/509) [`07a377c`](https://github.com/FuelLabs/fuel-connectors/commit/07a377c10e4e2cc9ea36bd1cde05f28aa7599e3d) Thanks [@nelitow](https://github.com/nelitow)! - feat: when it's mobile, keep in the list only connectors that work on mobile env
+
 ## 0.39.2
 
 ### Patch Changes
