@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/fuel-wallet",
-  "version": "0.39.1",
+  "version": "0.39.2",
   "private": true,
   "types": "./dist/index.d.ts",
   "exports": {
@@ -13,7 +13,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": "0.98.0"
+    "fuels": "0.100.0"
   },
   "dependencies": {
     "json-rpc-2.0": "1.7.0"

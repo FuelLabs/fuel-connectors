@@ -1,6 +1,6 @@
 {
   "name": "@fuels/connectors",
-  "version": "0.39.1",
+  "version": "0.39.2",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -18,7 +18,7 @@
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "fuels": "0.98.0"
+    "fuels": "0.100.0"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",

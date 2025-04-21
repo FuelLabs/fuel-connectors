@@ -12,6 +12,14 @@ interface GroupedConnectors {
   external: FuelConnector[];
 }
 
+// Allowed connectors for mobile platforms
+const ALLOWED_MOBILE_CONNECTORS = [
+  'Fuelet Wallet',
+  'Burner Wallet',
+  'Ethereum Wallets',
+  'Solana Wallets',
+];
+
 export function Connectors() {
   const {
     fuelConfig,
@@ -21,11 +29,22 @@ export function Connectors() {
     dialog: { connect },
   } = useConnectUI();
 
+  const isMobile = useMemo(() => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(
+      navigator.userAgent,
+    );
+  }, []);
   const { native, external } = useMemo<GroupedConnectors>(() => {
-    const external = connectors.filter((conn) => {
+    const filteredConnectors = isMobile
+      ? connectors.filter((conn) =>
+          ALLOWED_MOBILE_CONNECTORS.some((name) => name === conn.name),
+        )
+      : connectors;
+
+    const external = filteredConnectors.filter((conn) => {
       return !NATIVE_CONNECTORS.includes(conn.name);
     });
-    const native = connectors.filter((conn) => {
+    const native = filteredConnectors.filter((conn) => {
       return NATIVE_CONNECTORS.includes(conn.name);
     });
 
@@ -33,7 +52,7 @@ export function Connectors() {
       native,
       external,
     };
-  }, [connectors]);
+  }, [connectors, isMobile]);
 
   const shouldTitleGroups = !!native.length && !!external.length;
 

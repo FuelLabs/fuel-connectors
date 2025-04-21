@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { ErrorCode, FuelError } from '@fuel-ts/errors';
+import { ErrorCode, FuelError } from 'fuels';
 import { IMPORT_REGEXP, IMPORT_START_REGEXP } from '../snippetPlugin';
 
 /**

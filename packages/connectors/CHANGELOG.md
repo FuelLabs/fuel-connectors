@@ -1,5 +1,11 @@
 # @fuels/connectors
 
+## 0.39.2
+
+### Patch Changes
+
+- [#492](https://github.com/FuelLabs/fuel-connectors/pull/492) [`15c6583`](https://github.com/FuelLabs/fuel-connectors/commit/15c6583ad7d07c2c511630b6413df18da1fdd083) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: update to fuels 0.100.0 + relay tx interface changes to fuel wallet
+
 ## 0.39.1
 
 ## 0.39.0
