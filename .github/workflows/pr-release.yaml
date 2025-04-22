@@ -54,7 +54,6 @@ jobs:
       - name: Release PR version
         id: release
         run: |
-          ls -la
           rm -f .changeset/*.md
           pnpm changeset:next
           pnpm changeset version --snapshot pr-${{ github.event.pull_request.number }}
