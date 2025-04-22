@@ -46,25 +46,6 @@ jobs:
         env:
           HOME: ${{ github.workspace }}
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_S3_REGION }}
-
-      - name: Create .npmrc
-        run: |
-          TOKEN=$(aws codeartifact get-authorization-token \
-            --domain fuel \
-            --domain-owner 024848458133 \
-            --query authorizationToken \
-            --output text)
-
-          echo "//fuel-024848458133.d.codeartifact.us-east-1.amazonaws.com/npm/npm/:always-auth=true" >> $HOME/.npmrc
-          echo "//fuel-024848458133.d.codeartifact.us-east-1.amazonaws.com/npm/npm/:_authToken=${TOKEN}" >> $HOME/.npmrc
-        env:
-          HOME: ${{ github.workspace }}
-
       - name: Build Lib
         run: pnpm build
         env:
