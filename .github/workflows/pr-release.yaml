@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   pr-release:
-    name: Release PR to NPM
+    name: Release PR to AWS Package Registry
     runs-on: buildjet-4vcpu-ubuntu-2204
     permissions: write-all
     steps:
@@ -31,7 +31,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_S3_REGION }}
+          aws-region: us-east-1
 
       - name: Create .npmrc
         run: |
