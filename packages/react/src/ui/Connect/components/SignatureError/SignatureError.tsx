@@ -1,5 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { ErrorIcon } from 'src/icons/ErrorIcon';
+import { ErrorIcon } from '../../../../icons/ErrorIcon';
 import { useConnectUI } from '../../../../providers/FuelUIProvider';
 import {
   BackIcon,
