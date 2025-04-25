@@ -28,6 +28,7 @@ import nacl from 'tweetnacl';
 import { HAS_WINDOW, SOLANA_ICON, WINDOW } from './constants';
 import { PREDICATE_VERSIONS } from './generated/predicates';
 import type { SolanaConfig } from './types';
+import { SolanaConnectorEvents } from './types';
 import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
 
 const SIGNATURE_VALIDATION_KEY = (address: string) =>
@@ -35,7 +36,10 @@ const SIGNATURE_VALIDATION_KEY = (address: string) =>
 
 export class SolanaConnector extends PredicateConnector {
   name = 'Solana Wallets';
-  events = FuelConnectorEventTypes;
+  events = {
+    ...FuelConnectorEventTypes,
+    ...SolanaConnectorEvents,
+  };
   metadata: ConnectorMetadata = {
     image: SOLANA_ICON,
     install: {
@@ -148,10 +152,7 @@ export class SolanaConnector extends PredicateConnector {
               this._emitDisconnect();
             }
           } catch (error) {
-            console.error(
-              'SolanaConnector: Error during signature validation:',
-              error,
-            );
+            this._emitSignatureError(error);
             this.web3Modal.disconnect();
             this._emitDisconnect();
           }
@@ -168,6 +169,14 @@ export class SolanaConnector extends PredicateConnector {
     this.emit(this.events.connection, false);
     this.emit(this.events.accounts, []);
     this.emit(this.events.currentAccount, null);
+  }
+
+  private _emitSignatureError(error: unknown) {
+    console.error('SolanaConnector: Error during signature validation:', error);
+
+    this.emit(SolanaConnectorEvents.ERROR, new Error('Failed to sign message'));
+    this.web3Modal.disconnect();
+    this._emitDisconnect();
   }
 
   private async _emitConnected() {
@@ -355,10 +364,7 @@ export class SolanaConnector extends PredicateConnector {
           this._emitDisconnect();
           return false;
         } catch (error) {
-          console.error(
-            'SolanaConnector: Error during signature validation:',
-            error,
-          );
+          this._emitSignatureError(error);
           this.web3Modal.disconnect();
           this._emitDisconnect();
           return false;
@@ -401,6 +407,7 @@ export class SolanaConnector extends PredicateConnector {
               unsub();
               break;
             } catch (error) {
+              this._emitSignatureError(error);
               this.web3Modal.disconnect();
               this._emitDisconnect();
               resolve(false);

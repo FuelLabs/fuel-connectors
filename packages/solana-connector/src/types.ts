@@ -2,6 +2,10 @@ import type { PredicateConfig } from '@fuel-connectors/common';
 import type { ProviderType } from '@web3modal/solana/dist/types/src/utils/scaffold';
 import type { Provider as FuelProvider, StorageAbstract } from 'fuels';
 
+export enum SolanaConnectorEvents {
+  ERROR = 'error',
+}
+
 export type SolanaConfig = {
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
   projectId?: string;
