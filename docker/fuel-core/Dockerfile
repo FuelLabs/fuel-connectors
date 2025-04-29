@@ -30,6 +30,7 @@ RUN cp -R /chain-configuration/local/* ./
 # Copy the testnet consensus parameters and state transition bytecode
 RUN cp /chain-configuration/upgradelog/ignition-devnet/consensus_parameters/15.json \
     ./latest_consensus_parameters.json
+
 RUN cp /chain-configuration/upgradelog/ignition-devnet/state_transition_function/21.wasm \
     ./state_transition_bytecode.wasm
 
@@ -38,10 +39,10 @@ RUN jq '.coins = input' \
     state_config.json genesis_coins.json > tmp.json \
     && mv tmp.json state_config.json
 
-# update local state_config with testnet consensus parameters
+# update local chain_config with testnet consensus parameters
 RUN jq '.consensus_parameters = input' \
-    state_config.json latest_consensus_parameters.json > tmp.json \
-    && mv tmp.json state_config.json
+    chain_config.json latest_consensus_parameters.json > tmp.json \
+    && mv tmp.json chain_config.json
 
 # expose fuel node port
 EXPOSE ${FUEL_CORE_PORT}
