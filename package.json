@@ -39,7 +39,7 @@
     "@types/node": "20.12.11",
     "@vitest/coverage-v8": "2.1.9",
     "compare-versions": "6.1.0",
-    "fuels": "pr-3850",
+    "fuels": "0.100.4",
     "husky": "9.0.11",
     "lint-staged": "15.2.2",
     "tsx": "^4.16.2",

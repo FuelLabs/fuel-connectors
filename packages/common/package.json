@@ -25,7 +25,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": "pr-3850"
+    "fuels": "0.100.4"
   },
   "dependencies": {
     "@ethersproject/bytes": "5.7.0",
