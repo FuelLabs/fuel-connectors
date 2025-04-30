@@ -119,6 +119,10 @@ describe('EVM Wallet Connector', () => {
     });
 
     fuelProvider = provider;
+
+    // Wait for Provider to be ready
+    await fuelProvider.init();
+
     baseAssetId = await fuelProvider.getBaseAssetId();
 
     stopProvider = cleanup;
