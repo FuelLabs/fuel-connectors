@@ -1,5 +1,12 @@
 predicate;
+
 use std::{
+    crypto:: {
+        signature::Signature,
+        message::Message,
+        public_key::PublicKey,
+        secp256k1::Secp256k1
+    },
     b512::B512,
     bytes::Bytes,
     tx::{
@@ -36,16 +43,18 @@ configurable {
 
 fn main(witness_index: u64) -> bool {
     // Retrieve the Ethereum signature from the witness data in the Tx at the specified index.
-    let signature: B512 = tx_witness_data(witness_index).unwrap();
+    let witness_signature: B512 = tx_witness_data(witness_index).unwrap();
 
     // Hash the Fuel Tx (as the signed message) and attempt to recover the signer from the signature.
-    let result = ec_recover_evm_address(signature, personal_sign_hash(tx_id()));
+    let signature = Signature::Secp256k1(Secp256k1::from(witness_signature));
+    let pub_key = PublicKey::from(SIGNER);
+    let message = Message::from(personal_sign_hash(tx_id()));
+
+    let result = signature.verify(pub_key, message);
 
     // If the signers match then the predicate has validated the Tx.
     if result.is_ok() {
-        if SIGNER.into() == result.unwrap().into() {
-            return true;
-        }
+        return true;
     }
 
     // Otherwise, an invalid signature has been passed and we invalidate the Tx.

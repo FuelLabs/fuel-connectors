@@ -1,6 +1,12 @@
 predicate;
 
 use std::{
+    crypto:: {
+        signature::Signature,
+        ed25519::Ed25519,
+        message::Message,
+        public_key::PublicKey,
+    },
     b512::B512,
     hash::{
         Hash,
@@ -41,9 +47,14 @@ configurable {
 }
 
 fn main(witness_index: u64) -> bool {
-    let signature: B512 = tx_witness_data(witness_index).unwrap();
+    let witness_signature: B512 = tx_witness_data(witness_index).unwrap();
     let encoded = b256_to_ascii_bytes(tx_id());
-    let result = ed_verify(SIGNER, signature, encoded);
+
+    let signature = Signature::Ed25519(Ed25519::from(witness_signature));
+    let pub_key = PublicKey::from(SIGNER);
+    let message = Message::from(encoded);
+
+    let result = signature.verify(pub_key, message);
 
     if result.is_ok() {
         return true;
