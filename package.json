@@ -19,7 +19,7 @@
     "node:up": "make -C ./docker up",
     "node:down": "make -C ./docker down",
     "node:clean": "make -C ./docker clean",
-    "test:ci": "turbo run test -- --run --coverage.enabled --coverage.reporter=json-summary --coverage.reporter=json",
+    "test:ci": "turbo run test -- --run --coverage.enabled --coverage.reporter=json-summary --coverage.reporter=json --hook-timeout=30000",
     "test:e2e": "turbo run test:e2e",
     "test:e2e:local": "turbo run test:e2e:local --filter @e2e-tests/runner",
     "lint:check": "biome check --apply-unsafe .",
