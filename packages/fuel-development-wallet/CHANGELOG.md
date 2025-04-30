@@ -1,5 +1,7 @@
 # @fuel-connectors/fuel-development-wallet
 
+## 0.40.0
+
 ## 0.39.2
 
 ### Patch Changes
