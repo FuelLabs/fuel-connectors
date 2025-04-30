@@ -30,7 +30,7 @@ RUN cp -R /chain-configuration/local/* ./
 # Copy the testnet consensus parameters and state transition bytecode
 RUN cp /chain-configuration/upgradelog/ignition-devnet/consensus_parameters/15.json \
     ./latest_consensus_parameters.json
-RUN cp /chain-configuration/upgradelog/ignition-devnet/state_transition_function/25.wasm \
+RUN cp /chain-configuration/upgradelog/ignition-devnet/state_transition_function/27.wasm \
     ./state_transition_bytecode.wasm
 
 # update local state_config with custom genesis coins config
