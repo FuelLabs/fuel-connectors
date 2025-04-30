@@ -2,7 +2,7 @@ name: 'Forc Setup'
 
 inputs:
   forc-components:
-    default: 'forc@0.66.5, fuel-core@0.40.2'
+    default: 'forc@0.68.1, fuel-core@0.43.1'
 
 runs:
   using: 'composite'

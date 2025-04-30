@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FORC_VERSION: 0.66.5
-  CORE_VERSION: 0.40.2
+  FORC_VERSION: 0.68.1
+  CORE_VERSION: 0.43.1
 
 jobs:
   tests-vitest:
@@ -23,13 +23,13 @@ jobs:
     runs-on: buildjet-4vcpu-ubuntu-2204
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node
         uses: FuelLabs/github-actions/setups/node@master
         with:
           node-version: 20.11.0
           pnpm-version: 9.5.0
-      
+
       - uses: FuelLabs/github-actions/setups/docker@master
         with:
           username: ${{ github.repository_owner }}
@@ -101,7 +101,7 @@ jobs:
       - name: Run PNPM install
         id: pnpm-cache
         run: pnpm install --frozen-lockfile
-    
+
       - name: Copy .env file for E2E Tests
         run: cp e2e-tests/runner/.env.example e2e-tests/runner/.env
 
@@ -113,7 +113,7 @@ jobs:
 
       - name: Run build:connectors
         run: pnpm build:connectors
-        
+
       - uses: ./.github/workflows/setup-rust
 
       - name: Verify Forc and Fuel-Core
@@ -147,4 +147,3 @@ jobs:
         run: xvfb-run --auto-servernum -- pnpm --filter @e2e-tests/runner test:e2e
         env:
           VITE_MASTER_WALLET_MNEMONIC: ${{ secrets.VITE_MASTER_WALLET_MNEMONIC }}
-          
