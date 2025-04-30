@@ -131,6 +131,7 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   private async _emitDisconnect() {
+    console.log('!!! _emitDisconnect CALLED !!! - Resetting state.');
     this.isPollingSignatureRequestActive = false;
     this.svmAddress = null;
     await this.setupPredicate();
@@ -139,9 +140,10 @@ export class SolanaConnector extends PredicateConnector {
     this.emit(this.events.currentAccount, null);
   }
 
-  private _emitSignatureError(error: unknown) {
-    console.error('SolanaConnector: Error during signature validation:', error);
-
+  private _emitSignatureError(_error: unknown) {
+    console.log(
+      '!!! _emitSignatureError CALLED !!! - Will call _emitDisconnect.',
+    );
     this.isPollingSignatureRequestActive = false;
     this.emit(SolanaConnectorEvents.ERROR, new Error('Failed to sign message'));
     this.web3Modal.disconnect();
@@ -295,7 +297,7 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   public async connect(): Promise<boolean> {
-    this.createModal(); // Ensure modal is fresh
+    this.createModal();
     const currentAddress = this.web3Modal.getAddress();
     if (currentAddress) {
       const storageValue = await this.storage.getItem(
@@ -328,9 +330,6 @@ export class SolanaConnector extends PredicateConnector {
             this._emitConnected();
             return true;
           }
-          console.error(
-            `[Connect(Pending)] Signature INVALID for ${currentAddress}.`,
-          );
           await this.storage.removeItem(
             SIGNATURE_VALIDATION_KEY(currentAddress),
           );
@@ -339,10 +338,6 @@ export class SolanaConnector extends PredicateConnector {
           );
           return false;
         } catch (error) {
-          console.error(
-            `[Connect(Pending)] Error during signature request for ${currentAddress}:`,
-            error,
-          );
           await this.storage.removeItem(
             SIGNATURE_VALIDATION_KEY(currentAddress),
           );
@@ -355,7 +350,6 @@ export class SolanaConnector extends PredicateConnector {
       }
     }
 
-    // Show modal and wait for connection
     this.web3Modal.open();
     return new Promise((resolve) => {
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
@@ -383,13 +377,9 @@ export class SolanaConnector extends PredicateConnector {
                 this.emit(this.events.currentConnector, {
                   metadata: { pendingSignature: true },
                 });
-                resolve(false); // Resolve false, signature will happen via listener
+                resolve(false);
               }
             } catch (error) {
-              console.error(
-                `[Connect Promise] Error during CONNECT_SUCCESS handling for ${address}:`,
-                error,
-              );
               this._emitSignatureError(error);
               resolve(false);
             } finally {
@@ -413,9 +403,12 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   public async disconnect(): Promise<boolean> {
+    console.log(
+      '!!! public disconnect() CALLED !!! - Will call _emitDisconnect.',
+    );
     this.web3Modal.disconnect();
     this._emitDisconnect();
-    return this.isConnected();
+    return !(await this.isConnected());
   }
 
   private encodeTxId(txId: string): Uint8Array {
