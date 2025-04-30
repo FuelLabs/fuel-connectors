@@ -1,6 +1,4 @@
-import fs, { readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { txIdEncoders } from '@fuel-connectors/evm-predicates';
+import fs from 'node:fs';
 import { getPredicateRoot } from 'fuels';
 
 const TMP_BUILD_PATH = 'tmp';
