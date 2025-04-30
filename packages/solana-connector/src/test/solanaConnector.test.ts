@@ -40,9 +40,6 @@ describe('Solana Connector', () => {
 
     fuelProvider = provider;
     stopProvider = cleanup;
-
-    // Wait for the provider to be ready
-    await fuelProvider.init();
   });
 
   afterAll(() => {
