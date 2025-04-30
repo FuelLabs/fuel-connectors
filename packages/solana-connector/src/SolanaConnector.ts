@@ -72,61 +72,6 @@ export class SolanaConnector extends PredicateConnector {
       if (!address) {
         return;
       }
-
-      const storageStatus = await this.storage.getItem(
-        SIGNATURE_VALIDATION_KEY(address),
-      );
-      if (storageStatus === 'pending') {
-        try {
-          const provider = this.web3Modal.getWalletProvider() as SolanaProvider;
-          if (!provider) {
-            throw new Error(
-              '[Event Listener] No provider available for signature request',
-            );
-          }
-
-          const message = `Sign this message to verify the connected account: ${address}`;
-          const messageBytes = new TextEncoder().encode(message);
-          const signedMessage = await provider.signMessage(messageBytes);
-          const signature =
-            'signature' in signedMessage
-              ? signedMessage.signature
-              : signedMessage;
-          const publicKey = provider.publicKey;
-          if (!publicKey) {
-            throw new Error(
-              '[Event Listener] No public key available after signing',
-            );
-          }
-
-          const isValid = nacl.sign.detached.verify(
-            messageBytes,
-            signature,
-            publicKey.toBytes(),
-          );
-          if (isValid) {
-            await this.storage.setItem(
-              SIGNATURE_VALIDATION_KEY(address),
-              'true',
-            );
-            this.svmAddress = address;
-            this._emitConnected(); // Emit connection success
-          } else {
-            console.error(
-              `[Event Listener] Signature INVALID for ${address}. Cleaning up.`,
-            );
-            await this.storage.removeItem(SIGNATURE_VALIDATION_KEY(address));
-            this._emitSignatureError(new Error('Invalid signature provided'));
-          }
-        } catch (error) {
-          console.error(
-            `[Event Listener] Error during signature request/validation for ${address}:`,
-            error,
-          );
-          await this.storage.removeItem(SIGNATURE_VALIDATION_KEY(address));
-          this._emitSignatureError(error);
-        }
-      }
     });
   }
 
@@ -224,6 +169,9 @@ export class SolanaConnector extends PredicateConnector {
               SIGNATURE_VALIDATION_KEY(address),
               'pending',
             );
+            this.emit(this.events.currentConnector, {
+              metadata: { pendingSignature: true },
+            });
           }
         }
       } else if (!address && this.svmAddress) {
@@ -297,13 +245,16 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   public async connect(): Promise<boolean> {
-    this.createModal();
+    if (!this.web3Modal) {
+      this.createModal();
+    }
     const currentAddress = this.web3Modal.getAddress();
     if (currentAddress) {
       const storageValue = await this.storage.getItem(
         SIGNATURE_VALIDATION_KEY(currentAddress),
       );
       if (storageValue === 'pending') {
+        this.isPollingSignatureRequestActive = true;
         try {
           const provider = this.web3Modal.getWalletProvider() as SolanaProvider;
           if (!provider) throw new Error('Connect(Pending): No provider');
@@ -328,20 +279,20 @@ export class SolanaConnector extends PredicateConnector {
               'true',
             );
             this._emitConnected();
+            this.isPollingSignatureRequestActive = false;
             return true;
           }
           await this.storage.removeItem(
             SIGNATURE_VALIDATION_KEY(currentAddress),
-          );
+          ); // Clean up storage
           this._emitSignatureError(
-            new Error('Invalid signature during initial connect validation'),
+            new Error('Invalid signature provided during connect.'),
           );
+          this.isPollingSignatureRequestActive = false;
           return false;
         } catch (error) {
-          await this.storage.removeItem(
-            SIGNATURE_VALIDATION_KEY(currentAddress),
-          );
           this._emitSignatureError(error);
+          this.isPollingSignatureRequestActive = false;
           return false;
         }
       } else if (storageValue === 'true') {
@@ -350,9 +301,16 @@ export class SolanaConnector extends PredicateConnector {
       }
     }
 
+    if (!this.web3Modal) {
+      this.createModal();
+    }
     this.web3Modal.open();
     return new Promise((resolve) => {
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
+        console.log(
+          '[Connect Promise] Modal event received:',
+          event.data.event,
+        );
         switch (event.data.event) {
           case 'CONNECT_SUCCESS': {
             const provider =
