@@ -30,6 +30,7 @@ export enum Routes {
   Connecting = 'CONNECTING',
   PredicateExternalDisclaimer = 'PREDICATE_EXTERNAL_DISCLAIMER',
   PredicateAddressDisclaimer = 'PREDICATE_ADDRESS_DISCLAIMER',
+  SignatureError = 'SIGNATURE_ERROR',
 }
 
 export type FuelUIContextType = {
@@ -42,9 +43,7 @@ export type FuelUIContextType = {
   isConnecting: boolean;
   isError: boolean;
   connect: () => void;
-  cancel: (params?: {
-    clean?: boolean;
-  }) => void;
+  cancel: (params?: { clean?: boolean }) => void;
   setError: (error: Error | null) => void;
   error: Error | null;
   dialog: {

@@ -6,6 +6,7 @@ import {
   type ConnectorMetadata,
   FuelConnector,
   FuelConnectorEventTypes,
+  type HashableMessage,
   type JsonAbi,
   type Network,
   type SelectNetworkArguments,
@@ -307,7 +308,7 @@ export abstract class PredicateConnector extends FuelConnector {
 
   public async signMessage(
     _address: string,
-    _message: string,
+    _message: HashableMessage,
   ): Promise<string> {
     throw new Error('A predicate account cannot sign messages');
   }
