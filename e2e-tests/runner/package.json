@@ -1,6 +1,6 @@
 {
   "name": "@e2e-tests/runner",
-  "version": "0.39.2",
+  "version": "0.40.0",
   "private": true,
   "description": "E2E tests for Fuel Wallet Connectors",
   "author": "Fuel Labs <contact@fuel.sh> (https://fuel.network/)",
