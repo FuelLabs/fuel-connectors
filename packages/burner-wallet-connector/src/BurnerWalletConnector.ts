@@ -6,6 +6,7 @@ import {
   type ConnectorMetadata,
   FuelConnector,
   FuelConnectorEventTypes,
+  type HashableMessage,
   type JsonAbi,
   type Network,
   Provider,
@@ -198,7 +199,10 @@ export class BurnerWalletConnector extends FuelConnector {
     return false;
   }
 
-  async signMessage(address: string, message: string): Promise<string> {
+  async signMessage(
+    address: string,
+    message: HashableMessage,
+  ): Promise<string> {
     if (!this.burnerWallet) {
       throw Error('Wallet not connected');
     }
