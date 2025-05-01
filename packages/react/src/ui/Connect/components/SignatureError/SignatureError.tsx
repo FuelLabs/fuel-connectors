@@ -51,7 +51,7 @@ export function SignatureError({ theme }: SignatureErrorProps) {
               </ConnectorDescription>
             </ConnectorContent>
             <ConnectorButtonPrimary
-              href="https://github.com/FuelLabs/fuel-connectors/wiki/Guide:-Importing-Your-Ledger-Solana-Account-into-a-Hot-Wallet"
+              href="https://docs.fuel.network/guides/fuel-connectors/solana-ledger-connection"
               target="_blank"
             >
               View Troubleshooting Guide
