@@ -247,6 +247,7 @@ export class SolanaConnector extends PredicateConnector {
   public async connect(): Promise<boolean> {
     if (!this.web3Modal) {
       this.createModal();
+      await new Promise((resolve) => setTimeout(resolve, 50));
     }
     const currentAddress = this.web3Modal.getAddress();
     if (currentAddress) {
@@ -299,11 +300,10 @@ export class SolanaConnector extends PredicateConnector {
         this._emitConnected();
         return true;
       }
+    } else {
+      return false;
     }
 
-    if (!this.web3Modal) {
-      this.createModal();
-    }
     this.web3Modal.open();
     return new Promise((resolve) => {
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
