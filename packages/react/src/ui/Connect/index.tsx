@@ -17,8 +17,11 @@ import { DialogContent } from './components/Core/DialogContent';
 import { DialogFuel } from './components/Core/DialogFuel';
 import { PredicateAddressDisclaimer } from './components/PredicateAddressDisclaimer/PredicateAddressDisclaimer';
 import { PredicateExternalDisclaimer } from './components/PredicateExternalDisclaimer/PredicateExternalDisclaimer';
+import { SignatureError } from './components/SignatureError/SignatureError';
 
 const ConnectRoutes = ({ route }: { route: Routes }) => {
+  const { theme } = useConnectUI();
+
   switch (route) {
     case Routes.List:
       return <Connectors />;
@@ -30,6 +33,8 @@ const ConnectRoutes = ({ route }: { route: Routes }) => {
       return <PredicateAddressDisclaimer />;
     case Routes.Connecting:
       return <Connecting />;
+    case Routes.SignatureError:
+      return <SignatureError theme={theme} />;
     default:
       return null;
   }

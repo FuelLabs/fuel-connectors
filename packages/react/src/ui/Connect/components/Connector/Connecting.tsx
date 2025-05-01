@@ -101,6 +101,14 @@ export function Connecting({ className }: ConnectorProps) {
     };
   }, [fuel]);
 
+  useEffect(() => {
+    if (error) {
+      if (error.message.includes('Failed to sign message')) {
+        setRoute(Routes.SignatureError);
+      }
+    }
+  }, [error, setRoute]);
+
   if (!connector) return null;
 
   return (
