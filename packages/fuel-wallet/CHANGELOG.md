@@ -1,5 +1,11 @@
 # @fuel-connectors/fuel-wallet
 
+## 0.41.0
+
+### Minor Changes
+
+- [#506](https://github.com/FuelLabs/fuel-connectors/pull/506) [`4c07269`](https://github.com/FuelLabs/fuel-connectors/commit/4c07269ec7940bed12225789f908e601bb5e9f16) Thanks [@nelitow](https://github.com/nelitow)! - feat: Enable the signature of HashableMessages
+
 ## 0.40.0
 
 ## 0.39.2

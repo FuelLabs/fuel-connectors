@@ -1,5 +1,11 @@
 # @fuel-connectors/solana-connector
 
+## 0.41.0
+
+### Minor Changes
+
+- [#502](https://github.com/FuelLabs/fuel-connectors/pull/502) [`b0bc66a`](https://github.com/FuelLabs/fuel-connectors/commit/b0bc66ae05d8f38448ca1c0ebbeead1ada04ed78) Thanks [@nelitow](https://github.com/nelitow)! - feat: Added signature validation for the Solana Connector.
+
 ## 0.40.0
 
 ### Minor Changes
