@@ -15,4 +15,4 @@
 "docs": patch
 ---
 
-Upgrading `fuels` to `0.100.4`
+Upgrading `fuels` to `0.100.5`
