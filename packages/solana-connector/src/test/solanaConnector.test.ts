@@ -35,8 +35,6 @@ describe('Solana Connector', () => {
       nodeOptions: {
         args: ['--snapshot', snapshotPath],
         loggingEnabled: false,
-        // use fixed port to don't conflict with other packages,
-        port: '4002',
       },
     });
 
