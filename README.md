@@ -48,7 +48,7 @@ The `fuel-connectors` project includes comprehensive end-to-end (E2E) tests to e
 Ensure you have the following installed on your system:
 
 1. **Docker**: For running required services.
-2. **Node.js (v20.11.0 or higher)**: Use the version specified in `.nvmrc` or the project configuration.
+2. **Node.js (v20.14.0 or higher)**: Use the version specified in `.nvmrc` or the project configuration.
 3. **PNPM**: Version `9.x` or higher. Install it globally if needed:
    ```bash
    npm install -g pnpm
@@ -88,20 +88,20 @@ Ensure you have the following installed on your system:
 
 ### Additional Commands
 
-- **Run Tests for Specific Connectors**  
+- **Run Tests for Specific Connectors**
   To run tests for an individual project:
   ```bash
   pnpm --filter @e2e-tests/runner test:react-app
   ```
 React App is faster to build for e2e development.
 
-- **Debug with Playwright UI**  
+- **Debug with Playwright UI**
   Use Playwright's interactive UI for debugging tests:
   ```bash
   pnpm --filter @e2e-tests/runner test:e2e:ui
   ```
 
-- **Stop the Local Test Node**  
+- **Stop the Local Test Node**
   After testing, stop the test node to free up resources:
   ```bash
   pnpm node:down
@@ -111,7 +111,7 @@ React App is faster to build for e2e development.
 
 ### Troubleshooting
 
-- **Port Conflicts**  
+- **Port Conflicts**
   If you encounter errors related to ports already in use, ensure no processes are running on the following ports:
   - `4000`: Fuel Provider
   - `5173`: React App

@@ -24,7 +24,7 @@ jobs:
 
       - uses: FuelLabs/github-actions/setups/node@master
         with:
-          node-version: 20.11.0
+          node-version: 20.14.0
           pnpm-version: 9.5.0
 
       - name: Configure AWS credentials
@@ -76,4 +76,4 @@ jobs:
             pnpm add @fuels/connectors@${{ env.BUILD_VERSION }}
             ```
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
