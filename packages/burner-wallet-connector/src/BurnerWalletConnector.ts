@@ -13,6 +13,7 @@ import {
   type SelectNetworkArguments,
   type StorageAbstract,
   type TransactionRequestLike,
+  type TransactionResponse,
   type Version,
   Wallet,
   type WalletUnlocked,
@@ -219,7 +220,7 @@ export class BurnerWalletConnector extends FuelConnector {
   async sendTransaction(
     _address: string,
     transaction: TransactionRequestLike,
-  ): Promise<string> {
+  ): Promise<string | TransactionResponse> {
     if (!this.burnerWallet) {
       throw Error('Wallet not connected');
     }
@@ -228,10 +229,10 @@ export class BurnerWalletConnector extends FuelConnector {
       throw Error('Address not found for the connector');
     }
 
-    const transactionRequest =
+    const transactionResponse =
       await this.burnerWallet.sendTransaction(transaction);
 
-    return transactionRequest.id;
+    return transactionResponse;
   }
 
   async currentAccount(): Promise<string | null> {
