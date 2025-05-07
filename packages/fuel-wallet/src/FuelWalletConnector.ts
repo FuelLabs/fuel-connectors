@@ -13,6 +13,7 @@ import {
   Provider,
   type SelectNetworkArguments,
   type TransactionRequestLike,
+  type TransactionResponse,
   type Version,
   transactionRequestify,
 } from 'fuels';
@@ -203,7 +204,7 @@ export class FuelWalletConnector extends FuelConnector {
     address: string,
     transaction: TransactionRequestLike,
     params?: FuelConnectorSendTxParams,
-  ): Promise<string> {
+  ): Promise<string | TransactionResponse> {
     if (!transaction) {
       throw new Error('Transaction is required');
     }
@@ -221,9 +222,7 @@ export class FuelWalletConnector extends FuelConnector {
       txRequest = await onBeforeSend(txRequest);
     }
 
-    // Transform transaction object to a transaction request
-
-    return this.client.request('sendTransaction', {
+    const resp = await this.client.request('sendTransaction', {
       address,
       transaction: JSON.stringify(txRequest),
       provider,
@@ -231,6 +230,12 @@ export class FuelWalletConnector extends FuelConnector {
       transactionState,
       transactionSummary,
     });
+
+    // if (typeof resp === 'object' && 'id' in resp && 'providerCached' in resp) {
+    //   return deserializeTransactionResponseJson(resp);
+    // }
+
+    return resp?.id || resp;
   }
 
   async assets(): Promise<Array<Asset>> {

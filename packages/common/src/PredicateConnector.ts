@@ -11,6 +11,7 @@ import {
   type Network,
   type SelectNetworkArguments,
   type TransactionRequestLike,
+  type TransactionResponse,
   type Version,
   ZeroBytes32,
   bn,
@@ -51,7 +52,7 @@ export abstract class PredicateConnector extends FuelConnector {
   public abstract sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
-  ): Promise<string>;
+  ): Promise<string | TransactionResponse>;
   public abstract connect(): Promise<boolean>;
   public abstract disconnect(): Promise<boolean>;
 

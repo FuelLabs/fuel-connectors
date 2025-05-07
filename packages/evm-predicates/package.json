@@ -11,7 +11,7 @@
     "versions:generate": "pnpm fuels build && pnpm fuels deploy && tsx ./scripts/versions.ts"
   },
   "peerDependencies": {
-    "fuels": "0.100.5",
+    "fuels": "0.100.6",
     "viem": ">=2.20.1"
   },
   "devDependencies": {
