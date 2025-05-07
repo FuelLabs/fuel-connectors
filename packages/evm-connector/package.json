@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/evm-connector",
-  "version": "0.41.0",
+  "version": "0.41.1",
   "private": true,
   "type": "module",
   "files": ["dist"],
@@ -20,7 +20,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": "0.100.0"
+    "fuels": "0.100.6"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",

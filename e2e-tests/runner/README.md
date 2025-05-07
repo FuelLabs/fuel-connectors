@@ -1,7 +1,7 @@
 # Running E2E Tests Locally
 
 ## Prerequisites
-- Node.js v20.11.0
+- Node.js v20.14.0
 - PNPM v9.5.0
 - Rust toolchain with `forc` and `fuel-core`
 
@@ -41,7 +41,7 @@
    pnpm fuels build && pnpm fuels deploy
    ```
 
-6. **Build and Deploy Solana Predicates** 
+6. **Build and Deploy Solana Predicates**
    Copy `packages/solana-connector/.env.example` to `packages/solana-connector/.env`.
    ```bash
    cd packages/solana-connector

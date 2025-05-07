@@ -291,6 +291,13 @@ export class EVMWalletConnector extends PredicateConnector {
     }
 
     const encoder = txIdEncoders[this.predicateAddress];
+
+    if (!encoder) {
+      throw new Error(
+        `TxIdEncoder not found for this predicate address: ${this.predicateAddress}`,
+      );
+    }
+
     return encoder.encodeTxId(txId);
   }
 }

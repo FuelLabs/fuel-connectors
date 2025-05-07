@@ -1,5 +1,15 @@
 # @fuel-connectors/solana-connector
 
+## 0.41.1
+
+### Patch Changes
+
+- [#519](https://github.com/FuelLabs/fuel-connectors/pull/519) [`78362d4`](https://github.com/FuelLabs/fuel-connectors/commit/78362d495b6a231a916a737e0f61efab69aa896c) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: update to `fuels@0.100.6`
+
+- [#515](https://github.com/FuelLabs/fuel-connectors/pull/515) [`31f6606`](https://github.com/FuelLabs/fuel-connectors/commit/31f6606f1caaba677164a1a053acb6242f6f8dfb) Thanks [@arboleya](https://github.com/arboleya)! - Upgrading `fuels` to `0.100.5`
+
+- [#519](https://github.com/FuelLabs/fuel-connectors/pull/519) [`78362d4`](https://github.com/FuelLabs/fuel-connectors/commit/78362d495b6a231a916a737e0f61efab69aa896c) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: support returning TransactionResponse when user calls sendTransaction
+
 ## 0.41.0
 
 ### Minor Changes

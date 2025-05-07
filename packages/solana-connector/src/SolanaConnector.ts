@@ -21,6 +21,7 @@ import {
   LocalStorage,
   type StorageAbstract,
   type TransactionRequestLike,
+  type TransactionResponse,
   hexlify,
   toUtf8Bytes,
 } from 'fuels';
@@ -375,7 +376,7 @@ export class SolanaConnector extends PredicateConnector {
   public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
-  ): Promise<string> {
+  ): Promise<string | TransactionResponse> {
     const { predicate, transactionId, transactionRequest } =
       await this.prepareTransaction(address, transaction);
 
@@ -400,7 +401,7 @@ export class SolanaConnector extends PredicateConnector {
 
     const response = await predicate.sendTransaction(transactionRequest);
 
-    return response.id;
+    return response;
   }
 
   async signMessageCustomCurve(message: string) {
