@@ -13,7 +13,8 @@ import {
   Provider,
   type SelectNetworkArguments,
   type TransactionRequestLike,
-  type TransactionResponse,
+  TransactionResponse,
+  type TransactionResponseJson,
   type Version,
   transactionRequestify,
 } from 'fuels';
@@ -32,6 +33,37 @@ import {
   MessageTypes,
   type ResponseMessage,
 } from './types';
+
+// @TODO: REMOVE THIS METHOD WHEN UPGRADING TO fuels 0.100.7+, BECAUSE IT ALREADY HAS THIS METHOD
+export const deserializeTransactionResponseJson = (
+  json: TransactionResponseJson,
+) => {
+  const {
+    id,
+    abis,
+    status,
+    providerUrl,
+    requestJson,
+    providerCache,
+    gqlTransaction,
+    preConfirmationStatus,
+  } = json;
+
+  const provider = new Provider(providerUrl, { cache: providerCache });
+  const { chainId } = providerCache.chain.consensusParameters;
+
+  const response = new TransactionResponse(id, provider, Number(chainId), abis);
+
+  if (requestJson) {
+    response.request = transactionRequestify(JSON.parse(requestJson));
+  }
+
+  response.status = status;
+  response.gqlTransaction = gqlTransaction;
+  response.preConfirmationStatus = preConfirmationStatus;
+
+  return response;
+};
 
 export class FuelWalletConnector extends FuelConnector {
   name = '';
@@ -231,9 +263,9 @@ export class FuelWalletConnector extends FuelConnector {
       transactionSummary,
     });
 
-    // if (typeof resp === 'object' && 'id' in resp && 'providerCached' in resp) {
-    //   return deserializeTransactionResponseJson(resp);
-    // }
+    if (typeof resp === 'object' && 'id' in resp && 'providerCache' in resp) {
+      return deserializeTransactionResponseJson(resp);
+    }
 
     return resp?.id || resp;
   }
