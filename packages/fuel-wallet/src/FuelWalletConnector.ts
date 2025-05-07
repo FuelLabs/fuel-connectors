@@ -13,6 +13,8 @@ import {
   Provider,
   type SelectNetworkArguments,
   type TransactionRequestLike,
+  TransactionResponse,
+  type TransactionResponseJson,
   type Version,
   transactionRequestify,
 } from 'fuels';
@@ -31,6 +33,37 @@ import {
   MessageTypes,
   type ResponseMessage,
 } from './types';
+
+// @TODO: REMOVE THIS METHOD WHEN UPGRADING TO fuels 0.100.7+, BECAUSE IT ALREADY HAS THIS METHOD
+export const deserializeTransactionResponseJson = (
+  json: TransactionResponseJson,
+) => {
+  const {
+    id,
+    abis,
+    status,
+    providerUrl,
+    requestJson,
+    providerCache,
+    gqlTransaction,
+    preConfirmationStatus,
+  } = json;
+
+  const provider = new Provider(providerUrl, { cache: providerCache });
+  const { chainId } = providerCache.chain.consensusParameters;
+
+  const response = new TransactionResponse(id, provider, Number(chainId), abis);
+
+  if (requestJson) {
+    response.request = transactionRequestify(JSON.parse(requestJson));
+  }
+
+  response.status = status;
+  response.gqlTransaction = gqlTransaction;
+  response.preConfirmationStatus = preConfirmationStatus;
+
+  return response;
+};
 
 export class FuelWalletConnector extends FuelConnector {
   name = '';
@@ -203,7 +236,7 @@ export class FuelWalletConnector extends FuelConnector {
     address: string,
     transaction: TransactionRequestLike,
     params?: FuelConnectorSendTxParams,
-  ): Promise<string> {
+  ): Promise<string | TransactionResponse> {
     if (!transaction) {
       throw new Error('Transaction is required');
     }
@@ -221,9 +254,7 @@ export class FuelWalletConnector extends FuelConnector {
       txRequest = await onBeforeSend(txRequest);
     }
 
-    // Transform transaction object to a transaction request
-
-    return this.client.request('sendTransaction', {
+    const resp = await this.client.request('sendTransaction', {
       address,
       transaction: JSON.stringify(txRequest),
       provider,
@@ -231,6 +262,12 @@ export class FuelWalletConnector extends FuelConnector {
       transactionState,
       transactionSummary,
     });
+
+    if (typeof resp === 'object' && 'id' in resp && 'providerCache' in resp) {
+      return deserializeTransactionResponseJson(resp);
+    }
+
+    return resp?.id || resp;
   }
 
   async assets(): Promise<Array<Asset>> {
