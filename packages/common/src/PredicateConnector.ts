@@ -114,50 +114,63 @@ export abstract class PredicateConnector extends FuelConnector {
 
   /**
    * Get all predicate versions including metadata
+   * @returns Promise that resolves to the array of predicate versions with complete metadata
    */
-  public getAllPredicateVersionsWithMetadata(): Array<{
-    id: string;
-    generatedAt: number;
-    isActive: boolean;
-    isSelected: boolean;
-    isNewest: boolean;
-  }> {
-    const promises = this.predicateVersions.map(async (factory) => {
-      try {
-        const address = await this.getAccountAddress();
-        if (!address) return false;
-
-        const { fuelProvider } = await this.getProviders();
-        const predicate = factory.build(address, fuelProvider, [1]);
-        const result = await predicate.getBalances();
-        return !!(result.balances && result.balances.length > 0);
-      } catch (_error) {
-        return false;
-      }
-    });
-
-    // Return immediately with isActive=false for all versions
+  public async getAllPredicateVersionsWithMetadata(): Promise<
+    Array<{
+      id: string;
+      generatedAt: number;
+      isActive: boolean;
+      isSelected: boolean;
+      isNewest: boolean;
+    }>
+  > {
+    // Create the base result with isActive set to false initially
     const result = this.predicateVersions.map((factory, index) => ({
       id: factory.getRoot(),
       generatedAt: factory.getGeneratedAt(),
-      isActive: false, // Will be updated later
+      isActive: false,
       isSelected: factory.getRoot() === this.selectedPredicateVersion,
       isNewest: index === 0, // The first version is the newest
     }));
 
-    // Update isActive status in the background if possible
-    Promise.all(promises)
-      .then((activeStatus) => {
-        activeStatus.forEach((isActive, index) => {
-          if (index < result.length) {
-            const item = result[index];
-            if (item) {
-              item.isActive = isActive;
-            }
+    try {
+      // Check which versions have balances
+      const activeStatusPromises = this.predicateVersions.map(
+        async (factory) => {
+          try {
+            const address = await this.getAccountAddress();
+            if (!address) return false;
+
+            const { fuelProvider } = await this.getProviders();
+            const predicate = factory.build(address, fuelProvider, [1]);
+            const balanceResult = await predicate.getBalances();
+            return !!(
+              balanceResult.balances && balanceResult.balances.length > 0
+            );
+          } catch (_error) {
+            return false;
           }
-        });
-      })
-      .catch(() => {});
+        },
+      );
+
+      // Wait for all balance checks to complete
+      const activeStatuses = await Promise.all(activeStatusPromises);
+
+      // Update the isActive status
+      activeStatuses.forEach((isActive, index) => {
+        if (index < result.length) {
+          // Use a local variable to satisfy TypeScript
+          const item = result[index];
+          if (item) {
+            item.isActive = isActive;
+          }
+        }
+      });
+    } catch (error) {
+      // If balance checks fail, we still return the result with isActive as false
+      console.error('Failed to check predicate balances:', error);
+    }
 
     return result;
   }

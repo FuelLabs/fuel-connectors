@@ -195,16 +195,32 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
         if (hasVersionSupport(currentConnector)) {
           // Try to use the metadata method first
           if (currentConnector.getAllPredicateVersionsWithMetadata) {
-            const metadataVersions =
-              currentConnector.getAllPredicateVersionsWithMetadata();
-            setVersionsWithMetadata(metadataVersions);
-            setVersions(metadataVersions); // For backwards compatibility
+            try {
+              // Handle the async method properly
+              const metadataVersions =
+                await currentConnector.getAllPredicateVersionsWithMetadata();
+              setVersionsWithMetadata(metadataVersions);
+              setVersions(metadataVersions); // For backwards compatibility
 
-            // Find the selected version from metadata
-            const selected = metadataVersions.find((v) => v.isSelected);
-            if (selected) {
-              setSelectedVersion(selected.id);
-            } else {
+              // Find the selected version from metadata
+              const selected = metadataVersions.find((v) => v.isSelected);
+              if (selected) {
+                setSelectedVersion(selected.id);
+              } else {
+                setSelectedVersion(
+                  currentConnector.getSelectedPredicateVersion(),
+                );
+              }
+            } catch (err) {
+              console.error(
+                'Error fetching predicate versions with metadata:',
+                err,
+              );
+              // Fall back to the regular method
+              const availableVersions =
+                currentConnector.getAvailablePredicateVersions();
+              setVersions(availableVersions);
+              setVersionsWithMetadata([]);
               setSelectedVersion(
                 currentConnector.getSelectedPredicateVersion(),
               );
@@ -214,6 +230,7 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
             const availableVersions =
               currentConnector.getAvailablePredicateVersions();
             setVersions(availableVersions);
+            setVersionsWithMetadata([]);
             setSelectedVersion(currentConnector.getSelectedPredicateVersion());
           }
           setError(null);
