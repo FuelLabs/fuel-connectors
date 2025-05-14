@@ -123,47 +123,72 @@ export abstract class PredicateConnector extends FuelConnector {
       isActive: boolean;
       isSelected: boolean;
       isNewest: boolean;
+      balance?: string; // Balance amount in formatted string
+      assetId?: string; // Asset ID of the balance
     }>
   > {
     // Create the base result with isActive set to false initially
-    const result = this.predicateVersions.map((factory, index) => ({
-      id: factory.getRoot(),
-      generatedAt: factory.getGeneratedAt(),
-      isActive: false,
-      isSelected: factory.getRoot() === this.selectedPredicateVersion,
-      isNewest: index === 0, // The first version is the newest
-    }));
+    interface PredicateVersionWithMetadata {
+      id: string;
+      generatedAt: number;
+      isActive: boolean;
+      isSelected: boolean;
+      isNewest: boolean;
+      balance?: string;
+      assetId?: string;
+    }
+
+    const result: PredicateVersionWithMetadata[] = this.predicateVersions.map(
+      (factory, index) => ({
+        id: factory.getRoot(),
+        generatedAt: factory.getGeneratedAt(),
+        isActive: false,
+        isSelected: factory.getRoot() === this.selectedPredicateVersion,
+        isNewest: index === 0, // The first version is the newest
+      }),
+    );
 
     try {
       // Check which versions have balances
-      const activeStatusPromises = this.predicateVersions.map(
-        async (factory) => {
-          try {
-            const address = await this.getAccountAddress();
-            if (!address) return false;
+      const balancePromises = this.predicateVersions.map(async (factory) => {
+        try {
+          const address = await this.getAccountAddress();
+          if (!address) return { hasBalance: false };
 
-            const { fuelProvider } = await this.getProviders();
-            const predicate = factory.build(address, fuelProvider, [1]);
-            const balanceResult = await predicate.getBalances();
-            return !!(
-              balanceResult.balances && balanceResult.balances.length > 0
-            );
-          } catch (_error) {
-            return false;
+          const { fuelProvider } = await this.getProviders();
+          const predicate = factory.build(address, fuelProvider, [1]);
+          const balanceResult = await predicate.getBalances();
+
+          if (balanceResult.balances && balanceResult.balances.length > 0) {
+            const firstBalance = balanceResult.balances[0];
+            if (firstBalance) {
+              return {
+                hasBalance: true,
+                balance: firstBalance.amount.format(),
+                assetId: firstBalance.assetId,
+              };
+            }
           }
-        },
-      );
+
+          return { hasBalance: false };
+        } catch (_error) {
+          return { hasBalance: false };
+        }
+      });
 
       // Wait for all balance checks to complete
-      const activeStatuses = await Promise.all(activeStatusPromises);
+      const balanceResults = await Promise.all(balancePromises);
 
-      // Update the isActive status
-      activeStatuses.forEach((isActive, index) => {
+      balanceResults.forEach((balanceInfo, index) => {
         if (index < result.length) {
           // Use a local variable to satisfy TypeScript
           const item = result[index];
           if (item) {
-            item.isActive = isActive;
+            item.isActive = balanceInfo.hasBalance;
+            if (balanceInfo.hasBalance) {
+              item.balance = balanceInfo.balance;
+              item.assetId = balanceInfo.assetId;
+            }
           }
         }
       });

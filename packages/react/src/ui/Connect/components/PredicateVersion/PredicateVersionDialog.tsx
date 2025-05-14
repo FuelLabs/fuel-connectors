@@ -76,6 +76,18 @@ const DateLabel = (props: React.HTMLProps<HTMLSpanElement>) => (
   <span style={{ fontSize: '12px', color: 'var(--fuel-gray-10)' }} {...props} />
 );
 
+const BalanceLabel = (props: React.HTMLProps<HTMLSpanElement>) => (
+  <span
+    style={{
+      fontSize: '11px',
+      color: 'var(--fuel-green-11)',
+      display: 'block',
+      marginTop: '2px',
+    }}
+    {...props}
+  />
+);
+
 type PredicateVersionProps = {
   theme: 'dark' | 'light';
 };
@@ -89,6 +101,8 @@ interface VersionWithMetadata extends PredicateVersion {
   isActive: boolean;
   isSelected: boolean;
   isNewest: boolean;
+  balance?: string;
+  assetId?: string;
 }
 
 // Extended interface for PredicateConnector with version selection methods
@@ -443,14 +457,21 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                           version as Partial<VersionWithMetadata>;
                         if (versionWithMetadata.isActive) {
                           return (
-                            <span
-                              style={{
-                                fontSize: '11px',
-                                color: 'var(--fuel-accent-color)',
-                              }}
-                            >
-                              Has balance
-                            </span>
+                            <>
+                              <span
+                                style={{
+                                  fontSize: '11px',
+                                  color: 'var(--fuel-accent-color)',
+                                }}
+                              >
+                                Has balance
+                              </span>
+                              {versionWithMetadata.balance && (
+                                <BalanceLabel>
+                                  {versionWithMetadata.balance}
+                                </BalanceLabel>
+                              )}
+                            </>
                           );
                         }
                         return null;
