@@ -43,6 +43,7 @@ export abstract class PredicateConnector extends FuelConnector {
   protected predicateAccount: Maybe<PredicateFactory> = null;
   protected subscriptions: Array<() => void> = [];
   protected hasProviderSucceeded = true;
+  protected selectedPredicateVersion: Maybe<string> = null;
 
   private _predicateVersions!: Array<PredicateFactory>;
 
@@ -101,6 +102,82 @@ export abstract class PredicateConnector extends FuelConnector {
     return this._predicateVersions;
   }
 
+  public getAvailablePredicateVersions(): Array<{
+    id: string;
+    generatedAt: number;
+  }> {
+    return this.predicateVersions.map((factory) => ({
+      id: factory.getRoot(),
+      generatedAt: factory.getGeneratedAt(),
+    }));
+  }
+
+  /**
+   * Get all predicate versions including metadata
+   */
+  public getAllPredicateVersionsWithMetadata(): Array<{
+    id: string;
+    generatedAt: number;
+    isActive: boolean;
+    isSelected: boolean;
+    isNewest: boolean;
+  }> {
+    const promises = this.predicateVersions.map(async (factory) => {
+      try {
+        const address = await this.getAccountAddress();
+        if (!address) return false;
+
+        const { fuelProvider } = await this.getProviders();
+        const predicate = factory.build(address, fuelProvider, [1]);
+        const result = await predicate.getBalances();
+        return !!(result.balances && result.balances.length > 0);
+      } catch (_error) {
+        return false;
+      }
+    });
+
+    // Return immediately with isActive=false for all versions
+    const result = this.predicateVersions.map((factory, index) => ({
+      id: factory.getRoot(),
+      generatedAt: factory.getGeneratedAt(),
+      isActive: false, // Will be updated later
+      isSelected: factory.getRoot() === this.selectedPredicateVersion,
+      isNewest: index === 0, // The first version is the newest
+    }));
+
+    // Update isActive status in the background if possible
+    Promise.all(promises)
+      .then((activeStatus) => {
+        activeStatus.forEach((isActive, index) => {
+          if (index < result.length) {
+            const item = result[index];
+            if (item) {
+              item.isActive = isActive;
+            }
+          }
+        });
+      })
+      .catch(() => {});
+
+    return result;
+  }
+
+  public setSelectedPredicateVersion(versionId: string): void {
+    const versionExists = this.predicateVersions.some(
+      (factory) => factory.getRoot() === versionId,
+    );
+
+    if (versionExists) {
+      this.selectedPredicateVersion = versionId;
+    } else {
+      throw new Error(`Predicate version ${versionId} not found`);
+    }
+  }
+
+  public getSelectedPredicateVersion(): Maybe<string> {
+    return this.selectedPredicateVersion;
+  }
+
   protected isAddressPredicate(b: BytesLike, walletAccount: string): boolean {
     return this.predicateVersions.some(
       (predicate) => predicate.getPredicateAddress(walletAccount) === b,
@@ -131,6 +208,14 @@ export abstract class PredicateConnector extends FuelConnector {
     return this.predicateVersions[0];
   }
 
+  protected getPredicateByVersion(versionId: string): Maybe<PredicateFactory> {
+    return (
+      this.predicateVersions.find(
+        (factory) => factory.getRoot() === versionId,
+      ) || null
+    );
+  }
+
   protected async setupPredicate(): Promise<PredicateFactory> {
     if (this.customPredicate?.abi && this.customPredicate?.bin) {
       this.predicateAccount = new PredicateFactory(
@@ -143,6 +228,19 @@ export abstract class PredicateConnector extends FuelConnector {
       return this.predicateAccount;
     }
 
+    // If user has selected a predicate version, use that
+    if (this.selectedPredicateVersion) {
+      const selectedPredicate = this.getPredicateByVersion(
+        this.selectedPredicateVersion,
+      );
+      if (selectedPredicate) {
+        this.predicateAddress = selectedPredicate.getRoot();
+        this.predicateAccount = selectedPredicate;
+        return this.predicateAccount;
+      }
+    }
+
+    // Otherwise use the default selection logic
     const predicate =
       (await this.getCurrentUserPredicate()) ?? this.getNewestPredicate();
     if (!predicate) throw new Error('No predicate found');
