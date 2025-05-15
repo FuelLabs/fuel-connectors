@@ -1,4 +1,4 @@
-const connectorItemStyle: React.CSSProperties = {
+export const connectorItemStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   boxSizing: 'border-box',

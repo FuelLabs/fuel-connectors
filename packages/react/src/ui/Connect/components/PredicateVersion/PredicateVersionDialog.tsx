@@ -9,6 +9,7 @@ import { DialogFuel } from '../Core/DialogFuel';
 // TODO: Remove this
 import Button from '../../../../../../../examples/react-app/src/components/button';
 import { CloseIcon, DialogHeader, DialogTitle, Divider } from '../../styles';
+import { connectorItemStyle } from '../Connectors/styles';
 
 const Container = (props: React.HTMLProps<HTMLDivElement>) => (
   <div
@@ -35,7 +36,13 @@ const DialogMain = (props: React.HTMLProps<HTMLDivElement>) => (
 
 const VersionList = (props: React.HTMLProps<HTMLDivElement>) => (
   <div
-    style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 'var(--fuel-items-gap)',
+      padding: '0px 14px',
+    }}
     {...props}
   />
 );
@@ -43,24 +50,29 @@ const VersionList = (props: React.HTMLProps<HTMLDivElement>) => (
 const VersionItem = ({
   selected,
   onClick,
-  ...props
-}: React.HTMLProps<HTMLDivElement> & { selected?: boolean }) => (
+  children,
+}: React.HTMLProps<HTMLDivElement> & { selected: boolean }) => (
   <div
     style={{
-      padding: '12px',
-      borderRadius: '8px',
-      backgroundColor: selected ? 'var(--fuel-gray-3)' : 'var(--fuel-gray-2)',
-      cursor: 'pointer',
-      display: 'flex',
-      justifyContent: 'space-between',
+      ...connectorItemStyle,
     }}
     onClick={onClick}
-    {...props}
-  />
+    onKeyDown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        onClick?.(e as unknown as React.MouseEvent<HTMLDivElement>);
+      }
+    }}
+    tabIndex={0}
+    role="button"
+    aria-selected={selected}
+    className="fuel-connectors-connector-item"
+  >
+    {children}
+  </div>
 );
 
 const VersionLabel = (props: React.HTMLProps<HTMLSpanElement>) => (
-  <span style={{ fontSize: '14px', fontWeight: '600' }} {...props} />
+  <span style={{ fontSize: '0.875em', fontWeight: '500' }} {...props} />
 );
 
 const DateLabel = (props: React.HTMLProps<HTMLSpanElement>) => (
@@ -79,29 +91,32 @@ const BalanceLabel = (props: React.HTMLProps<HTMLSpanElement>) => (
   />
 );
 
+type PredicateVersion = {
+  id: string;
+  generatedAt: number;
+};
+
 type PredicateVersionProps = {
   theme: 'dark' | 'light';
 };
 
-interface PredicateVersion {
-  id: string;
-  generatedAt: number;
-}
-
-interface VersionWithMetadata extends PredicateVersion {
+type PredicateVersionWithMetadata = PredicateVersion & {
   isActive: boolean;
   isSelected: boolean;
   isNewest: boolean;
+  hasBalance?: boolean;
   balance?: string;
   assetId?: string;
-}
+};
 
 //
 interface PredicateConnectorWithVersions extends FuelConnector {
   getAvailablePredicateVersions: () => PredicateVersion[];
-  getAllPredicateVersionsWithMetadata?: () => VersionWithMetadata[];
-  setSelectedPredicateVersion: (versionId: string) => void;
-  getSelectedPredicateVersion: () => string | null;
+  setSelectedPredicateVersion: (id: string) => void;
+  getSelectedPredicateVersion: () => string;
+  getAllPredicateVersionsWithMetadata?: () => Promise<
+    PredicateVersionWithMetadata[]
+  >;
 }
 
 function hasVersionSupport(
@@ -122,21 +137,25 @@ function hasVersionSupport(
 }
 
 export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
-  const { isConnected } = useIsConnected();
-  const { currentConnector } = useCurrentConnector();
-  const {
-    dialog: { route },
-    cancel,
-  } = useConnectUI();
+  const connectUI = useConnectUI();
+  const route = connectUI.dialog.route;
+  const cancel = connectUI.cancel;
+
   const [versions, setVersions] = useState<PredicateVersion[]>([]);
   const [versionsWithMetadata, setVersionsWithMetadata] = useState<
-    VersionWithMetadata[]
+    PredicateVersionWithMetadata[]
   >([]);
   const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [waitingForConnection, setWaitingForConnection] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [waitingForConnection, setWaitingForConnection] =
-    useState<boolean>(false);
+  const currentConnectorResult = useCurrentConnector();
+  const isConnectedResult = useIsConnected();
+
+  // Extract the actual values from the hook results
+  const currentConnector = currentConnectorResult.currentConnector;
+  const isConnected = isConnectedResult.isConnected;
+
   const isOpen = route === Routes.PredicateVersionSelector;
 
   useEffect(() => {
@@ -146,16 +165,7 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
 
       if (!isConnected) {
         setWaitingForConnection(true);
-      } else {
-        setWaitingForConnection(false);
       }
-    } else {
-      setVersions([]);
-      setVersionsWithMetadata([]);
-      setSelectedVersion(null);
-      setError(null);
-      setLoading(false);
-      setWaitingForConnection(false);
     }
   }, [isOpen, isConnected]);
 
@@ -174,7 +184,7 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
         setError('Connection timed out. Please try again.');
         setLoading(false);
       }
-    }, 10000);
+    }, 10000); // 10 second timeout
 
     return () => clearTimeout(connectionPoll);
   }, [isOpen, waitingForConnection, isConnected]);
@@ -185,8 +195,6 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
     }
 
     const loadVersions = async () => {
-      setLoading(true);
-
       try {
         if (hasVersionSupport(currentConnector)) {
           if (currentConnector.getAllPredicateVersionsWithMetadata) {
@@ -225,18 +233,18 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
             setVersionsWithMetadata([]);
             setSelectedVersion(currentConnector.getSelectedPredicateVersion());
           }
-          setError(null);
+          setLoading(false);
         } else {
-          setError("This wallet doesn't support predicate version selection");
-          setVersions([]);
-          setVersionsWithMetadata([]);
+          setError(
+            'This connector does not support predicate version selection.',
+          );
+          setLoading(false);
         }
       } catch (err) {
         console.error('Failed to load predicate versions:', err);
         setError('Failed to load predicate versions. Please try again.');
         setVersions([]);
         setVersionsWithMetadata([]);
-      } finally {
         setLoading(false);
       }
     };
@@ -333,6 +341,8 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
             renderConnectionWaiting()
           ) : loading ? (
             renderLoadingState()
+          ) : versions.length === 0 ? (
+            renderEmptyState()
           ) : error ? (
             renderErrorState()
           ) : (
@@ -365,87 +375,83 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                 {(versionsWithMetadata.length > 0
                   ? versionsWithMetadata
                   : versions
-                ).map((version) => (
-                  <VersionItem
-                    key={version.id}
-                    selected={version.id === selectedVersion}
-                    onClick={() => handleVersionSelect(version.id)}
-                  >
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <VersionLabel>{formatVersionId(version.id)}</VersionLabel>
-                      <DateLabel>{formatDate(version.generatedAt)}</DateLabel>
-                    </div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-end',
-                      }}
+                ).map((version) => {
+                  // Check if version is from versionsWithMetadata
+                  const hasMetadata = 'isSelected' in version;
+                  const versionWithMeta = hasMetadata
+                    ? (version as PredicateVersionWithMetadata)
+                    : null;
+
+                  return (
+                    <VersionItem
+                      key={version.id}
+                      selected={version.id === selectedVersion}
+                      onClick={() => handleVersionSelect(version.id)}
                     >
-                      {version.id === selectedVersion && (
-                        <span
-                          style={{
-                            fontSize: '12px',
-                            color: 'var(--fuel-green-11)',
-                          }}
-                        >
-                          Selected
-                        </span>
-                      )}
-                      {(() => {
-                        // Type-safe check for isNewest property
-                        const versionWithMetadata =
-                          version as Partial<VersionWithMetadata>;
-                        if (versionWithMetadata.isNewest) {
-                          return (
-                            <span
-                              style={{
-                                fontSize: '11px',
-                                color: 'var(--fuel-blue-11)',
-                              }}
-                            >
-                              Newest
-                            </span>
-                          );
-                        }
-                        return null;
-                      })()}
-                      {(() => {
-                        // Type-safe check for isActive property
-                        const versionWithMetadata =
-                          version as Partial<VersionWithMetadata>;
-                        if (versionWithMetadata.isActive) {
-                          return (
-                            <>
-                              <span
-                                style={{
-                                  fontSize: '11px',
-                                  color: 'var(--fuel-accent-color)',
-                                }}
-                              >
-                                Has balance
-                              </span>
-                              {versionWithMetadata.balance && (
-                                <BalanceLabel>
-                                  {versionWithMetadata.balance}
-                                </BalanceLabel>
-                              )}
-                            </>
-                          );
-                        }
-                        return null;
-                      })()}
-                    </div>
-                  </VersionItem>
-                ))}
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <VersionLabel>
+                          {formatVersionId(version.id)}
+                        </VersionLabel>
+                        <DateLabel>{formatDate(version.generatedAt)}</DateLabel>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'flex-end',
+                          marginLeft: 'auto',
+                        }}
+                      >
+                        {version.id === selectedVersion && (
+                          <span
+                            style={{
+                              fontSize: '12px',
+                              color: 'var(--fuel-green-11)',
+                              backgroundColor: 'var(--fuel-green-3)',
+                              padding: '2px 8px',
+                              borderRadius: 'var(--fuel-border-radius)',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            Selected
+                          </span>
+                        )}
+                        {versionWithMeta?.hasBalance && (
+                          <BalanceLabel>
+                            {versionWithMeta?.balance
+                              ? `Balance: ${versionWithMeta.balance}`
+                              : 'Has Balance'}
+                            {versionWithMeta?.assetId &&
+                              ` (${versionWithMeta.assetId.substring(
+                                0,
+                                8,
+                              )}...)`}
+                          </BalanceLabel>
+                        )}
+                        {versionWithMeta?.isNewest && (
+                          <span
+                            style={{
+                              fontSize: '11px',
+                              color: 'var(--fuel-blue-11)',
+                              backgroundColor: 'var(--fuel-blue-3)',
+                              padding: '2px 8px',
+                              borderRadius: 'var(--fuel-border-radius)',
+                              marginTop: '2px',
+                            }}
+                          >
+                            Newest
+                          </span>
+                        )}
+                      </div>
+                    </VersionItem>
+                  );
+                })}
               </VersionList>
               <Button type="button" onClick={handleConfirm}>
-                Confirm
+                Confirm Selection
               </Button>
             </Container>
-          ) : (
-            renderEmptyState()
-          )}
+          ) : null}
         </DialogMain>
       </DialogContent>
     </DialogFuel>
