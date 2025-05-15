@@ -75,7 +75,7 @@ const VersionLabel = (props: React.HTMLProps<HTMLSpanElement>) => (
   <span style={{ fontSize: '0.875em', fontWeight: '500' }} {...props} />
 );
 
-const DateLabel = (props: React.HTMLProps<HTMLSpanElement>) => (
+const _DateLabel = (props: React.HTMLProps<HTMLSpanElement>) => (
   <span style={{ fontSize: '12px', color: 'var(--fuel-gray-10)' }} {...props} />
 );
 
@@ -258,7 +258,7 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
     }
   };
 
-  const formatDate = (timestamp: number) => {
+  const _formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {
       hour: '2-digit',
@@ -440,17 +440,6 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                         <VersionLabel>
                           {formatVersionId(version.id)}
                         </VersionLabel>
-                        <DateLabel>{formatDate(version.generatedAt)}</DateLabel>
-                        {versionWithMeta?.isNewest && (
-                          <span
-                            style={{
-                              fontSize: '11px',
-                              color: 'var(--fuel-accent-color)',
-                            }}
-                          >
-                            Latest version with security improvements
-                          </span>
-                        )}
                       </div>
                       <div
                         style={{
