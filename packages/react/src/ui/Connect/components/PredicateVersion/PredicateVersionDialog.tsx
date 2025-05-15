@@ -11,6 +11,35 @@ import Button from '../../../../../../../examples/react-app/src/components/butto
 import { CloseIcon, DialogHeader, DialogTitle, Divider } from '../../styles';
 import { connectorItemStyle } from '../Connectors/styles';
 
+// Base asset ID (ETH) - this is the default zero-bytes32 asset ID
+const BASE_ASSET_ID =
+  '0x0000000000000000000000000000000000000000000000000000000000000000';
+
+// Utility function to format number with appropriate scale
+const formatCompactBalance = (balance: string) => {
+  try {
+    // Remove any non-numeric characters except decimal points
+    const cleanedBalance = balance.replace(/[^\d.]/g, '');
+    const num = Number.parseFloat(cleanedBalance);
+
+    if (Number.isNaN(num)) return '0';
+
+    if (num === 0) return '0';
+    if (num < 0.001) return '<0.001';
+    if (num < 1) return num.toFixed(3);
+    if (num < 1000) return num.toFixed(2);
+    if (num < 10000) return num.toFixed(1);
+    if (num < 1000000) return `${(num / 1000).toFixed(1)}K`;
+    return `${(num / 1000000).toFixed(1)}M`;
+  } catch (_e) {
+    return balance;
+  }
+};
+
+const isBaseAsset = (assetId?: string) => {
+  return assetId === BASE_ASSET_ID;
+};
+
 const Container = (props: React.HTMLProps<HTMLDivElement>) => (
   <div
     style={{
@@ -55,6 +84,8 @@ const VersionItem = ({
   <div
     style={{
       ...connectorItemStyle,
+      border: '1px solid var(--fuel-blue-11)',
+      borderColor: selected ? 'var(--fuel-blue-11)' : 'transparent',
     }}
     onClick={onClick}
     onKeyDown={(e) => {
@@ -75,20 +106,19 @@ const VersionLabel = (props: React.HTMLProps<HTMLSpanElement>) => (
   <span style={{ fontSize: '0.875em', fontWeight: '500' }} {...props} />
 );
 
-const _DateLabel = (props: React.HTMLProps<HTMLSpanElement>) => (
-  <span style={{ fontSize: '12px', color: 'var(--fuel-gray-10)' }} {...props} />
-);
-
-const BalanceLabel = (props: React.HTMLProps<HTMLSpanElement>) => (
+const BalanceBadge = ({ children }: { children: React.ReactNode }) => (
   <span
     style={{
-      fontSize: '11px',
-      color: 'var(--fuel-green-11)',
-      display: 'block',
+      fontSize: '12px',
+      padding: '2px 8px',
+      borderRadius: 'var(--fuel-border-radius)',
       marginTop: '2px',
+      display: 'inline-block',
+      fontWeight: '500',
     }}
-    {...props}
-  />
+  >
+    {children}
+  </span>
 );
 
 type PredicateVersion = {
@@ -108,7 +138,6 @@ type PredicateVersionWithMetadata = PredicateVersion & {
   assetId?: string;
 };
 
-//
 interface PredicateConnectorWithVersions extends FuelConnector {
   getAvailablePredicateVersions: () => PredicateVersion[];
   setSelectedPredicateVersion: (id: string) => void;
@@ -150,7 +179,6 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
   const currentConnectorResult = useCurrentConnector();
   const isConnectedResult = useIsConnected();
 
-  // Extract the actual values from the hook results
   const currentConnector =
     connectUI.dialog.connector || currentConnectorResult.currentConnector;
   const isConnected = isConnectedResult.isConnected;
@@ -167,9 +195,38 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
       if (currentConnector.getAllPredicateVersionsWithMetadata) {
         const metadataVersions =
           await currentConnector.getAllPredicateVersionsWithMetadata();
-        setVersionsWithMetadata(metadataVersions);
 
-        const selected = metadataVersions.find((v) => v.isSelected);
+        // Sort versions to prioritize ones with balances, particularly base asset balances
+        const sortedVersions = [...metadataVersions].sort((a, b) => {
+          // First priority: user's selected version
+          if (a.isSelected !== b.isSelected) {
+            return a.isSelected ? -1 : 1;
+          }
+
+          // Second priority: versions with base asset
+          const aHasBaseAsset = isBaseAsset(a.assetId);
+          const bHasBaseAsset = isBaseAsset(b.assetId);
+          if (aHasBaseAsset !== bHasBaseAsset) {
+            return aHasBaseAsset ? -1 : 1;
+          }
+
+          // Third priority: any version with balance
+          if (a.isActive !== b.isActive) {
+            return a.isActive ? -1 : 1;
+          }
+
+          // Final priority: newest versions
+          if (a.isNewest !== b.isNewest) {
+            return a.isNewest ? -1 : 1;
+          }
+
+          // Default to generatedAt (newest first)
+          return b.generatedAt - a.generatedAt;
+        });
+
+        setVersionsWithMetadata(sortedVersions);
+
+        const selected = sortedVersions.find((v) => v.isSelected);
         if (selected) {
           setSelectedVersion(selected.id);
         }
@@ -210,7 +267,6 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
 
           setLoading(false);
 
-          // If connected, we can try to load metadata
           if (isConnected) {
             loadVersionMetadata();
           }
@@ -232,7 +288,6 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
     loadBasicVersions();
   }, [currentConnector, isOpen, isConnected, loadVersionMetadata]);
 
-  // Add an effect to load metadata when connection status changes
   useEffect(() => {
     if (
       isConnected &&
@@ -258,17 +313,17 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
     }
   };
 
-  const _formatDate = (timestamp: number) => {
-    const date = new Date(timestamp);
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    })}`;
-  };
-
   const formatVersionId = (id: string) => {
     if (!id) return '';
     return `${id.substring(0, 10)}...${id.substring(id.length - 8)}`;
+  };
+
+  const renderBalanceInfo = (version: PredicateVersionWithMetadata) => {
+    if (!version.isActive || !version.balance) return null;
+
+    const formattedBalance = formatCompactBalance(version.balance);
+
+    return <BalanceBadge>{formattedBalance} ETH</BalanceBadge>;
   };
 
   const handleConfirm = () => {
@@ -278,25 +333,18 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
       hasVersionSupport(currentConnector)
     ) {
       try {
-        // Store the previously selected version to check if it actually changed
         const previousVersion = currentConnector.getSelectedPredicateVersion();
 
-        // If the user selected the same version that was already active, just close
         if (previousVersion === selectedVersion) {
           console.log('Same predicate version selected, no changes needed');
           cancel();
           return;
         }
 
-        // Set the selected version
         currentConnector.setSelectedPredicateVersion(selectedVersion);
 
-        // Try to trigger account change events to refresh the UI without disconnecting
-        // This may not work in all connectors but we'll try first
         if ('emitAccountChange' in currentConnector) {
           try {
-            // Force the connector to refresh its predicate account and emit events
-            // Use a type that matches the expected parameters for emitAccountChange
             const connectorWithEmit = currentConnector as {
               emitAccountChange: (
                 id: string,
@@ -312,7 +360,6 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                 );
               })
               .catch(() => {
-                // If live switching failed, disconnect to ensure the new predicate version is applied
                 console.log(
                   'Live account update failed, disconnecting to apply new predicate version',
                 );
@@ -323,7 +370,6 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                 }, 500);
               });
           } catch (_emitError) {
-            // If live switching fails, disconnect to ensure the new predicate version is applied
             console.log(
               'Live account update failed, disconnecting to apply new predicate version',
             );
@@ -334,7 +380,6 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
             }, 500);
           }
         } else {
-          // If the connector doesn't support emitAccountChange, disconnect to ensure the new version is applied
           console.log(
             'Connector does not support live updates, disconnecting to apply new predicate version',
           );
@@ -419,12 +464,12 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                   Learn more about Fuel Predicate connectors.
                 </a>
               </Description>
+
               <VersionList>
                 {(versionsWithMetadata.length > 0
                   ? versionsWithMetadata
                   : versions
                 ).map((version) => {
-                  // Check if version is from versionsWithMetadata
                   const hasMetadata = 'isSelected' in version;
                   const versionWithMeta = hasMetadata
                     ? (version as PredicateVersionWithMetadata)
@@ -440,6 +485,16 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                         <VersionLabel>
                           {formatVersionId(version.id)}
                         </VersionLabel>
+                        {versionWithMeta?.isNewest && (
+                          <span
+                            style={{
+                              fontSize: '11px',
+                              color: 'var(--fuel-accent-color)',
+                            }}
+                          >
+                            Latest version
+                          </span>
+                        )}
                       </div>
                       <div
                         style={{
@@ -449,46 +504,7 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                           marginLeft: 'auto',
                         }}
                       >
-                        {version.id === selectedVersion && (
-                          <span
-                            style={{
-                              fontSize: '12px',
-                              color: 'var(--fuel-green-11)',
-                              backgroundColor: 'var(--fuel-green-3)',
-                              padding: '2px 8px',
-                              borderRadius: 'var(--fuel-border-radius)',
-                              textTransform: 'uppercase',
-                            }}
-                          >
-                            Selected
-                          </span>
-                        )}
-                        {versionWithMeta?.isActive && (
-                          <BalanceLabel>
-                            {versionWithMeta?.balance
-                              ? `Balance: ${versionWithMeta.balance}`
-                              : 'Has Balance'}
-                            {versionWithMeta?.assetId &&
-                              ` (${versionWithMeta.assetId.substring(
-                                0,
-                                8,
-                              )}...)`}
-                          </BalanceLabel>
-                        )}
-                        {versionWithMeta?.isNewest && (
-                          <span
-                            style={{
-                              fontSize: '11px',
-                              color: 'var(--fuel-blue-11)',
-                              backgroundColor: 'var(--fuel-blue-3)',
-                              padding: '2px 8px',
-                              borderRadius: 'var(--fuel-border-radius)',
-                              marginTop: '2px',
-                            }}
-                          >
-                            Newest
-                          </span>
-                        )}
+                        {versionWithMeta && renderBalanceInfo(versionWithMeta)}
                       </div>
                     </VersionItem>
                   );

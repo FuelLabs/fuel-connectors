@@ -8,6 +8,7 @@ export const connectorItemStyle: React.CSSProperties = {
   padding: '0.8em',
   borderRadius: '16px',
   fontWeight: 400,
+  transition: 'all 0.2s ease-in-out',
 };
 
 export const ConnectorItem = ({
