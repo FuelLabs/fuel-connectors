@@ -1,4 +1,5 @@
 import { useConnect, useDisconnect } from '@fuels/react';
+import { useEffect, useState } from 'react';
 import { useConfig } from '../context/ConfigContext';
 import { useWallet } from '../hooks/useWallet';
 import { Copyable } from './Copyable';
@@ -15,6 +16,29 @@ export default function ConnectedAccount({ isSigning }: Props) {
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
   const { explorerUrl } = useConfig();
+  const [predicateVersion, setPredicateVersion] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (
+      currentConnector &&
+      isConnected &&
+      'getSelectedPredicateVersion' in currentConnector
+    ) {
+      try {
+        // Use a type assertion that's more specific than 'any'
+        const connector = currentConnector as {
+          getSelectedPredicateVersion: () => string;
+        };
+        const version = connector.getSelectedPredicateVersion();
+        setPredicateVersion(version);
+      } catch (error) {
+        console.error('Error getting predicate version:', error);
+        setPredicateVersion(null);
+      }
+    } else {
+      setPredicateVersion(null);
+    }
+  }, [currentConnector, isConnected]);
 
   const explorerAccountUrl = `${explorerUrl}/account/${account}/assets`;
 
@@ -51,6 +75,54 @@ export default function ConnectedAccount({ isSigning }: Props) {
           </code>
           <Copyable value={account} />
         </div>
+        {predicateVersion && (
+          <div className="mt-2 text-sm">
+            <span className="text-zinc-400">Predicate Version:</span>{' '}
+            <code>{truncAddressMiddle(predicateVersion, 6)}</code>
+            <Button
+              onClick={() => {
+                if (
+                  currentConnector &&
+                  'getAllPredicateVersionsWithMetadata' in currentConnector
+                ) {
+                  // Open the predicate version selector directly
+                  // This is a temporary solution until there's a proper API
+                  const connectButton = document.querySelector(
+                    '[data-fuel-connector="connect-button"]',
+                  );
+                  if (connectButton) {
+                    (connectButton as HTMLElement).click();
+
+                    setTimeout(() => {
+                      const selectors = [
+                        'button[data-predicate-version="selector"]',
+                        '[data-fuel-selector="predicate-version"]',
+                        '[data-selector="predicate-version"]',
+                      ];
+
+                      for (const selector of selectors) {
+                        const versionSelector =
+                          document.querySelector(selector);
+                        if (versionSelector) {
+                          (versionSelector as HTMLElement).click();
+                          break;
+                        }
+                      }
+                    }, 200);
+                  }
+                }
+              }}
+              style={{
+                marginLeft: '10px',
+                padding: '4px 8px',
+                fontSize: '12px',
+                height: 'auto',
+              }}
+            >
+              Change
+            </Button>
+          </div>
+        )}
         <Button
           onClick={() => disconnect()}
           loadingText="Disconnecting..."

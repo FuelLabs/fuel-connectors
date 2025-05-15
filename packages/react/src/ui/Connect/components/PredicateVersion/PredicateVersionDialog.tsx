@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import type { FuelConnector } from 'fuels';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useCurrentConnector, useIsConnected } from '../../../../hooks';
 import { Routes, useConnectUI } from '../../../../providers/FuelUIProvider';
 import { DialogContent } from '../Core/DialogContent';
@@ -104,7 +104,6 @@ type PredicateVersionWithMetadata = PredicateVersion & {
   isActive: boolean;
   isSelected: boolean;
   isNewest: boolean;
-  hasBalance?: boolean;
   balance?: string;
   assetId?: string;
 };
@@ -147,93 +146,74 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
   >([]);
   const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [waitingForConnection, setWaitingForConnection] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const currentConnectorResult = useCurrentConnector();
   const isConnectedResult = useIsConnected();
 
   // Extract the actual values from the hook results
-  const currentConnector = currentConnectorResult.currentConnector;
+  const currentConnector =
+    connectUI.dialog.connector || currentConnectorResult.currentConnector;
   const isConnected = isConnectedResult.isConnected;
 
   const isOpen = route === Routes.PredicateVersionSelector;
+
+  // Define loadVersionMetadata as a useCallback to handle dependencies
+  const loadVersionMetadata = useCallback(async () => {
+    if (!currentConnector || !hasVersionSupport(currentConnector)) {
+      return;
+    }
+
+    try {
+      if (currentConnector.getAllPredicateVersionsWithMetadata) {
+        const metadataVersions =
+          await currentConnector.getAllPredicateVersionsWithMetadata();
+        setVersionsWithMetadata(metadataVersions);
+
+        const selected = metadataVersions.find((v) => v.isSelected);
+        if (selected) {
+          setSelectedVersion(selected.id);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching predicate versions with metadata:', err);
+    }
+  }, [currentConnector]);
 
   useEffect(() => {
     if (isOpen) {
       setLoading(true);
       setError(null);
-
-      if (!isConnected) {
-        setWaitingForConnection(true);
-      }
     }
-  }, [isOpen, isConnected]);
+  }, [isOpen]);
 
+  // Load basic versions when the dialog opens and we have a connector
   useEffect(() => {
-    if (!isOpen || !waitingForConnection) {
+    if (!isOpen || !currentConnector) {
       return;
     }
 
-    if (isConnected) {
-      setWaitingForConnection(false);
-      return;
-    }
-
-    const connectionPoll = setTimeout(() => {
-      if (waitingForConnection) {
-        setError('Connection timed out. Please try again.');
-        setLoading(false);
-      }
-    }, 10000); // 10 second timeout
-
-    return () => clearTimeout(connectionPoll);
-  }, [isOpen, waitingForConnection, isConnected]);
-
-  useEffect(() => {
-    if (!isOpen || !isConnected || !currentConnector) {
-      return;
-    }
-
-    const loadVersions = async () => {
+    const loadBasicVersions = async () => {
       try {
         if (hasVersionSupport(currentConnector)) {
-          if (currentConnector.getAllPredicateVersionsWithMetadata) {
-            try {
-              const metadataVersions =
-                await currentConnector.getAllPredicateVersionsWithMetadata();
-              setVersionsWithMetadata(metadataVersions);
-              setVersions(metadataVersions);
+          const availableVersions =
+            currentConnector.getAvailablePredicateVersions();
+          setVersions(availableVersions);
 
-              const selected = metadataVersions.find((v) => v.isSelected);
-              if (selected) {
-                setSelectedVersion(selected.id);
-              } else {
-                setSelectedVersion(
-                  currentConnector.getSelectedPredicateVersion(),
-                );
-              }
-            } catch (err) {
-              console.error(
-                'Error fetching predicate versions with metadata:',
-                err,
-              );
-
-              const availableVersions =
-                currentConnector.getAvailablePredicateVersions();
-              setVersions(availableVersions);
-              setVersionsWithMetadata([]);
-              setSelectedVersion(
-                currentConnector.getSelectedPredicateVersion(),
-              );
-            }
-          } else {
-            const availableVersions =
-              currentConnector.getAvailablePredicateVersions();
-            setVersions(availableVersions);
-            setVersionsWithMetadata([]);
-            setSelectedVersion(currentConnector.getSelectedPredicateVersion());
+          // Set the first version (newest) as default selection if none is already selected
+          const currentSelected =
+            currentConnector.getSelectedPredicateVersion();
+          if (currentSelected) {
+            setSelectedVersion(currentSelected);
+          } else if (availableVersions.length > 0) {
+            setSelectedVersion(availableVersions[0].id);
           }
+
           setLoading(false);
+
+          // If connected, we can try to load metadata
+          if (isConnected) {
+            loadVersionMetadata();
+          }
         } else {
           setError(
             'This connector does not support predicate version selection.',
@@ -249,8 +229,19 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
       }
     };
 
-    loadVersions();
-  }, [currentConnector, isConnected, isOpen]);
+    loadBasicVersions();
+  }, [currentConnector, isOpen, isConnected, loadVersionMetadata]);
+
+  // Add an effect to load metadata when connection status changes
+  useEffect(() => {
+    if (
+      isConnected &&
+      currentConnector &&
+      hasVersionSupport(currentConnector)
+    ) {
+      loadVersionMetadata();
+    }
+  }, [isConnected, currentConnector, loadVersionMetadata]);
 
   const handleVersionSelect = (versionId: string) => {
     if (!currentConnector || !hasVersionSupport(currentConnector)) {
@@ -287,7 +278,79 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
       hasVersionSupport(currentConnector)
     ) {
       try {
+        // Store the previously selected version to check if it actually changed
+        const previousVersion = currentConnector.getSelectedPredicateVersion();
+
+        // If the user selected the same version that was already active, just close
+        if (previousVersion === selectedVersion) {
+          console.log('Same predicate version selected, no changes needed');
+          cancel();
+          return;
+        }
+
+        // Set the selected version
         currentConnector.setSelectedPredicateVersion(selectedVersion);
+
+        // Try to trigger account change events to refresh the UI without disconnecting
+        // This may not work in all connectors but we'll try first
+        if ('emitAccountChange' in currentConnector) {
+          try {
+            // Force the connector to refresh its predicate account and emit events
+            // Use a type that matches the expected parameters for emitAccountChange
+            const connectorWithEmit = currentConnector as {
+              emitAccountChange: (
+                id: string,
+                connected: boolean,
+              ) => Promise<void>;
+            };
+
+            connectorWithEmit
+              .emitAccountChange(selectedVersion, true)
+              .then(() => {
+                console.log(
+                  'Successfully switched predicate version with live account update',
+                );
+              })
+              .catch(() => {
+                // If live switching failed, disconnect to ensure the new predicate version is applied
+                console.log(
+                  'Live account update failed, disconnecting to apply new predicate version',
+                );
+                setTimeout(() => {
+                  currentConnector.disconnect().then(() => {
+                    console.log('Disconnected to apply new predicate version');
+                  });
+                }, 500);
+              });
+          } catch (_emitError) {
+            // If live switching fails, disconnect to ensure the new predicate version is applied
+            console.log(
+              'Live account update failed, disconnecting to apply new predicate version',
+            );
+            setTimeout(() => {
+              currentConnector.disconnect().then(() => {
+                console.log('Disconnected to apply new predicate version');
+              });
+            }, 500);
+          }
+        } else {
+          // If the connector doesn't support emitAccountChange, disconnect to ensure the new version is applied
+          console.log(
+            'Connector does not support live updates, disconnecting to apply new predicate version',
+          );
+          setTimeout(() => {
+            currentConnector.disconnect().then(() => {
+              console.log('Disconnected to apply new predicate version');
+            });
+          }, 500);
+        }
+
+        console.log(
+          'Predicate version updated from',
+          previousVersion,
+          'to',
+          selectedVersion,
+        );
       } catch (err) {
         console.error('Failed to set predicate version before closing:', err);
       }
@@ -320,26 +383,11 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
     </>
   );
 
-  const renderConnectionWaiting = () => (
-    <>
-      <DialogTitle>Connecting to Wallet</DialogTitle>
-      <Description>
-        Please complete the connection in your wallet...
-      </Description>
-    </>
-  );
-
-  if ((!isConnected || !currentConnector) && !waitingForConnection) {
-    return null;
-  }
-
   return (
     <DialogFuel open={isOpen} theme={theme}>
       <DialogContent>
         <DialogHeader>
-          {waitingForConnection ? (
-            renderConnectionWaiting()
-          ) : loading ? (
+          {loading ? (
             renderLoadingState()
           ) : versions.length === 0 ? (
             renderEmptyState()
@@ -393,6 +441,16 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                           {formatVersionId(version.id)}
                         </VersionLabel>
                         <DateLabel>{formatDate(version.generatedAt)}</DateLabel>
+                        {versionWithMeta?.isNewest && (
+                          <span
+                            style={{
+                              fontSize: '11px',
+                              color: 'var(--fuel-accent-color)',
+                            }}
+                          >
+                            Latest version with security improvements
+                          </span>
+                        )}
                       </div>
                       <div
                         style={{
@@ -416,7 +474,7 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                             Selected
                           </span>
                         )}
-                        {versionWithMeta?.hasBalance && (
+                        {versionWithMeta?.isActive && (
                           <BalanceLabel>
                             {versionWithMeta?.balance
                               ? `Balance: ${versionWithMeta.balance}`
