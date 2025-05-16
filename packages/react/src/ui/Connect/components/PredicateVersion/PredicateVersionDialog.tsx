@@ -1,5 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import type { FuelConnector } from 'fuels';
+import { bn } from 'fuels';
 import { useCallback, useEffect, useState } from 'react';
 import { useCurrentConnector, useIsConnected } from '../../../../hooks';
 import { Routes, useConnectUI } from '../../../../providers/FuelUIProvider';
@@ -11,32 +12,31 @@ import Button from '../../../../../../../examples/react-app/src/components/butto
 import { CloseIcon, DialogHeader, DialogTitle, Divider } from '../../styles';
 import { connectorItemStyle } from '../Connectors/styles';
 
-// Base asset ID (ETH) - this is the default zero-bytes32 asset ID
+// TODO
 const BASE_ASSET_ID =
   '0x0000000000000000000000000000000000000000000000000000000000000000';
 
-// Utility function to format number with appropriate scale
 const formatCompactBalance = (balance: string) => {
   try {
-    // Remove any non-numeric characters except decimal points
     const cleanedBalance = balance.replace(/[^\d.]/g, '');
-    const num = Number.parseFloat(cleanedBalance);
+    const bnValue = bn(cleanedBalance);
 
-    if (Number.isNaN(num)) return '0';
+    if (bnValue.eq(0)) return '0';
 
-    if (num === 0) return '0';
-    if (num < 0.001) return '<0.001';
-    if (num < 1) return num.toFixed(3);
-    if (num < 1000) return num.toFixed(2);
-    if (num < 10000) return num.toFixed(1);
-    if (num < 1000000) return `${(num / 1000).toFixed(1)}K`;
-    return `${(num / 1000000).toFixed(1)}M`;
+    const numValue = Number(bnValue.format());
+
+    if (numValue < 0.001) return '<0.001';
+    if (numValue < 1) return numValue.toFixed(3);
+    if (numValue < 1000) return numValue.toFixed(2);
+    if (numValue < 10000) return numValue.toFixed(1);
+    if (numValue < 1000000) return `${(numValue / 1000).toFixed(1)}K`;
+    return `${(numValue / 1000000).toFixed(1)}M`;
   } catch (_e) {
     return balance;
   }
 };
 
-const isBaseAsset = (assetId?: string) => {
+const _isBaseAsset = (assetId?: string) => {
   return assetId === BASE_ASSET_ID;
 };
 
@@ -185,7 +185,6 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
 
   const isOpen = route === Routes.PredicateVersionSelector;
 
-  // Define loadVersionMetadata as a useCallback to handle dependencies
   const loadVersionMetadata = useCallback(async () => {
     if (!currentConnector || !hasVersionSupport(currentConnector)) {
       return;
@@ -196,31 +195,7 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
         const metadataVersions =
           await currentConnector.getAllPredicateVersionsWithMetadata();
 
-        // Sort versions to prioritize ones with balances, particularly base asset balances
         const sortedVersions = [...metadataVersions].sort((a, b) => {
-          // First priority: user's selected version
-          if (a.isSelected !== b.isSelected) {
-            return a.isSelected ? -1 : 1;
-          }
-
-          // Second priority: versions with base asset
-          const aHasBaseAsset = isBaseAsset(a.assetId);
-          const bHasBaseAsset = isBaseAsset(b.assetId);
-          if (aHasBaseAsset !== bHasBaseAsset) {
-            return aHasBaseAsset ? -1 : 1;
-          }
-
-          // Third priority: any version with balance
-          if (a.isActive !== b.isActive) {
-            return a.isActive ? -1 : 1;
-          }
-
-          // Final priority: newest versions
-          if (a.isNewest !== b.isNewest) {
-            return a.isNewest ? -1 : 1;
-          }
-
-          // Default to generatedAt (newest first)
           return b.generatedAt - a.generatedAt;
         });
 
