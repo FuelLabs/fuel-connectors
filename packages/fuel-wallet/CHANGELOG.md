@@ -1,5 +1,11 @@
 # @fuel-connectors/fuel-wallet
 
+## 0.41.2
+
+### Patch Changes
+
+- [#521](https://github.com/FuelLabs/fuel-connectors/pull/521) [`766ca2a`](https://github.com/FuelLabs/fuel-connectors/commit/766ca2a69701f75e875ca96eb7fa1b85dcb43087) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: add flag to fuelWallet know what tx type to return
+
 ## 0.41.1
 
 ### Patch Changes
