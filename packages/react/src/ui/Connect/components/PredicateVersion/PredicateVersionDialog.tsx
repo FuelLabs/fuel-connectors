@@ -12,9 +12,12 @@ import Button from '../../../../../../../examples/react-app/src/components/butto
 import { CloseIcon, DialogHeader, DialogTitle, Divider } from '../../styles';
 import { connectorItemStyle } from '../Connectors/styles';
 
-// TODO
+// TODO: Remove this
 const BASE_ASSET_ID =
   '0x0000000000000000000000000000000000000000000000000000000000000000';
+
+// LocalStorage key for selected predicate version
+const SELECTED_PREDICATE_KEY = 'fuel_selected_predicate_version';
 
 const formatCompactBalance = (balance: string) => {
   try {
@@ -70,7 +73,6 @@ const VersionList = (props: React.HTMLProps<HTMLDivElement>) => (
       flexDirection: 'column',
       alignItems: 'center',
       gap: 'var(--fuel-items-gap)',
-      padding: '0px 14px',
     }}
     {...props}
   />
@@ -106,6 +108,43 @@ const VersionLabel = (props: React.HTMLProps<HTMLSpanElement>) => (
   <span style={{ fontSize: '0.875em', fontWeight: '500' }} {...props} />
 );
 
+const Badge = ({
+  children,
+  variant = 'default',
+}: {
+  children: React.ReactNode;
+  variant?: 'default' | 'latest' | 'current';
+}) => {
+  let backgroundColor = 'var(--fuel-blue-5)';
+  let textColor = 'var(--fuel-blue-11)';
+
+  if (variant === 'latest') {
+    backgroundColor = 'var(--fuel-accent-background)';
+    textColor = 'var(--fuel-accent-color)';
+  } else if (variant === 'current') {
+    backgroundColor = 'var(--fuel-blue-5)';
+    textColor = 'var(--fuel-blue-11)';
+  }
+
+  return (
+    <span
+      style={{
+        fontSize: '11px',
+        padding: '2px 6px',
+        backgroundColor: backgroundColor,
+        color: textColor,
+        borderRadius: 'var(--fuel-border-radius)',
+        fontWeight: '500',
+        marginTop: '2px',
+        display: 'inline-block',
+        marginRight: '4px',
+      }}
+    >
+      {children}
+    </span>
+  );
+};
+
 const BalanceBadge = ({ children }: { children: React.ReactNode }) => (
   <span
     style={{
@@ -136,6 +175,7 @@ type PredicateVersionWithMetadata = PredicateVersion & {
   isNewest: boolean;
   balance?: string;
   assetId?: string;
+  accountAddress?: string;
 };
 
 interface PredicateConnectorWithVersions extends FuelConnector {
@@ -185,6 +225,22 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
 
   const isOpen = route === Routes.PredicateVersionSelector;
 
+  useEffect(() => {
+    if (currentConnector && hasVersionSupport(currentConnector)) {
+      try {
+        const savedPredicateVersion = localStorage.getItem(
+          SELECTED_PREDICATE_KEY,
+        );
+        if (savedPredicateVersion) {
+          currentConnector.setSelectedPredicateVersion(savedPredicateVersion);
+          setSelectedVersion(savedPredicateVersion);
+        }
+      } catch (err) {
+        console.error('Error loading saved predicate version:', err);
+      }
+    }
+  }, [currentConnector]);
+
   const loadVersionMetadata = useCallback(async () => {
     if (!currentConnector || !hasVersionSupport(currentConnector)) {
       return;
@@ -218,7 +274,6 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
     }
   }, [isOpen]);
 
-  // Load basic versions when the dialog opens and we have a connector
   useEffect(() => {
     if (!isOpen || !currentConnector) {
       return;
@@ -231,7 +286,6 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
             currentConnector.getAvailablePredicateVersions();
           setVersions(availableVersions);
 
-          // Set the first version (newest) as default selection if none is already selected
           const currentSelected =
             currentConnector.getSelectedPredicateVersion();
           if (currentSelected) {
@@ -281,6 +335,16 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
     try {
       currentConnector.setSelectedPredicateVersion(versionId);
       setSelectedVersion(versionId);
+
+      try {
+        localStorage.setItem(SELECTED_PREDICATE_KEY, versionId);
+      } catch (storageError) {
+        console.error(
+          'Failed to save predicate version to localStorage:',
+          storageError,
+        );
+      }
+
       setError(null);
     } catch (err) {
       console.error('Failed to set predicate version:', err);
@@ -288,8 +352,16 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
     }
   };
 
-  const formatVersionId = (id: string) => {
+  const formatAddressOrId = (id: string, accountAddress?: string) => {
     if (!id) return '';
+
+    if (accountAddress) {
+      if (accountAddress.startsWith('0x') && accountAddress.length >= 10) {
+        return `${accountAddress.slice(0, 6)}....${accountAddress.slice(-4)}`;
+      }
+      return accountAddress;
+    }
+
     return `${id.substring(0, 10)}...${id.substring(id.length - 8)}`;
   };
 
@@ -317,6 +389,15 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
         }
 
         currentConnector.setSelectedPredicateVersion(selectedVersion);
+
+        try {
+          localStorage.setItem(SELECTED_PREDICATE_KEY, selectedVersion);
+        } catch (storageError) {
+          console.error(
+            'Failed to save predicate version to localStorage:',
+            storageError,
+          );
+        }
 
         if ('emitAccountChange' in currentConnector) {
           try {
@@ -381,24 +462,24 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
 
   const renderLoadingState = () => (
     <>
-      <DialogTitle>Loading Predicate Versions</DialogTitle>
-      <Description>Please wait while we load available versions...</Description>
+      <DialogTitle>Loading Fuel Accounts</DialogTitle>
+      <Description>Please wait while we load available accounts...</Description>
     </>
   );
 
   const renderEmptyState = () => (
     <>
-      <DialogTitle>Predicate Versions</DialogTitle>
+      <DialogTitle>Fuel Accounts</DialogTitle>
       <Description>
-        No additional predicate versions were found for this wallet. Your wallet
-        is using the default version.
+        No additional Fuel accounts were found for this wallet. Your wallet is
+        using the default account.
       </Description>
     </>
   );
 
   const renderErrorState = () => (
     <>
-      <DialogTitle>Error Loading Versions</DialogTitle>
+      <DialogTitle>Error Loading Accounts</DialogTitle>
       <Description>{error}</Description>
     </>
   );
@@ -414,7 +495,7 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
           ) : error ? (
             renderErrorState()
           ) : (
-            <DialogTitle>Select Predicate Version</DialogTitle>
+            <DialogTitle>Select Fuel Account</DialogTitle>
           )}
           <Dialog.Close asChild>
             <CloseIcon size={32} onClick={() => cancel()} />
@@ -425,19 +506,9 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
           {versions.length > 0 ? (
             <Container>
               <Description>
-                Select a predicate version for your wallet. Predicate versions
-                evolve with the Fuel Network and Sway updates, bringing new
-                features and bug fixes. We recommend using the latest version
-                when possible. A predicate upgrade tool will be available soon.
-                <br />
-                <a
-                  href="https://docs.fuel.network/guides/fuel-connectors/non-technical-guide/"
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ color: 'var(--fuel-blue-11)' }}
-                >
-                  Learn more about Fuel Predicate connectors.
-                </a>
+                Select a Fuel Account to use. We recommend using the latest
+                version when possible as they can bring new features and bug
+                fixes.
               </Description>
 
               <VersionList>
@@ -449,6 +520,8 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                   const versionWithMeta = hasMetadata
                     ? (version as PredicateVersionWithMetadata)
                     : null;
+                  const currentlyActive = versionWithMeta?.isSelected;
+                  const isLatest = versionWithMeta?.isNewest;
 
                   return (
                     <VersionItem
@@ -458,18 +531,19 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                     >
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <VersionLabel>
-                          {formatVersionId(version.id)}
+                          {formatAddressOrId(
+                            version.id,
+                            versionWithMeta?.accountAddress,
+                          )}
                         </VersionLabel>
-                        {versionWithMeta?.isNewest && (
-                          <span
-                            style={{
-                              fontSize: '11px',
-                              color: 'var(--fuel-accent-color)',
-                            }}
-                          >
-                            Latest version
-                          </span>
-                        )}
+                        <div style={{ display: 'flex', marginTop: '4px' }}>
+                          {isLatest && (
+                            <Badge variant="latest">Latest version</Badge>
+                          )}
+                          {currentlyActive && (
+                            <Badge variant="current">Currently selected</Badge>
+                          )}
+                        </div>
                       </div>
                       <div
                         style={{
@@ -485,6 +559,18 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                   );
                 })}
               </VersionList>
+              <Description>
+                <br />A Fuel account upgrade tool will be available soon.
+                <br />
+                <a
+                  href="https://docs.fuel.network/guides/fuel-connectors/non-technical-guide/"
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ color: 'var(--fuel-blue-11)' }}
+                >
+                  Learn more about Fuel Predicate connectors.
+                </a>
+              </Description>
               <Button type="button" onClick={handleConfirm}>
                 Confirm Selection
               </Button>

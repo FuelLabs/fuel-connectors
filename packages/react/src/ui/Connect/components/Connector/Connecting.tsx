@@ -90,6 +90,7 @@ export function Connecting({ className }: ConnectorProps) {
         return;
       }
 
+      // So we need to show the disclaimer about predicates
       setRoute(Routes.PredicateAddressDisclaimer);
     }
   }, [isConnected, connector, route, setRoute, isConnecting, cancel]);

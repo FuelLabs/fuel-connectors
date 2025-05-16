@@ -33,6 +33,8 @@ import type {
   SignedMessageCustomCurve,
 } from './types';
 
+const SELECTED_PREDICATE_KEY = 'fuel_selected_predicate_version';
+
 export abstract class PredicateConnector extends FuelConnector {
   public connected = false;
   public installed = false;
@@ -67,6 +69,23 @@ export abstract class PredicateConnector extends FuelConnector {
   abstract signMessageCustomCurve(
     _message: string,
   ): Promise<SignedMessageCustomCurve>;
+
+  constructor() {
+    super();
+
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const savedVersion = window.localStorage.getItem(
+          SELECTED_PREDICATE_KEY,
+        );
+        if (savedVersion) {
+          this.selectedPredicateVersion = savedVersion;
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load saved predicate version:', error);
+    }
+  }
 
   protected async emitAccountChange(
     address: string,
@@ -123,11 +142,11 @@ export abstract class PredicateConnector extends FuelConnector {
       isActive: boolean;
       isSelected: boolean;
       isNewest: boolean;
-      balance?: string; // Balance amount in formatted string
-      assetId?: string; // Asset ID of the balance
+      balance?: string;
+      assetId?: string;
+      accountAddress?: string;
     }>
   > {
-    // Create the base result with isActive set to false initially
     interface PredicateVersionWithMetadata {
       id: string;
       generatedAt: number;
@@ -136,16 +155,27 @@ export abstract class PredicateConnector extends FuelConnector {
       isNewest: boolean;
       balance?: string;
       assetId?: string;
+      accountAddress?: string;
     }
 
+    const walletAccount = await this.getAccountAddress();
+
     const result: PredicateVersionWithMetadata[] = this.predicateVersions.map(
-      (factory, index) => ({
-        id: factory.getRoot(),
-        generatedAt: factory.getGeneratedAt(),
-        isActive: false,
-        isSelected: factory.getRoot() === this.selectedPredicateVersion,
-        isNewest: index === 0, // The first version is the newest
-      }),
+      (factory, index) => {
+        const metadata: PredicateVersionWithMetadata = {
+          id: factory.getRoot(),
+          generatedAt: factory.getGeneratedAt(),
+          isActive: false,
+          isSelected: factory.getRoot() === this.selectedPredicateVersion,
+          isNewest: index === 0,
+        };
+
+        if (walletAccount) {
+          metadata.accountAddress = factory.getPredicateAddress(walletAccount);
+        }
+
+        return metadata;
+      },
     );
 
     try {
@@ -207,6 +237,16 @@ export abstract class PredicateConnector extends FuelConnector {
 
     if (versionExists) {
       this.selectedPredicateVersion = versionId;
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          window.localStorage.setItem(SELECTED_PREDICATE_KEY, versionId);
+        }
+      } catch (error) {
+        console.error(
+          'Failed to save predicate version to localStorage:',
+          error,
+        );
+      }
     } else {
       throw new Error(`Predicate version ${versionId} not found`);
     }
@@ -266,7 +306,6 @@ export abstract class PredicateConnector extends FuelConnector {
       return this.predicateAccount;
     }
 
-    // If user has selected a predicate version, use that
     if (this.selectedPredicateVersion) {
       const selectedPredicate = this.getPredicateByVersion(
         this.selectedPredicateVersion,
@@ -278,7 +317,6 @@ export abstract class PredicateConnector extends FuelConnector {
       }
     }
 
-    // Otherwise use the default selection logic
     const predicate =
       (await this.getCurrentUserPredicate()) ?? this.getNewestPredicate();
     if (!predicate) throw new Error('No predicate found');
