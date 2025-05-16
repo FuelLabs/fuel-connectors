@@ -1,4 +1,5 @@
 import { useConnect, useDisconnect } from '@fuels/react';
+import { useEffect, useState } from 'react';
 import { useConfig } from '../context/ConfigContext';
 import { useWallet } from '../hooks/useWallet';
 import { Copyable } from './Copyable';
@@ -15,6 +16,27 @@ export default function ConnectedAccount({ isSigning }: Props) {
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
   const { explorerUrl } = useConfig();
+
+  useEffect(() => {
+    if (
+      currentConnector &&
+      isConnected &&
+      'getSelectedPredicateVersion' in currentConnector
+    ) {
+      try {
+        const connector = currentConnector as {
+          getSelectedPredicateVersion: () => string;
+        };
+        const version = connector.getSelectedPredicateVersion();
+        setPredicateVersion(version);
+      } catch (error) {
+        console.error('Error getting predicate version:', error);
+        setPredicateVersion(null);
+      }
+    } else {
+      setPredicateVersion(null);
+    }
+  }, [currentConnector, isConnected]);
 
   const explorerAccountUrl = `${explorerUrl}/account/${account}/assets`;
 
@@ -51,6 +73,7 @@ export default function ConnectedAccount({ isSigning }: Props) {
           </code>
           <Copyable value={account} />
         </div>
+
         <Button
           onClick={() => disconnect()}
           loadingText="Disconnecting..."

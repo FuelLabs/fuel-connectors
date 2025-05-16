@@ -74,6 +74,17 @@ export function Connecting({ className }: ConnectorProps) {
       }
 
       // If the connector is not native, let's check if we have already displayed the disclaimer
+      const supportsPredicateVersions =
+        connector &&
+        'getAvailablePredicateVersions' in connector &&
+        typeof (connector as { getAvailablePredicateVersions?: unknown })
+          .getAvailablePredicateVersions === 'function';
+
+      if (supportsPredicateVersions) {
+        setRoute(Routes.PredicateVersionSelector);
+        return;
+      }
+
       if (localStorage.getItem(PREDICATE_DISCLAIMER_KEY)) {
         cancel();
         return;
