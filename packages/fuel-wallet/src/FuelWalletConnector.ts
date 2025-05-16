@@ -261,6 +261,7 @@ export class FuelWalletConnector extends FuelConnector {
       skipCustomFee,
       transactionState,
       transactionSummary,
+      returnTransactionResponse: true,
     });
 
     if (typeof resp === 'object' && 'id' in resp && 'providerCache' in resp) {
