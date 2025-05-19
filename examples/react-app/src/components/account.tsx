@@ -17,27 +17,6 @@ export default function ConnectedAccount({ isSigning }: Props) {
   const { disconnect } = useDisconnect();
   const { explorerUrl } = useConfig();
 
-  useEffect(() => {
-    if (
-      currentConnector &&
-      isConnected &&
-      'getSelectedPredicateVersion' in currentConnector
-    ) {
-      try {
-        const connector = currentConnector as {
-          getSelectedPredicateVersion: () => string;
-        };
-        const version = connector.getSelectedPredicateVersion();
-        setPredicateVersion(version);
-      } catch (error) {
-        console.error('Error getting predicate version:', error);
-        setPredicateVersion(null);
-      }
-    } else {
-      setPredicateVersion(null);
-    }
-  }, [currentConnector, isConnected]);
-
   const explorerAccountUrl = `${explorerUrl}/account/${account}/assets`;
 
   if (!account && isConnected) {
