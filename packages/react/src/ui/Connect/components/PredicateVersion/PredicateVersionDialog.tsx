@@ -4,11 +4,10 @@ import { bn } from 'fuels';
 import { useCallback, useEffect, useState } from 'react';
 import { useCurrentConnector, useIsConnected } from '../../../../hooks';
 import { Routes, useConnectUI } from '../../../../providers/FuelUIProvider';
+import { ConnectorButtonPrimary } from '../Connector/styles';
 import { DialogContent } from '../Core/DialogContent';
 import { DialogFuel } from '../Core/DialogFuel';
 
-// TODO: Remove this
-import Button from '../../../../../../../examples/react-app/src/components/button';
 import { CloseIcon, DialogHeader, DialogTitle, Divider } from '../../styles';
 import { connectorItemStyle } from '../Connectors/styles';
 
@@ -46,7 +45,7 @@ const _isBaseAsset = (assetId?: string) => {
 const Container = (props: React.HTMLProps<HTMLDivElement>) => (
   <div
     style={{
-      padding: '16px',
+      padding: '0 14px',
       display: 'flex',
       flexDirection: 'column',
       gap: '16px',
@@ -571,9 +570,9 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                   Learn more about Fuel Predicate connectors.
                 </a>
               </Description>
-              <Button type="button" onClick={handleConfirm}>
+              <ConnectorButtonPrimary onClick={handleConfirm}>
                 Confirm Selection
-              </Button>
+              </ConnectorButtonPrimary>
             </Container>
           ) : null}
         </DialogMain>
