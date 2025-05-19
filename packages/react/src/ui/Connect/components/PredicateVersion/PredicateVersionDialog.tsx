@@ -17,10 +17,6 @@ import {
 } from '../../styles';
 import { connectorItemStyle } from '../Connectors/styles';
 
-// TODO: Remove this
-const BASE_ASSET_ID =
-  '0x0000000000000000000000000000000000000000000000000000000000000000';
-
 // LocalStorage key for selected predicate version
 const SELECTED_PREDICATE_KEY = 'fuel_selected_predicate_version';
 
@@ -42,10 +38,6 @@ const formatCompactBalance = (balance: string) => {
   } catch (_e) {
     return balance;
   }
-};
-
-const _isBaseAsset = (assetId?: string) => {
-  return assetId === BASE_ASSET_ID;
 };
 
 const Container = (props: React.HTMLProps<HTMLDivElement>) => (
