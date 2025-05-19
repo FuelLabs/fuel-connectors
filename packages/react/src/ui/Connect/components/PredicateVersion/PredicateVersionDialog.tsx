@@ -8,7 +8,13 @@ import { ConnectorButtonPrimary } from '../Connector/styles';
 import { DialogContent } from '../Core/DialogContent';
 import { DialogFuel } from '../Core/DialogFuel';
 
-import { CloseIcon, DialogHeader, DialogTitle, Divider } from '../../styles';
+import {
+  BackIcon,
+  CloseIcon,
+  DialogHeader,
+  DialogTitle,
+  Divider,
+} from '../../styles';
 import { connectorItemStyle } from '../Connectors/styles';
 
 // TODO: Remove this
@@ -207,6 +213,7 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
   const connectUI = useConnectUI();
   const route = connectUI.dialog.route;
   const cancel = connectUI.cancel;
+  const back = connectUI.dialog.back;
 
   const [versions, setVersions] = useState<PredicateVersion[]>([]);
   const [versionsWithMetadata, setVersionsWithMetadata] = useState<
@@ -487,6 +494,8 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
     <DialogFuel open={isOpen} theme={theme}>
       <DialogContent>
         <DialogHeader>
+          <BackIcon size={32} onClick={back} data-connector={true} />
+
           {loading ? (
             renderLoadingState()
           ) : versions.length === 0 ? (
