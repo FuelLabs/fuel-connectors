@@ -17,7 +17,6 @@ import {
 } from '../../styles';
 import { connectorItemStyle } from '../Connectors/styles';
 
-// LocalStorage key for selected predicate version
 const SELECTED_PREDICATE_KEY = 'fuel_selected_predicate_version';
 
 const formatCompactBalance = (balance: string) => {
@@ -182,6 +181,7 @@ interface PredicateConnectorWithVersions extends FuelConnector {
   getAllPredicateVersionsWithMetadata?: () => Promise<
     PredicateVersionWithMetadata[]
   >;
+  switchPredicateVersion: (versionId: string) => Promise<void>;
 }
 
 function hasVersionSupport(
@@ -197,7 +197,10 @@ function hasVersionSupport(
       .setSelectedPredicateVersion === 'function' &&
     'getSelectedPredicateVersion' in connector &&
     typeof (connector as Partial<PredicateConnectorWithVersions>)
-      .getSelectedPredicateVersion === 'function'
+      .getSelectedPredicateVersion === 'function' &&
+    'switchPredicateVersion' in connector &&
+    typeof (connector as Partial<PredicateConnectorWithVersions>)
+      .switchPredicateVersion === 'function'
   );
 }
 
@@ -325,24 +328,14 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
     }
   }, [isConnected, currentConnector, loadVersionMetadata]);
 
-  const handleVersionSelect = (versionId: string) => {
+  const handleVersionSelect = async (versionId: string) => {
     if (!currentConnector || !hasVersionSupport(currentConnector)) {
       return;
     }
 
     try {
-      currentConnector.setSelectedPredicateVersion(versionId);
+      await currentConnector.switchPredicateVersion(versionId);
       setSelectedVersion(versionId);
-
-      try {
-        localStorage.setItem(SELECTED_PREDICATE_KEY, versionId);
-      } catch (storageError) {
-        console.error(
-          'Failed to save predicate version to localStorage:',
-          storageError,
-        );
-      }
-
       setError(null);
     } catch (err) {
       console.error('Failed to set predicate version:', err);
@@ -386,76 +379,31 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
           return;
         }
 
-        currentConnector.setSelectedPredicateVersion(selectedVersion);
-
-        try {
-          localStorage.setItem(SELECTED_PREDICATE_KEY, selectedVersion);
-        } catch (storageError) {
-          console.error(
-            'Failed to save predicate version to localStorage:',
-            storageError,
-          );
-        }
-
-        if ('emitAccountChange' in currentConnector) {
-          try {
-            const connectorWithEmit = currentConnector as {
-              emitAccountChange: (
-                id: string,
-                connected: boolean,
-              ) => Promise<void>;
-            };
-
-            connectorWithEmit
-              .emitAccountChange(selectedVersion, true)
-              .then(() => {
-                console.log(
-                  'Successfully switched predicate version with live account update',
-                );
-              })
-              .catch(() => {
-                console.log(
-                  'Live account update failed, disconnecting to apply new predicate version',
-                );
-                setTimeout(() => {
-                  currentConnector.disconnect().then(() => {
-                    console.log('Disconnected to apply new predicate version');
-                  });
-                }, 500);
-              });
-          } catch (_emitError) {
+        currentConnector
+          .switchPredicateVersion(selectedVersion)
+          .then(() => {
             console.log(
-              'Live account update failed, disconnecting to apply new predicate version',
+              'Successfully switched predicate version with live account update',
             );
+            cancel();
+          })
+          .catch((error: Error) => {
+            console.error('Failed to switch predicate version:', error);
+            // Fallback to disconnecting if live switch fails
             setTimeout(() => {
               currentConnector.disconnect().then(() => {
                 console.log('Disconnected to apply new predicate version');
               });
             }, 500);
-          }
-        } else {
-          console.log(
-            'Connector does not support live updates, disconnecting to apply new predicate version',
-          );
-          setTimeout(() => {
-            currentConnector.disconnect().then(() => {
-              console.log('Disconnected to apply new predicate version');
-            });
-          }, 500);
-        }
-
-        console.log(
-          'Predicate version updated from',
-          previousVersion,
-          'to',
-          selectedVersion,
-        );
+            cancel();
+          });
       } catch (err) {
         console.error('Failed to set predicate version before closing:', err);
+        cancel();
       }
+    } else {
+      cancel();
     }
-
-    cancel();
   };
 
   const renderLoadingState = () => (

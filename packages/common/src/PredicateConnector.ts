@@ -256,6 +256,18 @@ export abstract class PredicateConnector extends FuelConnector {
     return this.selectedPredicateVersion;
   }
 
+  public async switchPredicateVersion(versionId: string): Promise<void> {
+    this.setSelectedPredicateVersion(versionId);
+    await this.setupPredicate();
+    const address = await this.getAccountAddress();
+    if (!address) {
+      throw new Error(
+        'No account address found after switching predicate version',
+      );
+    }
+    await this.emitAccountChange(address, true);
+  }
+
   protected isAddressPredicate(b: BytesLike, walletAccount: string): boolean {
     return this.predicateVersions.some(
       (predicate) => predicate.getPredicateAddress(walletAccount) === b,
