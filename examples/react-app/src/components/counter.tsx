@@ -1,5 +1,6 @@
 import { useCurrentConnector } from '@fuels/react';
-import type { TransactionRequestLike } from 'fuels';
+import type { ScriptTransactionRequest } from 'fuels';
+import { Provider } from 'fuels';
 import { useEffect, useState } from 'react';
 import { useLogEvents } from '../hooks/use-log-events';
 import { useWallet } from '../hooks/useWallet';
@@ -191,71 +192,60 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
       setLoading(true);
       setIsSigning(true);
       try {
-        console.log('Signing increment transaction...');
+        console.log('Signing increment transaction using assembleTx...');
 
-        // Create contract instance
         const contract = new Counter(counterContractId, wallet);
 
-        // Create transaction request with gas limit
-        const tx = await contract.functions
+        const txRequest = await contract.functions
           .increment_counter()
           .txParams({ gasLimit: 100_000 })
           .getTransactionRequest();
 
-        if (!tx) {
+        if (!txRequest) {
           throw Error('Failed to create increment counter transaction request');
         }
 
-        console.log(
-          'Created transaction request, attempting to prepare for funding...',
-        );
-        let gasPriceForFundingLog: string | undefined;
-        try {
-          const txCost = await wallet.getTransactionCost(tx, {
-            estimateTxDependencies: true,
-          });
-          gasPriceForFundingLog = txCost.gasPrice?.toString();
+        console.log('Transaction request created, attempting to assemble...');
 
-          console.log('Transaction cost calculated:', {
-            minFee: txCost.minFee?.toString(),
-            maxFee: txCost.maxFee?.toString(),
-            gasPrice: gasPriceForFundingLog,
-            requiredQuantities: txCost.requiredQuantities.map((rq) => ({
-              assetId: rq.assetId,
-              amount: rq.amount.toString(),
-            })),
-          });
-
-          await wallet.fund(tx, txCost);
-
-          console.log('Transaction request after funding:', {
-            type: tx?.type,
-            inputs: tx?.inputs?.length,
-            outputs: tx?.outputs?.length,
-            witnesses: tx?.witnesses?.length,
-            gasPriceUsedForFunding: gasPriceForFundingLog,
-          });
-        } catch (fundError) {
-          console.error(
-            'Error preparing/funding transaction for signing:',
-            fundError,
+        if (!wallet.provider?.url) {
+          throw new Error(
+            'Provider URL not found to create a local provider for assembleTx',
           );
-          setToast({
-            open: true,
-            type: 'error',
-            children: `Failed to prepare transaction for signing: ${
-              (fundError as Error).message
-            }`,
+        }
+        const localProvider = new Provider(wallet.provider.url);
+        await localProvider.init();
+
+        const { assembledRequest } =
+          await localProvider.assembleTx<ScriptTransactionRequest>({
+            request: txRequest,
+            feePayerAccount: wallet,
+            accountCoinQuantities: [],
           });
-          setLoading(false);
-          setIsSigning(false);
-          return; // Stop if funding fails
+        console.log(
+          'Result of localProvider.assembleTx (expecting { assembledRequest: ... }): ',
+          assembledRequest
+            ? 'Request extracted'
+            : 'Request NOT extracted or assembleTx failed',
+        );
+
+        if (!assembledRequest) {
+          throw new Error(
+            'Failed to destructure .assembledRequest from localProvider.assembleTx response. The method might not exist or returns a different structure. Check runtime error or logs.',
+          );
         }
 
-        // Sign the transaction without broadcasting it
+        console.log(
+          'Transaction assembled (from destructured .assembledRequest):',
+          {
+            inputs: assembledRequest.inputs?.length,
+            outputs: assembledRequest.outputs?.length,
+            witnesses: assembledRequest.witnesses?.length,
+          },
+        );
+
         const signedTransaction = await currentConnector.signTransaction(
           wallet.address.toString(),
-          tx,
+          assembledRequest,
         );
 
         console.log('Received signed transaction:', !!signedTransaction);
@@ -265,7 +255,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
           type: 'success',
           children: (
             <div>
-              <div>Transaction signed successfully!</div>
+              <div>Transaction signed successfully! (Using assembleTx)</div>
               <div className="text-xs mt-1">
                 The transaction was not broadcast to the network.
               </div>
@@ -278,11 +268,16 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
           ),
         });
       } catch (error) {
-        console.error('Error signing increment transaction:', error);
+        console.error(
+          'Error signing increment transaction (with assembleTx):',
+          error,
+        );
         setToast({
           open: true,
           type: 'error',
-          children: `Failed to sign transaction: ${(error as Error).message}`,
+          children: `Failed to sign transaction (assembleTx): ${
+            (error as Error).message
+          }`,
         });
       } finally {
         setLoading(false);
