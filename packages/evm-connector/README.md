@@ -22,6 +22,6 @@ sequenceDiagram
     B->>B: Hash transaction Id
     B->>C: ethProvider.request({ "method": "personal_sign" })
     C-->>B: "0xa202..<sign hash>..222"
-    B->>B: Send transaction using predicate validation to Fuel Nework
+    B->>B: Send transaction using predicate validation to Fuel Network
     B-->>A: "0x111..<transaction ID>..222"
 ```
