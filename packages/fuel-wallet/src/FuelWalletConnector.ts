@@ -271,6 +271,83 @@ export class FuelWalletConnector extends FuelConnector {
     return resp?.id || resp;
   }
 
+  async signTransaction(
+    address: string,
+    transaction: TransactionRequestLike,
+    params?: FuelConnectorSendTxParams,
+  ): Promise<string> {
+    if (!transaction) {
+      throw new Error('Transaction is required');
+    }
+    let txRequest = transactionRequestify(transaction);
+
+    const {
+      onBeforeSend,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
+    } = params || {};
+
+    let providerToSend = params?.provider;
+    if (!providerToSend) {
+      const currentConnectorProvider = await this.currentNetwork();
+      if (currentConnectorProvider?.url) {
+        // Optional chaining here as per previous lint
+        providerToSend = { url: currentConnectorProvider.url };
+      } else {
+        console.warn(
+          '[FuelWalletConnector] Provider URL for signTransaction could not be determined. Falling back to undefined.',
+        );
+      }
+    }
+
+    if (onBeforeSend) {
+      txRequest = await onBeforeSend(txRequest);
+    }
+
+    const resp = await this.client.request('signTransaction', {
+      address,
+      transaction: JSON.stringify(txRequest),
+      provider: providerToSend,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
+      noSendReturnPayload: true,
+    });
+
+    console.log(
+      '[FuelWalletConnector] signTransaction received resp from client:',
+      resp,
+      typeof resp,
+    );
+
+    // The JSONRPCClient might return the raw value or an object with a result property
+    // based on how the server (BackgroundService) structures its JSON-RPC response.
+    // Given BackgroundService returns the string directly, 'resp' should be the string.
+    if (typeof resp === 'string') {
+      return resp;
+    }
+    // Defensive coding: if it's an object and has a result that's a string, use that.
+    // This shouldn't be necessary if BackgroundService returns a direct string.
+    if (
+      typeof resp === 'object' &&
+      resp !== null &&
+      'result' in resp &&
+      typeof resp.result === 'string'
+    ) {
+      console.warn(
+        '[FuelWalletConnector] signTransaction received object, using resp.result',
+      );
+      return resp.result;
+    }
+    // If it's neither a string nor a valid response object, something is wrong.
+    console.error(
+      '[FuelWalletConnector] signTransaction received unexpected response:',
+      resp,
+    );
+    throw new Error('Unexpected response format from signTransaction');
+  }
+
   async assets(): Promise<Array<Asset>> {
     return this.client.request('assets', {});
   }
@@ -341,6 +418,7 @@ export class FuelWalletConnector extends FuelConnector {
      * by URL
      */
     const provider = new Provider(networkUrl);
+    console.log('provider', provider);
     return this.client.request('addNetwork', {
       network: {
         url: provider.url,
