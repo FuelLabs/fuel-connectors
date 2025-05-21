@@ -173,53 +173,52 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
 
   return (
     <Feature title="Transfer">
-      <div className="flex items-center space-x-2">
-        <input
-          type="text"
-          placeholder="Receiver address"
-          value={receiver}
-          onChange={(e) => setReceiver(e.target.value)}
-          className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent"
-        />
+      <input
+        type="text"
+        placeholder="Receiver address"
+        value={receiver}
+        onChange={(e) => setReceiver(e.target.value)}
+        className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent"
+      />
+      <Button
+        onClick={handleTransfer}
+        disabled={isLoading || !hasBalance || isSigning}
+        className="mt-1 shrink-0 md:mt-2"
+        loading={isLoading}
+        loadingText="Submitting..."
+      >
+        {`Submit ${defaultAmount.format()} ETH`}
+      </Button>
+      <div className="relative inline-block ml-2">
         <Button
-          onClick={handleTransfer}
-          disabled={isLoading || !hasBalance || isSigning}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsDropdownOpen(!isDropdownOpen);
+          }}
           className="mt-1 shrink-0 md:mt-2"
-          loading={isLoading}
-          loadingText="Submitting..."
+          disabled={isLoading || !hasBalance || isSigning}
         >
-          {`Submit ${defaultAmount.format()} ETH`}
+          ▼
         </Button>
-        <div className="relative inline-block">
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsDropdownOpen(!isDropdownOpen);
-            }}
-            className="shrink-0"
-            disabled={isLoading || !hasBalance || isSigning}
-          >
-            ▼
-          </Button>
-          {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-zinc-800 ring-1 ring-black ring-opacity-5 z-10">
-              <div className="py-1">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSignTransfer();
-                    setIsDropdownOpen(false);
-                  }}
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700"
-                >
-                  Sign Only
-                </button>
-              </div>
+        {isDropdownOpen && (
+          <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-zinc-800 ring-1 ring-black ring-opacity-5 z-10">
+            <div className="py-1">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSignTransfer();
+                  setIsDropdownOpen(false);
+                }}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700"
+              >
+                Sign Only
+              </button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
+
       <Notification
         setOpen={() => setToast({ ...toast, open: false })}
         {...toast}
