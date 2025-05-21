@@ -292,7 +292,6 @@ export class FuelWalletConnector extends FuelConnector {
     if (!providerToSend) {
       const currentConnectorProvider = await this.currentNetwork();
       if (currentConnectorProvider?.url) {
-        // Optional chaining here as per previous lint
         providerToSend = { url: currentConnectorProvider.url };
       } else {
         console.warn(
@@ -315,36 +314,18 @@ export class FuelWalletConnector extends FuelConnector {
       noSendReturnPayload: true,
     });
 
-    console.log(
-      '[FuelWalletConnector] signTransaction received resp from client:',
-      resp,
-      typeof resp,
-    );
-
-    // The JSONRPCClient might return the raw value or an object with a result property
-    // based on how the server (BackgroundService) structures its JSON-RPC response.
-    // Given BackgroundService returns the string directly, 'resp' should be the string.
     if (typeof resp === 'string') {
       return resp;
     }
-    // Defensive coding: if it's an object and has a result that's a string, use that.
-    // This shouldn't be necessary if BackgroundService returns a direct string.
     if (
       typeof resp === 'object' &&
       resp !== null &&
       'result' in resp &&
       typeof resp.result === 'string'
     ) {
-      console.warn(
-        '[FuelWalletConnector] signTransaction received object, using resp.result',
-      );
       return resp.result;
     }
-    // If it's neither a string nor a valid response object, something is wrong.
-    console.error(
-      '[FuelWalletConnector] signTransaction received unexpected response:',
-      resp,
-    );
+
     throw new Error('Unexpected response format from signTransaction');
   }
 
@@ -418,7 +399,6 @@ export class FuelWalletConnector extends FuelConnector {
      * by URL
      */
     const provider = new Provider(networkUrl);
-    console.log('provider', provider);
     return this.client.request('addNetwork', {
       network: {
         url: provider.url,

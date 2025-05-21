@@ -192,8 +192,6 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
       setLoading(true);
       setIsSigning(true);
       try {
-        console.log('Signing increment transaction using assembleTx...');
-
         const contract = new Counter(counterContractId, wallet);
 
         const txRequest = await contract.functions
@@ -204,8 +202,6 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
         if (!txRequest) {
           throw Error('Failed to create increment counter transaction request');
         }
-
-        console.log('Transaction request created, attempting to assemble...');
 
         if (!wallet.provider?.url) {
           throw new Error(
@@ -221,12 +217,6 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
             feePayerAccount: wallet,
             accountCoinQuantities: [],
           });
-        console.log(
-          'Result of localProvider.assembleTx (expecting { assembledRequest: ... }): ',
-          assembledRequest
-            ? 'Request extracted'
-            : 'Request NOT extracted or assembleTx failed',
-        );
 
         if (!assembledRequest) {
           throw new Error(
@@ -234,21 +224,10 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
           );
         }
 
-        console.log(
-          'Transaction assembled (from destructured .assembledRequest):',
-          {
-            inputs: assembledRequest.inputs?.length,
-            outputs: assembledRequest.outputs?.length,
-            witnesses: assembledRequest.witnesses?.length,
-          },
-        );
-
         const signedTransaction = await currentConnector.signTransaction(
           wallet.address.toString(),
           assembledRequest,
         );
-
-        console.log('Received signed transaction:', !!signedTransaction);
 
         setToast({
           open: true,

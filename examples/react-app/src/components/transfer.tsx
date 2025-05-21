@@ -114,22 +114,16 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
   };
 
   async function handleSignTransfer() {
-    console.log('handleSignTransfer');
     if (wallet && currentConnector) {
       setLoading(true);
       setIsSigning(true);
       try {
-        console.log('Signing transfer transaction...');
-
         if (!receiver) throw Error('Invalid address');
         const receiverAddress = Address.fromString(receiver);
-        console.log('Created receiver address:', receiverAddress.toString());
 
         const asset_id = await wallet.provider.getBaseAssetId();
-        console.log('Got base asset ID:', asset_id);
 
         // Create the transfer transaction request using wallet.createTransfer()
-        console.log('Creating transfer transaction request...');
         const tx = await wallet.createTransfer(
           receiverAddress,
           defaultAmount,
@@ -141,20 +135,11 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
           throw Error('Failed to create transfer transaction request');
         }
 
-        console.log('Created transaction request:', {
-          type: tx?.type,
-          inputs: tx?.inputs?.length,
-          outputs: tx?.outputs?.length,
-          witnesses: tx?.witnesses?.length,
-        });
-
         // Sign the transaction without broadcasting it
         const signedTransaction = await currentConnector.signTransaction(
           wallet.address.toString(),
           tx,
         );
-
-        console.log('Received signed transaction:', !!signedTransaction);
 
         setToast({
           open: true,
@@ -174,7 +159,6 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
           ),
         });
       } catch (error) {
-        console.error('Error signing transfer transaction:', error);
         setToast({
           open: true,
           type: 'error',
