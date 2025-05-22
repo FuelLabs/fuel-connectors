@@ -271,6 +271,64 @@ export class FuelWalletConnector extends FuelConnector {
     return resp?.id || resp;
   }
 
+  async signTransaction(
+    address: string,
+    transaction: TransactionRequestLike,
+    params?: FuelConnectorSendTxParams,
+  ): Promise<string> {
+    if (!transaction) {
+      throw new Error('Transaction is required');
+    }
+    let txRequest = transactionRequestify(transaction);
+
+    const {
+      onBeforeSend,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
+    } = params || {};
+
+    let providerToSend = params?.provider;
+    if (!providerToSend) {
+      const currentConnectorProvider = await this.currentNetwork();
+      if (currentConnectorProvider?.url) {
+        providerToSend = { url: currentConnectorProvider.url };
+      } else {
+        console.warn(
+          '[FuelWalletConnector] Provider URL for signTransaction could not be determined. Falling back to undefined.',
+        );
+      }
+    }
+
+    if (onBeforeSend) {
+      txRequest = await onBeforeSend(txRequest);
+    }
+
+    const resp = await this.client.request('signTransaction', {
+      address,
+      transaction: JSON.stringify(txRequest),
+      provider: providerToSend,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
+      noSendReturnPayload: true,
+    });
+
+    if (typeof resp === 'string') {
+      return resp;
+    }
+    if (
+      typeof resp === 'object' &&
+      resp !== null &&
+      'result' in resp &&
+      typeof resp.result === 'string'
+    ) {
+      return resp.result;
+    }
+
+    throw new Error('Unexpected response format from signTransaction');
+  }
+
   async assets(): Promise<Array<Asset>> {
     return this.client.request('assets', {});
   }
