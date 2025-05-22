@@ -185,9 +185,9 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
         disabled={isLoading || !hasBalance || isSigning}
         className="mt-1 shrink-0 md:mt-2"
         loading={isLoading}
-        loadingText="Submitting..."
+        loadingText="Transferring..."
       >
-        {`Submit ${defaultAmount.format()} ETH`}
+        {`Transfer ${defaultAmount.format()} ETH`}
       </Button>
       <div className="relative inline-block ml-2">
         <Button
