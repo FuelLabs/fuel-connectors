@@ -225,9 +225,11 @@ export class EVMWalletConnector extends PredicateConnector {
       this.emit(this.events.connection, false);
       this.emit(this.events.accounts, []);
       this.emit(this.events.currentAccount, null);
+      this.connected = false;
     }
 
-    return false;
+    await super.disconnect();
+    return await this.isConnected();
   }
 
   public async sendTransaction(

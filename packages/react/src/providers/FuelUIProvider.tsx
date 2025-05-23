@@ -31,6 +31,7 @@ export enum Routes {
   PredicateExternalDisclaimer = 'PREDICATE_EXTERNAL_DISCLAIMER',
   PredicateAddressDisclaimer = 'PREDICATE_ADDRESS_DISCLAIMER',
   SignatureError = 'SIGNATURE_ERROR',
+  PredicateVersionSelector = 'PREDICATE_VERSION_SELECTOR',
 }
 
 export type FuelUIContextType = {

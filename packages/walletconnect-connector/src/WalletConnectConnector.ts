@@ -401,6 +401,8 @@ export class WalletConnectConnector extends PredicateConnector {
       connector,
     });
 
+    await super.disconnect();
+
     return isConnected || false;
   }
 
