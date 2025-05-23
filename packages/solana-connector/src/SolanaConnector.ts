@@ -365,6 +365,7 @@ export class SolanaConnector extends PredicateConnector {
     );
     this.web3Modal.disconnect();
     this._emitDisconnect();
+    await super.disconnect();
     return !(await this.isConnected());
   }
 

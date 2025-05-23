@@ -227,6 +227,7 @@ export class EVMWalletConnector extends PredicateConnector {
       this.emit(this.events.currentAccount, null);
     }
 
+    await super.disconnect();
     return false;
   }
 

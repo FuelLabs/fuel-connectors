@@ -57,7 +57,34 @@ export abstract class PredicateConnector extends FuelConnector {
     transaction: TransactionRequestLike,
   ): Promise<string | TransactionResponse>;
   public abstract connect(): Promise<boolean>;
-  public abstract disconnect(): Promise<boolean>;
+
+  /**
+   * Disconnects the connector.
+   * This base implementation clears the cached predicate selection.
+   * Derived classes MUST call `await super.disconnect();` as part of their
+   * disconnection logic. They remain responsible for their specific
+   * disconnection procedures (e.g., from the underlying wallet),
+   * updating `this.connected` status, and emitting events such as
+   * `connection`, `currentAccount`, and `accounts`.
+   * @returns A promise that resolves to true if the base cleanup is successful.
+   *          The overall success is determined by the derived class.
+   */
+  public async disconnect(): Promise<boolean> {
+    this.selectedPredicateVersion = null;
+    this.predicateAccount = null; // Ensure predicate is fully re-setup on next connect
+
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.removeItem(SELECTED_PREDICATE_KEY);
+      }
+    } catch (error) {
+      console.error(
+        'Failed to clear selected predicate version from localStorage during disconnect:',
+        error,
+      );
+    }
+    return true;
+  }
 
   protected abstract configProviders(config: ConnectorConfig): MaybeAsync<void>;
   protected abstract getWalletAdapter(): PredicateWalletAdapter;
