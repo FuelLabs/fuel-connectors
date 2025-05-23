@@ -366,7 +366,7 @@ export class SolanaConnector extends PredicateConnector {
     this.web3Modal.disconnect();
     this._emitDisconnect();
     await super.disconnect();
-    return !(await this.isConnected());
+    return await this.isConnected();
   }
 
   private encodeTxId(txId: string): Uint8Array {
