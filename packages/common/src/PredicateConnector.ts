@@ -59,15 +59,12 @@ export abstract class PredicateConnector extends FuelConnector {
   public abstract connect(): Promise<boolean>;
 
   /**
-   * Disconnects the connector.
-   * This base implementation clears the cached predicate selection.
    * Derived classes MUST call `await super.disconnect();` as part of their
    * disconnection logic. They remain responsible for their specific
    * disconnection procedures (e.g., from the underlying wallet),
    * updating `this.connected` status, and emitting events such as
    * `connection`, `currentAccount`, and `accounts`.
    * @returns A promise that resolves to true if the base cleanup is successful.
-   *          The overall success is determined by the derived class.
    */
   public async disconnect(): Promise<boolean> {
     this.selectedPredicateVersion = null;
@@ -281,6 +278,25 @@ export abstract class PredicateConnector extends FuelConnector {
 
   public getSelectedPredicateVersion(): Maybe<string> {
     return this.selectedPredicateVersion;
+  }
+
+  public async getSmartDefaultPredicateVersion(): Promise<Maybe<string>> {
+    try {
+      const predicateWithBalance = await this.getCurrentUserPredicate();
+      if (predicateWithBalance) {
+        return predicateWithBalance.getRoot();
+      }
+
+      const newestPredicate = this.getNewestPredicate();
+      return newestPredicate?.getRoot() || null;
+    } catch (error) {
+      console.error(
+        'Error determining smart default predicate version:',
+        error,
+      );
+      const newestPredicate = this.getNewestPredicate();
+      return newestPredicate?.getRoot() || null;
+    }
   }
 
   public async switchPredicateVersion(versionId: string): Promise<void> {

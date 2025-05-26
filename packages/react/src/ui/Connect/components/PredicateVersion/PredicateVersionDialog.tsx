@@ -182,6 +182,7 @@ interface PredicateConnectorWithVersions extends FuelConnector {
     PredicateVersionWithMetadata[]
   >;
   switchPredicateVersion: (versionId: string) => Promise<void>;
+  getSmartDefaultPredicateVersion?: () => Promise<string | null>;
 }
 
 function hasVersionSupport(
@@ -292,7 +293,25 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
           if (currentSelected) {
             setSelectedVersion(currentSelected);
           } else if (availableVersions.length > 0) {
-            setSelectedVersion(availableVersions[0].id);
+            if (currentConnector.getSmartDefaultPredicateVersion) {
+              try {
+                const smartDefault =
+                  await currentConnector.getSmartDefaultPredicateVersion();
+                if (smartDefault) {
+                  setSelectedVersion(smartDefault);
+                } else {
+                  setSelectedVersion(availableVersions[0].id);
+                }
+              } catch (error) {
+                console.error(
+                  'Failed to get smart default, falling back to newest:',
+                  error,
+                );
+                setSelectedVersion(availableVersions[0].id);
+              }
+            } else {
+              setSelectedVersion(availableVersions[0].id);
+            }
           }
 
           setLoading(false);
