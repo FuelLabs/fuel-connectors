@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useConfig } from '../context/ConfigContext';
 import { useWallet } from '../hooks/useWallet';
 import type { CustomError } from '../utils/customError';
+import { Copyable } from './Copyable';
 import Button from './button';
 import Feature from './feature';
 import Notification, { type Props as NotificationProps } from './notification';
@@ -24,6 +25,9 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
   const [receiver, setReceiver] = useState(DEFAULT_ADDRESS);
   const [isLoading, setLoading] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [signedTransaction, setSignedTransaction] = useState<string | null>(
+    null,
+  );
   const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
     open: false,
   });
@@ -158,6 +162,8 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
             </div>
           ),
         });
+
+        setSignedTransaction(signedTransaction);
       } catch (error) {
         setToast({
           open: true,
@@ -172,57 +178,72 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
   }
 
   return (
-    <Feature title="Transfer">
-      <input
-        type="text"
-        placeholder="Receiver address"
-        value={receiver}
-        onChange={(e) => setReceiver(e.target.value)}
-        className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent"
-      />
-      <Button
-        onClick={handleTransfer}
-        disabled={isLoading || !hasBalance || isSigning}
-        className="mt-1 shrink-0 md:mt-2"
-        loading={isLoading}
-        loadingText="Transferring..."
-      >
-        {`Transfer ${defaultAmount.format()} ETH`}
-      </Button>
-      <div className="relative inline-block ml-2">
+    <div>
+      <Feature title="Transfer">
+        <input
+          type="text"
+          placeholder="Receiver address"
+          value={receiver}
+          onChange={(e) => setReceiver(e.target.value)}
+          className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent"
+        />
         <Button
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsDropdownOpen(!isDropdownOpen);
-          }}
-          className="mt-1 shrink-0 md:mt-2"
+          onClick={handleTransfer}
           disabled={isLoading || !hasBalance || isSigning}
+          className="mt-1 shrink-0 md:mt-2"
+          loading={isLoading}
+          loadingText="Transferring..."
         >
-          ▼
+          {`Transfer ${defaultAmount.format()} ETH`}
         </Button>
-        {isDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-zinc-800 ring-1 ring-black ring-opacity-5 z-10">
-            <div className="py-1">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleSignTransfer();
-                  setIsDropdownOpen(false);
-                }}
-                className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700"
-              >
-                Sign Only
-              </button>
+        <div className="relative inline-block ml-2">
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDropdownOpen(!isDropdownOpen);
+            }}
+            className="mt-1 shrink-0 md:mt-2"
+            disabled={isLoading || !hasBalance || isSigning}
+          >
+            ▼
+          </Button>
+          {isDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-zinc-800 ring-1 ring-black ring-opacity-5 z-10">
+              <div className="py-1">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSignTransfer();
+                    setIsDropdownOpen(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700"
+                >
+                  Sign Only
+                </button>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      <Notification
-        setOpen={() => setToast({ ...toast, open: false })}
-        {...toast}
-      />
-    </Feature>
+        <Notification
+          setOpen={() => setToast({ ...toast, open: false })}
+          {...toast}
+        />
+      </Feature>
+      {signedTransaction && (
+        <div className="mt-4">
+          <h3 className="flex mt-3 mb-1 text-sm font-medium md:mb-0 dark:text-zinc-300/70">
+            Signed Transaction
+            <div className="ml-2">
+              <Copyable value={signedTransaction} />
+            </div>
+          </h3>
+          <p className="whitespace-pre-wrap max-w-full break-words">
+            {signedTransaction}
+          </p>
+        </div>
+      )}
+    </div>
   );
 }

@@ -9,6 +9,7 @@ import { Counter } from '../types';
 import type { CustomError } from '../utils/customError';
 
 import { useConfig } from '../context/ConfigContext';
+import { Copyable } from './Copyable';
 import Button from './button';
 import ContractLink from './contract-link';
 import Feature from './feature';
@@ -31,6 +32,9 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
   const [isLoading, setLoading] = useState(false);
   const [counter, setCounter] = useState(0);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [signedTransaction, setSignedTransaction] = useState<string | null>(
+    null,
+  );
 
   const hasBalance = balance?.gte(defaultAmount);
 
@@ -101,6 +105,19 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
           />
         </div>
       </Feature>
+      {signedTransaction && (
+        <div className="mt-4">
+          <h3 className="flex mt-3 mb-1 text-sm font-medium md:mb-0 dark:text-zinc-300/70">
+            Signed Transaction
+            <div className="ml-2">
+              <Copyable value={signedTransaction} />
+            </div>
+          </h3>
+          <p className="whitespace-pre-wrap max-w-full break-words">
+            {signedTransaction}
+          </p>
+        </div>
+      )}
       <ContractLink />
     </div>
   );
@@ -246,6 +263,8 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
             </div>
           ),
         });
+
+        setSignedTransaction(signedTransaction);
       } catch (error) {
         console.error(
           'Error signing increment transaction (with assembleTx):',
