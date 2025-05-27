@@ -183,6 +183,47 @@ export class FuelWalletConnector extends FuelConnector {
    * Connector methods
    * ============================================================
    */
+  private async prepareTransactionRequest(
+    transaction: TransactionRequestLike,
+    params?: FuelConnectorSendTxParams,
+  ) {
+    if (!transaction) {
+      throw new Error('Transaction is required');
+    }
+    let txRequest = transactionRequestify(transaction);
+
+    const {
+      onBeforeSend,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
+    } = params || {};
+
+    let providerToSend = params?.provider;
+    if (!providerToSend) {
+      const currentConnectorProvider = await this.currentNetwork();
+      if (currentConnectorProvider?.url) {
+        providerToSend = { url: currentConnectorProvider.url };
+      } else {
+        console.warn(
+          '[FuelWalletConnector] Provider URL for transaction could not be determined. Falling back to undefined.',
+        );
+      }
+    }
+
+    if (onBeforeSend) {
+      txRequest = await onBeforeSend(txRequest);
+    }
+
+    return {
+      txRequest,
+      providerToSend,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
+    };
+  }
+
   async ping(): Promise<boolean> {
     return this.client.timeout(800).request('ping', {});
   }
@@ -237,27 +278,18 @@ export class FuelWalletConnector extends FuelConnector {
     transaction: TransactionRequestLike,
     params?: FuelConnectorSendTxParams,
   ): Promise<string | TransactionResponse> {
-    if (!transaction) {
-      throw new Error('Transaction is required');
-    }
-    let txRequest = transactionRequestify(transaction);
-
     const {
-      onBeforeSend,
+      txRequest,
+      providerToSend,
       skipCustomFee,
-      provider,
       transactionState,
       transactionSummary,
-    } = params || {};
-
-    if (onBeforeSend) {
-      txRequest = await onBeforeSend(txRequest);
-    }
+    } = await this.prepareTransactionRequest(transaction, params);
 
     const resp = await this.client.request('sendTransaction', {
       address,
       transaction: JSON.stringify(txRequest),
-      provider,
+      provider: providerToSend,
       skipCustomFee,
       transactionState,
       transactionSummary,
@@ -271,38 +303,20 @@ export class FuelWalletConnector extends FuelConnector {
     return resp?.id || resp;
   }
 
+  // TODO: retornar transactionrequest & string na wallet
+  // dapp methods txRequestserialized igual o sergio falou retornar em string, ai o connector recebe e faz a outra linha que o sergio mandou (transactionRequestInstace)
   async signTransaction(
     address: string,
     transaction: TransactionRequestLike,
     params?: FuelConnectorSendTxParams,
   ): Promise<string> {
-    if (!transaction) {
-      throw new Error('Transaction is required');
-    }
-    let txRequest = transactionRequestify(transaction);
-
     const {
-      onBeforeSend,
+      txRequest,
+      providerToSend,
       skipCustomFee,
       transactionState,
       transactionSummary,
-    } = params || {};
-
-    let providerToSend = params?.provider;
-    if (!providerToSend) {
-      const currentConnectorProvider = await this.currentNetwork();
-      if (currentConnectorProvider?.url) {
-        providerToSend = { url: currentConnectorProvider.url };
-      } else {
-        console.warn(
-          '[FuelWalletConnector] Provider URL for signTransaction could not be determined. Falling back to undefined.',
-        );
-      }
-    }
-
-    if (onBeforeSend) {
-      txRequest = await onBeforeSend(txRequest);
-    }
+    } = await this.prepareTransactionRequest(transaction, params);
 
     const resp = await this.client.request('signTransaction', {
       address,
@@ -311,22 +325,10 @@ export class FuelWalletConnector extends FuelConnector {
       skipCustomFee,
       transactionState,
       transactionSummary,
-      noSendReturnPayload: true,
+      signOnly: true,
     });
 
-    if (typeof resp === 'string') {
-      return resp;
-    }
-    if (
-      typeof resp === 'object' &&
-      resp !== null &&
-      'result' in resp &&
-      typeof resp.result === 'string'
-    ) {
-      return resp.result;
-    }
-
-    throw new Error('Unexpected response format from signTransaction');
+    return resp;
   }
 
   async assets(): Promise<Array<Asset>> {
