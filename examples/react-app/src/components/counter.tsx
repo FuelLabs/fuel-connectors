@@ -234,10 +234,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
           type: 'success',
           children: (
             <div>
-              <div>Transaction signed successfully! (Using assembleTx)</div>
-              <div className="text-xs mt-1">
-                The transaction was not broadcast to the network.
-              </div>
+              <div>Transaction signed successfully!</div>
               <div className="break-all text-xs mt-1 font-mono">
                 {signedTransaction
                   ? `${signedTransaction.substring(0, 80)}...`
