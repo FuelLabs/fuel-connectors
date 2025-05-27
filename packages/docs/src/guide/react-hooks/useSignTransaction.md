@@ -8,7 +8,7 @@ A hook to sign transactions in the connected app without sending them.
 The parameters to sign a transaction.
 - `address`: The address to sign the transaction from.
 - `transaction`: The transaction request object that defines the transaction details.
-- `params`: Optional parameters for the transaction, like provider URL.
+- `params`: Optional parameters for the transaction.
 
 #### Returns
 
@@ -22,28 +22,16 @@ Methods to sign transactions.
 To sign a transaction synchronously:
 ```ts
 const { signTransaction } = useSignTransaction();
-signTransaction({ 
-  address: '0x...', 
-  transaction: {...}, 
-  params: { 
-    provider: { url: 'http://...' } 
-  } 
-});
+signTransaction({ address: '0x...', transaction: {...}, params: { provider: { url: 'http://...' } } });
 ```
 
 To sign a transaction asynchronously:
 ```ts
 const { signTransactionAsync } = useSignTransaction();
-await signTransactionAsync({ 
-  address: '0x...', 
-  transaction: {...}, 
-  params: { 
-    provider: { url: 'http://...' } 
-  } 
-});
+await signTransactionAsync({ address: '0x...', transaction: {...}, params: { provider: { url: 'http://...' } } });
 ```
 
 #### Defined in
-[packages/react/src/hooks/useSignTransaction.ts:37](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useSignTransaction.ts#L37)
+[packages/react/src/hooks/useSignTransaction.ts:61](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useSignTransaction.ts#L61)
 
-___ 
+___
