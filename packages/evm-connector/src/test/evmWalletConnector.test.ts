@@ -9,6 +9,7 @@ import {
   type Asset,
   type Predicate as FuelPredicate,
   InputType,
+  type InputValue,
   type Provider,
   ScriptTransactionRequest,
   Wallet,
@@ -34,7 +35,7 @@ import { PREDICATE_VERSIONS } from './mockedPredicate';
 const MAX_FEE = bn(10_000);
 
 async function createTransaction(
-  predicate: FuelPredicate<number[]>,
+  predicate: FuelPredicate<InputValue[], { [name: string]: unknown }>,
   address: string,
 ) {
   const ALT_ASSET_ID =
