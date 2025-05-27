@@ -1,4 +1,4 @@
-import { useCurrentConnector } from '@fuels/react';
+import { useSignTransaction } from '@fuels/react';
 import type { ScriptTransactionRequest } from 'fuels';
 import { Provider } from 'fuels';
 import { useEffect, useState } from 'react';
@@ -23,7 +23,7 @@ interface Props {
 export default function ContractCounter({ isSigning, setIsSigning }: Props) {
   const { balance, wallet, refetchBalance } = useWallet();
   const { defaultAmount, counterContractId, explorerUrl } = useConfig();
-  const { currentConnector } = useCurrentConnector();
+  const { signTransactionAsync } = useSignTransaction();
 
   const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
     open: false,
@@ -205,7 +205,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
   }
 
   async function handleSignIncrement() {
-    if (wallet && currentConnector && 'signTransaction' in currentConnector) {
+    if (wallet) {
       setLoading(true);
       setIsSigning(true);
       try {
@@ -241,10 +241,10 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
           );
         }
 
-        const signedTransaction = await currentConnector.signTransaction(
-          wallet.address.toString(),
-          assembledRequest,
-        );
+        const signedTransaction = await signTransactionAsync({
+          address: wallet.address.toString(),
+          transaction: assembledRequest,
+        });
 
         setToast({
           open: true,
@@ -282,9 +282,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
         setIsSigning(false);
       }
     } else {
-      console.error(
-        'Wallet or connector not available, or signTransaction not supported',
-      );
+      console.error('Wallet not available');
     }
   }
 }

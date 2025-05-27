@@ -1,4 +1,4 @@
-import { useCurrentConnector } from '@fuels/react';
+import { useSignTransaction } from '@fuels/react';
 import { Address, type TransactionRequestLike } from 'fuels';
 import { useEffect, useState } from 'react';
 import { useConfig } from '../context/ConfigContext';
@@ -19,8 +19,8 @@ interface Props {
 
 export default function Transfer({ isSigning, setIsSigning }: Props) {
   const { balance, wallet, refetchBalance } = useWallet();
-  const { currentConnector } = useCurrentConnector();
   const { defaultAmount, explorerUrl } = useConfig();
+  const { signTransactionAsync } = useSignTransaction();
 
   const [receiver, setReceiver] = useState(DEFAULT_ADDRESS);
   const [isLoading, setLoading] = useState(false);
@@ -118,7 +118,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
   };
 
   async function handleSignTransfer() {
-    if (wallet && currentConnector) {
+    if (wallet) {
       setLoading(true);
       setIsSigning(true);
       try {
@@ -140,10 +140,10 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
         }
 
         // Sign the transaction without broadcasting it
-        const signedTransaction = await currentConnector.signTransaction(
-          wallet.address.toString(),
-          tx,
-        );
+        const signedTransaction = await signTransactionAsync({
+          address: wallet.address.toString(),
+          transaction: tx,
+        });
 
         setToast({
           open: true,
