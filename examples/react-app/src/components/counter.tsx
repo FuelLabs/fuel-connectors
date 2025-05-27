@@ -93,7 +93,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
                     }}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700"
                   >
-                    Sign Only
+                    Sign Increment
                   </button>
                 </div>
               </div>
@@ -251,10 +251,7 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
           type: 'success',
           children: (
             <div>
-              <div>Transaction signed successfully! (Using assembleTx)</div>
-              <div className="text-xs mt-1">
-                The transaction was not broadcast to the network.
-              </div>
+              <div>Transaction signed successfully!</div>
               <div className="break-all text-xs mt-1 font-mono">
                 {signedTransaction
                   ? `${signedTransaction.substring(0, 80)}...`
