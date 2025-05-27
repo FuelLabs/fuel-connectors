@@ -140,10 +140,16 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
         }
 
         // Sign the transaction without broadcasting it
-        const signedTransaction = await signTransactionAsync({
+        const signedTransactionResult = await signTransactionAsync({
           address: wallet.address.toString(),
           transaction: tx,
         });
+
+        // Handle both string and TransactionRequest return types
+        const signedTransaction =
+          typeof signedTransactionResult === 'string'
+            ? signedTransactionResult
+            : JSON.stringify(signedTransactionResult);
 
         setToast({
           open: true,
