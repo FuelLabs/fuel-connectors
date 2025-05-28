@@ -51,7 +51,6 @@ export default function ConnectedAccount({ isSigning }: Props) {
           </code>
           <Copyable value={account} />
         </div>
-
         <Button
           onClick={() => disconnect()}
           loadingText="Disconnecting..."
