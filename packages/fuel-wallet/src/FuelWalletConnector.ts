@@ -12,6 +12,7 @@ import {
   type Network,
   Provider,
   type SelectNetworkArguments,
+  type TransactionRequest,
   type TransactionRequestLike,
   TransactionResponse,
   type TransactionResponseJson,
@@ -63,6 +64,10 @@ export const deserializeTransactionResponseJson = (
   response.preConfirmationStatus = preConfirmationStatus;
 
   return response;
+};
+
+type TransactionRequestWithSignature = TransactionRequest & {
+  signature?: string;
 };
 
 export class FuelWalletConnector extends FuelConnector {
@@ -293,13 +298,11 @@ export class FuelWalletConnector extends FuelConnector {
     return resp?.id || resp;
   }
 
-  // TODO: retornar transactionrequest & string na wallet
-  // dapp methods txRequestserialized igual o sergio falou retornar em string, ai o connector recebe e faz a outra linha que o sergio mandou (transactionRequestInstace)
   async signTransaction(
     address: string,
     transaction: TransactionRequestLike,
     params?: FuelConnectorSendTxParams,
-  ): Promise<string> {
+  ): Promise<TransactionRequest> {
     const {
       txRequest,
       providerToSend,
@@ -308,7 +311,7 @@ export class FuelWalletConnector extends FuelConnector {
       transactionSummary,
     } = await this.prepareTransactionRequest(transaction, params);
 
-    const resp = await this.client.request('signTransaction', {
+    const signature: string = await this.client.request('signTransaction', {
       address,
       transaction: JSON.stringify(txRequest),
       provider: providerToSend,
@@ -318,7 +321,11 @@ export class FuelWalletConnector extends FuelConnector {
       signOnly: true,
     });
 
-    return resp;
+    // Cast to the extended type and attach signature
+    const txRequestWithSig = txRequest as TransactionRequestWithSignature;
+    txRequestWithSig.signature = signature;
+
+    return txRequestWithSig; // Return the object now conforming to TransactionRequestWithSignature
   }
 
   async assets(): Promise<Array<Asset>> {
