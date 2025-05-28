@@ -199,17 +199,7 @@ export class FuelWalletConnector extends FuelConnector {
       transactionSummary,
     } = params || {};
 
-    let providerToSend = params?.provider;
-    if (!providerToSend) {
-      const currentConnectorProvider = await this.currentNetwork();
-      if (currentConnectorProvider?.url) {
-        providerToSend = { url: currentConnectorProvider.url };
-      } else {
-        console.warn(
-          '[FuelWalletConnector] Provider URL for transaction could not be determined. Falling back to undefined.',
-        );
-      }
-    }
+    const providerToSend = params?.provider;
 
     if (onBeforeSend) {
       txRequest = await onBeforeSend(txRequest);
