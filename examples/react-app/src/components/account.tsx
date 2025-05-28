@@ -1,5 +1,4 @@
 import { useConnect, useDisconnect } from '@fuels/react';
-import { useEffect, useState } from 'react';
 import { useConfig } from '../context/ConfigContext';
 import { useWallet } from '../hooks/useWallet';
 import { Copyable } from './Copyable';
