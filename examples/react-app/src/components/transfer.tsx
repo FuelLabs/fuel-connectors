@@ -144,47 +144,25 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
         }
 
         // Sign the transaction without broadcasting it
-        const signedTransactionResult = await signTransactionAsync({
+        const txRequestSigned = await signTransactionAsync({
           address: wallet.address.toString(),
           transaction: tx,
         });
 
-        // Handle string or object return type to extract signature
-        let signature: string | undefined;
-        if (
-          signedTransactionResult &&
-          typeof signedTransactionResult === 'object' &&
-          'signature' in signedTransactionResult
-        ) {
-          const sigValue = (signedTransactionResult as { signature?: unknown })
-            .signature;
-          if (typeof sigValue === 'string') {
-            signature = sigValue;
-          }
-        } else if (typeof signedTransactionResult === 'string') {
-          // This case handles if the hook/connector returns a plain string signature.
-          signature = signedTransactionResult;
+        if (typeof txRequestSigned !== 'string' && txRequestSigned.witnesses) {
+          const signature = txRequestSigned.witnesses[0];
+
+          setSignedTransaction(signature.toString() || null);
+          setToast({
+            open: true,
+            type: 'success',
+            children: (
+              <div>
+                <div>Transaction signed successfully!</div>
+              </div>
+            ),
+          });
         }
-
-        setToast({
-          open: true,
-          type: 'success',
-          children: (
-            <div>
-              <div>Transaction signed successfully!</div>
-              <div className="text-xs mt-1">
-                The transaction was not broadcast to the network.
-              </div>
-              <div className="break-all text-xs mt-1 font-mono">
-                {signature
-                  ? `${signature.substring(0, 80)}...`
-                  : 'No signature returned (or result was not an object with a string signature)'}
-              </div>
-            </div>
-          ),
-        });
-
-        setSignedTransaction(signature || null);
       } catch (error) {
         setToast({
           open: true,
@@ -240,7 +218,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
                   }}
                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700"
                 >
-                  Sign Only
+                  Sign Transfer
                 </button>
               </div>
             </div>

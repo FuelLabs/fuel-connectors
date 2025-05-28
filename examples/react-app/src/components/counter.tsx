@@ -241,43 +241,25 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
           );
         }
 
-        const signedTransactionResult = await signTransactionAsync({
+        const txRequestSigned = await signTransactionAsync({
           address: wallet.address.toString(),
           transaction: assembledRequest,
         });
 
-        let signature: string | undefined;
-        if (
-          signedTransactionResult &&
-          typeof signedTransactionResult === 'object' &&
-          'signature' in signedTransactionResult
-        ) {
-          const sigValue = (signedTransactionResult as { signature?: unknown })
-            .signature;
-          if (typeof sigValue === 'string') {
-            signature = sigValue;
-          }
+        if (typeof txRequestSigned !== 'string' && txRequestSigned.witnesses) {
+          const signature = txRequestSigned.witnesses[0];
+
+          setSignedTransaction(signature.toString() || null);
+          setToast({
+            open: true,
+            type: 'success',
+            children: (
+              <div>
+                <div>Transaction signed successfully!</div>
+              </div>
+            ),
+          });
         }
-
-        setToast({
-          open: true,
-          type: 'success',
-          children: (
-            <div>
-              <div>Transaction signed successfully! (Using assembleTx)</div>
-              <div className="text-xs mt-1">
-                The transaction was not broadcast to the network.
-              </div>
-              <div className="break-all text-xs mt-1 font-mono">
-                {signature
-                  ? `${signature.substring(0, 80)}...`
-                  : 'No signature returned (or result was not an object with a string signature)'}
-              </div>
-            </div>
-          ),
-        });
-
-        setSignedTransaction(signature || null);
       } catch (error) {
         console.error(
           'Error signing increment transaction (with assembleTx):',

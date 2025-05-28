@@ -1,21 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import {
   Address,
-  type FuelConnector,
   type FuelConnectorSendTxParams,
   type TransactionRequestLike,
 } from 'fuels';
 
 import { useCurrentConnector } from './useCurrentConnector';
-
-// Extend the FuelConnector type to include signTransaction
-interface ConnectorWithSignTransaction extends FuelConnector {
-  signTransaction(
-    address: string,
-    transaction: TransactionRequestLike,
-    params?: FuelConnectorSendTxParams,
-  ): Promise<string>;
-}
 
 type MutationParams = {
   /**
@@ -62,7 +52,11 @@ export const useSignTransaction = () => {
   const { currentConnector } = useCurrentConnector();
 
   const { mutate, mutateAsync, ...queryProps } = useMutation({
-    mutationFn: async ({ address, transaction, params }: MutationParams) => {
+    mutationFn: async ({
+      address,
+      transaction,
+      params: _params,
+    }: MutationParams) => {
       if (!currentConnector) {
         throw new Error('No connector found, please connect first');
       }
@@ -77,12 +71,13 @@ export const useSignTransaction = () => {
         throw new Error('Connector does not support signTransaction');
       }
 
-      const source = Address.fromDynamicInput(address).toString();
-      // Cast to the extended interface
-      return (connector as ConnectorWithSignTransaction).signTransaction(
+      const source = new Address(address).toString();
+
+      return connector.signTransaction(
         source,
         transaction,
-        params,
+        // @TODO: needs to add it after ts-sdk implements it correctly
+        // params,
       );
     },
   });

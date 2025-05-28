@@ -66,10 +66,6 @@ export const deserializeTransactionResponseJson = (
   return response;
 };
 
-export type TransactionRequestWithSignature = TransactionRequest & {
-  signature?: string;
-};
-
 export class FuelWalletConnector extends FuelConnector {
   name = '';
   connected = false;
@@ -311,21 +307,23 @@ export class FuelWalletConnector extends FuelConnector {
       transactionSummary,
     } = await this.prepareTransactionRequest(transaction, params);
 
-    const signature: string = await this.client.request('signTransaction', {
-      address,
-      transaction: JSON.stringify(txRequest),
-      provider: providerToSend,
-      skipCustomFee,
-      transactionState,
-      transactionSummary,
-      signOnly: true,
-    });
+    const txRequestSerialized: string = await this.client.request(
+      'signTransaction',
+      {
+        address,
+        transaction: JSON.stringify(txRequest),
+        provider: providerToSend,
+        skipCustomFee,
+        transactionState,
+        transactionSummary,
+      },
+    );
 
-    // Cast to the extended type and attach signature
-    const txRequestWithSig = txRequest as TransactionRequestWithSignature;
-    txRequestWithSig.signature = signature;
+    const txRequestSigned = transactionRequestify(
+      JSON.parse(txRequestSerialized),
+    );
 
-    return txRequestWithSig; // Return the object now conforming to TransactionRequestWithSignature
+    return txRequestSigned;
   }
 
   async assets(): Promise<Array<Asset>> {
