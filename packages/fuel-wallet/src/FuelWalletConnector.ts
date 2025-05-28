@@ -66,7 +66,7 @@ export const deserializeTransactionResponseJson = (
   return response;
 };
 
-type TransactionRequestWithSignature = TransactionRequest & {
+export type TransactionRequestWithSignature = TransactionRequest & {
   signature?: string;
 };
 

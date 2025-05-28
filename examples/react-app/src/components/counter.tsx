@@ -1,5 +1,5 @@
 import { useSignTransaction } from '@fuels/react';
-import type { ScriptTransactionRequest } from 'fuels';
+import type { ScriptTransactionRequest, TransactionRequest } from 'fuels';
 import { Provider } from 'fuels';
 import { useEffect, useState } from 'react';
 import { useLogEvents } from '../hooks/use-log-events';
@@ -246,10 +246,18 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
           transaction: assembledRequest,
         });
 
-        const signedTransaction =
-          typeof signedTransactionResult === 'string'
-            ? signedTransactionResult
-            : JSON.stringify(signedTransactionResult);
+        let signature: string | undefined;
+        if (
+          signedTransactionResult &&
+          typeof signedTransactionResult === 'object' &&
+          'signature' in signedTransactionResult
+        ) {
+          const sigValue = (signedTransactionResult as { signature?: unknown })
+            .signature;
+          if (typeof sigValue === 'string') {
+            signature = sigValue;
+          }
+        }
 
         setToast({
           open: true,
@@ -261,15 +269,15 @@ export default function ContractCounter({ isSigning, setIsSigning }: Props) {
                 The transaction was not broadcast to the network.
               </div>
               <div className="break-all text-xs mt-1 font-mono">
-                {signedTransaction
-                  ? `${signedTransaction.substring(0, 80)}...`
-                  : 'No signature returned'}
+                {signature
+                  ? `${signature.substring(0, 80)}...`
+                  : 'No signature returned (or result was not an object with a string signature)'}
               </div>
             </div>
           ),
         });
 
-        setSignedTransaction(signedTransaction);
+        setSignedTransaction(signature || null);
       } catch (error) {
         console.error(
           'Error signing increment transaction (with assembleTx):',

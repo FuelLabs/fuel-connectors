@@ -1,5 +1,9 @@
 import { useSignTransaction } from '@fuels/react';
-import { Address, type TransactionRequestLike } from 'fuels';
+import {
+  Address,
+  type TransactionRequest,
+  type TransactionRequestLike,
+} from 'fuels';
 import { useEffect, useState } from 'react';
 import { useConfig } from '../context/ConfigContext';
 import { useWallet } from '../hooks/useWallet';
@@ -145,11 +149,22 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
           transaction: tx,
         });
 
-        // Handle both string and TransactionRequest return types
-        const signedTransaction =
-          typeof signedTransactionResult === 'string'
-            ? signedTransactionResult
-            : JSON.stringify(signedTransactionResult);
+        // Handle string or object return type to extract signature
+        let signature: string | undefined;
+        if (
+          signedTransactionResult &&
+          typeof signedTransactionResult === 'object' &&
+          'signature' in signedTransactionResult
+        ) {
+          const sigValue = (signedTransactionResult as { signature?: unknown })
+            .signature;
+          if (typeof sigValue === 'string') {
+            signature = sigValue;
+          }
+        } else if (typeof signedTransactionResult === 'string') {
+          // This case handles if the hook/connector returns a plain string signature.
+          signature = signedTransactionResult;
+        }
 
         setToast({
           open: true,
@@ -161,15 +176,15 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
                 The transaction was not broadcast to the network.
               </div>
               <div className="break-all text-xs mt-1 font-mono">
-                {signedTransaction
-                  ? `${signedTransaction.substring(0, 80)}...`
-                  : 'No signature returned'}
+                {signature
+                  ? `${signature.substring(0, 80)}...`
+                  : 'No signature returned (or result was not an object with a string signature)'}
               </div>
             </div>
           ),
         });
 
-        setSignedTransaction(signedTransaction);
+        setSignedTransaction(signature || null);
       } catch (error) {
         setToast({
           open: true,
