@@ -393,7 +393,6 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
         const previousVersion = currentConnector.getSelectedPredicateVersion();
 
         if (previousVersion === selectedVersion) {
-          console.log('Same predicate version selected, no changes needed');
           cancel();
           return;
         }
@@ -401,18 +400,13 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
         currentConnector
           .switchPredicateVersion(selectedVersion)
           .then(() => {
-            console.log(
-              'Successfully switched predicate version with live account update',
-            );
             cancel();
           })
           .catch((error: Error) => {
             console.error('Failed to switch predicate version:', error);
             // Fallback to disconnecting if live switch fails
             setTimeout(() => {
-              currentConnector.disconnect().then(() => {
-                console.log('Disconnected to apply new predicate version');
-              });
+              currentConnector.disconnect();
             }, 500);
             cancel();
           });
