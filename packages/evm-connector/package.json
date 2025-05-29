@@ -20,7 +20,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": "pr-3895"
+    "fuels": "0.101.1"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
