@@ -359,6 +359,21 @@ export abstract class PredicateConnector extends FuelConnector {
     this.predicateAddress = predicate.getRoot();
     this.predicateAccount = predicate;
 
+    this.selectedPredicateVersion = predicate.getRoot();
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(
+          SELECTED_PREDICATE_KEY,
+          predicate.getRoot(),
+        );
+      }
+    } catch (error) {
+      console.error(
+        'Failed to save auto-selected predicate version to localStorage:',
+        error,
+      );
+    }
+
     return this.predicateAccount;
   }
 
