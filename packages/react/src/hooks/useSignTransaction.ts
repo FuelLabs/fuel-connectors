@@ -52,11 +52,7 @@ export const useSignTransaction = () => {
   const { currentConnector } = useCurrentConnector();
 
   const { mutate, mutateAsync, ...queryProps } = useMutation({
-    mutationFn: async ({
-      address,
-      transaction,
-      params: _params,
-    }: MutationParams) => {
+    mutationFn: async ({ address, transaction, params }: MutationParams) => {
       if (!currentConnector) {
         throw new Error('No connector found, please connect first');
       }
@@ -73,12 +69,7 @@ export const useSignTransaction = () => {
 
       const source = new Address(address).toString();
 
-      return connector.signTransaction(
-        source,
-        transaction,
-        // @TODO: needs to add it after ts-sdk implements it correctly
-        // params,
-      );
+      return connector.signTransaction(source, transaction, params);
     },
   });
 

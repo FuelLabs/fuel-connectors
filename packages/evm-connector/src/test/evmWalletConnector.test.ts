@@ -502,6 +502,7 @@ describe('EVM Wallet Connector', () => {
       const createdPredicate = predicateFactory.build(
         ethAccount1,
         fuelProvider,
+        [0],
       );
 
       const fundingWallet = new WalletUnlocked('0x01', fuelProvider);
