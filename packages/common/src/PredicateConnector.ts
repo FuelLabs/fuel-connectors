@@ -28,6 +28,7 @@ import type {
   MaybeAsync,
   PredicateConfig,
   PredicateVersion,
+  PredicateVersionWithMetadata,
   PreparedTransaction,
   ProviderDictionary,
   SignedMessageCustomCurve,
@@ -160,28 +161,8 @@ export abstract class PredicateConnector extends FuelConnector {
    * @returns Promise that resolves to the array of predicate versions with complete metadata
    */
   public async getAllPredicateVersionsWithMetadata(): Promise<
-    Array<{
-      id: string;
-      generatedAt: number;
-      isActive: boolean;
-      isSelected: boolean;
-      isNewest: boolean;
-      balance?: string;
-      assetId?: string;
-      accountAddress?: string;
-    }>
+    PredicateVersionWithMetadata[]
   > {
-    interface PredicateVersionWithMetadata {
-      id: string;
-      generatedAt: number;
-      isActive: boolean;
-      isSelected: boolean;
-      isNewest: boolean;
-      balance?: string;
-      assetId?: string;
-      accountAddress?: string;
-    }
-
     const walletAccount = await this.getAccountAddress();
 
     const result: PredicateVersionWithMetadata[] = this.predicateVersions.map(
