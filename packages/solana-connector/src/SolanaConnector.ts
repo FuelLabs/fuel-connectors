@@ -77,7 +77,6 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   private async _emitDisconnect() {
-    console.log('!!! _emitDisconnect CALLED !!! - Resetting state.');
     this.isPollingSignatureRequestActive = false;
     this.svmAddress = null;
     await this.setupPredicate();
@@ -87,9 +86,6 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   private _emitSignatureError(_error: unknown) {
-    console.log(
-      '!!! _emitSignatureError CALLED !!! - Will call _emitDisconnect.',
-    );
     this.isPollingSignatureRequestActive = false;
     this.emit(SolanaConnectorEvents.ERROR, new Error('Failed to sign message'));
     this.web3Modal.disconnect();
@@ -306,10 +302,6 @@ export class SolanaConnector extends PredicateConnector {
 
     return new Promise((resolve) => {
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
-        console.log(
-          '[Connect Promise] Modal event received:',
-          event.data.event,
-        );
         switch (event.data.event) {
           case 'CONNECT_SUCCESS': {
             const provider =
@@ -365,7 +357,8 @@ export class SolanaConnector extends PredicateConnector {
     );
     this.web3Modal.disconnect();
     this._emitDisconnect();
-    return !(await this.isConnected());
+    await super.disconnect();
+    return await this.isConnected();
   }
 
   private encodeTxId(txId: string): Uint8Array {

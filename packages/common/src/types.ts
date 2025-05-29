@@ -55,14 +55,13 @@ export type SignedMessageCustomCurve = {
   signature: string;
 };
 
-// export interface PaymasterParams {
-//   paymasterAddress: string;
-//   maxFeePerGas?: BN;
-//   deadline?: number;
-// }
-
-// export interface SendTransactionParams {
-//   skipCustomFee?: boolean;
-//   onBeforeSend?: (txRequest: TransactionRequest) => Promise<TransactionRequest>;
-//   paymaster?: PaymasterParams;
-// }
+export interface PredicateVersionWithMetadata {
+  id: string;
+  generatedAt: number;
+  isActive: boolean;
+  isSelected: boolean;
+  isNewest: boolean;
+  balance?: string;
+  assetId?: string;
+  accountAddress?: string;
+}
