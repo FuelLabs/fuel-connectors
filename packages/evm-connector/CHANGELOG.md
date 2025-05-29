@@ -1,5 +1,7 @@
 # @fuel-connectors/evm-connector
 
+## 0.42.0
+
 ## 0.41.2
 
 ## 0.41.1

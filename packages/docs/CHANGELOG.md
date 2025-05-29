@@ -1,5 +1,11 @@
 # docs
 
+## 0.31.0
+
+### Minor Changes
+
+- [#523](https://github.com/FuelLabs/fuel-connectors/pull/523) [`5d5a9c2`](https://github.com/FuelLabs/fuel-connectors/commit/5d5a9c21429c14b1aa8dc7877aac4dde33dfc6ad) Thanks [@nelitow](https://github.com/nelitow)! - feat: Enable the use of signTransaction.
+
 ## 0.30.2
 
 ### Patch Changes
