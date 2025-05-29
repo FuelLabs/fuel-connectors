@@ -459,12 +459,6 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
         <DialogMain>
           {versions.length > 0 ? (
             <Container>
-              <Description>
-                Select a Fuel Account to use. We recommend using the latest
-                version when possible as they can bring new features and bug
-                fixes.
-              </Description>
-
               <VersionList>
                 {(versionsWithMetadata.length > 0
                   ? versionsWithMetadata
@@ -513,18 +507,6 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
                   );
                 })}
               </VersionList>
-              <Description>
-                <br />A Fuel account upgrade tool will be available soon.
-                <br />
-                <a
-                  href="https://docs.fuel.network/guides/fuel-connectors/non-technical-guide/"
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ color: 'var(--fuel-blue-11)' }}
-                >
-                  Learn more about Fuel Predicate connectors.
-                </a>
-              </Description>
               <ConnectorButtonPrimary onClick={handleConfirm}>
                 Confirm Selection
               </ConnectorButtonPrimary>
