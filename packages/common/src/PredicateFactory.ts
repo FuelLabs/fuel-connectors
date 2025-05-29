@@ -53,7 +53,7 @@ export class PredicateFactory {
       address: string | B256Address,
       provider: Provider,
       data?: T,
-    ): Predicate<T> =>
+    ): Predicate<InputValue[], { [name: string]: unknown }> =>
       new Predicate({
         bytecode: arrayify(this.bytecode),
         abi: this.abi,
@@ -62,7 +62,7 @@ export class PredicateFactory {
           SIGNER: this.adapter.convertAddress(address),
         },
         data,
-      }),
+      }) as Predicate<InputValue[], { [name: string]: unknown }>,
   );
 
   getAccountAddress = (

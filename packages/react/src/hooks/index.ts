@@ -16,6 +16,7 @@ export * from './useNodeInfo';
 export * from './useProvider';
 export * from './useSelectNetwork';
 export * from './useSendTransaction';
+export * from './useSignTransaction';
 export * from './useTransaction';
 export * from './useTransactionReceipts';
 export * from './useTransactionResult';

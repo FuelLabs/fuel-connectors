@@ -43,7 +43,7 @@ export type ProviderDictionary = {
 };
 
 export type PreparedTransaction = {
-  predicate: FuelPredicate<InputValue[]>;
+  predicate: FuelPredicate<InputValue[], { [name: string]: unknown }>;
   request: TransactionRequest;
   transactionId: string;
   account: string;

@@ -31,5 +31,9 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    ({ addVariant }) => {
+      addVariant('dropdown-open', '&.dropdown-open');
+    },
+  ],
 };
