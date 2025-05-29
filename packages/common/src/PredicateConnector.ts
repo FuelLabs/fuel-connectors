@@ -318,8 +318,7 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   protected async getCurrentUserPredicate(): Promise<Maybe<PredicateFactory>> {
-    const oldFirstPredicateVersions = [...this.predicateVersions].reverse();
-    for (const predicateInstance of oldFirstPredicateVersions) {
+    for (const predicateInstance of this.predicateVersions) {
       const address = await this.getAccountAddress();
       if (!address) {
         continue;
