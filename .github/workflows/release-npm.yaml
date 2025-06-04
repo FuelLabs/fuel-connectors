@@ -15,7 +15,7 @@ env:
 jobs:
   check-commit:
     name: Check Commit Type
-    runs-on: buildjet-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
@@ -80,6 +80,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Update Changeset PR with Rich Changelog
+        run: pnpm changeset:update-changelog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISHED: "false"
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          REF_NAME: ${{ github.ref_name }}
+
   publish-npm:
     name: Publish to NPM
     needs: check-commit
@@ -101,9 +109,8 @@ jobs:
 
       - name: Bump and Collect Version
         run: |
-          pnpm changeset version
+          pnpm changeset:version-with-docs
           echo "BUILD_VERSION=$(pnpm -s packages:version)" >> $GITHUB_ENV
-          git reset --hard
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -120,3 +127,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN_CONNECTORS }}
+
+      - name: Get Latest Release
+        id: latest-release
+        run: |
+          LATEST_RELEASE=$(pnpm changeset:get-latest-release)
+          echo "latest_release=$LATEST_RELEASE" >> $GITHUB_OUTPUT
+
+      - name: Update GitHub Release Description
+        run: pnpm changeset:update-changelog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISHED: "true"
+          RELEASE_TAG: v${{ env.BUILD_VERSION }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          REF_NAME: ${{ github.ref_name }}
+          LATEST_RELEASE: ${{ steps.latest-release.outputs.latest_release }}
+          RELEASE_VERSION_HIGHER_THAN_LATEST: ${{ contains(env.BUILD_VERSION, steps.latest-release.outputs.latest_release) == false }}
