@@ -14,7 +14,7 @@ concurrency:
 jobs:
   pr-release:
     name: Release PR to AWS Package Registry
-    runs-on: buildjet-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     permissions: write-all
     steps:
       - uses: actions/checkout@v3

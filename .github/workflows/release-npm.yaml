@@ -53,7 +53,7 @@ jobs:
     name: Create Changeset PR
     needs: check-commit
     if: needs.check-commit.outputs.is_changeset_pr == 'false'
-    runs-on: buildjet-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
@@ -92,7 +92,7 @@ jobs:
     name: Publish to NPM
     needs: check-commit
     if: needs.check-commit.outputs.is_changeset_pr == 'true'
-    runs-on: buildjet-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     environment: npm-deploy
     steps:
       - uses: actions/checkout@v3
