@@ -31,9 +31,19 @@ export default function App() {
   return (
     <main
       data-theme="dark"
-      className="flex items-center justify-center lg:h-screen dark:text-zinc-50/90"
+      className="flex items-center justify-center lg:h-screen dark:text-zinc-50/90 relative overflow-hidden"
     >
-      <div id="container" className="mx-8 mb-32 w-full max-w-5xl lg:mb-0">
+      {/* Floating animation background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-green-500/10 rounded-full animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-24 h-24 bg-blue-500/10 rounded-full animate-bounce" />
+        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-purple-500/10 rounded-full animate-ping" />
+      </div>
+
+      <div
+        id="container"
+        className="mx-8 mb-32 w-full max-w-5xl lg:mb-0 relative z-10"
+      >
         <nav
           id="nav"
           className="flex items-center justify-center py-6 lg:pb-10 lg:pt-0"
@@ -62,27 +72,36 @@ export default function App() {
                     />
                   )}
                 </div>
-                <h1 className="pb-1 pt-6 text-3xl font-medium">
-                  {currentConnector?.name ?? 'Wallet Demo'}
+                <h1 className="pb-1 pt-6 text-3xl font-medium bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+                  {currentConnector?.name ?? 'Fuel Wallet Integration Demo'}
                 </h1>
-                <p>
-                  Fuel enables developers to build integrations with any wallet.
+                <p className="text-lg">
+                  Experience seamless blockchain interactions with Fuel's
+                  next-generation wallet connectors. Build faster, deploy
+                  smarter, connect everywhere.
                 </p>
 
-                <ul className="list-inside list-disc pt-8">
-                  <li>Reduce friction for users</li>
-                  <li>Build using any signature scheme</li>
-                  <li>
-                    Use predicates, a new type of stateless smart contract
+                <ul className="list-inside list-disc pt-8 space-y-2">
+                  <li className="text-green-400">
+                    🚀 Reduce friction for users
+                  </li>
+                  <li className="text-blue-400">
+                    🔧 Build using any signature scheme
+                  </li>
+                  <li className="text-purple-400">
+                    ⚡ Use predicates, a new type of stateless smart contract
+                  </li>
+                  <li className="text-yellow-400">
+                    🌐 Cross-platform compatibility
                   </li>
                 </ul>
                 <a
                   href="https://github.com/FuelLabs/fuel-connectors"
                   target="_blank"
-                  className="inline-block pt-4 text-green-500/80 transition-colors hover:text-green-500"
+                  className="inline-block pt-4 text-green-500/80 transition-all duration-300 hover:text-green-400 hover:scale-105"
                   rel="noreferrer"
                 >
-                  Build your own wallet integration
+                  Build your own wallet integration →
                 </a>
               </div>
 
