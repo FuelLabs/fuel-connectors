@@ -71,11 +71,23 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
+      - name: Bump and Collect Versions
+        run: |
+          pnpm changeset version
+          echo "RELEASE_VERSION=$(pnpm -s packages:version)" >> $GITHUB_ENV
+          git reset --hard
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set changeset PR title
+        run: |
+          echo "CHANGESET_PR_TITLE=$(echo "ci(release): \`v${{ env.RELEASE_VERSION }}\` @ \`${{ github.ref_name }}\`")" >> $GITHUB_ENV
+
       - name: Create Changeset PR
         uses: changesets/action@v1
         with:
           commit: "ci(changesets): versioning packages"
-          title: "ci(changesets): versioning packages"
+          title: ${{ env.CHANGESET_PR_TITLE }}
           createGithubReleases: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
