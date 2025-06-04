@@ -1,5 +1,11 @@
 # @fuel-connectors/evm-connector
 
+## 0.43.0
+
+### Minor Changes
+
+- [`03edbac`](https://github.com/FuelLabs/fuel-connectors/commit/03edbac9a621afb1fb4a375fa48cef3329ae8897) Thanks [@nelitow](https://github.com/nelitow)! - feat: Changed important thing in the EVM.
+
 ## 0.42.0
 
 ## 0.41.2

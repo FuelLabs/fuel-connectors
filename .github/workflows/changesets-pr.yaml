@@ -1,0 +1,65 @@
+name: "Changesets PR"
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  create_changeset_pr: 
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    if: |
+      startsWith(github.event.head_commit.message, 'ci(release):') != true &&
+      github.event.before != '0000000000000000000000000000000000000000'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node and PNPM
+        uses: FuelLabs/github-actions/setups/node@master
+        with:
+          node-version: 20.14.0
+          pnpm-version: 9.5.0
+
+      - name: Setup git user
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      # Determine version for PR title
+      - name: Bump and Collect Versions
+        run: |
+          pnpm changeset version
+          echo "RELEASE_VERSION=$(pnpm -s packages:version)" >> $GITHUB_ENV
+          git reset --hard
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set changeset PR title
+        run: |
+          echo "CHANGESET_PR_TITLE=$(echo "ci(release): \`v${{ env.RELEASE_VERSION }}\` @ \`${{ github.ref_name }}\`")" >> $GITHUB_ENV
+
+      - name: Create Changeset PR
+        id: create_pr_action
+        uses: changesets/action@v1
+        with:
+          commit: "ci(release): versioning packages and changesets"
+          title: ${{ env.CHANGESET_PR_TITLE }}
+          createGithubReleases: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prettify changelog
+        run: pnpm changeset:update-changelog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REF_NAME: ${{ github.ref_name }}
+          PUBLISHED: "false" 

@@ -4,8 +4,8 @@ import type { Provider } from 'fuels';
 
 export type EVMWalletConnectorConfig = {
   fuelProvider?: Provider | Promise<Provider>;
-  ethProvider?: EIP1193Provider;
   predicateConfig?: PredicateConfig;
+  ethProvider?: EIP1193Provider;
   chainId?: number;
 };
 

@@ -20,7 +20,7 @@ export default function ConnectedAccount({ isSigning }: Props) {
 
   if (!account && isConnected) {
     return (
-      <Feature title="Your Fuel Address">
+      <Feature title="Your Address">
         Account not connected
         <Button
           onClick={() => connect(currentConnector.name)}
@@ -36,7 +36,7 @@ export default function ConnectedAccount({ isSigning }: Props) {
 
   return (
     <div>
-      <Feature title="Your Fuel Address">
+      <Feature title="Your Address">
         <div
           className="flex items-center space-between"
           style={{ gap: '10px' }}

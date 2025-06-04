@@ -1,5 +1,11 @@
 # @fuel-connectors/fuelet-wallet
 
+## 0.43.0
+
+### Minor Changes
+
+- [`b628f7a`](https://github.com/FuelLabs/fuel-connectors/commit/b628f7a6f537dfa6c5d72970675f15b35b9fb6ad) Thanks [@nelitow](https://github.com/nelitow)! - feat: Ding dong pirulito
+
 ## 0.42.0
 
 ## 0.41.2

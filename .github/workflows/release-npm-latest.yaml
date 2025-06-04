@@ -13,7 +13,7 @@ env:
 jobs:
   release-npm-latest:
     name: Tag packages as latest
-    runs-on: buildjet-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     environment: npm-deploy
     steps:
       - uses: actions/checkout@v3
