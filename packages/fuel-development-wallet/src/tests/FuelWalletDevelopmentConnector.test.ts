@@ -14,7 +14,7 @@ describe('FuelWalletDevelopmentConnector', () => {
   test('constructor initializes properties correctly', async () => {
     const connector = new FuelWalletDevelopmentConnector();
     expect(connector.name).toBe('Fuel Wallet Development');
-    expect(connector.connected).toBe(false);
     expect(connector.installed).toBe(false);
+    expect(connector.connected).toBe(false);
   });
 });
