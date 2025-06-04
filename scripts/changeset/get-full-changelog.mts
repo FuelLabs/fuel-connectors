@@ -42,12 +42,15 @@ async function getChangelogInfo(
     commit: changesetCommit,
   });
 
+  if (!prNo) {
+    return undefined;
+  }
+
   const {
     data: { title, body },
   } = await octokit.rest.pulls.get({
     ...github.context.repo,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    pull_number: prNo!,
+    pull_number: prNo,
   });
 
   /**

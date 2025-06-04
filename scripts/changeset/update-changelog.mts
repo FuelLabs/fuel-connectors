@@ -13,7 +13,6 @@ const {
   REF_NAME,
   LATEST_RELEASE,
   RELEASE_VERSION_HIGHER_THAN_LATEST,
-  INCLUDE_NON_PUBLISHED,
 } = process.env;
 
 function sleep(time: number) {
@@ -64,10 +63,13 @@ async function getChangesetPr(retried = false) {
 async function reapplyLatestTagToActualLatestRelease() {
   const octokit = github.getOctokit(GITHUB_TOKEN as string);
 
+  if (!LATEST_RELEASE) {
+    return;
+  }
+
   const previousLatest = await octokit.rest.repos.getReleaseByTag({
     ...github.context.repo,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    tag: LATEST_RELEASE!,
+    tag: LATEST_RELEASE,
   });
 
   await octokit.rest.repos.updateRelease({
@@ -100,7 +102,7 @@ async function updatePublishedRelease() {
     pull_number: pull as number,
   });
 
-  let releaseBody = pr.data.body as string;
+  const releaseBody = pr.data.body as string;
 
   await octokit.rest.repos.updateRelease({
     ...github.context.repo,
