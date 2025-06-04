@@ -72,7 +72,7 @@ export default function App() {
                     />
                   )}
                 </div>
-                <h1 className="pb-1 pt-6 text-3xl font-medium bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+                <h1 className="pb-1 pt-8 text-3xl font-medium bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
                   {currentConnector?.name ?? 'Fuel Wallet Integration Demo'}
                 </h1>
                 <p className="text-lg">
