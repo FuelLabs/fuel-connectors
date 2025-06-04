@@ -1,5 +1,7 @@
 # @fuel-connectors/evm-predicates
 
+## 0.43.0
+
 ## 0.42.0
 
 ## 0.41.2
