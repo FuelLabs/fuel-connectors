@@ -15,15 +15,8 @@ export enum BakoSafeConnectorEvents {
   TX_CONFIRMED = '[TX_EVENT_CONFIRMED]',
   TX_TIMEOUT = '[TX_EVENT_TIMEOUT]',
 
-  //switchNetwork
-  CHANGE_NETWORK = '[CHANGE_NETWORK]',
-  NETWORK_CHANGED = '[NETWORK_CHANGED]',
-
   //auth
   AUTH_CONFIRMED = '[AUTH_CONFIRMED]',
-
-  CONNECTION_STATE = '[CONNECTION_STATE]',
-  DISCONNECT = '[DISCONNECT]',
 }
 
 export enum BakoSafeUsernames {
@@ -57,7 +50,6 @@ export interface ISocketMessage<T> {
 export interface ICreateClientSocket {
   sessionId: string;
   events: BakoSafeConnector;
-  onConnectStateChange: (state: boolean) => void;
 }
 
 export interface IRequestTxPending {
