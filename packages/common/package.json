@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/common",
-  "version": "0.44.0",
+  "version": "0.43.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
