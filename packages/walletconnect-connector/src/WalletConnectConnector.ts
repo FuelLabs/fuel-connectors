@@ -401,6 +401,8 @@ export class WalletConnectConnector extends PredicateConnector {
       connector,
     });
 
+    await super.disconnect();
+
     return isConnected || false;
   }
 
@@ -457,6 +459,13 @@ export class WalletConnectConnector extends PredicateConnector {
     }
 
     const encoder = txIdEncoders[this.predicateAddress];
+
+    if (!encoder) {
+      throw new Error(
+        `TxIdEncoder not found for this predicate address: ${this.predicateAddress}`,
+      );
+    }
+
     return encoder.encodeTxId(txId);
   }
 

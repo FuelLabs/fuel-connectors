@@ -45,7 +45,7 @@ jobs:
       - name: CI Setup
         uses: FuelLabs/github-actions/setups/node@58bcd91d7246e40938e1971be0b0fe35b253dff0
         with:
-          node-version: 20.11.0
+          node-version: 20.14.0
           pnpm-version: 9.5.0
 
       - name: Validate Changeset
@@ -58,14 +58,14 @@ jobs:
       - uses: actions/checkout@v3
       - uses: FuelLabs/github-actions/setups/node@master
         with:
-          node-version: 20.11.0
+          node-version: 20.14.0
           pnpm-version: 9.5.0
       - name: Install jq
         run: sudo apt-get install jq
       - run: |
           pnpm audit --prod --json | jq '
-            .advisories | to_entries | 
-            map(select(.value.patched_versions != "<0.0.0" and .value.severity == "critical") | {package: .value.module_name, vulnerable: .value.vulnerable_versions, fixed_in: .value.patched_versions}) 
+            .advisories | to_entries |
+            map(select(.value.patched_versions != "<0.0.0" and .value.severity == "critical") | {package: .value.module_name, vulnerable: .value.vulnerable_versions, fixed_in: .value.patched_versions})
           ' > audit_fix_packages.json
           if [ "$(jq 'length' audit_fix_packages.json)" -gt "0" ]; then
             echo "Actionable vulnerabilities found in the following packages:"
@@ -76,7 +76,7 @@ jobs:
             echo "No actionable vulnerabilities"
             exit 0
           fi
-  
+
   strict-audit:
     name: Strict Audit
     runs-on: ubuntu-latest
@@ -84,7 +84,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: FuelLabs/github-actions/setups/node@master
         with:
-          node-version: 20.11.0
+          node-version: 20.14.0
           pnpm-version: 9.5.0
       - run: pnpm audit --prod
 
@@ -102,7 +102,7 @@ jobs:
       - name: Setup Node
         uses: FuelLabs/github-actions/setups/node@master
         with:
-          node-version: 20.11.0
+          node-version: 20.14.0
           pnpm-version: 9.5.0
 
       - name: Run lint & ts:check

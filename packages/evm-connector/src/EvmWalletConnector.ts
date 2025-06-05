@@ -225,9 +225,11 @@ export class EVMWalletConnector extends PredicateConnector {
       this.emit(this.events.connection, false);
       this.emit(this.events.accounts, []);
       this.emit(this.events.currentAccount, null);
+      this.connected = false;
     }
 
-    return false;
+    await super.disconnect();
+    return await this.isConnected();
   }
 
   public async sendTransaction(
@@ -291,6 +293,13 @@ export class EVMWalletConnector extends PredicateConnector {
     }
 
     const encoder = txIdEncoders[this.predicateAddress];
+
+    if (!encoder) {
+      throw new Error(
+        `TxIdEncoder not found for this predicate address: ${this.predicateAddress}`,
+      );
+    }
+
     return encoder.encodeTxId(txId);
   }
 }
