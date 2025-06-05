@@ -1,5 +1,13 @@
 # @fuels/connectors
 
+## 0.43.0
+
+### Minor Changes
+
+- [#530](https://github.com/FuelLabs/fuel-connectors/pull/530) [`660c16b`](https://github.com/FuelLabs/fuel-connectors/commit/660c16b5920bf97bbca20489035a7390325b78d7) Thanks [@nelitow](https://github.com/nelitow)! - test: This is a Fuel Release test.
+
+- [#531](https://github.com/FuelLabs/fuel-connectors/pull/531) [`6a1e262`](https://github.com/FuelLabs/fuel-connectors/commit/6a1e2622da10a9e5a9e26c1f089b37b8ba8425b0) Thanks [@nelitow](https://github.com/nelitow)! - feat: Sample change to common and connectors
+
 ## 0.42.0
 
 ## 0.41.2
