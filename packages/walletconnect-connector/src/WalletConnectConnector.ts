@@ -412,7 +412,7 @@ export class WalletConnectConnector extends PredicateConnector {
     params?: FuelConnectorSendTxParams,
   ): Promise<string> {
     const { ethProvider, fuelProvider } = await this.getProviders();
-    const { request, transactionId, account, transactionRequest } =
+    const { predicate, request, transactionId, account, transactionRequest } =
       await this.prepareTransaction(address, transaction);
 
     const txId = this.encodeTxId(transactionId);
@@ -440,11 +440,9 @@ export class WalletConnectConnector extends PredicateConnector {
       );
     }
 
-    const response = await fuelProvider.operations.submit({
-      encodedTransaction: hexlify(txAfterUserCallback.toTransactionBytes()),
-    });
+    const response = await predicate.sendTransaction(txAfterUserCallback);
 
-    return response.submit.id;
+    return response.id;
   }
 
   private isValidPredicateAddress(
