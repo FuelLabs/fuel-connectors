@@ -32,8 +32,8 @@ export class BurnerWalletConnector extends FuelConnector {
   name = 'Burner Wallet';
 
   connected = false;
-  external = false;
   installed = true;
+  external = false;
 
   events = FuelConnectorEventTypes;
 
