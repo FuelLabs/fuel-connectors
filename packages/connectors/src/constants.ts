@@ -1,2 +1,1 @@
 export const DEFAULT_WC_PROJECT_ID = '00000000000000000000000000000000';
-export const FUEL_RELEASE_TEST = 'release-flow-test';
