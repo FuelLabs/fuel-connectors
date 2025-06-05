@@ -3,7 +3,7 @@ import * as github from '@actions/github';
 import { getInfo } from '@changesets/get-github-info';
 import { execSync } from 'node:child_process';
 
-import { getFullChangelog } from './get-full-changelog.js';
+import { getFullChangelog } from './get-full-changelog.mjs';
 
 const {
   PUBLISHED,
