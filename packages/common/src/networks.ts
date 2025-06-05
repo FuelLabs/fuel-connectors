@@ -30,3 +30,5 @@ export const getProviderUrl = (chainId: number): string => {
 
   return network.url;
 };
+
+export const FUEL_COMMON_RELEASE_TEST = 'release-flow-test-common';
