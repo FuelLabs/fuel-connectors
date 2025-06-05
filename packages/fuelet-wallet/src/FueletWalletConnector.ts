@@ -11,7 +11,6 @@ function decodeBech32NoChecksum(address: string): Uint8Array {
   }
 
   const data = address.slice(sepPosition + 1, address.length - 6);
-  // Convert the characters of the data part to 5-bit words using the bech32 alphabet.
   const ALPHABET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
   const words = [];
   for (const char of data) {
@@ -28,8 +27,8 @@ export class FueletWalletConnector extends FuelWalletConnector {
   name = 'Fuelet Wallet';
   metadata: ConnectorMetadata = {
     image: {
-      light: APP_IMAGE_LIGHT,
       dark: APP_IMAGE_DARK,
+      light: APP_IMAGE_LIGHT,
     },
     install: {
       action: 'Install',
