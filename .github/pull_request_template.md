@@ -1,7 +1,7 @@
 <!--
 List the issues this PR closes (if any) in a bullet list format, e.g.:
-- Closes #ABCD
-- Closes #EFGH
+- Closes #X
+- Closes FE-Z
 -->
 
 # Release notes
