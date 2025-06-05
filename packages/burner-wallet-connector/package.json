@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/burner-wallet-connector",
-  "version": "0.43.0",
+  "version": "0.44.0",
   "private": true,
   "type": "module",
   "types": "./dist/index.d.ts",
