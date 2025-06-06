@@ -237,7 +237,7 @@ export class EVMWalletConnector extends PredicateConnector {
     transaction: TransactionRequestLike,
   ): Promise<string> {
     const { ethProvider, fuelProvider } = await this.getProviders();
-    const { request, transactionId, account, transactionRequest } =
+    const { predicate, request, transactionId, account, transactionRequest } =
       await this.prepareTransaction(address, transaction);
 
     const txId = this.encodeTxId(transactionId);
@@ -257,13 +257,11 @@ export class EVMWalletConnector extends PredicateConnector {
     const transactionWithPredicateEstimated =
       await fuelProvider.estimatePredicates(request);
 
-    const response = await fuelProvider.operations.submit({
-      encodedTransaction: hexlify(
-        transactionWithPredicateEstimated.toTransactionBytes(),
-      ),
-    });
+    const response = await predicate.sendTransaction(
+      transactionWithPredicateEstimated,
+    );
 
-    return response.submit.id;
+    return response.id;
   }
 
   async signMessageCustomCurve(message: string) {
