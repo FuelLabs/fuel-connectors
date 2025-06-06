@@ -23,6 +23,9 @@ const encodeTxIdLegacy = (txId: string): string => {
 };
 
 export const txIdEncoders: Record<EvmPredicateRoot, TxIdEncoder> = {
+  '0xcf9eacbcaf1edce679fb7321f9b5708acc52aef7fee117d8db15cfd9babb92eb': {
+    encodeTxId: encodeTxIdUtf8,
+  },
   '0x3499b76bcb35d8bc68fb2fa74fbe1760461f64f0ac19890c0bacb69377ac19d2': {
     encodeTxId: encodeTxIdUtf8,
   },
