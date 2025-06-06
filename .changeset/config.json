@@ -4,10 +4,6 @@
     "version": true,
     "tag": false
   },
-  "changelog": [
-    "@changesets/changelog-github",
-    { "repo": "FuelLabs/fuel-connectors" }
-  ],
   "commit": false,
   "fixed": [["@fuels/connectors", "@fuel-connectors/*", "@fuels/react"]],
   "linked": [],
