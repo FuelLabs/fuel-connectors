@@ -73,7 +73,7 @@ jobs:
 
       - name: Get latest release
         run: |
-          LATEST_RELEASE=$(pnpm changeset:get-latest-release)
+          LATEST_RELEASE=$(pnpm --silent changeset:get-latest-release)
           echo "LATEST_RELEASE=$LATEST_RELEASE" >> $GITHUB_ENV
 
           pnpm add --global semver
