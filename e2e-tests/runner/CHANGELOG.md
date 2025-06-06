@@ -1,5 +1,11 @@
 # @fuel-connectors/e2e-tests
 
+## 0.43.1
+
+### Patch Changes
+
+- [#534](https://github.com/FuelLabs/fuel-connectors/pull/534) [`6cee71a`](https://github.com/FuelLabs/fuel-connectors/commit/6cee71a1ad9bc634134ee30770f0765392cc989c) Thanks [@nelitow](https://github.com/nelitow)! - test: Patch
+
 ## 0.40.1
 
 ### Patch Changes
