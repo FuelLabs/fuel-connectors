@@ -443,6 +443,8 @@ export class WalletConnectConnector extends PredicateConnector {
 
     const response = await predicate.sendTransaction(txAfterUserCallback);
 
+    await response.waitForPreConfirmation();
+
     return response;
   }
 

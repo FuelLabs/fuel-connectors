@@ -262,6 +262,8 @@ export class EVMWalletConnector extends PredicateConnector {
       transactionWithPredicateEstimated,
     );
 
+    await response.waitForPreConfirmation();
+
     return response;
   }
 
