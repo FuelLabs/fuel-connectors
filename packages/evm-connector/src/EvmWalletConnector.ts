@@ -9,6 +9,7 @@ import {
   FuelConnectorEventTypes,
   Provider,
   type TransactionRequestLike,
+  type TransactionResponse,
 } from 'fuels';
 
 import {
@@ -235,7 +236,7 @@ export class EVMWalletConnector extends PredicateConnector {
   public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
-  ): Promise<string> {
+  ): Promise<TransactionResponse> {
     const { ethProvider, fuelProvider } = await this.getProviders();
     const { predicate, request, transactionId, account, transactionRequest } =
       await this.prepareTransaction(address, transaction);
@@ -261,7 +262,7 @@ export class EVMWalletConnector extends PredicateConnector {
       transactionWithPredicateEstimated,
     );
 
-    return response.id;
+    return response;
   }
 
   async signMessageCustomCurve(message: string) {

@@ -24,6 +24,7 @@ import {
   LocalStorage,
   type StorageAbstract,
   type TransactionRequestLike,
+  type TransactionResponse,
 } from 'fuels';
 
 import {
@@ -410,7 +411,7 @@ export class WalletConnectConnector extends PredicateConnector {
     address: string,
     transaction: TransactionRequestLike,
     params?: FuelConnectorSendTxParams,
-  ): Promise<string> {
+  ): Promise<TransactionResponse> {
     const { ethProvider, fuelProvider } = await this.getProviders();
     const { predicate, request, transactionId, account, transactionRequest } =
       await this.prepareTransaction(address, transaction);
@@ -442,7 +443,7 @@ export class WalletConnectConnector extends PredicateConnector {
 
     const response = await predicate.sendTransaction(txAfterUserCallback);
 
-    return response.id;
+    return response;
   }
 
   private isValidPredicateAddress(
