@@ -45,7 +45,7 @@ jobs:
 
       - name: Set changeset PR title
         run: |
-          echo "CHANGESET_PR_TITLE=$(echo "ci(release): \`v${{ env.RELEASE_VERSION }}\` @ \`${{ github.ref_name }}\`")" >> $GITHUB_ENV
+          echo "CHANGESET_PR_TITLE=$(echo "ci(release): \`${{ env.RELEASE_VERSION }}\` @ \`${{ github.ref_name }}\`")" >> $GITHUB_ENV
 
       - name: Create Changeset PR
         id: create_pr_action
