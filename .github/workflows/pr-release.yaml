@@ -62,6 +62,7 @@ jobs:
           HOME: ${{ github.workspace }}
           npm_config_registry: "https://fuel-024848458133.d.codeartifact.us-east-1.amazonaws.com/npm/npm/"
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Comment release package name to PR
         uses: mshick/add-pr-comment@v2
