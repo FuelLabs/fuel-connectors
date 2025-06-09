@@ -1,5 +1,11 @@
 # @fuels/connectors
 
+## 0.43.2
+
+### Patch Changes
+
+- [#529](https://github.com/FuelLabs/fuel-connectors/pull/529) [`76886fb`](https://github.com/FuelLabs/fuel-connectors/commit/76886fbb7eeb731fc4e58f124d15d0c74699ca99) Thanks [@petertonysmith94](https://github.com/petertonysmith94)! - chore: updated `WalletConnectConnector` to use predicate for tx submission
+
 ## 0.43.1
 
 ### Patch Changes
