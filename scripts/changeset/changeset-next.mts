@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const CHANGESET_CONFIG_PATH = '.changeset/config.json';
+const IGNORE_PATTERNS = ['dist', 'node_modules', 'examples'];
 
 interface PackageInfo {
   path: string;
@@ -18,7 +19,7 @@ interface PackageInfo {
  */
 function findPackageJsonFiles(
   dir: string,
-  ignorePatterns: string[] = ['dist', 'node_modules']
+  ignorePatterns: string[] = IGNORE_PATTERNS
 ): string[] {
   const files: string[] = [];
 
