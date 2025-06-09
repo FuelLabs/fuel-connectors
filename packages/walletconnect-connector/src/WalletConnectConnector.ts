@@ -105,7 +105,7 @@ export class WalletConnectConnector extends PredicateConnector {
     );
   }
 
-  // createModal re-instanciates the modal to update singletons from web3modal
+  // createModal re-instantiates the modal to update singletons from web3modal
   private createModal() {
     this.clearSubscriptions();
     this.web3Modal = this.modalFactory(this.config);

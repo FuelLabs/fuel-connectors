@@ -179,7 +179,7 @@ export class SolanaConnector extends PredicateConnector {
     this.subscribe(() => clearInterval(interval));
   }
 
-  // createModal re-instanciates the modal to update singletons from web3modal
+  // createModal re-instantiates the modal to update singletons from web3modal
   private createModal() {
     this.clearSubscriptions();
     const web3Modal = this.modalFactory(this.config);
