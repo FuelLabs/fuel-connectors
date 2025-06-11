@@ -4,6 +4,7 @@ import type { NetworkConfig } from './types';
 export const CONNECTOR_KEY = 'fuel-current-connector';
 
 export const NATIVE_CONNECTORS = [
+  'Arcana Wallet',
   'Bako Safe',
   'Burner Wallet',
   'Fuel Wallet',
