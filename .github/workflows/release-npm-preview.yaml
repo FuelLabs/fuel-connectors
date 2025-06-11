@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0
       - uses: FuelLabs/github-actions/setups/node@master
         with:
-          node-version: 20.11.0
+          node-version: 20.14.0
           pnpm-version: 9.5.0
       - uses: FuelLabs/github-actions/setups/npm@master
         with:
@@ -35,7 +35,7 @@ jobs:
           ## increase node.js m memory limit for building
           ## with sourcemaps
           NODE_OPTIONS: "--max-old-space-size=4096"
-      
+
       - name: Release to @preview tag on npm
         id: release
         run: |

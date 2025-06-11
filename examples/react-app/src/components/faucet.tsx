@@ -4,7 +4,10 @@ export interface FaucetProps {
   disabled?: boolean;
 }
 export function Faucet({ address, isSigning, disabled }: FaucetProps) {
-  const url = `https://faucet-testnet.fuel.network/?address=${address}&autoClose&redirectUrl=${window.location.href}`;
+  const locationHref = window.location.href;
+  const isLocal = /localhost/.test(locationHref);
+  const faucetUrl = isLocal ? 'localhost:4040' : 'faucet-testnet.fuel.network';
+  const url = `http://${faucetUrl}/?address=${address}&autoClose&redirectUrl=${locationHref}`;
 
   return (
     <a
