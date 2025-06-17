@@ -136,14 +136,14 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
           </Button>
         </div>
 
-        {/* Test the exact case from the issue */}
+        {/* Test single byte array edge case */}
         <div className="flex items-center gap-2 justify-between">
           <div className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent">
-            <pre className="text-xs">Raw Uint8Array: [0]</pre>
+            <pre className="text-xs">Single Byte: [0]</pre>
           </div>
           <Button
             onClick={() => {
-              console.log('Testing raw Uint8Array');
+              console.log('Testing single byte array');
               handleSign({ personalSign: new Uint8Array([0]) });
             }}
             disabled={isLoading || isSigning}
@@ -151,28 +151,7 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
             loading={isLoading}
             loadingText="Signing..."
           >
-            Test Raw Bytes
-          </Button>
-        </div>
-
-        {/* Test with hexlify conversion */}
-        <div className="flex items-center gap-2 justify-between">
-          <div className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent">
-            <pre className="text-xs">
-              Hexlified: {hexlify(new Uint8Array([0]))}
-            </pre>
-          </div>
-          <Button
-            onClick={() => {
-              console.log('Testing hexlified Uint8Array');
-              handleSign({ personalSign: hexlify(new Uint8Array([0])) });
-            }}
-            disabled={isLoading || isSigning}
-            className="shrink-0"
-            loading={isLoading}
-            loadingText="Signing..."
-          >
-            Test Hex Bytes
+            Test Single Byte
           </Button>
         </div>
       </div>
