@@ -47,6 +47,7 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
     setLoading(true);
     setIsSigning(true);
     try {
+      console.log('Signing message:', message);
       const resp = await wallet?.signMessage(message);
       setSignedMessage(resp || '');
 
@@ -59,7 +60,7 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
       setIsSigning(false);
     } catch (err) {
       const error = err as CustomError;
-      console.error(error.message);
+      console.error('Sign error:', error);
 
       setToast({
         open: true,
@@ -132,6 +133,25 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
             loadingText="Signing..."
           >
             Sign Object
+          </Button>
+        </div>
+
+        {/* Test single byte array edge case */}
+        <div className="flex items-center gap-2 justify-between">
+          <div className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent">
+            <pre className="text-xs">Single Byte: [0]</pre>
+          </div>
+          <Button
+            onClick={() => {
+              console.log('Testing single byte array');
+              handleSign({ personalSign: new Uint8Array([0]) });
+            }}
+            disabled={isLoading || isSigning}
+            className="shrink-0"
+            loading={isLoading}
+            loadingText="Signing..."
+          >
+            Test Single Byte
           </Button>
         </div>
       </div>
