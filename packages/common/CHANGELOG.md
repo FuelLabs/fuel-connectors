@@ -1,5 +1,23 @@
 # @fuel-connectors/common
 
+## 0.43.2
+
+## 0.43.1
+
+## 0.43.0
+
+### Minor Changes
+
+- [#531](https://github.com/FuelLabs/fuel-connectors/pull/531) [`6a1e262`](https://github.com/FuelLabs/fuel-connectors/commit/6a1e2622da10a9e5a9e26c1f089b37b8ba8425b0) Thanks [@nelitow](https://github.com/nelitow)! - feat: Sample change to common and connectors
+
+## 0.42.0
+
+### Minor Changes
+
+- [#520](https://github.com/FuelLabs/fuel-connectors/pull/520) [`f5666e3`](https://github.com/FuelLabs/fuel-connectors/commit/f5666e3f12cf626ba92143a1771d4232f0412305) Thanks [@nelitow](https://github.com/nelitow)! - feat: Allow selection of predicate version when using predicate Wallets.
+
+## 0.41.2
+
 ## 0.41.1
 
 ### Patch Changes

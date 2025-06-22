@@ -12,10 +12,11 @@ import {
   type Network,
   Provider,
   type SelectNetworkArguments,
+  type TransactionRequest,
   type TransactionRequestLike,
-  TransactionResponse,
-  type TransactionResponseJson,
+  type TransactionResponse,
   type Version,
+  deserializeTransactionResponseJson,
   transactionRequestify,
 } from 'fuels';
 import type { JSONRPCRequest } from 'json-rpc-2.0';
@@ -33,37 +34,6 @@ import {
   MessageTypes,
   type ResponseMessage,
 } from './types';
-
-// @TODO: REMOVE THIS METHOD WHEN UPGRADING TO fuels 0.100.7+, BECAUSE IT ALREADY HAS THIS METHOD
-export const deserializeTransactionResponseJson = (
-  json: TransactionResponseJson,
-) => {
-  const {
-    id,
-    abis,
-    status,
-    providerUrl,
-    requestJson,
-    providerCache,
-    gqlTransaction,
-    preConfirmationStatus,
-  } = json;
-
-  const provider = new Provider(providerUrl, { cache: providerCache });
-  const { chainId } = providerCache.chain.consensusParameters;
-
-  const response = new TransactionResponse(id, provider, Number(chainId), abis);
-
-  if (requestJson) {
-    response.request = transactionRequestify(JSON.parse(requestJson));
-  }
-
-  response.status = status;
-  response.gqlTransaction = gqlTransaction;
-  response.preConfirmationStatus = preConfirmationStatus;
-
-  return response;
-};
 
 export class FuelWalletConnector extends FuelConnector {
   name = '';
@@ -183,6 +153,37 @@ export class FuelWalletConnector extends FuelConnector {
    * Connector methods
    * ============================================================
    */
+  private async prepareTransactionRequest(
+    transaction: TransactionRequestLike,
+    params?: FuelConnectorSendTxParams,
+  ) {
+    if (!transaction) {
+      throw new Error('Transaction is required');
+    }
+    let txRequest = transactionRequestify(transaction);
+
+    const {
+      onBeforeSend,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
+    } = params || {};
+
+    const providerToSend = params?.provider;
+
+    if (onBeforeSend) {
+      txRequest = await onBeforeSend(txRequest);
+    }
+
+    return {
+      txRequest,
+      providerToSend,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
+    };
+  }
+
   async ping(): Promise<boolean> {
     return this.client.timeout(800).request('ping', {});
   }
@@ -222,7 +223,11 @@ export class FuelWalletConnector extends FuelConnector {
     if (typeof message === 'string' && !message.trim()) {
       throw new Error('Message is required');
     }
-    if (typeof message === 'object' && !message.personalSign) {
+    if (
+      typeof message === 'object' &&
+      message !== null &&
+      !message.personalSign
+    ) {
       throw new Error('Message is required');
     }
 
@@ -237,27 +242,18 @@ export class FuelWalletConnector extends FuelConnector {
     transaction: TransactionRequestLike,
     params?: FuelConnectorSendTxParams,
   ): Promise<string | TransactionResponse> {
-    if (!transaction) {
-      throw new Error('Transaction is required');
-    }
-    let txRequest = transactionRequestify(transaction);
-
     const {
-      onBeforeSend,
+      txRequest,
+      providerToSend,
       skipCustomFee,
-      provider,
       transactionState,
       transactionSummary,
-    } = params || {};
-
-    if (onBeforeSend) {
-      txRequest = await onBeforeSend(txRequest);
-    }
+    } = await this.prepareTransactionRequest(transaction, params);
 
     const resp = await this.client.request('sendTransaction', {
       address,
       transaction: JSON.stringify(txRequest),
-      provider,
+      provider: providerToSend,
       skipCustomFee,
       transactionState,
       transactionSummary,
@@ -269,6 +265,38 @@ export class FuelWalletConnector extends FuelConnector {
     }
 
     return resp?.id || resp;
+  }
+
+  async signTransaction(
+    address: string,
+    transaction: TransactionRequestLike,
+    params?: FuelConnectorSendTxParams,
+  ): Promise<TransactionRequest> {
+    const {
+      txRequest,
+      providerToSend,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
+    } = await this.prepareTransactionRequest(transaction, params);
+
+    const txRequestSerialized: string = await this.client.request(
+      'signTransaction',
+      {
+        address,
+        transaction: JSON.stringify(txRequest),
+        provider: providerToSend,
+        skipCustomFee,
+        transactionState,
+        transactionSummary,
+      },
+    );
+
+    const txRequestSigned = transactionRequestify(
+      JSON.parse(txRequestSerialized),
+    );
+
+    return txRequestSigned;
   }
 
   async assets(): Promise<Array<Asset>> {

@@ -1,5 +1,15 @@
 # @fuel-connectors/walletconnect-connector
 
+## 0.43.2
+
+## 0.43.1
+
+## 0.43.0
+
+## 0.42.0
+
+## 0.41.2
+
 ## 0.41.1
 
 ### Patch Changes

@@ -1,5 +1,21 @@
 # @fuels/react
 
+## 0.43.2
+
+## 0.43.1
+
+## 0.43.0
+
+## 0.42.0
+
+### Minor Changes
+
+- [#523](https://github.com/FuelLabs/fuel-connectors/pull/523) [`5d5a9c2`](https://github.com/FuelLabs/fuel-connectors/commit/5d5a9c21429c14b1aa8dc7877aac4dde33dfc6ad) Thanks [@nelitow](https://github.com/nelitow)! - feat: Enable the use of signTransaction.
+
+- [#520](https://github.com/FuelLabs/fuel-connectors/pull/520) [`f5666e3`](https://github.com/FuelLabs/fuel-connectors/commit/f5666e3f12cf626ba92143a1771d4232f0412305) Thanks [@nelitow](https://github.com/nelitow)! - feat: Allow selection of predicate version when using predicate Wallets.
+
+## 0.41.2
+
 ## 0.41.1
 
 ### Patch Changes

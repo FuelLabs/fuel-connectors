@@ -1,4 +1,4 @@
-import { useConnectUI } from '../../../../providers/FuelUIProvider';
+import { Routes, useConnectUI } from '../../../../providers/FuelUIProvider';
 import {
   ConnectorButton,
   ConnectorButtonPrimary,
@@ -11,6 +11,16 @@ export function PredicateExternalDisclaimer() {
   const {
     dialog: { connector, _startConnection, back },
   } = useConnectUI();
+
+  const handleConnectWallet = async () => {
+    if (!connector) return;
+
+    try {
+      await _startConnection(connector);
+    } catch (error) {
+      console.error('Connection failed:', error);
+    }
+  };
 
   if (!connector) return null;
 
@@ -96,7 +106,7 @@ export function PredicateExternalDisclaimer() {
           </li>
         </DisclaimerList>
       </DisclaimerContainer>
-      <ConnectorButtonPrimary onClick={() => _startConnection(connector)}>
+      <ConnectorButtonPrimary onClick={handleConnectWallet}>
         Proceed
       </ConnectorButtonPrimary>
       <ConnectorButton onClick={() => back()}>

@@ -50,5 +50,4 @@ export function subscribeAndEnforceChain(config: Config) {
       },
     },
   );
-  // wagmiCo
 }
