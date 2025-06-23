@@ -223,7 +223,11 @@ export class FuelWalletConnector extends FuelConnector {
     if (typeof message === 'string' && !message.trim()) {
       throw new Error('Message is required');
     }
-    if (typeof message === 'object' && !message.personalSign) {
+    if (
+      typeof message === 'object' &&
+      message !== null &&
+      !message.personalSign
+    ) {
       throw new Error('Message is required');
     }
 
