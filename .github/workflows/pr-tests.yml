@@ -118,6 +118,9 @@ jobs:
           forc --version
           fuel-core --version
 
+      - name: Run build:connectors
+        run: pnpm build:connectors
+
       - name: Build & Deploy Contracts
         run: pnpm deploy:contracts:ci
         working-directory: e2e-tests/runner/scripts
@@ -131,6 +134,7 @@ jobs:
         if: false # @TODO: Phantom CRX is currently broken, so we're skipping this step for now
         working-directory: packages/solana-connector
 
+      # Rebuild after building and deploying predicates
       - name: Run build:connectors
         run: pnpm build:connectors
 
