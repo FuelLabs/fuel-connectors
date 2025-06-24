@@ -138,10 +138,6 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
         working-directory: e2e-tests/runner
 
-      - name: Build Synpress cache
-        run: xvfb-run pnpm synpress wallet-setup
-        working-directory: e2e-tests/runner
-
       - name: Run Playwright tests locally for Preview
         if: ${{ github.event_name == 'pull_request' }}
         run: xvfb-run --auto-servernum -- pnpm --filter @e2e-tests/runner test:e2e

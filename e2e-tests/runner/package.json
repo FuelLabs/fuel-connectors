@@ -7,7 +7,7 @@
   "homepage": "https://github.com/FuelLabs/fuel-connectors",
   "type": "module",
   "scripts": {
-    "test:e2e": "pnpm run start:servers & pnpm exec playwright test",
+    "test:e2e": "pnpm run start:servers && synpress wallet-setup & pnpm exec playwright test --ui e2e-tests/runner/examples/connectors/WalletConnectConnector/WalletConnectConnector.test.ts",
     "test:e2e:ui": "playwright test --ui --debug",
     "test:react-app": "pnpm test:react-app:ci -- --ui",
     "test:react-app:ci": "playwright test e2e-tests/react-app --project=react-app",
