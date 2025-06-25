@@ -111,9 +111,6 @@ jobs:
       - name: Copy .env file for React App
         run: cp examples/react-app/.env.example examples/react-app/.env
 
-      - name: Run build:connectors
-        run: pnpm build:connectors
-
       - uses: ./.github/workflows/setup-rust
 
       - name: Verify Forc and Fuel-Core
@@ -121,18 +118,25 @@ jobs:
           forc --version
           fuel-core --version
 
+      - name: Run build:connectors
+        run: pnpm build:connectors
+
       - name: Build & Deploy Contracts
         run: pnpm deploy:contracts:ci
         working-directory: e2e-tests/runner/scripts
 
       - name: Build & Deploy EVM Predicates
-        run: pnpm fuels build && pnpm fuels deploy
+        run: pnpm versions:generate
         working-directory: packages/evm-predicates
 
       - name: Build & Deploy Solana Predicates
-        run: pnpm fuels build && pnpm fuels deploy
+        run: pnpm versions:generate
         if: false # @TODO: Phantom CRX is currently broken, so we're skipping this step for now
         working-directory: packages/solana-connector
+
+      # Rebuild after building and deploying predicates
+      - name: Run build:connectors
+        run: pnpm build:connectors
 
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
