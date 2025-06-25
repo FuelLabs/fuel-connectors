@@ -1,5 +1,11 @@
 # @fuel-connectors/e2e-tests
 
+## 0.44.0
+
+### Patch Changes
+
+- [#544](https://github.com/FuelLabs/fuel-connectors/pull/544) [`a887d6c`](https://github.com/FuelLabs/fuel-connectors/commit/a887d6c64d183312cadb6e3212a69a8c06eb0d58) Thanks [@petertonysmith94](https://github.com/petertonysmith94)! - fix: EVM-based e2e test runner
+
 ## 0.43.2
 
 ## 0.43.1
