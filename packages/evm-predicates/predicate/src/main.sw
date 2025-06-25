@@ -1,14 +1,20 @@
 predicate;
+
 use std::{
+    crypto:: {
+        signature::Signature,
+        message::Message,
+        public_key::PublicKey,
+        secp256k1::Secp256k1
+    },
     b512::B512,
     bytes::Bytes,
-    constants::ZERO_B256,
     tx::{
         tx_id,
         tx_witness_data,
     },
     vm::evm::{
-        ecr::ec_recover_evm_address,
+        evm_address::EvmAddress,
     },
 };
 
@@ -32,21 +38,22 @@ struct SignedData {
 
 configurable {
     /// The Ethereum address that signed the transaction.
-    SIGNER: b256 = ZERO_B256,
+    SIGNER: b256 = b256::zero(),
 }
 
 fn main(witness_index: u64) -> bool {
     // Retrieve the Ethereum signature from the witness data in the Tx at the specified index.
-    let signature: B512 = tx_witness_data(witness_index).unwrap();
+    let witness_signature: B512 = tx_witness_data(witness_index).unwrap();
 
     // Hash the Fuel Tx (as the signed message) and attempt to recover the signer from the signature.
-    let result = ec_recover_evm_address(signature, personal_sign_hash(tx_id()));
+    let signature = Signature::Secp256k1(Secp256k1::from(witness_signature));
+    let message = Message::from(personal_sign_hash(tx_id()));
+
+    let result = signature.verify_evm_address(EvmAddress::from(SIGNER), message);
 
     // If the signers match then the predicate has validated the Tx.
     if result.is_ok() {
-        if SIGNER == result.unwrap().into() {
-            return true;
-        }
+        return true;
     }
 
     // Otherwise, an invalid signature has been passed and we invalidate the Tx.
@@ -85,7 +92,7 @@ fn personal_sign_hash(transaction_id: b256) -> b256 {
     let data = SignedData {
         transaction_id: transaction_id_utf8,
         ethereum_prefix: ETHEREUM_PREFIX,
-        empty: ZERO_B256,
+        empty: b256::zero(),
     };
 
     // Pointer to the data we have signed external to Sway.

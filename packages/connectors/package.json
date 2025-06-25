@@ -1,6 +1,6 @@
 {
   "name": "@fuels/connectors",
-  "version": "0.39.1",
+  "version": "0.43.2",
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -19,7 +19,7 @@
   },
   "peerDependencies": {
     "@reown/appkit": ">=1.6.8",
-    "fuels": ">=0.98.0",
+    "fuels": "0.101.1",
     "viem": ">=2.23.2"
   },
   "peerDependenciesMeta": {

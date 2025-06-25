@@ -10,6 +10,7 @@ import {
   type FuelABI,
   type Predicate as FuelPredicate,
   InputType,
+  type InputValue,
   type Provider,
   ScriptTransactionRequest,
   Wallet,
@@ -35,7 +36,7 @@ import { PREDICATE_VERSIONS } from './mockedPredicate';
 const MAX_FEE = bn(10_000);
 
 async function createTransaction(
-  predicate: FuelPredicate<number[]>,
+  predicate: FuelPredicate<InputValue[], { [name: string]: unknown }>,
   address: string,
 ) {
   const ALT_ASSET_ID =
@@ -116,14 +117,11 @@ describe('EVM Wallet Connector', () => {
       nodeOptions: {
         args: ['--snapshot', snapshotPath],
         loggingEnabled: false,
-        // use fixed port to don't conflict with other packages,
-        port: '10001',
       },
     });
 
     fuelProvider = provider;
     baseAssetId = await fuelProvider.getBaseAssetId();
-
     stopProvider = cleanup;
   });
 
@@ -277,17 +275,12 @@ describe('EVM Wallet Connector', () => {
 
       // Transfer base asset coins to predicate
       await fundingWallet
-        .transfer(createdPredicate.address, 1_000_000, baseAssetId, {
-          gasLimit: 10000,
-          maxFee: MAX_FEE,
-        })
+        .transfer(createdPredicate.address, 20_000_000, baseAssetId)
         .then((resp) => resp.wait());
+
       // Transfer alt asset coins to predicate
       await fundingWallet
-        .transfer(createdPredicate.address, 1_000_000, ALT_ASSET_ID, {
-          gasLimit: 10000,
-          maxFee: MAX_FEE,
-        })
+        .transfer(createdPredicate.address, 20_000_000, ALT_ASSET_ID)
         .then((resp) => resp.wait());
 
       // Create a recipient Wallet
@@ -330,12 +323,14 @@ describe('EVM Wallet Connector', () => {
       // Check balances are correct
       const predicateAltBalanceFinal =
         await createdPredicate.getBalance(ALT_ASSET_ID);
+
       const recipientBalanceFinal =
         await recipientWallet.getBalance(ALT_ASSET_ID);
 
       expect(predicateAltBalanceFinal.toString()).eq(
         predicateAltBalanceInitial.sub(bn.parseUnits('0.0001')).toString(),
       );
+
       expect(recipientBalanceFinal.toString()).eq(
         recipientBalanceInitial.add(bn.parseUnits('0.0001')).toString(),
       );
@@ -356,17 +351,12 @@ describe('EVM Wallet Connector', () => {
 
       // Transfer base asset coins to predicate
       await fundingWallet
-        .transfer(createdPredicate.address, 1_000_000, baseAssetId, {
-          gasLimit: 10000,
-          maxFee: MAX_FEE,
-        })
+        .transfer(createdPredicate.address, 20_000_000, baseAssetId)
         .then((resp) => resp.wait());
+
       // Transfer alt asset coins to predicate
       await fundingWallet
-        .transfer(createdPredicate.address, 1_000_000, ALT_ASSET_ID, {
-          gasLimit: 10000,
-          maxFee: MAX_FEE,
-        })
+        .transfer(createdPredicate.address, 20_000_000, ALT_ASSET_ID)
         .then((resp) => resp.wait());
 
       // Create a recipient Wallet
@@ -443,17 +433,12 @@ describe('EVM Wallet Connector', () => {
 
       // Transfer base asset coins to predicate
       await fundingWallet
-        .transfer(createdPredicate.address, 1_000_000, baseAssetId, {
-          gasLimit: 10000,
-          maxFee: MAX_FEE,
-        })
+        .transfer(createdPredicate.address, 20_000_000, baseAssetId)
         .then((resp) => resp.wait());
+
       // Transfer alt asset coins to predicate
       await fundingWallet
-        .transfer(createdPredicate.address, 1_000_000, ALT_ASSET_ID, {
-          gasLimit: 10000,
-          maxFee: MAX_FEE,
-        })
+        .transfer(createdPredicate.address, 20_000_000, ALT_ASSET_ID)
         .then((resp) => resp.wait());
 
       const transactionRequest = await createTransaction(
@@ -518,23 +503,19 @@ describe('EVM Wallet Connector', () => {
       const createdPredicate = predicateFactory.build(
         ethAccount1,
         fuelProvider,
+        [0],
       );
 
       const fundingWallet = new WalletUnlocked('0x01', fuelProvider);
 
       // Transfer base asset coins to predicate
       await fundingWallet
-        .transfer(createdPredicate.address, 1_000_000, baseAssetId, {
-          gasLimit: 10000,
-          maxFee: MAX_FEE,
-        })
+        .transfer(createdPredicate.address, 20_000_000, baseAssetId)
         .then((resp) => resp.wait());
+
       // Transfer alt asset coins to predicate
       await fundingWallet
-        .transfer(createdPredicate.address, 1_000_000, ALT_ASSET_ID, {
-          gasLimit: 10000,
-          maxFee: MAX_FEE,
-        })
+        .transfer(createdPredicate.address, 20_000_000, ALT_ASSET_ID)
         .then((resp) => resp.wait());
 
       // Check predicate balances

@@ -1,5 +1,43 @@
 # @fuels/react
 
+## 0.43.2
+
+## 0.43.1
+
+## 0.43.0
+
+## 0.42.0
+
+### Minor Changes
+
+- [#523](https://github.com/FuelLabs/fuel-connectors/pull/523) [`5d5a9c2`](https://github.com/FuelLabs/fuel-connectors/commit/5d5a9c21429c14b1aa8dc7877aac4dde33dfc6ad) Thanks [@nelitow](https://github.com/nelitow)! - feat: Enable the use of signTransaction.
+
+- [#520](https://github.com/FuelLabs/fuel-connectors/pull/520) [`f5666e3`](https://github.com/FuelLabs/fuel-connectors/commit/f5666e3f12cf626ba92143a1771d4232f0412305) Thanks [@nelitow](https://github.com/nelitow)! - feat: Allow selection of predicate version when using predicate Wallets.
+
+## 0.41.2
+
+## 0.41.1
+
+### Patch Changes
+
+- [#519](https://github.com/FuelLabs/fuel-connectors/pull/519) [`78362d4`](https://github.com/FuelLabs/fuel-connectors/commit/78362d495b6a231a916a737e0f61efab69aa896c) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: update to `fuels@0.100.6`
+
+- [#515](https://github.com/FuelLabs/fuel-connectors/pull/515) [`31f6606`](https://github.com/FuelLabs/fuel-connectors/commit/31f6606f1caaba677164a1a053acb6242f6f8dfb) Thanks [@arboleya](https://github.com/arboleya)! - Upgrading `fuels` to `0.100.5`
+
+## 0.41.0
+
+## 0.40.0
+
+### Minor Changes
+
+- [#509](https://github.com/FuelLabs/fuel-connectors/pull/509) [`07a377c`](https://github.com/FuelLabs/fuel-connectors/commit/07a377c10e4e2cc9ea36bd1cde05f28aa7599e3d) Thanks [@nelitow](https://github.com/nelitow)! - feat: when it's mobile, keep in the list only connectors that work on mobile env
+
+## 0.39.2
+
+### Patch Changes
+
+- [#492](https://github.com/FuelLabs/fuel-connectors/pull/492) [`15c6583`](https://github.com/FuelLabs/fuel-connectors/commit/15c6583ad7d07c2c511630b6413df18da1fdd083) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: update to fuels 0.100.0 + relay tx interface changes to fuel wallet
+
 ## 0.39.1
 
 ## 0.39.0

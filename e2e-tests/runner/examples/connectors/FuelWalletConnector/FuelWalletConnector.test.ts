@@ -27,7 +27,7 @@ test.describe('FuelWalletConnector', () => {
   let fuelWallet: WalletUnlocked;
   let masterWallet: WalletUnlocked;
 
-  const depositAmount = '0.0003'; // Should be enough to cover the increment and transfer
+  const depositAmount = '0.05'; // Should be enough to cover the increment and transfer
 
   const connect: ConnectorFunctions['connect'] = async (page) => {
     const connectButton = getButtonByText(page, 'Connect Wallet', true);

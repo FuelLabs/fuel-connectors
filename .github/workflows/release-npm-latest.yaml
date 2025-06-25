@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
       - uses: FuelLabs/github-actions/setups/node@master
         with:
-          node-version: 20.11.0
+          node-version: 20.14.0
           pnpm-version: 9.5.0
       - uses: FuelLabs/github-actions/setups/npm@master
         with:
