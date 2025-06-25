@@ -142,7 +142,7 @@ jobs:
         working-directory: e2e-tests/runner
 
       - name: Build Synpress cache
-        run: xvfb-run pnpm synpress wallet-setup
+        run: xvfb-run pnpm setup:synpress
         working-directory: e2e-tests/runner
 
       - name: Run Playwright tests locally for Preview
