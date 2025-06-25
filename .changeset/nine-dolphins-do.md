@@ -2,4 +2,4 @@
 "@fuel-connectors/fuel-wallet": minor
 ---
 
-fix: Null check signature messages
+fix: validate empty signatures on personalSign
