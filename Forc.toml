@@ -1,0 +1,7 @@
+[workspace]
+members = [
+  "examples/react-app/contracts",
+  "packages/evm-predicates/predicate",
+  "packages/solana-connector/predicate",
+  "e2e-tests/runner/contracts/custom_asset"
+]

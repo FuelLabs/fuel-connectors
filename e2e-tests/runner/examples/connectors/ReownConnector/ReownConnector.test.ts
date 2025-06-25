@@ -73,7 +73,7 @@ test.describe('ReownConnector', () => {
     const addressElement = await page.locator('css=#address');
 
     const address = await addressElement.getAttribute('data-address');
-    const amount: BN = bn(100_000_000);
+    const amount: BN = bn(2_000_000_000);
 
     if (address) {
       await seedWallet(

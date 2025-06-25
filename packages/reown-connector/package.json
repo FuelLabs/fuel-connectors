@@ -1,7 +1,7 @@
 {
   "name": "@fuel-connectors/reown-connector",
   "private": true,
-  "version": "0.39.1",
+  "version": "0.43.2",
   "type": "module",
   "files": ["dist"],
   "main": "./dist/reown-connector.umd.cjs",
@@ -20,7 +20,7 @@
   },
   "peerDependencies": {
     "@reown/appkit": ">=1.6.8",
-    "fuels": ">=0.98.0",
+    "fuels": "0.101.1",
     "viem": ">=2.23.2"
   },
   "dependencies": {

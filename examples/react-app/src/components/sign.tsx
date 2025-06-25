@@ -1,3 +1,5 @@
+import type { HashableMessage } from 'fuels';
+import { arrayify, hexlify } from 'fuels';
 import { useState } from 'react';
 import { useWallet } from '../hooks/useWallet';
 import type { CustomError } from '../utils/customError';
@@ -10,6 +12,21 @@ import Notification, { type Props as NotificationProps } from './notification';
 const DEFAULT_MESSAGE = `Fuelum ipsum FuelVM sit amet, high-performance Ethereum layer-2 consectetur adipiscing elit. Home verification dolor magna aliqua, scalability ut labore et dolore Sway nulla pariatur. Modular blockchain quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
 Fuel Network tempor incididunt, powered by FuelVM ut labore et dolore magna aliqua. Ut enim ad minim veniam, scalable for all quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`;
+
+const DEFAULT_OBJECT = {
+  personalSign: hexlify(
+    new TextEncoder().encode(
+      JSON.stringify({
+        type: 'auth',
+        timestamp: Date.now(),
+        data: {
+          action: 'login',
+          nonce: Math.random().toString(36).substring(7),
+        },
+      }),
+    ),
+  ),
+};
 
 interface Props {
   isSigning: boolean;
@@ -26,11 +43,12 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
     open: false,
   });
 
-  const handleSign = async () => {
+  const handleSign = async (message: HashableMessage) => {
     setLoading(true);
     setIsSigning(true);
     try {
-      const resp = await wallet?.signMessage(messageToSign);
+      console.log('Signing message:', message);
+      const resp = await wallet?.signMessage(message);
       setSignedMessage(resp || '');
 
       setToast({
@@ -42,7 +60,7 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
       setIsSigning(false);
     } catch (err) {
       const error = err as CustomError;
-      console.error(error.message);
+      console.error('Sign error:', error);
 
       setToast({
         open: true,
@@ -74,22 +92,69 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
         ) : null
       }
     >
-      <input
-        type="text"
-        placeholder="Message to sign"
-        value={messageToSign}
-        onChange={(e) => setMessageToSign(e.target.value)}
-        className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent"
-      />
-      <Button
-        onClick={handleSign}
-        disabled={isLoading || isSigning}
-        className="mt-1 shrink-0 md:mt-2"
-        loading={isLoading}
-        loadingText="Signing..."
-      >
-        Sign Message
-      </Button>
+      <div className="flex flex-col gap-2 w-full">
+        <div className="flex items-center gap-2 justify-between">
+          <input
+            type="text"
+            placeholder="Message to sign"
+            value={messageToSign}
+            onChange={(e) => setMessageToSign(e.target.value)}
+            className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent"
+          />
+          <Button
+            onClick={() => handleSign(messageToSign)}
+            disabled={isLoading || isSigning}
+            className="mt-1 shrink-0 md:mt-2"
+            loading={isLoading}
+            loadingText="Signing..."
+          >
+            Sign Message
+          </Button>
+        </div>
+        <div className="flex items-center gap-2 justify-between">
+          <div className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent">
+            <pre className="text-xs">
+              {JSON.stringify(
+                JSON.parse(
+                  new TextDecoder().decode(
+                    arrayify(DEFAULT_OBJECT.personalSign),
+                  ),
+                ),
+                null,
+                2,
+              )}
+            </pre>
+          </div>
+          <Button
+            onClick={() => handleSign(DEFAULT_OBJECT)}
+            disabled={isLoading || isSigning}
+            className="shrink-0"
+            loading={isLoading}
+            loadingText="Signing..."
+          >
+            Sign Object
+          </Button>
+        </div>
+
+        {/* Test single byte array edge case */}
+        <div className="flex items-center gap-2 justify-between">
+          <div className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent">
+            <pre className="text-xs">Single Byte: [0]</pre>
+          </div>
+          <Button
+            onClick={() => {
+              console.log('Testing single byte array');
+              handleSign({ personalSign: new Uint8Array([0]) });
+            }}
+            disabled={isLoading || isSigning}
+            className="shrink-0"
+            loading={isLoading}
+            loadingText="Signing..."
+          >
+            Test Single Byte
+          </Button>
+        </div>
+      </div>
       <Notification
         setOpen={() => setToast({ ...toast, open: false })}
         {...toast}
