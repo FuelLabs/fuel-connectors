@@ -10,6 +10,7 @@ import Balance from './components/balance';
 import Counter from './components/counter';
 import Transfer from './components/transfer';
 
+import WalletHashingTest from './components/WalletHashingTest';
 import Sign from './components/sign';
 import { useWallet } from './hooks/useWallet';
 
@@ -129,6 +130,10 @@ export default function App() {
                         setIsSigning={setIsSigning}
                       />
                       <Sign isSigning={isSigning} setIsSigning={setIsSigning} />
+                      <WalletHashingTest
+                        isSigning={isSigning}
+                        setIsSigning={setIsSigning}
+                      />
                     </section>
                   )}
                 </div>

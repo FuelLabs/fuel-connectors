@@ -21,6 +21,7 @@ export const useWallet = () => {
   const currentConnector = {
     logo: connectImage,
     name: _currentConnector?.name ?? 'Wallet Demo',
+    connector: _currentConnector,
   };
   const {
     account,

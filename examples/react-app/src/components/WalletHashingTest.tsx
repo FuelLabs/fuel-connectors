@@ -1,0 +1,210 @@
+import { Signer, arrayify, hashMessage } from 'fuels';
+import { useState } from 'react';
+import { useWallet } from '../hooks/useWallet';
+
+import { Copyable } from './Copyable';
+import Button from './button';
+import Feature from './feature';
+import Notification, { type Props as NotificationProps } from './notification';
+
+interface TestResult {
+  testName: string;
+  passed: boolean;
+  signature: string;
+  recoveredAddress: string;
+  expectedAddress: string;
+  error?: string;
+  details: {
+    singleHashedMatch: boolean;
+  };
+}
+
+interface Props {
+  isSigning: boolean;
+  setIsSigning: (isSigning: boolean) => void;
+}
+
+export default function WalletHashingTest({ isSigning, setIsSigning }: Props) {
+  const { currentConnector, account, isConnected } = useWallet();
+
+  const [testResults, setTestResults] = useState<TestResult[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
+    open: false,
+  });
+
+  const runHashTest = async () => {
+    if (!currentConnector.connector || !account) return;
+
+    setIsLoading(true);
+    setIsSigning(true);
+
+    try {
+      const TEST_NAME = 'Hash Object Test';
+      const TEST_HASH =
+        '0x6eca378ab5ed54f3b21c075d39b4c61ab927c049610670214ddeeee90db832e2';
+
+      const hashBytes = arrayify(TEST_HASH);
+
+      const signature = await currentConnector.connector.signMessage(account, {
+        personalSign: hashBytes,
+      });
+
+      const hashedMsg = hashMessage({ personalSign: hashBytes });
+      const recoveredAddress = Signer.recoverAddress(
+        hashedMsg,
+        signature,
+      ).toHexString();
+
+      const passed = recoveredAddress.toLowerCase() === account.toLowerCase();
+
+      const result: TestResult = {
+        testName: TEST_NAME,
+        passed,
+        signature,
+        recoveredAddress,
+        expectedAddress: account,
+        details: { singleHashedMatch: passed },
+      };
+
+      setTestResults((prev) => [
+        ...prev.filter((r) => r.testName !== TEST_NAME),
+        result,
+      ]);
+
+      setToast({
+        open: true,
+        type: passed ? 'success' : 'error',
+        children: passed
+          ? 'Hash test passed - Wallet correctly hashes and recovers address'
+          : 'Hash test failed - Wallet may not be compatible',
+      });
+    } catch (error) {
+      const result: TestResult = {
+        testName: 'Hash Object Test',
+        passed: false,
+        signature: '',
+        recoveredAddress: '',
+        expectedAddress: account,
+        error: (error as Error).message,
+        details: {
+          singleHashedMatch: false,
+        },
+      };
+
+      setTestResults((prev) => [
+        ...prev.filter((r) => r.testName !== 'Hash Object Test'),
+        result,
+      ]);
+
+      setToast({
+        open: true,
+        type: 'error',
+        children: `Hash test failed: ${(error as Error).message.substring(
+          0,
+          30,
+        )}`,
+      });
+    } finally {
+      setIsLoading(false);
+      setIsSigning(false);
+    }
+  };
+
+  const _clearResults = () => {
+    setTestResults([]);
+  };
+
+  const getOverallStatus = () => {
+    if (testResults.length === 0) return 'NOT_RUN';
+    const passedTests = testResults.filter((r) => r.passed).length;
+    if (passedTests === testResults.length) return 'ALL_PASS';
+    if (passedTests === 0) return 'ALL_FAIL';
+    return 'PARTIAL';
+  };
+
+  const _overallStatus = getOverallStatus();
+
+  // Lightweight card to display a single test result
+  function TestResultCard({ result }: { result: TestResult }) {
+    return (
+      <div className="border border-zinc-500/25 rounded-lg p-3 space-y-2 text-xs">
+        <div className="flex items-center justify-between mb-1">
+          <span
+            className={
+              result.passed
+                ? 'text-green-500 font-bold'
+                : 'text-red-500 font-bold'
+            }
+          >
+            {result.passed ? '✓ PASS' : '❌ FAIL'}
+          </span>
+        </div>
+
+        {result.error && (
+          <div className="text-red-500">
+            <strong>Error:</strong> {result.error}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <Feature
+      title="Wallet Hashing Test"
+      lastRow={
+        testResults.length > 0 ? (
+          <div className="space-y-4">
+            {testResults.map((result) => (
+              <TestResultCard
+                key={
+                  result.signature || result.recoveredAddress || result.testName
+                }
+                result={result}
+              />
+            ))}
+
+            <div className="text-xs text-zinc-400 mt-4 p-3 bg-zinc-800/50 rounded">
+              <strong>Expected Behavior:</strong>
+              <br />• <strong>Fixed Wallet:</strong> Single-hashed recovery
+              should match the account address
+              <br />• <strong>Test Logic:</strong> Signs message, then tests
+              recovery with different hash levels
+            </div>
+          </div>
+        ) : null
+      }
+    >
+      <div className="flex flex-col gap-4 w-full">
+        <div className="flex gap-2">
+          <Button
+            onClick={runHashTest}
+            disabled={
+              isLoading ||
+              isSigning ||
+              !isConnected ||
+              !currentConnector.connector ||
+              !account
+            }
+            className="flex-1"
+            loading={isLoading}
+            loadingText="Running Hash Test..."
+          >
+            Run Hash Test
+          </Button>
+        </div>
+
+        {!isConnected && (
+          <div className="text-xs text-yellow-500 text-center">
+            Please connect to a Fuel Wallet to run tests
+          </div>
+        )}
+      </div>
+      <Notification
+        setOpen={() => setToast({ ...toast, open: false })}
+        {...toast}
+      />
+    </Feature>
+  );
+}
