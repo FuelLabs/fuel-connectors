@@ -119,25 +119,15 @@ export class BakoSafeConnector extends FuelConnector {
     if (!HAS_WINDOW) return;
     if (this.socket) this.socket.checkConnection();
     if (this.setupReady) return;
-    const sessionId = await this.getSessionId();
 
+    this.setupReady = true;
+
+    const sessionId = await this.getSessionId();
     this.sessionId = sessionId;
 
     this.socket = SocketClient.create({
       sessionId,
       events: this,
-      onConnectStateChange: async (connected) => {
-        this.connected = connected;
-        this.emit(this.events.connection, connected);
-
-        if (connected) {
-          this.emit(this.events.accounts, await this.accounts());
-          this.emit(this.events.currentAccount, await this.currentAccount());
-        } else {
-          this.emit(this.events.accounts, []);
-          this.emit(this.events.currentAccount, null);
-        }
-      },
     });
 
     this.dAppWindow = new DAppWindow({
@@ -148,7 +138,24 @@ export class BakoSafeConnector extends FuelConnector {
       request_id: this.socket.request_id,
     });
 
-    this.setupReady = true;
+    await this.requestConnectionState();
+  }
+
+  private async requestConnectionState() {
+    return new Promise<void>((resolve) => {
+      if (!this.socket) return;
+
+      this.socket.server.emit(BakoSafeConnectorEvents.CONNECTION_STATE);
+
+      this.socket.server.once(
+        BakoSafeConnectorEvents.CONNECTION_STATE,
+        async ({ data }: { data: boolean }) => {
+          this.connected = data;
+          this.emit(this.events.connection, data);
+          resolve();
+        },
+      );
+    });
   }
 
   // ============================================================
@@ -174,17 +181,13 @@ export class BakoSafeConnector extends FuelConnector {
       this.once(
         BakoSafeConnectorEvents.AUTH_CONFIRMED,
         async ({ data }: { data: IResponseAuthConfirmed }) => {
-          const connected = data.connected;
-          const accounts = await this.accounts();
-          const currentAccount = await this.currentAccount();
+          await this.requestConnectionState();
 
-          this.connected = connected;
-          this.emit(this.events.connection, connected);
-          this.emit(this.events.accounts, accounts);
-          this.emit(this.events.currentAccount, currentAccount);
+          this.emit(this.events.accounts, await this.accounts());
+          this.emit(this.events.currentAccount, await this.currentAccount());
 
           this.dAppWindow?.close();
-          resolve(connected);
+          resolve(data.connected);
         },
       );
     });
@@ -324,7 +327,9 @@ export class BakoSafeConnector extends FuelConnector {
 
   async disconnect() {
     await this.api.delete(`/connections/${this.sessionId}`);
-    this.socket?.server.emit(BakoSafeConnectorEvents.CONNECTION_STATE);
+    await this.requestConnectionState();
+    this.emit(this.events.accounts, []);
+    this.emit(this.events.currentAccount, null);
     return false;
   }
 

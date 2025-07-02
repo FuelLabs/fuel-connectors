@@ -57,7 +57,6 @@ export interface ISocketMessage<T> {
 export interface ICreateClientSocket {
   sessionId: string;
   events: BakoSafeConnector;
-  onConnectStateChange: (state: boolean) => void;
 }
 
 export interface IRequestTxPending {

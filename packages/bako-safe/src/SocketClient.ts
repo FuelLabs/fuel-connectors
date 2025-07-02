@@ -21,18 +21,12 @@ const DEFAULT_SOCKET_AUTH: Omit<ISocketAuth, 'sessionId'> = {
 export class SocketClient {
   private static instance: SocketClient | null = null;
   private connecting = false;
-  private onConnectStateChange: ICreateClientSocket['onConnectStateChange'];
   server: Socket;
   events: BakoSafeConnector;
   request_id: string;
 
-  private constructor({
-    sessionId,
-    events,
-    onConnectStateChange,
-  }: ICreateClientSocket) {
+  private constructor({ sessionId, events }: ICreateClientSocket) {
     this.request_id = crypto.randomUUID();
-    this.onConnectStateChange = onConnectStateChange;
 
     this.server = io(SOCKET_URL, {
       auth: {
@@ -41,7 +35,9 @@ export class SocketClient {
         request_id: this.request_id,
       },
       autoConnect: false,
-      reconnection: false,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
     });
 
     this.server?.on(
@@ -63,15 +59,8 @@ export class SocketClient {
 
   private setupEventListeners(): void {
     this.server.on('connect', () => {
+      console.log('[SOCKET] Connected to server');
       this.connecting = false;
-      setTimeout(() => {
-        this.server.emit(BakoSafeConnectorEvents.CONNECTION_STATE);
-      }, 200);
-    });
-
-    this.server.on(BakoSafeConnectorEvents.CONNECTION_STATE, (data) => {
-      if (data.to !== DEFAULT_SOCKET_AUTH.username) return;
-      this.onConnectStateChange(data.data);
     });
 
     this.server.on('connect_error', () => {
