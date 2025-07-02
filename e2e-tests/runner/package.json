@@ -13,7 +13,7 @@
     "test:react-app:ci": "playwright test e2e-tests/react-app --project=react-app",
     "test:react-next": "pnpm playwright test --project=react-next",
     "test:e2e:dev": "pnpm run start:servers & pnpm playwright test --ui",
-    "test:e2e:local": "pnpm run deploy:contracts && pnpm run test:e2e",
+    "test:e2e:local": "pnpm run deploy:contracts && synpress wallet-setup && pnpm run test:e2e",
     "start:react-app": "pnpm --filter react-app dev",
     "start:react-next": "pnpm --filter @e2e-tests/react-next dev",
     "start:servers": "pnpm run start:react-app & pnpm run start:react-next",
