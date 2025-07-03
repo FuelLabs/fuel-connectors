@@ -5,6 +5,7 @@ export * from './useAddNetwork';
 export * from './useAssets';
 export * from './useBalance';
 export * from './useChain';
+export * from './useCoins';
 export * from './useConnect';
 export * from './useContractRead';
 export * from './useConnectors';
