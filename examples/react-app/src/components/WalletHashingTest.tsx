@@ -166,11 +166,8 @@ export default function WalletHashingTest({ isSigning, setIsSigning }: Props) {
             ))}
 
             <div className="text-xs text-zinc-400 mt-4 p-3 bg-zinc-800/50 rounded">
-              <strong>Expected Behavior:</strong>
-              <br />• <strong>Fixed Wallet:</strong> Single-hashed recovery
-              should match the account address
-              <br />• <strong>Test Logic:</strong> Signs message, then tests
-              recovery with different hash levels
+              <strong>Fixed Wallet:</strong> Single-hashed recovery should match
+              the account address
             </div>
           </div>
         ) : null
