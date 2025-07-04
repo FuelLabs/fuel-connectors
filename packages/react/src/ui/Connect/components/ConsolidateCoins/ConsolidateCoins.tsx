@@ -1,5 +1,6 @@
 import type React from 'react';
 import { useCallback, useMemo, useState } from 'react';
+import { Routes } from 'src/providers/FuelUIProvider';
 import {
   useChain,
   useCoins,
@@ -7,33 +8,31 @@ import {
   useWallet,
 } from '../../../../hooks';
 import { Spinner } from '../../../../icons/Spinner';
+import { useConnectUI } from '../../../../providers';
 import { DialogHeader, DialogMain, DialogTitle, Divider } from '../../styles';
 import { Button, ButtonLoading } from '../Network/styles';
 
 const ButtonLoader = ({
   loading,
-  children,
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement> & { loading: boolean }) => {
-  const text = useMemo(() => {
-    if (loading) {
-      return (
-        <span style={{ display: 'flex', justifyContent: 'center' }}>
-          <Spinner color="white" size={32} />
-        </span>
-      );
-    }
+  if (loading) {
+    return (
+      <ButtonLoading>
+        <Spinner size={26} color="var(--fuel-loader-background)" />
+      </ButtonLoading>
+    );
+  }
 
-    return children;
-  }, [loading, children]);
-
-  return <Button {...props}>{text}</Button>;
+  return <Button {...props} />;
 };
 
 export function ConsolidateCoins() {
+  const { cancel } = useConnectUI();
   const { wallet } = useWallet();
   const { chain } = useChain();
   const [loading, setLoading] = useState(false);
+  const [consolidated, setConsolidated] = useState(false);
 
   const { maxInputs, assetId, assetNamePlural } = useMemo(() => {
     const maxInputs =
@@ -68,12 +67,34 @@ export function ConsolidateCoins() {
     wallet
       .assembleBaseAssetConsolidationTxs({ coins, mode: 'sequential' })
       .then(({ submitAll }) => submitAll())
-      // TODO: Should probably show a status update?
-      // .then()
-      // TODO: display error?
+      .then(() => setConsolidated(true))
+
+      // TODO: display some error?
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [wallet, coins]);
+
+  if (consolidated) {
+    return (
+      <>
+        <DialogMain>
+          <p>
+            The consolidation process has been completed, you can continue to
+            proceed with your previous transaction.
+          </p>
+
+          <Divider />
+
+          <ButtonLoader
+            type="button"
+            value="Okay"
+            loading={false}
+            onClick={() => cancel()}
+          />
+        </DialogMain>
+      </>
+    );
+  }
 
   return (
     <>
@@ -95,9 +116,12 @@ export function ConsolidateCoins() {
 
         <Divider />
 
-        <ButtonLoader loading={loading} onClick={startConsolidation}>
-          Start consolidation
-        </ButtonLoader>
+        <ButtonLoader
+          type="button"
+          value="Start consolidation"
+          loading={loading}
+          onClick={startConsolidation}
+        />
       </DialogMain>
     </>
   );
