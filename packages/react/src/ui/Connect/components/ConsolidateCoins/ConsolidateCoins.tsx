@@ -1,18 +1,17 @@
+import { Close } from '@radix-ui/react-dialog';
 import type React from 'react';
 import { useCallback, useMemo, useState } from 'react';
-import { Routes } from 'src/providers/FuelUIProvider';
-import {
-  useChain,
-  useCoins,
-  useCurrentConnector,
-  useWallet,
-} from '../../../../hooks';
+import { useChain, useCoins, useWallet } from '../../../../hooks';
+import { CloseIcon } from '../../../../icons/CloseIcon';
 import { Spinner } from '../../../../icons/Spinner';
 import { useConnectUI } from '../../../../providers';
 import { DialogHeader, DialogMain, DialogTitle, Divider } from '../../styles';
+import { ConnectorButtonPrimary } from '../Connector/styles';
+import { DialogContent } from '../Core/DialogContent';
+import { DialogFuel } from '../Core/DialogFuel';
 import { Button, ButtonLoading } from '../Network/styles';
 
-const ButtonLoader = ({
+const _ButtonLoader = ({
   loading,
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement> & { loading: boolean }) => {
@@ -28,10 +27,10 @@ const ButtonLoader = ({
 };
 
 export function ConsolidateCoins() {
-  const { cancel } = useConnectUI();
+  const { theme, cancel } = useConnectUI();
   const { wallet } = useWallet();
   const { chain } = useChain();
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
   const [consolidated, setConsolidated] = useState(false);
 
   const { maxInputs, assetId, assetNamePlural } = useMemo(() => {
@@ -57,7 +56,7 @@ export function ConsolidateCoins() {
     },
   });
 
-  const startConsolidation = useCallback(async () => {
+  const handleConsolidation = useCallback(async () => {
     if (!wallet) {
       return;
     }
@@ -74,55 +73,50 @@ export function ConsolidateCoins() {
       .finally(() => setLoading(false));
   }, [wallet, coins]);
 
-  if (consolidated) {
-    return (
-      <>
-        <DialogMain>
-          <p>
-            The consolidation process has been completed, you can continue to
-            proceed with your previous transaction.
-          </p>
-
-          <Divider />
-
-          <ButtonLoader
-            type="button"
-            value="Okay"
-            loading={false}
-            onClick={() => cancel()}
-          />
-        </DialogMain>
-      </>
-    );
-  }
-
   return (
-    <>
-      <DialogHeader>
-        <DialogTitle>Your account needs UTXO consolidation</DialogTitle>
-      </DialogHeader>
-
-      <DialogMain>
-        <p>
-          You current have {coins.length} UTXOs for {assetNamePlural}. The
-          maximum number of {assetNamePlural} you can transact without
-          consolidating is {maxInputs}.
-        </p>
-
-        <p>
-          We need to execute a consolidation process of your UTXOs, so your
-          account can become usable again.
-        </p>
-
+    <DialogFuel open={true} theme={theme} onOpenChange={() => cancel()}>
+      <DialogContent data-connector={true}>
+        <DialogHeader>
+          <DialogTitle>Consolidate Coins</DialogTitle>
+          <Close asChild>
+            <CloseIcon size={26} onClick={() => cancel()} />
+          </Close>
+        </DialogHeader>
         <Divider />
+        <DialogMain>
+          {!consolidated && (
+            <>
+              <div>
+                You current have {coins.length} UTXOs for {assetNamePlural}. The
+                maximum number of {assetNamePlural} you can transact without
+                consolidating is {maxInputs}.
+              </div>
 
-        <ButtonLoader
-          type="button"
-          value="Start consolidation"
-          loading={loading}
-          onClick={startConsolidation}
-        />
-      </DialogMain>
-    </>
+              <div>
+                We need to execute a consolidation process of your UTXOs, so
+                your account can become usable again.
+              </div>
+
+              <ConnectorButtonPrimary onClick={handleConsolidation}>
+                Confirm Selection
+              </ConnectorButtonPrimary>
+            </>
+          )}
+
+          {consolidated && (
+            <>
+              <div>
+                Successfully consolidated UTXOs, you can now continue your
+                previous operation.
+              </div>
+
+              <ConnectorButtonPrimary onClick={() => cancel()}>
+                Close
+              </ConnectorButtonPrimary>
+            </>
+          )}
+        </DialogMain>
+      </DialogContent>
+    </DialogFuel>
   );
 }
