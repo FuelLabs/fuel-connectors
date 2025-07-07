@@ -19,6 +19,7 @@ import {
   FuelConnectorEventTypes,
   Provider as FuelProvider,
   LocalStorage,
+  type StartConsolidateCoins,
   type StorageAbstract,
   type TransactionRequestLike,
   type TransactionResponse,
@@ -464,5 +465,12 @@ export class SolanaConnector extends PredicateConnector {
     }
 
     return await this.accountHasValidation(address);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async startConsolidation(opts: StartConsolidateCoins): Promise<void> {
+    this.emit(FuelConnectorEventTypes.consolidateCoins, opts);
   }
 }

@@ -11,6 +11,7 @@ import {
   type Network,
   Provider,
   type SelectNetworkArguments,
+  type StartConsolidateCoins,
   type StorageAbstract,
   type TransactionRequestLike,
   type TransactionResponse,
@@ -287,5 +288,12 @@ export class BurnerWalletConnector extends FuelConnector {
 
   async hasAbi(_contractId: string): Promise<boolean> {
     throw Error('Method not implemented.');
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async startConsolidation(opts: StartConsolidateCoins): Promise<void> {
+    this.emit(FuelConnectorEventTypes.consolidateCoins, opts);
   }
 }
