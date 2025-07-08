@@ -13,17 +13,6 @@ export const QUERY_KEYS = {
   assets: (): QueryKey => {
     return QUERY_KEYS.base.concat('assets');
   },
-  coins: (
-    address?: string,
-    assetId?: BytesLike,
-    chainId?: number | undefined | null,
-  ): QueryKey => {
-    const queryKey = QUERY_KEYS.base.concat('coins');
-    if (address) queryKey.push(address);
-    if (assetId) queryKey.push(assetId);
-    if (typeof chainId === 'number') queryKey.push(chainId);
-    return queryKey;
-  },
   consolidation: (): QueryKey => {
     return QUERY_KEYS.base.concat('consolidation');
   },
