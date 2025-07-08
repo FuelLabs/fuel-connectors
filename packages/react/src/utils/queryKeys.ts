@@ -24,6 +24,9 @@ export const QUERY_KEYS = {
     if (typeof chainId === 'number') queryKey.push(chainId);
     return queryKey;
   },
+  consolidation: (): QueryKey => {
+    return QUERY_KEYS.base.concat('consolidation');
+  },
   contract: (
     address: string,
     chainId: number | undefined,
