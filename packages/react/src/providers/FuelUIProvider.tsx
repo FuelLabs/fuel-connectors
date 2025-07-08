@@ -1,4 +1,8 @@
-import type { FuelConfig, FuelConnector } from 'fuels';
+import {
+  type FuelConfig,
+  type FuelConnector,
+  FuelConnectorEventTypes,
+} from 'fuels';
 import {
   type ReactNode,
   createContext,
@@ -16,6 +20,7 @@ import { NATIVE_CONNECTORS } from '../config';
 import { useIsConnected } from '../hooks';
 import type { UIConfig } from '../types';
 import { isNativeConnector } from '../utils';
+import { useFuel } from './FuelHooksProvider';
 
 export type FuelUIProviderProps = {
   children?: ReactNode;
@@ -32,6 +37,7 @@ export enum Routes {
   PredicateAddressDisclaimer = 'PREDICATE_ADDRESS_DISCLAIMER',
   SignatureError = 'SIGNATURE_ERROR',
   PredicateVersionSelector = 'PREDICATE_VERSION_SELECTOR',
+  ConsolidateCoins = 'CONSOLIDATE_COINS',
 }
 
 export type FuelUIContextType = {
@@ -102,6 +108,7 @@ export function FuelUIProvider({
   theme,
   uiConfig,
 }: FuelUIProviderProps) {
+  const { fuel } = useFuel();
   const { isPending: isConnecting, isError, connectAsync } = useConnect();
   const { connectors, isLoading: isLoadingConnectors } = useConnectors({
     query: { select: sortConnectors },
@@ -150,6 +157,22 @@ export function FuelUIProvider({
     },
     [handleRetryConnect],
   );
+
+  useEffect(() => {
+    const handleStartConsolidation = () => {
+      setDialogRoute(Routes.ConsolidateCoins);
+      setOpen(true);
+    };
+
+    fuel.on(FuelConnectorEventTypes.consolidateCoins, handleStartConsolidation);
+
+    return () => {
+      fuel.off(
+        FuelConnectorEventTypes.consolidateCoins,
+        handleStartConsolidation,
+      );
+    };
+  }, [fuel]);
 
   const handleSelectConnector = useCallback(
     async (connector: FuelConnector) => {

@@ -1,2 +1,2 @@
 export * from './BurnerWalletConnector';
-export { BurnerWalletConfig } from './types';
+export type { BurnerWalletConfig } from './types';
