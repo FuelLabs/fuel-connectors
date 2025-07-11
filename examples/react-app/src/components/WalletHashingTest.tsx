@@ -2,7 +2,6 @@ import { Signer, arrayify, hashMessage } from 'fuels';
 import { useState } from 'react';
 import { useWallet } from '../hooks/useWallet';
 
-import { Copyable } from './Copyable';
 import Button from './button';
 import Feature from './feature';
 import Notification, { type Props as NotificationProps } from './notification';
@@ -27,7 +26,7 @@ interface Props {
 export default function WalletHashingTest({ isSigning, setIsSigning }: Props) {
   const { currentConnector, account, isConnected } = useWallet();
 
-  const [testResults, setTestResults] = useState<TestResult[]>([]);
+  const [testResults, setTestResults] = useState<TestResult>();
   const [isLoading, setIsLoading] = useState(false);
   const [toast, setToast] = useState<Omit<NotificationProps, 'setOpen'>>({
     open: false,
@@ -67,10 +66,7 @@ export default function WalletHashingTest({ isSigning, setIsSigning }: Props) {
         details: { singleHashedMatch: passed },
       };
 
-      setTestResults((prev) => [
-        ...prev.filter((r) => r.testName !== TEST_NAME),
-        result,
-      ]);
+      setTestResults(result);
 
       setToast({
         open: true,
@@ -92,10 +88,7 @@ export default function WalletHashingTest({ isSigning, setIsSigning }: Props) {
         },
       };
 
-      setTestResults((prev) => [
-        ...prev.filter((r) => r.testName !== 'Hash Object Test'),
-        result,
-      ]);
+      setTestResults(result);
 
       setToast({
         open: true,
@@ -122,7 +115,7 @@ export default function WalletHashingTest({ isSigning, setIsSigning }: Props) {
                 : 'text-red-500 font-bold'
             }
           >
-            {result.passed ? '✓ PASS' : '❌ FAIL'}
+            {result.passed ? '✓ Hash signed and recovered' : '❌ FAIL'}
           </span>
         </div>
 
@@ -139,16 +132,9 @@ export default function WalletHashingTest({ isSigning, setIsSigning }: Props) {
     <Feature
       title=""
       lastRow={
-        testResults.length > 0 ? (
+        testResults ? (
           <div className="mt-2 -ml-2">
-            {testResults.map((result) => (
-              <TestResultCard
-                key={
-                  result.signature || result.recoveredAddress || result.testName
-                }
-                result={result}
-              />
-            ))}
+            <TestResultCard result={testResults} />
           </div>
         ) : null
       }
