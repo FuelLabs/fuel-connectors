@@ -33,6 +33,10 @@ export default function WalletHashingTest({ isSigning, setIsSigning }: Props) {
     open: false,
   });
 
+  const TEST_NAME = 'Hash Object Test';
+  const TEST_HASH =
+    '0x6eca378ab5ed54f3b21c075d39b4c61ab927c049610670214ddeeee90db832e2';
+
   const runHashTest = async () => {
     if (!currentConnector.connector || !account) return;
 
@@ -40,10 +44,6 @@ export default function WalletHashingTest({ isSigning, setIsSigning }: Props) {
     setIsSigning(true);
 
     try {
-      const TEST_NAME = 'Hash Object Test';
-      const TEST_HASH =
-        '0x6eca378ab5ed54f3b21c075d39b4c61ab927c049610670214ddeeee90db832e2';
-
       const hashBytes = arrayify(TEST_HASH);
 
       const signature = await currentConnector.connector.signMessage(account, {
@@ -111,21 +111,6 @@ export default function WalletHashingTest({ isSigning, setIsSigning }: Props) {
     }
   };
 
-  const _clearResults = () => {
-    setTestResults([]);
-  };
-
-  const getOverallStatus = () => {
-    if (testResults.length === 0) return 'NOT_RUN';
-    const passedTests = testResults.filter((r) => r.passed).length;
-    if (passedTests === testResults.length) return 'ALL_PASS';
-    if (passedTests === 0) return 'ALL_FAIL';
-    return 'PARTIAL';
-  };
-
-  const _overallStatus = getOverallStatus();
-
-  // Lightweight card to display a single test result
   function TestResultCard({ result }: { result: TestResult }) {
     return (
       <div className="border border-zinc-500/25 rounded-lg p-3 space-y-2 text-xs">
@@ -152,10 +137,10 @@ export default function WalletHashingTest({ isSigning, setIsSigning }: Props) {
 
   return (
     <Feature
-      title="Wallet Hashing Test"
+      title=""
       lastRow={
         testResults.length > 0 ? (
-          <div className="space-y-4">
+          <div className="mt-2 -ml-2">
             {testResults.map((result) => (
               <TestResultCard
                 key={
@@ -164,17 +149,15 @@ export default function WalletHashingTest({ isSigning, setIsSigning }: Props) {
                 result={result}
               />
             ))}
-
-            <div className="text-xs text-zinc-400 mt-4 p-3 bg-zinc-800/50 rounded">
-              <strong>Fixed Wallet:</strong> Single-hashed recovery should match
-              the account address
-            </div>
           </div>
         ) : null
       }
     >
-      <div className="flex flex-col gap-4 w-full">
-        <div className="flex gap-2">
+      <div className="flex flex-col gap-2 w-full">
+        <div className="flex items-center gap-2 justify-between">
+          <div className="w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 font-mono md:-ml-2 md:p-2 dark:bg-transparent overflow-x-hidden">
+            <pre>{TEST_HASH}</pre>
+          </div>
           <Button
             onClick={runHashTest}
             disabled={
@@ -184,20 +167,15 @@ export default function WalletHashingTest({ isSigning, setIsSigning }: Props) {
               !currentConnector.connector ||
               !account
             }
-            className="flex-1"
+            className="shrink-0 w-1/3"
             loading={isLoading}
-            loadingText="Running Hash Test..."
+            loadingText="Signing Hash..."
           >
-            Run Hash Test
+            Sign Hash
           </Button>
         </div>
-
-        {!isConnected && (
-          <div className="text-xs text-yellow-500 text-center">
-            Please connect to a Fuel Wallet to run tests
-          </div>
-        )}
       </div>
+
       <Notification
         setOpen={() => setToast({ ...toast, open: false })}
         {...toast}
