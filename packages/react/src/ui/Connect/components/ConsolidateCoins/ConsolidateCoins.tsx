@@ -161,13 +161,13 @@ export function ConsolidateCoins() {
 
   const Title = useCallback(
     ({ children }: { children: string }) => {
-      const currentStep =
-        currentStatus.status !== 'consolidating' ? 0 : currentStatus.step;
+      const currentStep: number | null =
+        currentStatus.status === 'consolidating' ? currentStatus.step : null;
 
       return (
         <DialogTitle>
           {children}
-          {currentStatus.status !== 'loading' && (
+          {currentStep && (
             <>
               {' '}
               | {currentStep}/{maxStep}
@@ -221,24 +221,31 @@ export function ConsolidateCoins() {
         <Divider />
         <DialogMain>
           <DialogContainer>
-            <p>
-              You have reached the maximum number of UTXO's for a transaction
-              and therefore you must consolidate these coins before continuing.
-            </p>
-
-            <Divider />
+            {currentStatus.status !== 'finished' && (
+              <>
+                <p>
+                  You have reached the maximum number of UTXO's for a
+                  transaction and therefore you must consolidate these coins
+                  before continuing.
+                </p>
+              </>
+            )}
 
             {currentStatus.status === 'consolidating' && (
-              <p>
-                Please sign the request for the following transaction.
-                <ul>
-                  <li>
-                    Transaction ID:{' '}
-                    {truncate(currentStatus.bundle.transactionId)}
-                  </li>
-                  <li>Asset ID: {truncate(currentStatus.bundle.assetId)}</li>
-                </ul>
-              </p>
+              <>
+                <Divider />
+
+                <p>
+                  Please sign the request for the following transaction.
+                  <ul>
+                    <li>
+                      Transaction ID:{' '}
+                      {truncate(currentStatus.bundle.transactionId)}
+                    </li>
+                    <li>Asset ID: {truncate(currentStatus.bundle.assetId)}</li>
+                  </ul>
+                </p>
+              </>
             )}
 
             {currentStatus.status === 'finished' && (
@@ -247,6 +254,8 @@ export function ConsolidateCoins() {
                 your previous operation.
               </p>
             )}
+
+            <Divider />
 
             <DialogButton />
           </DialogContainer>
