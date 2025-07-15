@@ -14,7 +14,7 @@ use std::{
         tx_witness_data,
     },
     vm::evm::{
-        ecr::ec_recover_evm_address,
+        evm_address::EvmAddress,
     },
 };
 
@@ -47,10 +47,9 @@ fn main(witness_index: u64) -> bool {
 
     // Hash the Fuel Tx (as the signed message) and attempt to recover the signer from the signature.
     let signature = Signature::Secp256k1(Secp256k1::from(witness_signature));
-    let pub_key = PublicKey::from(SIGNER);
     let message = Message::from(personal_sign_hash(tx_id()));
 
-    let result = signature.verify(pub_key, message);
+    let result = signature.verify_evm_address(EvmAddress::from(SIGNER), message);
 
     // If the signers match then the predicate has validated the Tx.
     if result.is_ok() {
