@@ -1,10 +1,11 @@
-import { type CHAIN_IDS, bn } from 'fuels';
+import { CHAIN_IDS, bn } from 'fuels';
 import { counter as COUNTER_CONTRACT_ID_LOCAL } from './types/contract-ids-local.json';
 import { counter as COUNTER_CONTRACT_ID_MAINNET } from './types/contract-ids-mainnet.json';
 import { counter as COUNTER_CONTRACT_ID_TESTNET } from './types/contract-ids-testnet.json';
 
 export const CHAIN_ID_NAME = import.meta.env
   .VITE_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel;
+export const CHAIN_ID = CHAIN_IDS.fuel[CHAIN_ID_NAME] || 0;
 export const PROVIDER_URL = import.meta.env.VITE_FUEL_PROVIDER_URL;
 export const DEFAULT_AMOUNT = bn.parseUnits(
   CHAIN_ID_NAME === 'mainnet' ? '0.000000001' : '0.0001',

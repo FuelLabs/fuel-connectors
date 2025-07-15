@@ -19,8 +19,20 @@ import * as Toast from '@radix-ui/react-toast';
 import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import './index.css';
-import { CHAIN_IDS, type FuelConfig, Provider, bn } from 'fuels';
+import { type FuelConfig, Provider } from 'fuels';
+import {
+  CHAIN_ID,
+  CHAIN_ID_NAME,
+  COUNTER_CONTRACT_ID,
+  DEFAULT_AMOUNT,
+  EXPLORER_URL,
+  PROVIDER_URL,
+} from './config.ts';
 import { ConfigProvider } from './context/ConfigContext.tsx';
+
+if (!PROVIDER_URL) {
+  throw new Error('VITE_FUEL_PROVIDER_URL is not set');
+}
 
 const queryClient = new QueryClient();
 const isDev = process.env.NODE_ENV === 'development';
@@ -59,16 +71,6 @@ const wagmiConfig = createConfig({
   ],
 });
 
-const CHAIN_ID_NAME = import.meta.env
-  .VITE_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel;
-const PROVIDER_URL = import.meta.env.VITE_FUEL_PROVIDER_URL;
-
-const CHAIN_ID = CHAIN_IDS.fuel[CHAIN_ID_NAME] || 0;
-
-if (!PROVIDER_URL) {
-  throw new Error('VITE_FUEL_PROVIDER_URL is not set');
-}
-
 const NETWORKS: NetworkConfig[] = [
   {
     chainId: CHAIN_ID,
@@ -86,35 +88,12 @@ const FUEL_CONFIG: FuelConfig = {
   }),
 };
 
-function getContractId() {
-  switch (CHAIN_ID_NAME) {
-    case 'mainnet':
-      return COUNTER_CONTRACT_ID_MAINNET;
-    case 'testnet':
-      return COUNTER_CONTRACT_ID_TESTNET;
-    default:
-      return COUNTER_CONTRACT_ID_LOCAL;
-  }
-}
-
-export const EXPLORER_LOCAL_URL = 'http://localhost:3001';
-export const EXPLORER_URL_MAP: Record<keyof typeof CHAIN_IDS.fuel, string> = {
-  testnet: 'https://app-testnet.fuel.network',
-  devnet: 'https://app-testnet.fuel.network',
-  mainnet: 'https://app-mainnet.fuel.network',
-};
-
 const config = {
-  explorerUrl:
-    EXPLORER_URL_MAP[CHAIN_ID_NAME as keyof typeof EXPLORER_URL_MAP] ||
-    EXPLORER_LOCAL_URL,
-  providerUrl: import.meta.env.VITE_FUEL_PROVIDER_URL,
-  counterContractId: getContractId(),
-  chainIdName: import.meta.env
-    .VITE_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel,
-  defaultAmount: bn.parseUnits(
-    CHAIN_ID_NAME === 'mainnet' ? '0.000000001' : '0.0001',
-  ),
+  explorerUrl: EXPLORER_URL,
+  providerUrl: PROVIDER_URL,
+  counterContractId: COUNTER_CONTRACT_ID,
+  chainIdName: CHAIN_ID_NAME,
+  defaultAmount: DEFAULT_AMOUNT,
 };
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
