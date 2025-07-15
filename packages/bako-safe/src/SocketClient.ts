@@ -59,7 +59,6 @@ export class SocketClient {
 
   private setupEventListeners(): void {
     this.server.on('connect', () => {
-      console.log('[SOCKET] Connected to server');
       this.connecting = false;
     });
 
