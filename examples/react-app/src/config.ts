@@ -34,3 +34,8 @@ export const EXPLORER_LOCAL_URL = 'http://localhost:3001';
 
 export const EXPLORER_URL =
   EXPLORER_URL_MAP[CHAIN_ID_NAME] || EXPLORER_LOCAL_URL;
+
+export const CUSTOM_ASSET_ID: string | undefined = import.meta.env
+  .VITE_CUSTOM_ASSET_ID;
+export const CUSTOM_ASSET_SYMBOL: string | undefined = import.meta.env
+  .VITE_CUSTOM_ASSET_SYMBOL;

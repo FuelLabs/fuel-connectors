@@ -24,11 +24,13 @@ import {
   CHAIN_ID,
   CHAIN_ID_NAME,
   COUNTER_CONTRACT_ID,
+  CUSTOM_ASSET_ID,
+  CUSTOM_ASSET_SYMBOL,
   DEFAULT_AMOUNT,
   EXPLORER_URL,
   PROVIDER_URL,
 } from './config.ts';
-import { ConfigProvider } from './context/ConfigContext.tsx';
+import { type Config, ConfigProvider } from './context/ConfigContext.tsx';
 
 if (!PROVIDER_URL) {
   throw new Error('VITE_FUEL_PROVIDER_URL is not set');
@@ -88,12 +90,14 @@ const FUEL_CONFIG: FuelConfig = {
   }),
 };
 
-const config = {
+const config: Config = {
   explorerUrl: EXPLORER_URL,
   providerUrl: PROVIDER_URL,
   counterContractId: COUNTER_CONTRACT_ID,
   chainIdName: CHAIN_ID_NAME,
   defaultAmount: DEFAULT_AMOUNT,
+  assetId: CUSTOM_ASSET_ID ?? undefined,
+  assetSymbol: !CUSTOM_ASSET_ID ? 'ETH' : CUSTOM_ASSET_SYMBOL ?? 'USDT',
 };
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
