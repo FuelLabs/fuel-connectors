@@ -1,5 +1,7 @@
 # @fuel-connectors/burner-wallet-connector
 
+## 0.44.0
+
 ## 0.43.2
 
 ## 0.43.1
