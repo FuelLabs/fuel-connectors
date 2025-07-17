@@ -99,12 +99,12 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
             placeholder="Message to sign"
             value={messageToSign}
             onChange={(e) => setMessageToSign(e.target.value)}
-            className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent"
+            className="w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 font-mono md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent"
           />
           <Button
             onClick={() => handleSign(messageToSign)}
             disabled={isLoading || isSigning}
-            className="mt-1 shrink-0 md:mt-2"
+            className="shrink-0 w-1/3"
             loading={isLoading}
             loadingText="Signing..."
           >
@@ -112,7 +112,7 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
           </Button>
         </div>
         <div className="flex items-center gap-2 justify-between">
-          <div className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent">
+          <div className="w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 font-mono md:-ml-2 md:p-2 dark:bg-transparent">
             <pre className="text-xs">
               {JSON.stringify(
                 JSON.parse(
@@ -128,7 +128,7 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
           <Button
             onClick={() => handleSign(DEFAULT_OBJECT)}
             disabled={isLoading || isSigning}
-            className="shrink-0"
+            className="shrink-0 w-1/3"
             loading={isLoading}
             loadingText="Signing..."
           >
@@ -138,8 +138,8 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
 
         {/* Test single byte array edge case */}
         <div className="flex items-center gap-2 justify-between">
-          <div className="-ml-1 mr-2 mt-1 w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 p-1 font-mono outline-none md:-ml-2 md:mt-2 md:p-2 dark:bg-transparent">
-            <pre className="text-xs">Single Byte: [0]</pre>
+          <div className="w-2/3 shrink basis-2/3 rounded-lg border border-zinc-500/25 font-mono md:-ml-2 md:p-2 dark:bg-transparent">
+            <pre>Single Byte: [0]</pre>
           </div>
           <Button
             onClick={() => {
@@ -147,11 +147,11 @@ export default function Sign({ isSigning, setIsSigning }: Props) {
               handleSign({ personalSign: new Uint8Array([0]) });
             }}
             disabled={isLoading || isSigning}
-            className="shrink-0"
+            className="shrink-0 w-1/3"
             loading={isLoading}
             loadingText="Signing..."
           >
-            Test Single Byte
+            Sign Byte
           </Button>
         </div>
       </div>
