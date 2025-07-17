@@ -1,13 +1,10 @@
 import { Close } from '@radix-ui/react-dialog';
 import { useQuery } from '@tanstack/react-query';
 import {
-  type Account,
-  type Coin,
   type ConsolidateCoinsEvent,
-  type CursorPaginationArgs,
-  type GetCoinsResponse,
   type ScriptTransactionRequest,
-  sleep,
+  type SubmitAllCallback,
+  consolidateCoins,
 } from 'fuels';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useChain, useWallet } from '../../../../hooks';
@@ -20,66 +17,17 @@ import { DialogContent } from '../Core/DialogContent';
 import { DialogFuel } from '../Core/DialogFuel';
 import { ConsolidateButtonPrimary, DialogContainer } from './styles';
 
-type ConsolidationBundle = {
-  assetId: string;
-  request: ScriptTransactionRequest;
-  transactionId: string;
-};
-
 type ConsolidationStatus =
   | { status: 'loading' }
   | { status: 'ready' }
-  | { status: 'consolidating'; step: number; bundle: ConsolidationBundle }
-  | { status: 'finished' };
-
-const getAllCoins = async (
-  getCoins: (pagination: CursorPaginationArgs) => Promise<GetCoinsResponse>,
-) => {
-  const allCoins: Coin[] = [];
-  const pagination: Partial<CursorPaginationArgs> = {};
-
-  while (true) {
-    const { coins, pageInfo } = await getCoins(pagination);
-    allCoins.push(...coins);
-
-    if (!pageInfo.hasNextPage) {
-      break;
+  | {
+      status: 'consolidating';
+      step: number;
+      assetId: string;
+      request: ScriptTransactionRequest;
+      transactionId: string;
     }
-
-    pagination.after = pageInfo.endCursor;
-  }
-
-  return { coins: allCoins };
-};
-
-const createBundles = async ({
-  chainId,
-  wallet,
-  assetId,
-  baseAssetId,
-}: {
-  chainId: number;
-  wallet: Account;
-  assetId: string;
-  baseAssetId: string;
-}) => {
-  const { coins } = await getAllCoins((pagination) =>
-    wallet.getCoins(assetId, pagination),
-  );
-  const consolidations =
-    assetId === baseAssetId
-      ? await wallet.assembleBaseAssetConsolidationTxs({ coins })
-      : await wallet.assembleNonBaseAssetConsolidationTxs({ coins, assetId });
-
-  return consolidations.txs.map(
-    (request) =>
-      ({
-        transactionId: request.getTransactionId(chainId),
-        request,
-        assetId,
-      }) as ConsolidationBundle,
-  );
-};
+  | { status: 'finished' };
 
 const useConsolidate = ({ assetId }: { assetId: string | undefined }) => {
   // Useful context
@@ -97,8 +45,10 @@ const useConsolidate = ({ assetId }: { assetId: string | undefined }) => {
   const [currentStatus, setCurrentStatus] = useState<ConsolidationStatus>({
     status: 'loading',
   });
-  const [bundles, setBundles] = useState<ConsolidationBundle[]>([]);
-  const maxStep = useMemo(() => bundles.length, [bundles]);
+  const [submitAll, setSubmitAll] = useState<SubmitAllCallback>(() =>
+    Promise.resolve({ txResponses: [], errors: [] }),
+  );
+  const [maxStep, setMaxStep] = useState<number>(0);
 
   // Functions
   const start = async () => {
@@ -106,26 +56,17 @@ const useConsolidate = ({ assetId }: { assetId: string | undefined }) => {
       return;
     }
 
-    for (let i = 0; i < bundles.length; i++) {
-      const step = i + 1;
-      const bundle = bundles[i];
-      setCurrentStatus({ status: 'consolidating', step, bundle });
-
-      try {
-        // Re-assemble transaction
-        const { assembledRequest } = await wallet.provider.assembleTx({
-          request: bundle.request,
-          feePayerAccount: wallet,
+    await submitAll({
+      onTransactionStart: ({ tx, step, transactionId, assetId }) => {
+        setCurrentStatus({
+          status: 'consolidating',
+          step,
+          assetId,
+          request: tx,
+          transactionId,
         });
-
-        const { waitForResult } =
-          await wallet.sendTransaction(assembledRequest);
-        await waitForResult();
-      } catch (e: unknown) {
-        // TODO: show error to use
-        console.error(e);
-      }
-    }
+      },
+    });
 
     setCurrentStatus({ status: 'finished' });
   };
@@ -137,10 +78,13 @@ const useConsolidate = ({ assetId }: { assetId: string | undefined }) => {
       return;
     }
 
-    createBundles({ wallet, assetId, baseAssetId, chainId }).then((bundles) => {
-      setCurrentStatus({ status: 'ready' });
-      setBundles(bundles);
-    });
+    consolidateCoins({ account: wallet, assetId }).then(
+      ({ submitAll, txs }) => {
+        setCurrentStatus({ status: 'ready' });
+        setSubmitAll(() => submitAll);
+        setMaxStep(txs.length);
+      },
+    );
   }, [wallet, assetId, baseAssetId, chainId]);
 
   return {
@@ -239,10 +183,9 @@ export function ConsolidateCoins() {
                   Please sign the request for the following transaction.
                   <ul>
                     <li>
-                      Transaction ID:{' '}
-                      {truncate(currentStatus.bundle.transactionId)}
+                      Transaction ID: {truncate(currentStatus.transactionId)}
                     </li>
-                    <li>Asset ID: {truncate(currentStatus.bundle.assetId)}</li>
+                    <li>Asset ID: {truncate(currentStatus.assetId)}</li>
                   </ul>
                 </p>
               </>
