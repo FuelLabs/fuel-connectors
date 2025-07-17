@@ -6,7 +6,7 @@
 
 # We should be supporting always the same fuel-core version as the fuels (ts-sdk)
 # https://github.com/FuelLabs/fuels-ts/blob/master/internal/fuel-core/VERSION
-FROM ghcr.io/fuellabs/fuel-core:v0.43.1
+FROM ghcr.io/fuellabs/fuel-core:ps-fix-max-coins-error
 
 # dependencies
 ENV DEBIAN_FRONTEND=noninteractive
@@ -41,6 +41,10 @@ RUN jq '.coins = input' \
 # update local chain_config with testnet consensus parameters
 RUN jq '.consensus_parameters = input' \
     chain_config.json latest_consensus_parameters.json > tmp.json \
+    && mv tmp.json chain_config.json
+
+# update local chain_config with the correct `genesis_state_transition_version`
+RUN jq '.genesis_state_transition_version = 29' chain_config.json > tmp.json \
     && mv tmp.json chain_config.json
 
 # expose fuel node port
