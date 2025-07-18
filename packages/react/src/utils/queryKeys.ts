@@ -100,6 +100,11 @@ export const QUERY_KEYS = {
     if (isConnected) queryKey.push(isConnected);
     return queryKey;
   },
+  verifiedAssets: (chainId?: number | null): QueryKey => {
+    const queryKey = QUERY_KEYS.base.concat('verifiedAssets');
+    if (chainId !== undefined) queryKey.push(chainId);
+    return queryKey;
+  },
 };
 
 export const MUTATION_KEYS = {

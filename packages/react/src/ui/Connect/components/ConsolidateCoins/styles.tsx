@@ -1,3 +1,5 @@
+import { Spinner } from '../../../../icons/Spinner';
+
 const dialogContainer: React.CSSProperties = {
   margin: '0 1rem',
   padding: '0.5rem',
@@ -30,15 +32,17 @@ const connectorButtonStyle: React.CSSProperties = {
 
 export const ConsolidateButtonPrimary = ({
   children,
+  isLoading,
   ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement>) => {
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & { isLoading?: boolean }) => {
   return (
     <button
       style={connectorButtonStyle}
       {...props}
+      disabled={!!isLoading || props.disabled}
       className="fuel-connectors-connector-button-primary"
     >
-      {children}
+      {isLoading ? <Spinner size={16} color="#e5e7eb" /> : children}
     </button>
   );
 };

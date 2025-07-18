@@ -2,205 +2,174 @@ import { Close } from '@radix-ui/react-dialog';
 import { useQuery } from '@tanstack/react-query';
 import {
   type ConsolidateCoinsEvent,
-  type ScriptTransactionRequest,
   type SubmitAllCallback,
   consolidateCoins,
 } from 'fuels';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useChain, useWallet } from '../../../../hooks';
+import { useEffect, useMemo, useState } from 'react';
+import { useWallet } from '../../../../hooks';
+import { CheckCircleIcon } from '../../../../icons/CheckCircleIcon';
 import { CloseIcon } from '../../../../icons/CloseIcon';
 import { Spinner } from '../../../../icons/Spinner';
 import { useConnectUI } from '../../../../providers';
 import { QUERY_KEYS } from '../../../../utils';
+import { useVerifiedAssets } from '../../hooks/useVerifiedAssets';
 import { DialogHeader, DialogMain, DialogTitle, Divider } from '../../styles';
 import { DialogContent } from '../Core/DialogContent';
 import { DialogFuel } from '../Core/DialogFuel';
+import { ProgressBar } from './ProgressBar';
 import { ConsolidateButtonPrimary, DialogContainer } from './styles';
 
-type ConsolidationStatus =
-  | { status: 'loading' }
-  | { status: 'ready' }
-  | {
-      status: 'consolidating';
-      step: number;
-      assetId: string;
-      request: ScriptTransactionRequest;
-      transactionId: string;
-    }
-  | { status: 'finished' };
-
-const useConsolidate = ({ assetId }: { assetId: string | undefined }) => {
-  // Useful context
-  const { chain } = useChain();
+export function ConsolidateCoins() {
   const { wallet } = useWallet();
-  const { baseAssetId, chainId } = useMemo(
-    () => ({
-      baseAssetId: chain?.consensusParameters.baseAssetId,
-      chainId: chain?.consensusParameters.chainId.toNumber(),
-    }),
-    [chain],
-  );
+  const { theme, cancel } = useConnectUI();
+  const { data: consolidation } = useQuery<ConsolidateCoinsEvent['data']>({
+    queryKey: QUERY_KEYS.consolidation(),
+  });
+
+  // Load the asset name and symbol
+  const { verifiedAssets } = useVerifiedAssets();
+  const asset = useMemo(() => {
+    if (!consolidation?.assetId) {
+      return null;
+    }
+
+    const asset = verifiedAssets.find(
+      (asset) => asset.assetId === consolidation?.assetId,
+    );
+    if (!asset) {
+      return null;
+    }
+
+    return {
+      symbol: asset?.symbol,
+      name: asset?.name,
+    };
+  }, [consolidation?.assetId, verifiedAssets]);
 
   // Internal state
-  const [currentStatus, setCurrentStatus] = useState<ConsolidationStatus>({
-    status: 'loading',
-  });
+  const [status, setStatus] = useState<
+    'loading' | 'ready' | 'consolidating' | 'finished'
+  >('loading');
+  const [currentStep, setCurrentStep] = useState<number>(0);
+  const [totalSteps, setTotalSteps] = useState<number | undefined>(undefined);
+  const [utxoCount, setUtxoCount] = useState<number>(0);
   const [submitAll, setSubmitAll] = useState<SubmitAllCallback>(() =>
     Promise.resolve({ txResponses: [], errors: [] }),
   );
-  const [maxStep, setMaxStep] = useState<number>(0);
 
   // Functions
   const start = async () => {
-    if (currentStatus.status !== 'ready' || !wallet) {
+    if (status !== 'ready' || !wallet || !consolidation?.assetId) {
       return;
     }
 
     await submitAll({
-      onTransactionStart: ({ tx, step, transactionId, assetId }) => {
-        setCurrentStatus({
-          status: 'consolidating',
-          step,
-          assetId,
-          request: tx,
-          transactionId,
-        });
+      onTransactionStart: ({ step }) => {
+        setStatus('consolidating');
+        setCurrentStep(step);
       },
     });
 
-    setCurrentStatus({ status: 'finished' });
+    setStatus('finished');
   };
 
   // Load our bundles
   useEffect(() => {
     // Wait till everything loads
-    if (!wallet || !assetId || !baseAssetId || chainId === undefined) {
+    if (!wallet || !consolidation?.assetId) {
       return;
     }
 
-    consolidateCoins({ account: wallet, assetId }).then(
+    consolidateCoins({ account: wallet, assetId: consolidation?.assetId }).then(
       ({ submitAll, txs }) => {
-        setCurrentStatus({ status: 'ready' });
+        setStatus('ready');
         setSubmitAll(() => submitAll);
-        setMaxStep(txs.length);
+        setTotalSteps(txs.length);
+        const utxoCount = txs.reduce((acc, tx) => acc + tx.inputs.length, 0);
+        setUtxoCount(utxoCount);
       },
     );
-  }, [wallet, assetId, baseAssetId, chainId]);
-
-  return {
-    currentStatus,
-    maxStep,
-    start,
-  };
-};
-
-export function ConsolidateCoins() {
-  const { theme, cancel } = useConnectUI();
-  const { data: consolidation } = useQuery<ConsolidateCoinsEvent['data']>({
-    queryKey: QUERY_KEYS.consolidation(),
-  });
-  const { currentStatus, maxStep, start } = useConsolidate({
-    assetId: consolidation?.assetId,
-  });
-
-  const Title = useCallback(
-    ({ children }: { children: string }) => {
-      const currentStep: number | null =
-        currentStatus.status === 'consolidating' ? currentStatus.step : null;
-
-      return (
-        <DialogTitle>
-          {children}
-          {currentStep && (
-            <>
-              {' '}
-              | {currentStep}/{maxStep}
-            </>
-          )}
-        </DialogTitle>
-      );
-    },
-    [currentStatus, maxStep],
-  );
-
-  const truncate = (input: string) => {
-    return `${input.slice(0, 6)}....${input.slice(-4)}`;
-  };
-
-  const DialogButton = useCallback(() => {
-    switch (currentStatus.status) {
-      case 'finished':
-        return (
-          <ConsolidateButtonPrimary onClick={() => cancel()}>
-            Close
-          </ConsolidateButtonPrimary>
-        );
-
-      case 'loading':
-      case 'consolidating':
-        return (
-          <ConsolidateButtonPrimary>
-            <Spinner color="white" size={26} />
-          </ConsolidateButtonPrimary>
-        );
-
-      case 'ready':
-        return (
-          <ConsolidateButtonPrimary onClick={start}>
-            Start
-          </ConsolidateButtonPrimary>
-        );
-    }
-  }, [currentStatus, start, cancel]);
+  }, [wallet, consolidation?.assetId]);
 
   return (
-    <DialogFuel open={true} theme={theme} onOpenChange={() => cancel()}>
+    <DialogFuel theme={theme} open={true} onOpenChange={() => cancel()}>
       <DialogContent data-connector={true}>
         <DialogHeader>
-          <Title>Consolidate coins</Title>
+          <DialogTitle>Consolidate coins</DialogTitle>
           <Close asChild>
             <CloseIcon size={26} onClick={() => cancel()} />
           </Close>
         </DialogHeader>
+
         <Divider />
+
         <DialogMain>
           <DialogContainer>
-            {currentStatus.status !== 'finished' && (
+            {status === 'loading' && (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '1rem',
+                }}
+              >
+                <Spinner size={48} color="#e5e7eb" />
+              </div>
+            )}
+
+            {(status === 'ready' || status === 'consolidating') && (
               <>
-                <p>
-                  You have reached the maximum number of UTXO's for a
-                  transaction and therefore you must consolidate these coins
-                  before continuing.
-                </p>
+                <div className="text-sm text-gray-600">
+                  Consolidating {utxoCount} UTXOs
+                  {asset
+                    ? ` for the asset ${asset.name} (${asset.symbol})`
+                    : ''}
+                  .
+                </div>
+
+                <br />
+
+                <ProgressBar
+                  theme={theme}
+                  current={currentStep}
+                  total={totalSteps}
+                />
               </>
             )}
 
-            {currentStatus.status === 'consolidating' && (
+            {status === 'finished' && (
               <>
-                <Divider />
+                <div style={{ textAlign: 'center', fontSize: '0.9rem' }}>
+                  <p>
+                    Consolidation finished! You can now close this window and
+                    continue your previous operation.
+                  </p>
+                </div>
 
-                <p>
-                  Please sign the request for the following transaction.
-                  <ul>
-                    <li>
-                      Transaction ID: {truncate(currentStatus.transactionId)}
-                    </li>
-                    <li>Asset ID: {truncate(currentStatus.assetId)}</li>
-                  </ul>
-                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginTop: '1rem',
+                  }}
+                >
+                  <CheckCircleIcon size={48} color="#22c55e" />
+                </div>
               </>
-            )}
-
-            {currentStatus.status === 'finished' && (
-              <p>
-                Successfully consolidated all coins, you can now proceed with
-                your previous operation.
-              </p>
             )}
 
             <Divider />
 
-            <DialogButton />
+            <ConsolidateButtonPrimary
+              onClick={() => (status === 'finished' ? cancel() : start())}
+              isLoading={status === 'consolidating' || status === 'loading'}
+            >
+              {status === 'finished' ? 'Close' : 'Start'}
+            </ConsolidateButtonPrimary>
           </DialogContainer>
         </DialogMain>
       </DialogContent>
