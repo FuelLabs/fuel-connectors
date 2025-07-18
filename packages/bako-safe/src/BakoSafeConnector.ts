@@ -5,7 +5,6 @@ import {
   FuelConnectorEventTypes,
   type Network,
   Provider,
-  type SelectNetworkArguments,
   type StartConsolidateCoins,
   type StorageAbstract,
   type TransactionRequestLike,
@@ -53,11 +52,6 @@ export class BakoSafeConnector extends FuelConnector {
   connected = false;
   external = false;
 
-  events = {
-    ...BakoSafeConnectorEvents,
-    ...FuelConnectorEventTypes,
-  };
-
   private readonly appUrl: string;
   private readonly host: string;
   private readonly api: RequestAPI;
@@ -99,16 +93,13 @@ export class BakoSafeConnector extends FuelConnector {
 
   private checkWindow() {
     // timeout to open
-    const open_interval = setInterval(() => {
+    const openInterval = setInterval(() => {
       const isOpen = this.dAppWindow?.isOpen;
       if (!isOpen) {
         this.emit(BakoSafeConnectorEvents.CLIENT_DISCONNECTED, {});
-        clearInterval(open_interval);
+        clearInterval(openInterval);
       }
     }, 2000);
-    //todo: check connection on safari
-    // safari browser does not support window.opener
-    //if(this.dAppWindow?.isSafariBrowser) return;
 
     // timeout to close
     const interval = setInterval(() => {
@@ -128,12 +119,15 @@ export class BakoSafeConnector extends FuelConnector {
 
   private async setup() {
     if (!HAS_WINDOW) return;
+    if (this.socket) this.socket.checkConnection();
     if (this.setupReady) return;
-    const sessionId = await this.getSessionId();
 
+    this.setupReady = true;
+
+    const sessionId = await this.getSessionId();
     this.sessionId = sessionId;
 
-    this.socket = new SocketClient({
+    this.socket = SocketClient.create({
       sessionId,
       events: this,
     });
@@ -146,44 +140,56 @@ export class BakoSafeConnector extends FuelConnector {
       request_id: this.socket.request_id,
     });
 
-    this.setupReady = true;
+    await this.requestConnectionState();
+  }
+
+  private async requestConnectionState() {
+    return new Promise<void>((resolve) => {
+      if (!this.socket) return;
+
+      this.socket.server.emit(BakoSafeConnectorEvents.CONNECTION_STATE);
+
+      this.socket.server.once(
+        BakoSafeConnectorEvents.CONNECTION_STATE,
+        async ({ data }: { data: boolean }) => {
+          this.connected = data;
+          this.emit(this.events.connection, data);
+          resolve();
+        },
+      );
+    });
   }
 
   // ============================================================
   // Connector methods
   // ============================================================
   async connect() {
+    await this.setup();
+
     return new Promise<boolean>((resolve, reject) => {
       if (this.connected) {
         resolve(true);
         return;
       }
 
-      // window controll
       this.dAppWindow?.open('/', reject);
       this.checkWindow();
 
-      //events controll
-      // @ts-ignore
       this.once(BakoSafeConnectorEvents.CLIENT_DISCONNECTED, () => {
         this.dAppWindow?.close();
         reject(false);
       });
 
       this.once(
-        //@ts-ignore
         BakoSafeConnectorEvents.AUTH_CONFIRMED,
         async ({ data }: { data: IResponseAuthConfirmed }) => {
-          const connected = data.connected;
-          const accounts = await this.accounts();
-          const currentAccount = await this.currentAccount();
+          await this.requestConnectionState();
 
-          this.emit(this.events.connection, connected);
-          this.emit(this.events.accounts, accounts);
-          this.emit(this.events.currentAccount, currentAccount);
+          this.emit(this.events.accounts, await this.accounts());
+          this.emit(this.events.currentAccount, await this.currentAccount());
 
           this.dAppWindow?.close();
-          resolve(connected);
+          resolve(data.connected);
         },
       );
     });
@@ -200,41 +206,87 @@ export class BakoSafeConnector extends FuelConnector {
     _transaction: TransactionRequestLike,
   ) {
     return new Promise<string>((resolve, reject) => {
-      // window controll
       this.dAppWindow?.open('/dapp/transaction', reject);
       this.checkWindow();
 
-      //events controll
-      this.once(
-        //@ts-ignore
-        BakoSafeConnectorEvents.CLIENT_DISCONNECTED,
-        () => {
-          this.dAppWindow?.close();
-          reject(new Error('Client disconnected'));
-        },
-      );
-
-      // @ts-ignore
-      this.once(BakoSafeConnectorEvents.TX_TIMEOUT, () => {
-        this.dAppWindow?.close();
-        reject(new Error('Transaction timeout'));
-      });
-
-      // @ts-ignore
-      this.once(BakoSafeConnectorEvents.CLIENT_CONNECTED, () => {
+      const onClientConnected = () => {
         this.socket?.server.emit(BakoSafeConnectorEvents.TX_PENDING, {
           _transaction,
           _address,
         });
+      };
+
+      // @ts-ignore
+      this.on(BakoSafeConnectorEvents.CLIENT_CONNECTED, onClientConnected);
+
+      this.once(BakoSafeConnectorEvents.CLIENT_DISCONNECTED, () => {
+        this.dAppWindow?.close();
+        this.removeListener(
+          BakoSafeConnectorEvents.CLIENT_CONNECTED,
+          onClientConnected,
+        );
+        reject(new Error('Client disconnected'));
+      });
+
+      this.once(BakoSafeConnectorEvents.TX_TIMEOUT, () => {
+        this.dAppWindow?.close();
+        this.removeListener(
+          BakoSafeConnectorEvents.CLIENT_CONNECTED,
+          onClientConnected,
+        );
+        reject(new Error('Transaction timeout'));
       });
 
       this.once(
-        // @ts-ignore
         BakoSafeConnectorEvents.TX_CONFIRMED,
         ({ data }: { data: IResponseTxCofirmed }) => {
+          this.removeListener(
+            BakoSafeConnectorEvents.CLIENT_CONNECTED,
+            onClientConnected,
+          );
           resolve(`0x${data.id}`);
         },
       );
+    });
+  }
+
+  async selectNetwork(_network: Network): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.dAppWindow?.open('/dapp/network', reject);
+      this.checkWindow();
+
+      const onClientConnected = () => {
+        this.socket?.server.emit(BakoSafeConnectorEvents.CHANGE_NETWORK, {
+          _network,
+        });
+      };
+
+      // @ts-ignore
+      this.on(BakoSafeConnectorEvents.CLIENT_CONNECTED, onClientConnected);
+
+      this.once(BakoSafeConnectorEvents.CLIENT_DISCONNECTED, () => {
+        this.dAppWindow?.close();
+        this.removeListener(
+          BakoSafeConnectorEvents.CLIENT_CONNECTED,
+          onClientConnected,
+        );
+        reject(new Error('Client disconnected'));
+      });
+
+      this.once(BakoSafeConnectorEvents.NETWORK_CHANGED, async () => {
+        const network = await this.currentNetwork();
+
+        this.emit(this.events.networks, [network]);
+        this.emit(this.events.currentNetwork, network);
+
+        this.dAppWindow?.close();
+        this.removeListener(
+          BakoSafeConnectorEvents.CLIENT_CONNECTED,
+          onClientConnected,
+        );
+
+        resolve(true);
+      });
     });
   }
 
@@ -254,13 +306,8 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   async isConnected() {
-    //this request goes to the api without sessionId
-    const sessionId = this.sessionId ?? (await this.getSessionId());
-    const data = await this.api.get(`/connections/${sessionId}/state`);
-
-    this.connected = data;
-
-    return data;
+    await this.setup();
+    return this.connected;
   }
 
   async accounts() {
@@ -282,7 +329,7 @@ export class BakoSafeConnector extends FuelConnector {
 
   async disconnect() {
     await this.api.delete(`/connections/${this.sessionId}`);
-    this.emit(this.events.connection, false);
+    await this.requestConnectionState();
     this.emit(this.events.accounts, []);
     this.emit(this.events.currentAccount, null);
     return false;
@@ -322,10 +369,6 @@ export class BakoSafeConnector extends FuelConnector {
   }
 
   async addNetwork(_networkUrl: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
-  }
-
-  async selectNetwork(_network: SelectNetworkArguments): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
 
