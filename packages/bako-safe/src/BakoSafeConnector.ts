@@ -2,8 +2,10 @@ import {
   type Asset,
   type FuelABI,
   FuelConnector,
+  FuelConnectorEventTypes,
   type Network,
   Provider,
+  type StartConsolidateCoins,
   type StorageAbstract,
   type TransactionRequestLike,
 } from 'fuels';
@@ -380,5 +382,12 @@ export class BakoSafeConnector extends FuelConnector {
 
   async hasABI(_id: string): Promise<boolean> {
     throw new Error('Method not implemented.');
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async startConsolidation(opts: StartConsolidateCoins): Promise<void> {
+    this.emit(FuelConnectorEventTypes.consolidateCoins, opts);
   }
 }

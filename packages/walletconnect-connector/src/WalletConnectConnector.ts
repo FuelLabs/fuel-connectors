@@ -22,6 +22,7 @@ import {
   type FuelConnectorSendTxParams,
   Provider as FuelProvider,
   LocalStorage,
+  type StartConsolidateCoins,
   type StorageAbstract,
   type TransactionRequestLike,
   type TransactionResponse,
@@ -564,5 +565,12 @@ export class WalletConnectConnector extends PredicateConnector {
     );
 
     return predicateAddresses;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async startConsolidation(opts: StartConsolidateCoins): Promise<void> {
+    this.emit(FuelConnectorEventTypes.consolidateCoins, opts);
   }
 }

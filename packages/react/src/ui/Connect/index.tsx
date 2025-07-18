@@ -13,6 +13,7 @@ import {
 } from './styles';
 
 import { Connecting } from './components/Connector/Connecting';
+import { ConsolidateCoins } from './components/ConsolidateCoins/ConsolidateCoins';
 import { DialogContent } from './components/Core/DialogContent';
 import { DialogFuel } from './components/Core/DialogFuel';
 import { PredicateAddressDisclaimer } from './components/PredicateAddressDisclaimer/PredicateAddressDisclaimer';
@@ -38,6 +39,8 @@ const ConnectRoutes = ({ route }: { route: Routes }) => {
       return <Connecting />;
     case Routes.SignatureError:
       return <SignatureError theme={theme} />;
+    case Routes.ConsolidateCoins:
+      return <ConsolidateCoins />;
     default:
       return null;
   }
