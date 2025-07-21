@@ -12,7 +12,7 @@ import {
   transferTests,
 } from '../../../common/common';
 import type { ConnectorFunctions } from '../../../common/types';
-import basicSetup from '../../../wallet-setup/basic.setup';
+import basicSetup from '../../synpress/metamask/basic.setup';
 
 const test = testWithSynpress(metaMaskFixtures(basicSetup));
 
