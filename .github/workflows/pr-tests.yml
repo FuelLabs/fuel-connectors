@@ -131,7 +131,6 @@ jobs:
 
       - name: Build & Deploy Solana Predicates
         run: pnpm versions:generate
-        if: false # @TODO: Phantom CRX is currently broken, so we're skipping this step for now
         working-directory: packages/solana-connector
 
       # Rebuild after building and deploying predicates
@@ -143,7 +142,7 @@ jobs:
         working-directory: e2e-tests/runner
 
       - name: Build Synpress cache
-        run: xvfb-run pnpm synpress wallet-setup
+        run: xvfb-run pnpm setup:synpress
         working-directory: e2e-tests/runner
 
       - name: Run Playwright tests locally for Preview
