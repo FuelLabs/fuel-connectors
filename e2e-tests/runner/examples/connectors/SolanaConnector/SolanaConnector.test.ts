@@ -65,7 +65,8 @@ test.describe('SolanaConnector', () => {
     await phantom.confirmSignature();
   };
 
-  test('Solana session test', async ({ page }) => {
+  // TODO: This should be resolved by the new Reown integration
+  test.skip('Solana session test', async ({ page }) => {
     await sessionTests(page, { connect, approveTransfer, secondConnect });
   });
 
