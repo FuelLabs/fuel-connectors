@@ -43,9 +43,12 @@ export const useVerifiedAssets = (params?: UseVerifiedAssetsParams) => {
   return useNamedQuery('verifiedAssets', {
     queryKey: QUERY_KEYS.verifiedAssets(chainId),
     queryFn: async () => {
-      const data: Asset[] = await fetch(VERIFIED_ASSETS_URL).then((res) =>
-        res.json(),
-      );
+      const data: Asset[] = await fetch(VERIFIED_ASSETS_URL)
+        .then((res) => res.json())
+        .catch((error) => {
+          console.error('Error fetching verified assets', error);
+          return [];
+        });
 
       return data.reduce((acc, { networks, ...asset }) => {
         const network = networks.find(
