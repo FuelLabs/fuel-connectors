@@ -55,12 +55,14 @@ test.describe('ReownConnector', () => {
     await metamask.confirmSignature();
     // TODO: For now we select the latest predicate version
     // In the future we may want to test all predicate version
+    await page.getByText('Latest version', { exact: true }).click();
     await page.getByText('Confirm Selection', { exact: true }).click();
   };
 
   // From here on, we'll skip the signature step and predicate address warning disclaimer
   const secondConnect: ConnectorFunctions['connect'] = async (page) => {
     await commonConnect(page);
+    await page.getByText('Latest version', { exact: true }).click();
     await page.getByText('Confirm Selection', { exact: true }).click();
   };
 

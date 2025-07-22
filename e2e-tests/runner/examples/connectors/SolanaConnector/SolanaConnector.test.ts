@@ -36,7 +36,12 @@ test.describe('SolanaConnector', () => {
   const commonConnect: ConnectFunction = async (page: Page) => {
     const connectButton = getButtonByText(page, 'Connect Wallet', true);
     await connectButton.click();
-    await getByAriaLabel(page, 'Connect to Solana Wallets', true).click();
+    await getByAriaLabel(
+      page,
+      'Connect to Ethereum / Solana Wallets',
+      true,
+    ).click();
+    await page.getByText('Proceed').click();
     await page.getByText('Proceed').click();
     await getButtonByText(page, 'Phantom').click();
     await phantom.connectToDapp().catch((error) => {
@@ -67,8 +72,7 @@ test.describe('SolanaConnector', () => {
     await phantom.confirmSignature();
   };
 
-  // TODO: This should be resolved by the new Reown integration
-  test.skip('Solana session test', async ({ page }) => {
+  test('Solana session test', async ({ page }) => {
     await sessionTests(page, { connect, approveTransfer, secondConnect });
   });
 
