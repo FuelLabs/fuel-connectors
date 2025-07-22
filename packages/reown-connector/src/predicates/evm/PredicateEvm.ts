@@ -32,6 +32,7 @@ import {
   Provider as FuelProvider,
   type StorageAbstract,
   type TransactionRequestLike,
+  type TransactionResponse,
 } from 'fuels';
 import { stringToHex } from 'viem';
 import { SIGNATURE_VALIDATION_TIMEOUT } from './constants';
@@ -214,19 +215,18 @@ export class PredicateEvm extends PredicateConnector {
   }
 
   public async disconnect(): Promise<boolean> {
-    await this.config.appkit.disconnect();
-    return false;
+    return await super.disconnect();
   }
 
   public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
     params?: FuelConnectorSendTxParams,
-  ): Promise<string> {
+  ): Promise<string | TransactionResponse> {
     const { fuelProvider } = await this.getProviders();
     const ethProvider =
       this.config.appkit.getProvider<EIP1193Provider>('eip155');
-    const { request, transactionId, account, transactionRequest } =
+    const { predicate, request, transactionId, account, transactionRequest } =
       await this.prepareTransaction(address, transaction);
 
     const txId = this.encodeTxId(transactionId);
@@ -253,11 +253,9 @@ export class PredicateEvm extends PredicateConnector {
       );
     }
 
-    const response = await fuelProvider.operations.submit({
-      encodedTransaction: hexlify(txAfterUserCallback.toTransactionBytes()),
-    });
-
-    return response.submit.id;
+    const response = await predicate.sendTransaction(txAfterUserCallback);
+    await response.waitForPreConfirmation();
+    return response;
   }
 
   private encodeTxId(txId: string): string {

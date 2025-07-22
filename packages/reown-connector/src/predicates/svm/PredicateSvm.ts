@@ -19,6 +19,7 @@ import {
   FuelConnectorEventTypes,
   Provider as FuelProvider,
   type TransactionRequestLike,
+  type TransactionResponse,
   hexlify,
   toUtf8Bytes,
 } from 'fuels';
@@ -35,7 +36,7 @@ export class PredicateSvm extends PredicateConnector {
     },
   };
 
-  private fuelProvider: FuelProvider;
+  private fuelProvider: FuelProvider | null = null;
   private config: PredicateSvmConfig;
 
   constructor(config: PredicateSvmConfig) {
@@ -43,8 +44,6 @@ export class PredicateSvm extends PredicateConnector {
 
     this.config = config;
     this.customPredicate = config.predicateConfig || null;
-    const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
-    this.fuelProvider = new FuelProvider(network);
   }
 
   public async getCurrentState(): Promise<PredicateCurrentState> {
@@ -86,8 +85,20 @@ export class PredicateSvm extends PredicateConnector {
   }
 
   protected async getProviders(): Promise<ProviderDictionary> {
+    if (this.fuelProvider) {
+      return {
+        fuelProvider: this.fuelProvider,
+      };
+    }
+
+    const network = getProviderUrl(
+      this.config?.chainId ?? CHAIN_IDS.fuel.mainnet,
+    );
+    const provider = this.config.fuelProvider || new FuelProvider(network);
+    this.fuelProvider = await provider;
+
     return {
-      fuelProvider: await this.fuelProvider,
+      fuelProvider: this.fuelProvider,
     };
   }
 
@@ -97,8 +108,7 @@ export class PredicateSvm extends PredicateConnector {
   }
 
   public async disconnect(): Promise<boolean> {
-    await this.config.appkit.disconnect();
-    return false;
+    return await super.disconnect();
   }
 
   private encodeTxId(txId: string): Uint8Array {
@@ -109,7 +119,7 @@ export class PredicateSvm extends PredicateConnector {
   public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
-  ): Promise<string> {
+  ): Promise<string | TransactionResponse> {
     const { predicate, transactionId, transactionRequest } =
       await this.prepareTransaction(address, transaction);
 
@@ -134,7 +144,7 @@ export class PredicateSvm extends PredicateConnector {
 
     const response = await predicate.sendTransaction(transactionRequest);
 
-    return response.id;
+    return response;
   }
 
   async signMessageCustomCurve(message: string) {
