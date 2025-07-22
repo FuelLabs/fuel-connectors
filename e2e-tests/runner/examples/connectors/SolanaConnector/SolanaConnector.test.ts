@@ -1,5 +1,7 @@
 import { getButtonByText, getByAriaLabel } from '@fuels/playwright-utils';
 import type { Page } from '@playwright/test';
+import { testWithSynpress } from '@synthetixio/synpress';
+import { Phantom, phantomFixtures } from '@synthetixio/synpress/playwright';
 import {
   incrementTests,
   sessionTests,
@@ -11,15 +13,25 @@ import type {
   ConnectFunction,
   ConnectorFunctions,
 } from '../../../common/types';
+import phantomSetup from '../../synpress/phantom/basic.setup';
 import { fundWallet } from '../setup';
-import phantomExtended from './phantom/phantom';
-import { test } from './setup';
 
-// @TODO: Phantom CRX is currently broken, so we're skipping this step for now
-// When someone fixes it, we should move it to "ReownConnector" because SolanaConnector doesn't exist anymore
+const test = testWithSynpress(phantomFixtures(phantomSetup));
+
+// TODO: When someone fixes it, we should move it to "ReownConnector" because SolanaConnector doesn't exist anymore
 // Find this PR to see more details and understand better.
-test.skip('SolanaConnector', () => {
+test.describe('SolanaConnector', () => {
+  let phantom: Phantom;
   test.slow();
+  test.beforeEach(async ({ context, extensionId, phantomPage, page }) => {
+    phantom = new Phantom(
+      context,
+      phantomPage,
+      phantomSetup.walletPassword,
+      extensionId,
+    );
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+  });
 
   const commonConnect: ConnectFunction = async (page: Page) => {
     const connectButton = getButtonByText(page, 'Connect Wallet', true);
@@ -27,37 +39,42 @@ test.skip('SolanaConnector', () => {
     await getByAriaLabel(page, 'Connect to Solana Wallets', true).click();
     await page.getByText('Proceed').click();
     await getButtonByText(page, 'Phantom').click();
-    try {
-      await phantomExtended.acceptAccess();
-    } catch (error) {
+    await phantom.connectToDapp().catch((error) => {
       // Phantom might not need to accept access if it already connected before
       console.log('Error: ', error);
-    }
+    });
   };
 
   // First-time connection requires to confirm the fuel predicate address difference
   const connect: ConnectorFunctions['connect'] = async (page) => {
     await commonConnect(page);
-    await page.getByText('Continue to application').click();
+    await page.getByText('Sign', { exact: true }).click();
+    await phantom.confirmSignature();
+    // TODO: For now we select the latest predicate version
+    // In the future we may want to test all predicate version
+    await page.getByText('Latest version', { exact: true }).click();
+    await page.getByText('Confirm Selection', { exact: true }).click();
   };
 
   // From here on, we'll skip the predicate warning step
-  const secondConnect: ConnectorFunctions['connect'] = commonConnect;
-
-  const approveTransfer: ApproveTransferFunction = async () => {
-    await phantomExtended.confirmSignatureRequest();
+  const secondConnect: ConnectorFunctions['connect'] = async (page) => {
+    await commonConnect(page);
+    await page.getByText('Latest version', { exact: true }).click();
+    await page.getByText('Confirm Selection', { exact: true }).click();
   };
 
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+  const approveTransfer: ApproveTransferFunction = async () => {
+    await phantom.confirmSignature();
+  };
+
+  // TODO: This should be resolved by the new Reown integration
+  test.skip('Solana session test', async ({ page }) => {
+    await sessionTests(page, { connect, approveTransfer, secondConnect });
   });
 
-  test('Solana tests', async ({ page }) => {
-    await test.step('Session tests', async () => {
-      await sessionTests(page, { connect, approveTransfer });
-    });
+  test('Solana transfer tests', async ({ page }) => {
+    await connect(page);
 
-    await secondConnect(page);
     await skipBridgeFunds(page);
 
     const addressElement = await page.locator('#address');
@@ -71,20 +88,16 @@ test.skip('SolanaConnector', () => {
     } else {
       throw new Error('Address is null');
     }
-    await test.step('Transfer tests', async () => {
-      await transferTests(page, {
-        connect: secondConnect,
-        approveTransfer,
-        keepSession: true,
-      });
-    });
 
-    await test.step('Increment tests', async () => {
-      await incrementTests(page, {
-        connect: secondConnect,
-        approveTransfer,
-        keepSession: true,
-      });
+    await transferTests(page, {
+      connect: secondConnect,
+      approveTransfer,
+      keepSession: true,
+    });
+    await incrementTests(page, {
+      connect: secondConnect,
+      approveTransfer,
+      keepSession: true,
     });
   });
 });

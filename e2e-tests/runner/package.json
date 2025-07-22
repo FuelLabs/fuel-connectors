@@ -13,21 +13,21 @@
     "test:react-app:ci": "playwright test e2e-tests/react-app --project=react-app",
     "test:react-next": "pnpm playwright test --project=react-next",
     "test:e2e:dev": "pnpm run start:servers & pnpm playwright test --ui",
-    "test:e2e:local": "pnpm run deploy:contracts && synpress wallet-setup && pnpm run test:e2e",
+    "test:e2e:local": "pnpm run deploy:contracts && pnpm run setup:synpress && pnpm run test:e2e",
     "start:react-app": "pnpm --filter react-app dev",
     "start:react-next": "pnpm --filter @e2e-tests/react-next dev",
     "start:servers": "pnpm run start:react-app & pnpm run start:react-next",
     "deploy:contracts": "sh ./scripts/deployLocal.sh",
-    "deploy:contracts:ci": "sh ./scripts/deployCI.sh"
+    "deploy:contracts:ci": "sh ./scripts/deployCI.sh",
+    "setup:synpress": "synpress examples/synpress/metamask && synpress --phantom examples/synpress/phantom"
   },
   "devDependencies": {
     "@fuels/connectors": "workspace:*",
     "@fuels/playwright-utils": "0.49.0",
     "@playwright/test": "1.48.2",
-    "@synthetixio/synpress": "4.0.3",
-    "@synthetixio/synpress-cache": "0.0.4",
+    "@synthetixio/synpress": "4.1.0",
+    "@synthetixio/synpress-cache": "0.0.10",
     "dotenv": "16.4.5",
-    "@phantom/synpress": "4.0.0-alpha.53",
     "fuels": "0.101.1"
   }
 }
