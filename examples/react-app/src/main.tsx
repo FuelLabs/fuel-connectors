@@ -96,8 +96,8 @@ const config: Config = {
   counterContractId: COUNTER_CONTRACT_ID,
   chainIdName: CHAIN_ID_NAME,
   defaultAmount: DEFAULT_AMOUNT,
-  assetId: CUSTOM_ASSET_ID ?? undefined,
-  assetSymbol: !CUSTOM_ASSET_ID ? 'ETH' : CUSTOM_ASSET_SYMBOL ?? 'USDT',
+  assetId: CUSTOM_ASSET_ID,
+  assetSymbol: CUSTOM_ASSET_SYMBOL,
 };
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
