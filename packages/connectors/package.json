@@ -34,6 +34,7 @@
     "viem": "2.20.1"
   },
   "devDependencies": {
+    "@fuel-connectors/arcana-wallet": "workspace:*",
     "@fuel-connectors/bako-safe": "workspace:*",
     "@fuel-connectors/burner-wallet-connector": "workspace:*",
     "@fuel-connectors/evm-connector": "workspace:*",
