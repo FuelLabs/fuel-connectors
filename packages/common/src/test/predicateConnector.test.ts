@@ -1,4 +1,4 @@
-import type { Asset, Network } from 'fuels';
+import type { Asset, FuelABI, Network } from 'fuels';
 import { describe, expect, test } from 'vitest';
 import versions from './mockedPredicate';
 import { TestPredicatedConnector } from './testConnector';
@@ -65,9 +65,9 @@ describe('Predicated Connector', () => {
 
   describe('addAbi()', () => {
     test('throws error', async () => {
-      await expect(() => connector.addAbi({})).rejects.toThrowError(
-        'Method not implemented.',
-      );
+      await expect(() =>
+        connector.addAbi('contractId', {} as FuelABI),
+      ).rejects.toThrowError('Method not implemented.');
     });
   });
 

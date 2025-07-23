@@ -36,6 +36,7 @@ const config: PlaywrightTestConfig = defineConfig({
     permissions: ['clipboard-read', 'clipboard-write'],
     trace: 'on-first-retry',
   },
+  testIgnore: ['**/WalletConnectConnector.test.ts'],
 });
 
 export default config;

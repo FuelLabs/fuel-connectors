@@ -129,9 +129,9 @@ jobs:
         run: pnpm versions:generate
         working-directory: packages/evm-predicates
 
-      - name: Build & Deploy Solana Predicates
+      - name: Build & Deploy SVM Predicates
         run: pnpm versions:generate
-        working-directory: packages/solana-connector
+        working-directory: packages/svm-predicates
 
       # Rebuild after building and deploying predicates
       - name: Run build:connectors

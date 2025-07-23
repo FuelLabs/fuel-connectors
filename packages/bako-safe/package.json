@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "tsup": "8.0.2",
-    "typescript": "5.4.2",
+    "typescript": "5.4.5",
     "undici": "6.9.0"
   }
 }

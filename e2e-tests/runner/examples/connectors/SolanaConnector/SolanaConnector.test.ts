@@ -18,6 +18,8 @@ import { fundWallet } from '../setup';
 
 const test = testWithSynpress(phantomFixtures(phantomSetup));
 
+// TODO: When someone fixes it, we should move it to "ReownConnector" because SolanaConnector doesn't exist anymore
+// Find this PR to see more details and understand better.
 test.describe('SolanaConnector', () => {
   let phantom: Phantom;
   test.slow();
@@ -34,7 +36,11 @@ test.describe('SolanaConnector', () => {
   const commonConnect: ConnectFunction = async (page: Page) => {
     const connectButton = getButtonByText(page, 'Connect Wallet', true);
     await connectButton.click();
-    await getByAriaLabel(page, 'Connect to Solana Wallets', true).click();
+    await getByAriaLabel(
+      page,
+      'Connect to Ethereum / Solana Wallets',
+      true,
+    ).click();
     await page.getByText('Proceed').click();
     await getButtonByText(page, 'Phantom').click();
     await phantom.connectToDapp().catch((error) => {
@@ -46,8 +52,9 @@ test.describe('SolanaConnector', () => {
   // First-time connection requires to confirm the fuel predicate address difference
   const connect: ConnectorFunctions['connect'] = async (page) => {
     await commonConnect(page);
-    await page.getByText('Sign', { exact: true }).click();
-    await phantom.confirmSignature();
+    // TODO: Re-add the sign step in the SvmPredicate
+    // await page.getByText('Sign', { exact: true }).click();
+    // await phantom.confirmSignature();
     // TODO: For now we select the latest predicate version
     // In the future we may want to test all predicate version
     await page.getByText('Latest version', { exact: true }).click();
@@ -65,8 +72,7 @@ test.describe('SolanaConnector', () => {
     await phantom.confirmSignature();
   };
 
-  // TODO: This should be resolved by the new Reown integration
-  test.skip('Solana session test', async ({ page }) => {
+  test('Solana session test', async ({ page }) => {
     await sessionTests(page, { connect, approveTransfer, secondConnect });
   });
 

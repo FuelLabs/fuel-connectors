@@ -7,6 +7,7 @@ import {
 import {
   Address,
   type Asset,
+  type FuelABI,
   type Predicate as FuelPredicate,
   InputType,
   type InputValue,
@@ -586,9 +587,9 @@ describe('EVM Wallet Connector', () => {
         fuelProvider,
       });
 
-      await expect(() => connector.addAbi({})).rejects.toThrowError(
-        'Method not implemented.',
-      );
+      await expect(() =>
+        connector.addAbi('', {} as FuelABI),
+      ).rejects.toThrowError('Method not implemented.');
     });
   });
 

@@ -1,9 +1,9 @@
 {
   "name": "@fuels/connectors",
   "version": "0.43.2",
+  "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -18,20 +18,21 @@
     "ts:check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "fuels": "0.101.1"
+    "@reown/appkit": ">=1.6.8",
+    "fuels": "0.101.1",
+    "viem": ">=2.23.2"
+  },
+  "peerDependenciesMeta": {
+    "@reown/appkit": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
-    "@solana/web3.js": "1.93.1",
-    "@wagmi/core": "2.13.4",
-    "@web3modal/core": "5.0.0",
-    "@web3modal/scaffold": "5.0.0",
-    "@web3modal/solana": "5.0.0",
-    "@web3modal/wagmi": "5.0.0",
+    "@solana/web3.js": "1.98.0",
     "rpc-websockets": "7.11.0",
-    "socket.io-client": "4.7.2",
-    "viem": "2.20.1"
+    "socket.io-client": "4.7.2"
   },
   "devDependencies": {
     "@fuel-connectors/bako-safe": "workspace:*",
@@ -40,10 +41,11 @@
     "@fuel-connectors/fuel-development-wallet": "workspace:*",
     "@fuel-connectors/fuel-wallet": "workspace:*",
     "@fuel-connectors/fuelet-wallet": "workspace:*",
-    "@fuel-connectors/solana-connector": "workspace:*",
-    "@fuel-connectors/walletconnect-connector": "workspace:*",
+    "@fuel-connectors/reown-connector": "workspace:*",
+    "@reown/appkit": "1.6.8",
     "terser": "5.31.0",
     "tsup": "8.0.2",
-    "typescript": "5.4.5"
+    "typescript": "5.4.5",
+    "viem": "2.23.2"
   }
 }

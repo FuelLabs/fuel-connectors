@@ -1,13 +1,12 @@
 import {
-  type AbiMap,
   Address,
   type Asset,
   type BytesLike,
   type ConnectorMetadata,
+  type FuelABI,
   FuelConnector,
   FuelConnectorEventTypes,
   type HashableMessage,
-  type JsonAbi,
   type Network,
   type SelectNetworkArguments,
   type TransactionRequestLike,
@@ -23,7 +22,7 @@ import {
 import { PredicateFactory, getMockedSignatureIndex } from './PredicateFactory';
 import type { PredicateWalletAdapter } from './PredicateWalletAdapter';
 import type {
-  ConnectorConfig,
+  FuelPredicateAddress,
   Maybe,
   MaybeAsync,
   PredicateConfig,
@@ -84,12 +83,10 @@ export abstract class PredicateConnector extends FuelConnector {
     return true;
   }
 
-  protected abstract configProviders(config: ConnectorConfig): MaybeAsync<void>;
   protected abstract getWalletAdapter(): PredicateWalletAdapter;
   protected abstract getPredicateVersions(): Record<string, PredicateVersion>;
   protected abstract getAccountAddress(): MaybeAsync<Maybe<string>>;
   protected abstract getProviders(): Promise<ProviderDictionary>;
-  protected abstract requireConnection(): MaybeAsync<void>;
   protected abstract walletAccounts(): Promise<Array<string>>;
   abstract signMessageCustomCurve(
     _message: string,
@@ -129,19 +126,30 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   protected get predicateVersions(): Array<PredicateFactory> {
-    if (!this._predicateVersions) {
-      this._predicateVersions = Object.entries(this.getPredicateVersions())
-        .map(
-          ([key, pred]) =>
-            new PredicateFactory(
-              this.getWalletAdapter(),
-              pred.predicate,
-              key,
-              pred.generatedAt,
-            ),
-        )
-        .sort((a, b) => a.sort(b));
+    if (this._predicateVersions) {
+      return this._predicateVersions;
     }
+
+    const sortedPredicateConfigs = Object.entries(this.getPredicateVersions())
+      .map(([root, { predicate, generatedAt }]) => {
+        return {
+          root,
+          predicate,
+          generatedAt,
+        };
+      })
+      .sort((a, b) => b.generatedAt - a.generatedAt);
+
+    this._predicateVersions = sortedPredicateConfigs.map((config) => {
+      const predicateInstance = new PredicateFactory(
+        this.getWalletAdapter(),
+        config.predicate,
+        config.root,
+        config.generatedAt,
+      );
+
+      return predicateInstance;
+    });
 
     return this._predicateVersions;
   }
@@ -315,7 +323,7 @@ export abstract class PredicateConnector extends FuelConnector {
       }
     }
 
-    return null;
+    return this.predicateVersions[0];
   }
 
   protected getNewestPredicate(): Maybe<PredicateFactory> {
@@ -376,10 +384,6 @@ export abstract class PredicateConnector extends FuelConnector {
     }
 
     return this.predicateAccount;
-  }
-
-  protected subscribe(listener: () => void) {
-    this.subscriptions.push(listener);
   }
 
   protected async prepareTransaction(
@@ -471,23 +475,8 @@ export abstract class PredicateConnector extends FuelConnector {
     };
   }
 
-  public clearSubscriptions() {
-    if (!this.subscriptions) {
-      return;
-    }
-    this.subscriptions.forEach((listener) => listener());
-    this.subscriptions = [];
-  }
-
   public async ping(): Promise<boolean> {
-    this.getProviders()
-      .catch(() => {
-        this.hasProviderSucceeded = false;
-      })
-      .then(() => {
-        this.hasProviderSucceeded = true;
-      });
-    return this.hasProviderSucceeded;
+    return true;
   }
 
   public async version(): Promise<Version> {
@@ -495,7 +484,6 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   public async isConnected(): Promise<boolean> {
-    await this.requireConnection();
     const accounts = await this.accounts();
     return accounts.length > 0;
   }
@@ -561,15 +549,21 @@ export abstract class PredicateConnector extends FuelConnector {
     throw new Error('Method not implemented.');
   }
 
-  public async addAbi(_abiMap: AbiMap): Promise<boolean> {
+  public async addAbi(_contractId: string, _abi: FuelABI): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
 
-  public async getAbi(_contractId: string): Promise<JsonAbi> {
+  public async getAbi(_contractId: string): Promise<FuelABI> {
     throw Error('Cannot get contractId ABI for a predicate');
   }
 
   public async hasAbi(_contractId: string): Promise<boolean> {
     throw Error('A predicate account cannot have an ABI');
+  }
+
+  public static getFuelPredicateAddresses(
+    _address: string,
+  ): FuelPredicateAddress[] {
+    throw new Error('Method not implemented.');
   }
 }

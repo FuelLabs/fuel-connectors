@@ -1,15 +1,24 @@
 'use client';
 import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
-import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
-import { http, createConfig, injected } from '@wagmi/core';
-import { mainnet, sepolia } from '@wagmi/core/chains';
+import { createAppKit } from '@reown/appkit';
+import { SolanaAdapter } from '@reown/appkit-adapter-solana';
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
+import {
+  type AppKitNetwork,
+  mainnet,
+  sepolia,
+  solana,
+  solanaTestnet,
+} from '@reown/appkit/networks';
 import { CHAIN_IDS, Provider, bn } from 'fuels';
 import App from 'react-app/src/App';
 import { ConfigProvider } from 'react-app/src/context/ConfigContext';
 import COUNTER_CONTRACT_ID_LOCAL from 'react-app/src/types/contract-ids-local.json';
 import COUNTER_CONTRACT_ID_MAINNET from 'react-app/src/types/contract-ids-mainnet.json';
 import COUNTER_CONTRACT_ID_TESTNET from 'react-app/src/types/contract-ids-testnet.json';
+import { http } from 'wagmi';
+import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors';
 
 const CHAIN_ID_NAME = process.env
   .NEXT_PUBLIC_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel;
@@ -38,6 +47,13 @@ const EXPLORER_URL_MAP: Record<keyof typeof CHAIN_IDS.fuel, string> = {
   mainnet: 'https://app-mainnet.fuel.network',
 };
 
+const METADATA = {
+  name: 'Wallet Demo',
+  description: 'Fuel Wallets Demo',
+  url: 'https://connectors.fuel.network',
+  icons: ['https://connectors.fuel.network/logo_white.png'],
+};
+
 const NETWORKS = [
   {
     chainId: CHAIN_ID,
@@ -47,20 +63,18 @@ const NETWORKS = [
 
 const WC_PROJECT_ID = process.env.NEXT_PUBLIC_WC_PROJECT_ID || '';
 
-const METADATA = {
-  name: 'Wallet Demo',
-  description: 'Fuel Wallets Demo',
-  url: 'https://connectors.fuel.network',
-  icons: ['https://connectors.fuel.network/logo_white.png'],
-};
+const networks: [AppKitNetwork, ...AppKitNetwork[]] = [
+  mainnet,
+  sepolia,
+  solana,
+  solanaTestnet,
+];
 
-const wagmiConfig = createConfig({
-  chains: [mainnet, sepolia],
-  transports: {
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
-  },
+const solanaWeb3JsAdapter = new SolanaAdapter();
+const wagmiAdapter = new WagmiAdapter({
+  networks,
   syncConnectedChain: true,
+  projectId: WC_PROJECT_ID,
   connectors: [
     injected({ shimDisconnect: false }),
     walletConnect({
@@ -77,11 +91,28 @@ const wagmiConfig = createConfig({
   ],
 });
 
+const appkit = createAppKit({
+  adapters: [wagmiAdapter, solanaWeb3JsAdapter],
+  enableWalletConnect: !!WC_PROJECT_ID,
+  projectId: WC_PROJECT_ID,
+  networks,
+  allowUnsupportedChain: false,
+  allWallets: 'ONLY_MOBILE',
+  featuredWalletIds: [
+    '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0', // Trust Wallet
+    'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase Wallet
+  ],
+  features: {
+    email: false,
+    socials: false,
+    analytics: false,
+  },
+});
+
 const FUEL_CONFIG = {
   connectors: defaultConnectors({
     devMode: true,
-    wcProjectId: WC_PROJECT_ID,
-    ethWagmiConfig: wagmiConfig,
+    appkit,
     chainId: CHAIN_ID,
     fuelProvider: new Provider(PROVIDER_URL),
   }),
