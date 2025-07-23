@@ -4,7 +4,13 @@ import { FuelProvider } from '@fuels/react';
 import { createAppKit } from '@reown/appkit';
 import { SolanaAdapter } from '@reown/appkit-adapter-solana';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
-import { type AppKitNetwork, mainnet, sepolia } from '@reown/appkit/networks';
+import {
+  type AppKitNetwork,
+  mainnet,
+  sepolia,
+  solana,
+  solanaTestnet,
+} from '@reown/appkit/networks';
 import { CHAIN_IDS, Provider, bn } from 'fuels';
 import App from 'react-app/src/App';
 import { ConfigProvider } from 'react-app/src/context/ConfigContext';
@@ -57,17 +63,18 @@ const NETWORKS = [
 
 const WC_PROJECT_ID = process.env.NEXT_PUBLIC_WC_PROJECT_ID || '';
 
-const networks: [AppKitNetwork, ...AppKitNetwork[]] = [mainnet, sepolia];
+const networks: [AppKitNetwork, ...AppKitNetwork[]] = [
+  mainnet,
+  sepolia,
+  solana,
+  solanaTestnet,
+];
 
 const solanaWeb3JsAdapter = new SolanaAdapter();
 const wagmiAdapter = new WagmiAdapter({
   networks,
-  projectId: WC_PROJECT_ID,
-  transports: {
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
-  },
   syncConnectedChain: true,
+  projectId: WC_PROJECT_ID,
   connectors: [
     injected({ shimDisconnect: false }),
     walletConnect({
@@ -88,9 +95,13 @@ const appkit = createAppKit({
   adapters: [wagmiAdapter, solanaWeb3JsAdapter],
   enableWalletConnect: !!WC_PROJECT_ID,
   projectId: WC_PROJECT_ID,
-  networks: networks,
+  networks,
   allowUnsupportedChain: false,
   allWallets: 'ONLY_MOBILE',
+  featuredWalletIds: [
+    '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0', // Trust Wallet
+    'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase Wallet
+  ],
   features: {
     email: false,
     socials: false,
