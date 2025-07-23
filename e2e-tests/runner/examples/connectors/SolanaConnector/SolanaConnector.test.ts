@@ -42,7 +42,6 @@ test.describe('SolanaConnector', () => {
       true,
     ).click();
     await page.getByText('Proceed').click();
-    await page.getByText('Proceed').click();
     await getButtonByText(page, 'Phantom').click();
     await phantom.connectToDapp().catch((error) => {
       // Phantom might not need to accept access if it already connected before
@@ -53,8 +52,9 @@ test.describe('SolanaConnector', () => {
   // First-time connection requires to confirm the fuel predicate address difference
   const connect: ConnectorFunctions['connect'] = async (page) => {
     await commonConnect(page);
-    await page.getByText('Sign', { exact: true }).click();
-    await phantom.confirmSignature();
+    // TODO: Re-add the sign step in the SvmPredicate
+    // await page.getByText('Sign', { exact: true }).click();
+    // await phantom.confirmSignature();
     // TODO: For now we select the latest predicate version
     // In the future we may want to test all predicate version
     await page.getByText('Latest version', { exact: true }).click();
