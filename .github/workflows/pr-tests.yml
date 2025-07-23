@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FORC_VERSION: 0.66.5
-  CORE_VERSION: 0.40.2
+  FORC_VERSION: 0.68.1
+  CORE_VERSION: 0.43.1
 
 jobs:
   tests-vitest:
@@ -23,13 +23,13 @@ jobs:
     runs-on: buildjet-4vcpu-ubuntu-2204
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node
         uses: FuelLabs/github-actions/setups/node@master
         with:
-          node-version: 20.11.0
+          node-version: 20.14.0
           pnpm-version: 9.5.0
-      
+
       - uses: FuelLabs/github-actions/setups/docker@master
         with:
           username: ${{ github.repository_owner }}
@@ -87,7 +87,7 @@ jobs:
       - name: Setup Node
         uses: FuelLabs/github-actions/setups/node@master
         with:
-          node-version: 20.11.0
+          node-version: 20.14.0
           pnpm-version: 9.5.0
 
       - uses: FuelLabs/github-actions/setups/docker@master
@@ -101,7 +101,7 @@ jobs:
       - name: Run PNPM install
         id: pnpm-cache
         run: pnpm install --frozen-lockfile
-    
+
       - name: Copy .env file for E2E Tests
         run: cp e2e-tests/runner/.env.example e2e-tests/runner/.env
 
@@ -111,9 +111,6 @@ jobs:
       - name: Copy .env file for React App
         run: cp examples/react-app/.env.example examples/react-app/.env
 
-      - name: Run build:connectors
-        run: pnpm build:connectors
-        
       - uses: ./.github/workflows/setup-rust
 
       - name: Verify Forc and Fuel-Core
@@ -121,25 +118,31 @@ jobs:
           forc --version
           fuel-core --version
 
+      - name: Run build:connectors
+        run: pnpm build:connectors
+
       - name: Build & Deploy Contracts
         run: pnpm deploy:contracts:ci
         working-directory: e2e-tests/runner/scripts
 
       - name: Build & Deploy EVM Predicates
-        run: pnpm fuels build && pnpm fuels deploy
+        run: pnpm versions:generate
         working-directory: packages/evm-predicates
 
       - name: Build & Deploy Solana Predicates
-        run: pnpm fuels build && pnpm fuels deploy
-        if: false # @TODO: Phantom CRX is currently broken, so we're skipping this step for now
+        run: pnpm versions:generate
         working-directory: packages/solana-connector
+
+      # Rebuild after building and deploying predicates
+      - name: Run build:connectors
+        run: pnpm build:connectors
 
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
         working-directory: e2e-tests/runner
 
       - name: Build Synpress cache
-        run: xvfb-run pnpm synpress wallet-setup
+        run: xvfb-run pnpm setup:synpress
         working-directory: e2e-tests/runner
 
       - name: Run Playwright tests locally for Preview
@@ -147,4 +150,3 @@ jobs:
         run: xvfb-run --auto-servernum -- pnpm --filter @e2e-tests/runner test:e2e
         env:
           VITE_MASTER_WALLET_MNEMONIC: ${{ secrets.VITE_MASTER_WALLET_MNEMONIC }}
-          

@@ -18,18 +18,29 @@ import {
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
+  LocalStorage,
+  type StorageAbstract,
   type TransactionRequestLike,
+  type TransactionResponse,
   hexlify,
   toUtf8Bytes,
 } from 'fuels';
-import { HAS_WINDOW, SOLANA_ICON } from './constants';
+import nacl from 'tweetnacl';
+import { HAS_WINDOW, SOLANA_ICON, WINDOW } from './constants';
 import { PREDICATE_VERSIONS } from './generated/predicates';
 import type { SolanaConfig } from './types';
+import { SolanaConnectorEvents } from './types';
 import { createSolanaConfig, createSolanaWeb3ModalInstance } from './web3Modal';
+
+const SIGNATURE_VALIDATION_KEY = (address: string) =>
+  `SIGNATURE_VALIDATION_${address}`;
 
 export class SolanaConnector extends PredicateConnector {
   name = 'Solana Wallets';
-  events = FuelConnectorEventTypes;
+  events = {
+    ...FuelConnectorEventTypes,
+    ...SolanaConnectorEvents,
+  };
   metadata: ConnectorMetadata = {
     image: SOLANA_ICON,
     install: {
@@ -44,16 +55,29 @@ export class SolanaConnector extends PredicateConnector {
   private web3Modal!: Web3Modal;
   private config: SolanaConfig = {};
   private svmAddress: string | null = null;
+  private storage: StorageAbstract;
+
+  private isPollingSignatureRequestActive = false;
 
   constructor(config: SolanaConfig) {
     super();
+    this.storage =
+      config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
     this.customPredicate = config.predicateConfig || null;
     if (HAS_WINDOW) {
       this.configProviders(config);
     }
+
+    this.on(this.events.currentConnector, async () => {
+      const address = this.web3Modal?.getAddress();
+      if (!address) {
+        return;
+      }
+    });
   }
 
   private async _emitDisconnect() {
+    this.isPollingSignatureRequestActive = false;
     this.svmAddress = null;
     await this.setupPredicate();
     this.emit(this.events.connection, false);
@@ -61,13 +85,22 @@ export class SolanaConnector extends PredicateConnector {
     this.emit(this.events.currentAccount, null);
   }
 
+  private _emitSignatureError(_error: unknown) {
+    this.isPollingSignatureRequestActive = false;
+    this.emit(SolanaConnectorEvents.ERROR, new Error('Failed to sign message'));
+    this.web3Modal.disconnect();
+    this._emitDisconnect();
+  }
+
   private async _emitConnected() {
+    const address = this.web3Modal?.getAddress();
+    const predicate = this.predicateAccount?.getPredicateAddress(address || '');
     await this.setupPredicate();
-    const address = this.web3Modal.getAddress();
-    if (!address || !this.predicateAccount) return;
+    if (!address || !this.predicateAccount) {
+      return;
+    }
     this.svmAddress = address;
     this.emit(this.events.connection, true);
-    const predicate = this.predicateAccount.getPredicateAddress(address);
     this.emit(this.events.currentAccount, predicate);
     const accounts = await this.walletAccounts();
     const _accounts = this.predicateAccount?.getPredicateAddresses(accounts);
@@ -103,7 +136,6 @@ export class SolanaConnector extends PredicateConnector {
             if (!address || address.startsWith('0x')) {
               return;
             }
-            this._emitConnected();
             break;
           }
           case 'DISCONNECT_SUCCESS': {
@@ -116,14 +148,30 @@ export class SolanaConnector extends PredicateConnector {
 
     // Poll for account changes due a problem with the event listener not firing on account changes
     const interval = setInterval(async () => {
-      if (!this.web3Modal) {
+      if (!this.web3Modal || this.isPollingSignatureRequestActive) {
         return;
       }
       const address = this.web3Modal.getAddress();
       if (address && address !== this.svmAddress) {
-        this._emitConnected();
-      }
-      if (!address && this.svmAddress) {
+        const hasValidation = await this.accountHasValidation(address);
+        if (hasValidation) {
+          this.svmAddress = address;
+          this._emitConnected();
+        } else {
+          const currentStorage = await this.storage.getItem(
+            SIGNATURE_VALIDATION_KEY(address),
+          );
+          if (currentStorage !== 'pending' && currentStorage !== 'true') {
+            await this.storage.setItem(
+              SIGNATURE_VALIDATION_KEY(address),
+              'pending',
+            );
+            this.emit(this.events.currentConnector, {
+              metadata: { pendingSignature: true },
+            });
+          }
+        }
+      } else if (!address && this.svmAddress) {
         this._emitDisconnect();
       }
     }, 300);
@@ -194,17 +242,105 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   public async connect(): Promise<boolean> {
-    this.createModal();
+    if (!this.web3Modal) {
+      this.createModal();
+    }
+    const currentAddress = this.web3Modal.getAddress();
+    if (currentAddress) {
+      const storageValue = await this.storage.getItem(
+        SIGNATURE_VALIDATION_KEY(currentAddress),
+      );
+      if (storageValue === 'pending') {
+        this.isPollingSignatureRequestActive = true;
+        try {
+          const provider = this.web3Modal.getWalletProvider() as SolanaProvider;
+          if (!provider) throw new Error('Connect(Pending): No provider');
+          const message = `Sign this message to verify the connected account: ${currentAddress}`;
+          const messageBytes = new TextEncoder().encode(message);
+          const signedMessage = await provider.signMessage(messageBytes);
+          const signature =
+            'signature' in signedMessage
+              ? signedMessage.signature
+              : signedMessage;
+          const publicKey = provider.publicKey;
+          if (!publicKey) throw new Error('Connect(Pending): No public key');
+          const isValid = nacl.sign.detached.verify(
+            messageBytes,
+            signature,
+            publicKey.toBytes(),
+          );
+
+          if (isValid) {
+            await this.storage.setItem(
+              SIGNATURE_VALIDATION_KEY(currentAddress),
+              'true',
+            );
+            this._emitConnected();
+            this.isPollingSignatureRequestActive = false;
+            return true;
+          }
+          await this.storage.removeItem(
+            SIGNATURE_VALIDATION_KEY(currentAddress),
+          ); // Clean up storage
+          this._emitSignatureError(
+            new Error('Invalid signature provided during connect.'),
+          );
+          this.isPollingSignatureRequestActive = false;
+          return false;
+        } catch (error) {
+          this._emitSignatureError(error);
+          this.isPollingSignatureRequestActive = false;
+          return false;
+        }
+      } else if (storageValue === 'true') {
+        this._emitConnected();
+        return true;
+      }
+    }
+
+    this.web3Modal.open();
+
     return new Promise((resolve) => {
-      this.web3Modal.open();
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
         switch (event.data.event) {
           case 'CONNECT_SUCCESS': {
-            resolve(true);
+            const provider =
+              this.web3Modal.getWalletProvider() as SolanaProvider;
+            const address = provider?.publicKey?.toString();
+            if (!address || !provider || !provider.publicKey) {
+              resolve(false);
+              unsub();
+              break;
+            }
+
+            try {
+              const hasValidation = await this.accountHasValidation(address);
+              if (hasValidation) {
+                this._emitConnected();
+                resolve(true);
+              } else {
+                await this.storage.setItem(
+                  SIGNATURE_VALIDATION_KEY(address),
+                  'pending',
+                );
+                this.emit(this.events.currentConnector, {
+                  metadata: { pendingSignature: true },
+                });
+                resolve(false);
+              }
+            } catch (error) {
+              this._emitSignatureError(error);
+              resolve(false);
+            } finally {
+              unsub();
+            }
+            break;
+          }
+          case 'MODAL_CLOSE': {
+            resolve(false);
             unsub();
             break;
           }
-          case 'MODAL_CLOSE':
           case 'CONNECT_ERROR': {
             resolve(false);
             unsub();
@@ -216,9 +352,13 @@ export class SolanaConnector extends PredicateConnector {
   }
 
   public async disconnect(): Promise<boolean> {
+    console.log(
+      '!!! public disconnect() CALLED !!! - Will call _emitDisconnect.',
+    );
     this.web3Modal.disconnect();
     this._emitDisconnect();
-    return this.isConnected();
+    await super.disconnect();
+    return await this.isConnected();
   }
 
   private encodeTxId(txId: string): Uint8Array {
@@ -229,7 +369,7 @@ export class SolanaConnector extends PredicateConnector {
   public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
-  ): Promise<string> {
+  ): Promise<string | TransactionResponse> {
     const { predicate, transactionId, transactionRequest } =
       await this.prepareTransaction(address, transaction);
 
@@ -254,7 +394,7 @@ export class SolanaConnector extends PredicateConnector {
 
     const response = await predicate.sendTransaction(transactionRequest);
 
-    return response.id;
+    return response;
   }
 
   async signMessageCustomCurve(message: string) {
@@ -296,5 +436,33 @@ export class SolanaConnector extends PredicateConnector {
     );
 
     return predicateAddresses;
+  }
+
+  private async accountHasValidation(
+    account: string | undefined,
+  ): Promise<boolean> {
+    if (!account) {
+      return false;
+    }
+    try {
+      const storageKey = SIGNATURE_VALIDATION_KEY(account);
+      const isValidated = await this.storage.getItem(storageKey);
+      return isValidated === 'true';
+    } catch (err) {
+      console.error(
+        `[Validation Check] Error checking storage for ${account}:`,
+        err,
+      );
+      return false;
+    }
+  }
+
+  public async isConnected(): Promise<boolean> {
+    const address = this.web3Modal?.getAddress();
+    if (!address) {
+      return false;
+    }
+
+    return await this.accountHasValidation(address);
   }
 }

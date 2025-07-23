@@ -12,7 +12,7 @@ import {
   transferTests,
 } from '../../../common/common';
 import type { ConnectorFunctions } from '../../../common/types';
-import basicSetup from '../../../wallet-setup/basic.setup';
+import basicSetup from '../../synpress/metamask/basic.setup';
 
 const test = testWithSynpress(metaMaskFixtures(basicSetup));
 
@@ -49,11 +49,16 @@ test.describe('WalletConnectConnector', () => {
     await commonConnect(page);
     await page.getByText('Sign', { exact: true }).click();
     await metamask.confirmSignature();
-    await page.getByText('Continue to application').click();
+    // TODO: For now we select the latest predicate version
+    // In the future we may want to test all predicate version
+    await page.getByText('Confirm Selection', { exact: true }).click();
   };
 
   // From here on, we'll skip the signature step and predicate address warning disclaimer
-  const secondConnect: ConnectorFunctions['connect'] = commonConnect;
+  const secondConnect: ConnectorFunctions['connect'] = async (page) => {
+    await commonConnect(page);
+    await page.getByText('Confirm Selection', { exact: true }).click();
+  };
 
   const approveTransfer: ConnectorFunctions['approveTransfer'] = async () => {
     await metamask.confirmTransaction();
@@ -69,7 +74,7 @@ test.describe('WalletConnectConnector', () => {
     const addressElement = await page.locator('css=#address');
 
     const address = await addressElement.getAttribute('data-address');
-    const amount: BN = bn(100_000_000);
+    const amount: BN = bn(2_000_000_000);
 
     if (address) {
       await seedWallet(

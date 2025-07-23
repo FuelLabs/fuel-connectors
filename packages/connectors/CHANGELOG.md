@@ -1,5 +1,39 @@
 # @fuels/connectors
 
+## 0.43.2
+
+### Patch Changes
+
+- [#529](https://github.com/FuelLabs/fuel-connectors/pull/529) [`76886fb`](https://github.com/FuelLabs/fuel-connectors/commit/76886fbb7eeb731fc4e58f124d15d0c74699ca99) Thanks [@petertonysmith94](https://github.com/petertonysmith94)! - chore: updated `WalletConnectConnector` to use predicate for tx submission
+
+## 0.43.1
+
+### Patch Changes
+
+- [#538](https://github.com/FuelLabs/fuel-connectors/pull/538) [`12b73ae`](https://github.com/FuelLabs/fuel-connectors/commit/12b73ae52ac784ed94405773d934f417b9a228c1) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - chore: test release
+
+## 0.43.0
+
+### Minor Changes
+
+- [#530](https://github.com/FuelLabs/fuel-connectors/pull/530) [`660c16b`](https://github.com/FuelLabs/fuel-connectors/commit/660c16b5920bf97bbca20489035a7390325b78d7) Thanks [@nelitow](https://github.com/nelitow)! - test: This is a Fuel Release test.
+
+- [#531](https://github.com/FuelLabs/fuel-connectors/pull/531) [`6a1e262`](https://github.com/FuelLabs/fuel-connectors/commit/6a1e2622da10a9e5a9e26c1f089b37b8ba8425b0) Thanks [@nelitow](https://github.com/nelitow)! - feat: Sample change to common and connectors
+
+## 0.42.0
+
+## 0.41.2
+
+## 0.41.1
+
+### Patch Changes
+
+- [#519](https://github.com/FuelLabs/fuel-connectors/pull/519) [`78362d4`](https://github.com/FuelLabs/fuel-connectors/commit/78362d495b6a231a916a737e0f61efab69aa896c) Thanks [@LuizAsFight](https://github.com/LuizAsFight)! - feat: update to `fuels@0.100.6`
+
+- [#515](https://github.com/FuelLabs/fuel-connectors/pull/515) [`31f6606`](https://github.com/FuelLabs/fuel-connectors/commit/31f6606f1caaba677164a1a053acb6242f6f8dfb) Thanks [@arboleya](https://github.com/arboleya)! - Upgrading `fuels` to `0.100.5`
+
+## 0.41.0
+
 ## 0.40.0
 
 ## 0.39.2

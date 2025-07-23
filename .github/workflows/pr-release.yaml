@@ -14,7 +14,7 @@ concurrency:
 jobs:
   pr-release:
     name: Release PR to AWS Package Registry
-    runs-on: buildjet-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     permissions: write-all
     steps:
       - uses: actions/checkout@v3
@@ -24,7 +24,7 @@ jobs:
 
       - uses: FuelLabs/github-actions/setups/node@master
         with:
-          node-version: 20.11.0
+          node-version: 20.14.0
           pnpm-version: 9.5.0
 
       - name: Configure AWS credentials
@@ -62,6 +62,7 @@ jobs:
           HOME: ${{ github.workspace }}
           npm_config_registry: "https://fuel-024848458133.d.codeartifact.us-east-1.amazonaws.com/npm/npm/"
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Comment release package name to PR
         uses: mshick/add-pr-comment@v2
@@ -76,4 +77,4 @@ jobs:
             pnpm add @fuels/connectors@${{ env.BUILD_VERSION }}
             ```
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

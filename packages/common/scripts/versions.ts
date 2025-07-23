@@ -6,19 +6,27 @@ const VERSIONS_PREDICATE_PATH = 'predicates';
 
 export const getTmpBuildPath = (__dirname: string) =>
   `${__dirname}/${TMP_BUILD_PATH}`;
+
 export const getVersionsPredicatePath = (__dirname: string) =>
   `${__dirname}/${VERSIONS_PREDICATE_PATH}`;
 
-export const addPredicate = async (__dirname: string) => {
+export const addPredicate = async (__dirname: string, prefix: string) => {
   const tmpBuildPath = getTmpBuildPath(__dirname);
   if (!fs.existsSync(tmpBuildPath)) {
     console.info('No new predicate found. Ignoring...');
     return;
   }
 
-  const { VerificationPredicateLoader: predicate } = await import(tmpBuildPath);
+  // Import all predicates and resolve the correct one (Evm or Sol prefixes)
+  const allPredicates = await import(tmpBuildPath);
+  const predicateKey = `${prefix}VerificationPredicateLoader`;
+  const { [predicateKey]: predicate } = allPredicates;
+
+  // Get the predicate root
   const version = getPredicateRoot(predicate.bytecode);
   const newPath = `${getVersionsPredicatePath(__dirname)}/${version}`;
+
+  // If the predicate already exists, skip
   if (fs.existsSync(newPath)) {
     console.warn(`Predicate already exists: ${version}`);
     console.warn(
@@ -29,7 +37,8 @@ export const addPredicate = async (__dirname: string) => {
     return;
   }
 
-  fs.mkdirSync(newPath);
+  // Create the predicate directory
+  fs.mkdirSync(newPath, { recursive: true });
 
   const date = new Date();
   const code = [
@@ -43,8 +52,13 @@ export const addPredicate = async (__dirname: string) => {
     `export const bin: BytesLike = new Uint8Array([${predicate.bytecode}]);`,
   ];
 
+  // Write the predicate
   fs.appendFileSync(`${newPath}/index.ts`, code.join('\n'));
+
+  // Remove the tmp build
   fs.rmSync(tmpBuildPath, { recursive: true, force: true });
+
+  // Log the predicate
   console.info(`Predicate added: ${version}`);
 };
 
@@ -68,7 +82,7 @@ export const syncPredicate = async (__dirname: string) => {
   );
   if (versions.length === 0) {
     console.warn('No predicates found.');
-    return;
+    return [];
   }
 
   const headers = versions.map(
@@ -76,19 +90,24 @@ export const syncPredicate = async (__dirname: string) => {
       `import { abi as abi${v.date}, bin as bin${v.date}, generationDate as generationDate${v.date}} from './${v.version}';`,
   );
 
-  const code = `\n\nexport const PREDICATE_VERSIONS = {\n${versions
+  const code = `\n\nexport const PREDICATE_VERSIONS: Record<string, PredicateVersion> = {\n${versions
     .map(
       (v) =>
         `\t'${v.version}':{ predicate: {abi: abi${v.date}, bin: bin${v.date}}, generatedAt: generationDate${v.date} }`,
     )
     .join(',\n')}
-} as const satisfies Record<string, PredicateVersion>;\n`;
+};\n`;
   fs.appendFileSync(versionsDictionaryPath, `${headers.join('\n')}${code}`);
   console.info('Dictionary updated.');
+  return versions;
 };
 
-export const generateVersions = async (__dirname: string) => {
-  await addPredicate(__dirname);
-  await syncPredicate(__dirname);
+export const generateVersions = async (
+  __dirname: string,
+  prefix: 'Evm' | 'Sol',
+) => {
+  await addPredicate(__dirname, prefix);
+  const versions = await syncPredicate(__dirname);
   console.info('Done.');
+  return versions;
 };

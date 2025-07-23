@@ -9,6 +9,7 @@ import {
   FuelConnectorEventTypes,
   Provider,
   type TransactionRequestLike,
+  type TransactionResponse,
 } from 'fuels';
 
 import {
@@ -225,17 +226,19 @@ export class EVMWalletConnector extends PredicateConnector {
       this.emit(this.events.connection, false);
       this.emit(this.events.accounts, []);
       this.emit(this.events.currentAccount, null);
+      this.connected = false;
     }
 
-    return false;
+    await super.disconnect();
+    return await this.isConnected();
   }
 
   public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
-  ): Promise<string> {
+  ): Promise<TransactionResponse> {
     const { ethProvider, fuelProvider } = await this.getProviders();
-    const { request, transactionId, account, transactionRequest } =
+    const { predicate, request, transactionId, account, transactionRequest } =
       await this.prepareTransaction(address, transaction);
 
     const txId = this.encodeTxId(transactionId);
@@ -255,13 +258,13 @@ export class EVMWalletConnector extends PredicateConnector {
     const transactionWithPredicateEstimated =
       await fuelProvider.estimatePredicates(request);
 
-    const response = await fuelProvider.operations.submit({
-      encodedTransaction: hexlify(
-        transactionWithPredicateEstimated.toTransactionBytes(),
-      ),
-    });
+    const response = await predicate.sendTransaction(
+      transactionWithPredicateEstimated,
+    );
 
-    return response.submit.id;
+    await response.waitForPreConfirmation();
+
+    return response;
   }
 
   async signMessageCustomCurve(message: string) {
@@ -291,6 +294,13 @@ export class EVMWalletConnector extends PredicateConnector {
     }
 
     const encoder = txIdEncoders[this.predicateAddress];
+
+    if (!encoder) {
+      throw new Error(
+        `TxIdEncoder not found for this predicate address: ${this.predicateAddress}`,
+      );
+    }
+
     return encoder.encodeTxId(txId);
   }
 }
