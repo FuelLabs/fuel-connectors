@@ -1,12 +1,14 @@
 import type { BN } from 'fuels';
-import React, { createContext, useContext, type ReactNode } from 'react';
+import { type ReactNode, createContext, useContext } from 'react';
 
-interface Config {
+export interface Config {
   explorerUrl: string;
   providerUrl: string;
   counterContractId: string;
   chainIdName: string;
   defaultAmount: BN;
+  assetId: string | undefined;
+  assetSymbol: string | undefined;
 }
 
 const ConfigContext = createContext<Config | undefined>(undefined);

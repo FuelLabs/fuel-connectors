@@ -1,9 +1,5 @@
 import { useSignTransaction } from '@fuels/react';
-import {
-  Address,
-  type TransactionRequest,
-  type TransactionRequestLike,
-} from 'fuels';
+import { Address } from 'fuels';
 import { useEffect, useState } from 'react';
 import { useConfig } from '../context/ConfigContext';
 import { useWallet } from '../hooks/useWallet';
@@ -23,7 +19,7 @@ interface Props {
 
 export default function Transfer({ isSigning, setIsSigning }: Props) {
   const { balance, wallet, refetchBalance } = useWallet();
-  const { defaultAmount, explorerUrl } = useConfig();
+  const { defaultAmount, explorerUrl, assetId, assetSymbol } = useConfig();
   const { signTransactionAsync } = useSignTransaction();
 
   const [receiver, setReceiver] = useState(DEFAULT_ADDRESS);
@@ -58,7 +54,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
       }
 
       const receiverAddress = Address.fromString(receiver);
-      const asset_id = await wallet?.provider.getBaseAssetId();
+      const asset_id = assetId ?? (await wallet?.provider.getBaseAssetId());
 
       const resp = await wallet?.transfer(
         receiverAddress,
@@ -129,7 +125,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
         if (!receiver) throw Error('Invalid address');
         const receiverAddress = Address.fromString(receiver);
 
-        const asset_id = await wallet.provider.getBaseAssetId();
+        const asset_id = assetId ?? (await wallet?.provider.getBaseAssetId());
 
         // Create the transfer transaction request using wallet.createTransfer()
         const tx = await wallet.createTransfer(
@@ -193,7 +189,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
           loading={isLoading}
           loadingText="Transferring..."
         >
-          {`Transfer ${defaultAmount.format()} ETH`}
+          {`Transfer ${defaultAmount.format()} ${assetSymbol}`}
         </Button>
         <div className="relative inline-block ml-2">
           <Button

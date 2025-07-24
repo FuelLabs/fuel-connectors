@@ -22,10 +22,13 @@ const dialogContentStyle: React.CSSProperties = {
     'hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px',
 };
 
-export const DialogContent = (props: Dialog.DialogContentProps) => {
+export const DialogContent = ({
+  style,
+  ...props
+}: Dialog.DialogContentProps) => {
   return (
     <Dialog.Content
-      style={dialogContentStyle}
+      style={{ ...dialogContentStyle, ...style }}
       {...props}
       className="fuel-connectors-dialog-content"
       // Workaround to prevent closing dialog when interacting with WalletConnect Modal

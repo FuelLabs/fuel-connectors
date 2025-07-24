@@ -8,6 +8,7 @@ import {
   FuelConnectorEventType,
   FuelConnectorEventTypes,
   Provider,
+  type StartConsolidateCoins,
   type TransactionRequestLike,
   type TransactionResponse,
 } from 'fuels';
@@ -302,5 +303,12 @@ export class EVMWalletConnector extends PredicateConnector {
     }
 
     return encoder.encodeTxId(txId);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async startConsolidation(opts: StartConsolidateCoins): Promise<void> {
+    this.emit(FuelConnectorEventTypes.consolidateCoins, opts);
   }
 }
