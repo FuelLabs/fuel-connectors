@@ -14,7 +14,7 @@
     "@tanstack/react-query": "5.35.1",
     "@wagmi/connectors": "5.1.7",
     "@wagmi/core": "2.13.4",
-    "fuels": "0.0.0-pr-3912-20250722065453",
+    "fuels": "0.101.3",
     "clsx": "2.1.1",
     "connectkit": "1.8.2",
     "next": "14.2.26",

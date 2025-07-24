@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fuels": "0.0.0-pr-3912-20250722065453",
+    "fuels": "0.101.3",
     "typedoc-plugin-markdown": "^3.17.1"
   },
   "devDependencies": {
