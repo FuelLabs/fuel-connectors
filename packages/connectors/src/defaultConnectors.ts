@@ -6,7 +6,10 @@ import {
 import { FuelWalletDevelopmentConnector } from '@fuel-connectors/fuel-development-wallet';
 import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
 import { FueletWalletConnector } from '@fuel-connectors/fuelet-wallet';
-import { ReownConnector } from '@fuel-connectors/reown-connector';
+import {
+  ReownEvmConnector,
+  ReownSvmConnector,
+} from '@fuel-connectors/reown-connector';
 import type { AppKit } from '@reown/appkit';
 
 import type { FuelConnector } from 'fuels';
@@ -17,7 +20,7 @@ type DefaultConnectors = {
   burnerWalletConfig?: BurnerWalletConfig;
   appkit?: AppKit;
   chainId?: number;
-  fuelProvider?: FuelProvider | Promise<FuelProvider>;
+  fuelProvider?: FuelProvider;
 };
 
 export function defaultConnectors({
@@ -35,7 +38,12 @@ export function defaultConnectors({
 
   if (appkit) {
     connectors.push(
-      new ReownConnector({
+      new ReownEvmConnector({
+        appkit,
+        chainId,
+        fuelProvider,
+      }),
+      new ReownSvmConnector({
         appkit,
         chainId,
         fuelProvider,

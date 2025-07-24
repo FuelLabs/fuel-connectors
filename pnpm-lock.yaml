@@ -481,10 +481,10 @@ importers:
         version: 5.1.0(typedoc@0.25.13(typescript@5.4.5))
       vitepress:
         specifier: 1.3.2
-        version: 1.3.2(@algolia/client-search@5.33.0)(@types/node@24.0.14)(@types/react@18.3.1)(axios@1.10.0)(idb-keyval@6.2.2)(jiti@1.21.7)(postcss@8.5.6)(qrcode@1.5.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.16.3)(terser@5.43.1)(tsx@4.20.3)(typescript@5.4.5)(yaml@2.8.0)
+        version: 1.3.2(@algolia/client-search@5.33.0)(@types/node@24.0.14)(@types/react@18.3.1)(axios@1.10.0)(idb-keyval@6.2.2)(postcss@8.5.6)(qrcode@1.5.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.16.3)(terser@5.43.1)(typescript@5.4.5)
       vitepress-plugin-search:
         specifier: 1.0.4-alpha.22
-        version: 1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.3.2(@algolia/client-search@5.33.0)(@types/node@24.0.14)(@types/react@18.3.1)(axios@1.10.0)(idb-keyval@6.2.2)(jiti@1.21.7)(postcss@8.5.6)(qrcode@1.5.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.16.3)(terser@5.43.1)(tsx@4.20.3)(typescript@5.4.5)(yaml@2.8.0))(vue@3.5.17(typescript@5.4.5))
+        version: 1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.3.2(@algolia/client-search@5.33.0)(@types/node@24.0.14)(@types/react@18.3.1)(axios@1.10.0)(idb-keyval@6.2.2)(postcss@8.5.6)(qrcode@1.5.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.16.3)(terser@5.43.1)(typescript@5.4.5))(vue@3.5.17(typescript@5.4.5))
       vue:
         specifier: ^3.4.37
         version: 3.5.17(typescript@5.4.5)
@@ -689,9 +689,9 @@ importers:
       fuels:
         specifier: 0.101.1
         version: 0.101.1(vitest@2.1.9(@types/node@24.0.14)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      memoizee:
-        specifier: 0.4.15
-        version: 0.4.15
+      tweetnacl:
+        specifier: 1.0.3
+        version: 1.0.3
     devDependencies:
       '@fuel-connectors/common':
         specifier: workspace:*
@@ -708,9 +708,6 @@ importers:
       '@reown/appkit-utils':
         specifier: 1.6.8
         version: 1.6.8(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(valtio@1.13.2(@types/react@18.3.1)(react@18.3.1))(zod@3.22.4)
-      '@types/memoizee':
-        specifier: 0.4.11
-        version: 0.4.11
       jsdom:
         specifier: 24.0.0
         version: 24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -3982,6 +3979,7 @@ packages:
 
   '@walletconnect/ethereum-provider@2.15.1':
     resolution: {integrity: sha512-3ssEAKc/rLYshwyE2ZIaoTxzi/p9Ws+kj/FIsd1Ed/CC37Rl5l/KYHaRJtevWeni9s4dGqyqKsYkJ0VwwUcnfQ==}
+    deprecated: 'Reliability and performance improvements. See: https://github.com/WalletConnect/walletconnect-monorepo/releases'
 
   '@walletconnect/ethereum-provider@2.17.0':
     resolution: {integrity: sha512-b+KTAXOb6JjoxkwpgYQQKPUcTwENGmdEdZoIDLeRicUmZTn/IQKfkMoC2frClB4YxkyoVMtj1oMV2JAax+yu9A==}
@@ -4057,6 +4055,7 @@ packages:
 
   '@walletconnect/sign-client@2.15.1':
     resolution: {integrity: sha512-YnLNEmCHgZ8yBpE3hwZnHD/bVznVMguSAlwLBNOoWUH2f4d9mR8bqa6KeVXqZ3e8mVHcxKTJTjTJ3oQMLyKIjw==}
+    deprecated: 'Reliability and performance improvements. See: https://github.com/WalletConnect/walletconnect-monorepo/releases'
 
   '@walletconnect/sign-client@2.17.0':
     resolution: {integrity: sha512-sErYwvSSHQolNXni47L3Bm10ptJc1s1YoJvJd34s5E9h9+d3rj7PrhbiW9X82deN+Dm5oA8X9tC4xty1yIBrVg==}
@@ -5436,14 +5435,6 @@ packages:
 
   fb-watchman@2.0.2:
     resolution: {integrity: sha512-p5161BqbuCaSnB8jIbzQHOlpgsPmK5rJVDfDKO91Axs5NC1uu3HRQm6wt9cd9/+GtQQIO53JdGXXoyDpTAsgYA==}
-
-  fdir@6.4.6:
-    resolution: {integrity: sha512-hiFoqpyZcfNm1yc4u8oWCf9A2c4D3QjCrks3zmoVKVxpQRzmPNar1hUJcBG2RQHvEVGDN+Jm81ZheVLAQMK6+w==}
-    peerDependencies:
-      picomatch: ^3 || ^4
-    peerDependenciesMeta:
-      picomatch:
-        optional: true
 
   fflate@0.8.2:
     resolution: {integrity: sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==}
@@ -8115,10 +8106,6 @@ packages:
   tinyexec@0.3.2:
     resolution: {integrity: sha512-KQQR9yN7R5+OSwaK0XQoj22pwHoTlgYqmUscPYoknOoWCWfj/5/ABTMRi69FrKU5ffPVh5QcFikpWJI/P1ocHA==}
 
-  tinyglobby@0.2.14:
-    resolution: {integrity: sha512-tX5e7OM1HnYr2+a2C/4V0htOcSQcoSTH9KgJnVvNm5zm/cyEWKJ7j7YutsH9CxMdtOkkLFy2AHrMci9IM8IPZQ==}
-    engines: {node: '>=12.0.0'}
-
   tinygradient@1.1.5:
     resolution: {integrity: sha512-8nIfc2vgQ4TeLnk2lFj4tRLvvJwEfQuabdsmvDdQPT0xlk9TaNtpGd6nNRxXoK6vQhN6RSzj+Cnp5tTQmpxmbw==}
 
@@ -8252,11 +8239,6 @@ packages:
         optional: true
       typescript:
         optional: true
-
-  tsx@4.20.3:
-    resolution: {integrity: sha512-qjbnuR9Tr+FJOMBqJCW5ehvIo/buZq7vH7qD7JziU98h6l3qGy0a/yPFjwO+y0/T7GFpNgNAvEcPPVfyT8rrPQ==}
-    engines: {node: '>=18.0.0'}
-    hasBin: true
 
   tsx@4.9.3:
     resolution: {integrity: sha512-czVbetlILiyJZI5zGlj2kw9vFiSeyra9liPD4nG+Thh4pKTi0AmMEQ8zdV/L2xbIVKrIqif4sUNrsMAOksx9Zg==}
@@ -8733,46 +8715,6 @@ packages:
       sugarss:
         optional: true
       terser:
-        optional: true
-
-  vite@7.0.5:
-    resolution: {integrity: sha512-1mncVwJxy2C9ThLwz0+2GKZyEXuC3MyWtAAlNftlZZXZDP3AJt5FmwcMit/IGGaNZ8ZOB2BNO/HFUB+CpN0NQw==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': ^20.19.0 || >=22.12.0
-      jiti: '>=1.21.0'
-      less: ^4.0.0
-      lightningcss: ^1.21.0
-      sass: ^1.70.0
-      sass-embedded: ^1.70.0
-      stylus: '>=0.54.8'
-      sugarss: ^5.0.0
-      terser: ^5.16.0
-      tsx: ^4.8.1
-      yaml: ^2.4.2
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      jiti:
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      sass-embedded:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-      tsx:
-        optional: true
-      yaml:
         optional: true
 
   vitepress-plugin-search@1.0.4-alpha.22:
@@ -14437,9 +14379,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-vue@5.2.4(vite@7.0.5(@types/node@24.0.14)(jiti@1.21.7)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue@3.5.17(typescript@5.4.5))':
+  '@vitejs/plugin-vue@5.2.4(vite@5.4.18(@types/node@24.0.14)(terser@5.43.1))(vue@3.5.17(typescript@5.4.5))':
     dependencies:
-      vite: 7.0.5(@types/node@24.0.14)(jiti@1.21.7)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
+      vite: 5.4.18(@types/node@24.0.14)(terser@5.43.1)
       vue: 3.5.17(typescript@5.4.5)
 
   '@vitest/coverage-v8@2.1.9(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
@@ -17552,10 +17494,6 @@ snapshots:
   fb-watchman@2.0.2:
     dependencies:
       bser: 2.1.1
-
-  fdir@6.4.6(picomatch@4.0.3):
-    optionalDependencies:
-      picomatch: 4.0.3
 
   fflate@0.8.2: {}
 
@@ -20764,11 +20702,6 @@ snapshots:
 
   tinyexec@0.3.2: {}
 
-  tinyglobby@0.2.14:
-    dependencies:
-      fdir: 6.4.6(picomatch@4.0.3)
-      picomatch: 4.0.3
-
   tinygradient@1.1.5:
     dependencies:
       '@types/tinycolor2': 1.4.6
@@ -20959,14 +20892,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - ts-node
-
-  tsx@4.20.3:
-    dependencies:
-      esbuild: 0.25.6
-      get-tsconfig: 4.10.1
-    optionalDependencies:
-      fsevents: 2.3.3
-    optional: true
 
   tsx@4.9.3:
     dependencies:
@@ -21463,40 +21388,24 @@ snapshots:
       fsevents: 2.3.3
       terser: 5.43.1
 
-  vite@7.0.5(@types/node@24.0.14)(jiti@1.21.7)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0):
-    dependencies:
-      esbuild: 0.25.6
-      fdir: 6.4.6(picomatch@4.0.3)
-      picomatch: 4.0.3
-      postcss: 8.5.6
-      rollup: 4.45.1
-      tinyglobby: 0.2.14
-    optionalDependencies:
-      '@types/node': 24.0.14
-      fsevents: 2.3.3
-      jiti: 1.21.7
-      terser: 5.43.1
-      tsx: 4.20.3
-      yaml: 2.8.0
-
-  vitepress-plugin-search@1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.3.2(@algolia/client-search@5.33.0)(@types/node@24.0.14)(@types/react@18.3.1)(axios@1.10.0)(idb-keyval@6.2.2)(jiti@1.21.7)(postcss@8.5.6)(qrcode@1.5.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.16.3)(terser@5.43.1)(tsx@4.20.3)(typescript@5.4.5)(yaml@2.8.0))(vue@3.5.17(typescript@5.4.5)):
+  vitepress-plugin-search@1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.3.2(@algolia/client-search@5.33.0)(@types/node@24.0.14)(@types/react@18.3.1)(axios@1.10.0)(idb-keyval@6.2.2)(postcss@8.5.6)(qrcode@1.5.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.16.3)(terser@5.43.1)(typescript@5.4.5))(vue@3.5.17(typescript@5.4.5)):
     dependencies:
       '@types/flexsearch': 0.7.42
       '@types/markdown-it': 12.2.3
       flexsearch: 0.7.43
       glob-to-regexp: 0.4.1
       markdown-it: 13.0.2
-      vitepress: 1.3.2(@algolia/client-search@5.33.0)(@types/node@24.0.14)(@types/react@18.3.1)(axios@1.10.0)(idb-keyval@6.2.2)(jiti@1.21.7)(postcss@8.5.6)(qrcode@1.5.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.16.3)(terser@5.43.1)(tsx@4.20.3)(typescript@5.4.5)(yaml@2.8.0)
+      vitepress: 1.3.2(@algolia/client-search@5.33.0)(@types/node@24.0.14)(@types/react@18.3.1)(axios@1.10.0)(idb-keyval@6.2.2)(postcss@8.5.6)(qrcode@1.5.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.16.3)(terser@5.43.1)(typescript@5.4.5)
       vue: 3.5.17(typescript@5.4.5)
 
-  vitepress@1.3.2(@algolia/client-search@5.33.0)(@types/node@24.0.14)(@types/react@18.3.1)(axios@1.10.0)(idb-keyval@6.2.2)(jiti@1.21.7)(postcss@8.5.6)(qrcode@1.5.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.16.3)(terser@5.43.1)(tsx@4.20.3)(typescript@5.4.5)(yaml@2.8.0):
+  vitepress@1.3.2(@algolia/client-search@5.33.0)(@types/node@24.0.14)(@types/react@18.3.1)(axios@1.10.0)(idb-keyval@6.2.2)(postcss@8.5.6)(qrcode@1.5.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.16.3)(terser@5.43.1)(typescript@5.4.5):
     dependencies:
       '@docsearch/css': 3.9.0
       '@docsearch/js': 3.9.0(@algolia/client-search@5.33.0)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.16.3)
       '@shikijs/core': 1.29.2
       '@shikijs/transformers': 1.29.2
       '@types/markdown-it': 14.1.2
-      '@vitejs/plugin-vue': 5.2.4(vite@7.0.5(@types/node@24.0.14)(jiti@1.21.7)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue@3.5.17(typescript@5.4.5))
+      '@vitejs/plugin-vue': 5.2.4(vite@5.4.18(@types/node@24.0.14)(terser@5.43.1))(vue@3.5.17(typescript@5.4.5))
       '@vue/devtools-api': 7.7.7
       '@vue/shared': 3.5.17
       '@vueuse/core': 10.11.1(vue@3.5.17(typescript@5.4.5))
@@ -21505,7 +21414,7 @@ snapshots:
       mark.js: 8.11.1
       minisearch: 7.1.2
       shiki: 1.29.2
-      vite: 7.0.5(@types/node@24.0.14)(jiti@1.21.7)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
+      vite: 5.4.18(@types/node@24.0.14)(terser@5.43.1)
       vue: 3.5.17(typescript@5.4.5)
     optionalDependencies:
       postcss: 8.5.6
@@ -21520,7 +21429,6 @@ snapshots:
       - drauu
       - fuse.js
       - idb-keyval
-      - jiti
       - jwt-decode
       - less
       - lightningcss
@@ -21535,10 +21443,8 @@ snapshots:
       - stylus
       - sugarss
       - terser
-      - tsx
       - typescript
       - universal-cookie
-      - yaml
 
   vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1):
     dependencies:

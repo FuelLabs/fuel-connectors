@@ -1,375 +1,329 @@
+import { hexToBytes } from '@ethereumjs/util';
+import { splitSignature } from '@ethersproject/bytes';
 import {
-  CONNECTOR_KEY,
+  type FuelPredicateAddress,
   type Maybe,
-  type PredicateVersionWithMetadata,
+  type MaybeAsync,
+  PredicateConnector,
+  type PredicateVersion,
+  type PredicateWalletAdapter,
+  type ProviderDictionary,
+  type SignedMessageCustomCurve,
+  getFuelPredicateAddresses,
+  getMockedSignatureIndex,
+  getProviderUrl,
 } from '@fuel-connectors/common';
+import type { AppKit } from '@reown/appkit';
+
 import {
-  type Asset,
-  type ConnectorMetadata,
-  type FuelABI,
-  FuelConnector,
-  FuelConnectorEventTypes,
-  type FuelConnectorEvents,
-  type FuelEventArg,
+  CHAIN_IDS,
+  type FuelConnectorSendTxParams,
   LocalStorage,
-  type Network,
-  type SelectNetworkArguments,
+  Provider,
   type StorageAbstract,
   type TransactionRequestLike,
   type TransactionResponse,
-  type Version,
 } from 'fuels';
 import {
-  APPKIT_STORAGE_KEYS,
-  HAS_WINDOW,
-  REOWN_ICON,
-  WINDOW,
+  type REOWN_NAMESPACES,
+  SIGNATURE_VALIDATION_TIMEOUT,
 } from './constants';
-import { PredicateEvm } from './predicates/evm/PredicateEvm';
-import { PredicateSvm } from './predicates/svm/PredicateSvm';
 import type {
-  GetFuelPredicateAddressesParams,
-  ReownChain,
+  CustomCurrentConnectorEvent,
   ReownConnectorConfig,
 } from './types';
 
-export class ReownConnector extends FuelConnector {
-  name = 'Ethereum / Solana Wallets';
-  installed = true;
-  events = FuelConnectorEventTypes;
-  metadata: ConnectorMetadata = {
-    image: REOWN_ICON,
-    install: {
-      action: '',
-      description: '',
-      link: '',
-    },
-  };
+export abstract class ReownConnector extends PredicateConnector {
+  public override installed = true;
+  public override connected = false;
 
-  private predicatesInstance: {
-    ethereum: PredicateEvm;
-    solana: PredicateSvm;
-  };
-  private activeChain!: ReownChain;
-  private config: ReownConnectorConfig;
+  protected appkit: AppKit;
+  private fuelProvider: Provider;
   private storage: StorageAbstract;
-  private isConnecting = false;
-  private account: string | undefined;
 
-  constructor(config: ReownConnectorConfig) {
+  /** If undefined, the connector is not connected */
+  public abstract namespace: (typeof REOWN_NAMESPACES)[keyof typeof REOWN_NAMESPACES];
+
+  protected static PREDICATE_VERSIONS: Record<string, PredicateVersion> = {};
+  protected static WALLET_ADAPTER: PredicateWalletAdapter;
+
+  constructor(opts: ReownConnectorConfig) {
     super();
-
-    this.storage =
-      config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
-    this.config = config;
-
-    this.watchCurrentAccount();
-    this.predicatesInstance = {
-      ethereum: new PredicateEvm(this.config, this.storage),
-      solana: new PredicateSvm(this.config),
-    };
-
-    const appkitAdapters = this.config.appkit.options?.adapters ?? [];
-    const namespaces = appkitAdapters.map((adapter) => adapter.namespace);
-    if (!namespaces.includes('eip155') || !namespaces.includes('solana')) {
-      throw new Error('ReownConnector requires Ethereum and Solana adapters');
-    }
-  }
-
-  private setPredicateInstance() {
-    if (this.config.appkit.getActiveChainNamespace() === 'eip155') {
-      this.activeChain = 'ethereum';
-      return;
-    }
-
-    this.activeChain = 'solana';
-  }
-
-  private async getConnectedNamespaces() {
-    return this.storage.getItem(APPKIT_STORAGE_KEYS.CONNECTED_NAMESPACES);
-  }
-
-  private watchCurrentAccount() {
-    if (!HAS_WINDOW) return;
-    this.config.appkit.subscribeAccount(async (account) => {
-      // If we are already connecting, we don't want to do anything
-      // This is mainly for reconnecting (e.g. page reload)
-      if (this.isConnecting) {
-        return;
-      }
-
-      const currentConnector = await this.storage.getItem(CONNECTOR_KEY);
-      const isSameConnector = currentConnector === this.name;
-
-      // We don't want to reconnect if we are using a different connector
-      if (!isSameConnector) {
-        return;
-      }
-
-      // Reconnecting
-      if (
-        account.status === 'connected' &&
-        account.address &&
-        account.address !== this.account
-      ) {
-        this.setPredicateInstance();
-        this.account = account.address;
-
-        const state = await this.currentActivePredicate.getCurrentState();
-        this.emit(this.events.connection, state.connection);
-        this.emit(this.events.currentAccount, state.account);
-        this.emit(this.events.accounts, state.accounts);
-        return;
-      }
-
-      // Disconnecting
-      if (
-        account.status === 'disconnected' &&
-        this.account &&
-        this.account !== account.address
-      ) {
-        this.account = undefined;
-        this.emit(this.events.connection, false);
-        this.emit(this.events.accounts, []);
-        this.emit(this.events.currentAccount, null);
-        return;
+    const network = getProviderUrl(opts.chainId ?? CHAIN_IDS.fuel.testnet);
+    this.fuelProvider = opts.fuelProvider || new Provider(network);
+    this.storage = opts.storage || new LocalStorage(window.localStorage);
+    this.appkit = opts.appkit;
+    this.appkit.subscribeAccount((account) => {
+      if (account.status === 'connected') {
+        this.handleAccountConnected();
       }
     });
   }
 
+  private handleAccountConnected = async () => {
+    const _isConnected = this.appkit.getIsConnectedState();
+    const nativeAddress = this.appkit.getAddress(this.namespace);
+
+    // If there is no current address, we're not connection
+    if (!nativeAddress) {
+      // Do we want to trigger a disconnect?
+      return;
+    }
+
+    const validated = await this.getAccountValidation(nativeAddress);
+    if (validated === 'idle') {
+      this.storage.setItem(`SIGNATURE_VALIDATION_${nativeAddress}`, 'pending');
+      return;
+    }
+
+    if (validated === 'pending') {
+      const event: CustomCurrentConnectorEvent = {
+        type: this.events.currentConnector,
+        data: this,
+        metadata: {
+          pendingSignature: true,
+        },
+      };
+      this.emit(this.events.currentConnector, event);
+      return;
+    }
+
+    this.connected = true;
+    this.emitAccountChange(nativeAddress, true);
+    return;
+  };
+
   /**
-   * ============================================================
    * Connector methods
-   * ============================================================
    */
-  async ping(): Promise<boolean> {
+  override async ping(): Promise<boolean> {
     return true;
   }
 
-  async connect(): Promise<boolean> {
-    this.isConnecting = true;
+  override async connect(): Promise<boolean> {
+    const isConnected = this.appkit.getIsConnectedState();
+    const nativeAddress = this.appkit.getAddress(this.namespace);
 
-    // If we already have an account, we don't need to open the appkit modal
-    if (
-      this.config.appkit.getAddress() &&
-      this.config.appkit.getIsConnectedState()
-    ) {
-      this.setPredicateInstance();
-      try {
-        const connector = this.currentActivePredicate;
-        const res = await connector.connect();
-        const state = await connector.getCurrentState();
-        this.emit(this.events.connection, state.connection);
-        this.emit(this.events.currentAccount, state.account);
-        this.emit(this.events.accounts, state.accounts);
-        this.isConnecting = false;
-        return res;
-      } catch (err) {
-        this.isConnecting = false;
-        throw err;
+    // Already connected
+    if (isConnected && nativeAddress) {
+      const isValidated = await this.requestAccountSignature(nativeAddress);
+
+      if (isValidated) {
+        this.handleAccountConnected();
+        return true;
       }
+
+      return false;
     }
 
-    // New connection
-    await this.config.appkit.open();
+    await this.appkit.open({
+      view: 'Connect',
+      namespace: this.namespace,
+    });
 
     return new Promise((resolve, reject) => {
-      const interval = setInterval(async () => {
-        const address = this.config.appkit.getAddress();
-        const isModalOpen = this.config.appkit.isOpen();
+      const interval = setInterval(() => {
+        const nativeAddress = this.appkit.getAddress(this.namespace);
+        const isModalOpen = this.appkit.isOpen();
 
-        // Idle state
-        if (!isModalOpen && !address) {
-          this.isConnecting = false;
+        // Modal closed and no address
+        if (!isModalOpen && !nativeAddress) {
           clearInterval(interval);
           resolve(false);
           return;
         }
 
-        // Connected something
-        if (address && address !== this.account) {
-          // If we don't have any connected namespaces, we need to disconnect
-          // For some reason, the appkit doesn't return the correct state after closing a wallet if there's something connected previously
-          const connectedNamespaces = await this.getConnectedNamespaces();
-          if (!connectedNamespaces) {
-            await this.config.appkit.disconnect();
-            this.isConnecting = false;
-            clearInterval(interval);
-            resolve(false);
-            return;
-          }
-
-          this.setPredicateInstance();
-          const connector = this.currentActivePredicate;
-          this.account = address;
-
-          try {
-            await connector.connect();
-            const state = await connector.getCurrentState();
-            this.emit(this.events.connection, state.connection);
-            this.emit(this.events.currentAccount, state.account);
-            this.emit(this.events.accounts, state.accounts);
-            resolve(true);
-          } catch (err) {
-            reject(err);
-          } finally {
-            this.isConnecting = false;
-            clearInterval(interval);
-          }
-        }
-
-        // Disconnected somehow
-        if (!address && this.account) {
-          this.account = undefined;
-          this.isConnecting = false;
-          clearInterval(interval);
-          resolve(false);
+        // Connected to address
+        if (nativeAddress) {
+          return this.handleAccountConnected()
+            .then(() => {
+              clearInterval(interval);
+              resolve(false);
+            })
+            .catch((error) => {
+              clearInterval(interval);
+              reject(error);
+            });
         }
       }, 300);
     });
   }
 
-  private get currentActivePredicate(): PredicateEvm | PredicateSvm {
-    return this.predicatesInstance[this.activeChain];
+  override async disconnect(): Promise<boolean> {
+    try {
+      await super.disconnect();
+
+      this.connected = false;
+      this.emit(this.events.connection, false);
+      this.emit(this.events.currentAccount, null);
+      this.emit(this.events.accounts, []);
+
+      await this.appkit.disconnect();
+
+      return true;
+    } catch (error) {
+      console.error('ReownConnector - Unable to disconnect', error);
+
+      return false;
+    }
   }
 
-  async isConnected(): Promise<boolean> {
-    return this.currentActivePredicate.isConnected();
+  override async isConnected(): Promise<boolean> {
+    return this.connected;
   }
 
-  async disconnect(): Promise<boolean> {
-    await this.config.appkit.disconnect();
-    await this.predicatesInstance.ethereum.disconnect();
-    await this.predicatesInstance.solana.disconnect();
-
-    return await super.disconnect();
-  }
-
-  async accounts(): Promise<Array<string>> {
-    return this.currentActivePredicate.accounts();
-  }
-
-  async currentAccount(): Promise<string | null> {
-    return this.currentActivePredicate.currentAccount();
-  }
-
-  async signMessage(address: string, message: string): Promise<string> {
-    return this.currentActivePredicate.signMessage(address, message);
-  }
-
-  async sendTransaction(
+  override async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
+    params?: FuelConnectorSendTxParams,
   ): Promise<string | TransactionResponse> {
-    return this.currentActivePredicate.sendTransaction(address, transaction);
-  }
+    const { fuelProvider } = await this.getProviders();
+    const { predicate, request, transactionId, transactionRequest } =
+      await this.prepareTransaction(address, transaction);
 
-  async assets(): Promise<Array<Asset>> {
-    return this.currentActivePredicate.assets();
-  }
+    const txId = this.encodeTxId(transactionId);
+    const { signature } = await this.signMessageCustomCurve(txId);
 
-  async addAsset(asset: Asset): Promise<boolean> {
-    return this.currentActivePredicate.addAsset(asset);
-  }
+    const predicateSignatureIndex = getMockedSignatureIndex(
+      transactionRequest.witnesses,
+    );
 
-  async addAssets(assets: Asset[]): Promise<boolean> {
-    return this.currentActivePredicate.addAssets(assets);
-  }
+    // Transform the signature into compact form for Sway to understand
+    const compactSignature = splitSignature(hexToBytes(signature)).compact;
+    transactionRequest.witnesses[predicateSignatureIndex] = compactSignature;
 
-  async addAbi(contractId: string, abi: FuelABI): Promise<boolean> {
-    return this.currentActivePredicate.addAbi(contractId, abi);
-  }
+    const transactionWithPredicateEstimated =
+      await fuelProvider.estimatePredicates(request);
 
-  async getABI(contractId: string): Promise<FuelABI> {
-    return this.currentActivePredicate.getAbi(contractId);
-  }
-
-  async hasABI(contractId: string): Promise<boolean> {
-    return this.currentActivePredicate.hasAbi(contractId);
-  }
-
-  async currentNetwork(): Promise<Network> {
-    return this.currentActivePredicate.currentNetwork();
-  }
-
-  async selectNetwork(network: SelectNetworkArguments): Promise<boolean> {
-    return this.currentActivePredicate.selectNetwork(network);
-  }
-
-  async networks(): Promise<Network[]> {
-    return this.currentActivePredicate.networks();
-  }
-
-  async addNetwork(networkUrl: string): Promise<boolean> {
-    return this.currentActivePredicate.addNetwork(networkUrl);
-  }
-
-  async version(): Promise<Version> {
-    return this.currentActivePredicate.version();
-  }
-
-  getAvailablePredicateVersions(): { id: string; generatedAt: number }[] {
-    return this.currentActivePredicate.getAvailablePredicateVersions();
-  }
-
-  setSelectedPredicateVersion(versionId: string): void {
-    this.currentActivePredicate.setSelectedPredicateVersion(versionId);
-  }
-
-  getSelectedPredicateVersion(): Maybe<string> {
-    return this.currentActivePredicate.getSelectedPredicateVersion();
-  }
-
-  async switchPredicateVersion(versionId: string): Promise<void> {
-    await this.currentActivePredicate.switchPredicateVersion(versionId);
-  }
-
-  async getSmartDefaultPredicateVersion(): Promise<Maybe<string>> {
-    return await this.currentActivePredicate.getSmartDefaultPredicateVersion();
-  }
-
-  async getAllPredicateVersionsWithMetadata(): Promise<
-    PredicateVersionWithMetadata[]
-  > {
-    return await this.currentActivePredicate.getAllPredicateVersionsWithMetadata();
-  }
-
-  /**
-   * ============================================================
-   * Predicate Utilities
-   * ============================================================
-   */
-  public static getFuelPredicateAddresses({
-    address,
-    chain,
-  }: GetFuelPredicateAddressesParams) {
-    if (chain === 'ethereum') {
-      return PredicateEvm.getFuelPredicateAddresses(address);
+    let txAfterUserCallback = transactionWithPredicateEstimated;
+    if (params?.onBeforeSend) {
+      txAfterUserCallback = await params.onBeforeSend(
+        transactionWithPredicateEstimated,
+      );
     }
 
-    return PredicateSvm.getFuelPredicateAddresses(address);
+    const response = await predicate.sendTransaction(txAfterUserCallback);
+    await response.waitForPreConfirmation();
+    return response;
   }
 
   /**
-   * ============================================================
-   * Event Listener Utilities
-   * ============================================================
+   * Predicate connector methods
    */
-  public on<E extends FuelConnectorEvents['type'], D extends FuelEventArg<E>>(
-    eventName: E,
-    listener: (data: D) => void,
-  ): this {
-    this.predicatesInstance.solana.on(eventName, listener);
-    this.predicatesInstance.ethereum.on(eventName, listener);
-    return super.on(eventName, listener);
+  protected override getProviders(): Promise<ProviderDictionary> {
+    return Promise.resolve({
+      fuelProvider: this.fuelProvider,
+    });
   }
 
-  public off<E extends FuelConnectorEvents['type'], D extends FuelEventArg<E>>(
-    eventName: E,
-    listener: (data: D) => void,
-  ): this {
-    this.predicatesInstance.solana.off(eventName, listener);
-    this.predicatesInstance.ethereum.off(eventName, listener);
-    return super.off(eventName, listener);
+  protected override getAccountAddress(): MaybeAsync<Maybe<string>> {
+    const nativeAddress = this.appkit.getAddress(this.namespace);
+    return Promise.resolve(nativeAddress);
+  }
+
+  protected override async walletAccounts(): Promise<Array<string>> {
+    const nativeAddress = await this.getAccountAddress();
+    return Promise.resolve(nativeAddress ? [nativeAddress] : []);
+  }
+
+  abstract override signMessageCustomCurve(
+    message: string,
+  ): Promise<SignedMessageCustomCurve>;
+  protected abstract encodeTxId(txId: string): string;
+  protected abstract verifySignature(
+    address: string,
+    message: string,
+    signature: string,
+  ): Promise<boolean>;
+
+  /**
+   * Account validation
+   */
+  private async getAccountValidation(
+    nativeAddress: string,
+  ): Promise<'true' | 'pending' | 'idle'> {
+    const storageItem = await this.storage.getItem(
+      `SIGNATURE_VALIDATION_${nativeAddress}`,
+    );
+
+    const state = storageItem as 'true' | 'pending' | null;
+    if (!state) {
+      return 'idle';
+    }
+
+    return state;
+  }
+
+  private async isAccountValidated(nativeAddress: string): Promise<boolean> {
+    const state = await this.getAccountValidation(nativeAddress);
+    return state === 'true';
+  }
+
+  private async requestAccountSignature(
+    nativeAddress: string,
+  ): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      // Check whether the account is already validated
+      const isValidated = await this.isAccountValidated(nativeAddress);
+      if (isValidated) {
+        return resolve(true);
+      }
+
+      // Disconnect if user doesn't provide signature in time
+      const validationTimeout = setTimeout(() => {
+        this.storage.removeItem(`SIGNATURE_VALIDATION_${nativeAddress}`);
+        reject(
+          new Error("User didn't provide signature in less than 1 minute"),
+        );
+      }, SIGNATURE_VALIDATION_TIMEOUT);
+
+      // Sign the message
+      const message = `Sign this message to verify the connected account: ${nativeAddress}`;
+      const { signature } = await this.signMessageCustomCurve(message);
+
+      // Check that the signature is valid
+      const isValid = await this.verifySignature(
+        nativeAddress,
+        message,
+        signature,
+      );
+      if (isValid) {
+        clearTimeout(validationTimeout);
+        this.storage.setItem(`SIGNATURE_VALIDATION_${nativeAddress}`, 'true');
+        resolve(true);
+      } else {
+        clearTimeout(validationTimeout);
+        this.storage.removeItem(`SIGNATURE_VALIDATION_${nativeAddress}`);
+        reject(new Error('Signature validation failed'));
+      }
+    });
+  }
+
+  static getFuelPredicateAddresses(
+    nativeAddress: string,
+  ): FuelPredicateAddress[] {
+    const predicateConfig = Object.entries(ReownConnector.PREDICATE_VERSIONS)
+      .sort(([, a], [, b]) => b.generatedAt - a.generatedAt)
+      .map(([evmPredicateAddress, { predicate, generatedAt }]) => ({
+        abi: predicate.abi,
+        bin: predicate.bin,
+        evmPredicate: {
+          generatedAt,
+          address: evmPredicateAddress,
+        },
+      }));
+
+    const address = ReownConnector.WALLET_ADAPTER.convertAddress(nativeAddress);
+    const predicateAddresses = predicateConfig.map(
+      ({ abi, bin, evmPredicate }) => ({
+        fuelAddress: getFuelPredicateAddresses({
+          signerAddress: address,
+          predicate: { abi, bin },
+        }),
+        predicate: evmPredicate,
+      }),
+    );
+
+    return predicateAddresses;
   }
 }

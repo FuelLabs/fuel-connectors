@@ -4,7 +4,6 @@ import { counter as COUNTER_CONTRACT_ID_LOCAL } from './types/contract-ids-local
 import { counter as COUNTER_CONTRACT_ID_MAINNET } from './types/contract-ids-mainnet.json';
 import { counter as COUNTER_CONTRACT_ID_TESTNET } from './types/contract-ids-testnet.json';
 
-import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider, type NetworkConfig } from '@fuels/react';
 import {
   type AppKitNetwork,
@@ -26,6 +25,7 @@ import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import { ConfigProvider } from './context/ConfigContext.tsx';
 import './index.css';
+import { defaultConnectors } from '@fuels/connectors';
 import { createAppKit } from '@reown/appkit';
 import { SolanaAdapter } from '@reown/appkit-adapter-solana';
 

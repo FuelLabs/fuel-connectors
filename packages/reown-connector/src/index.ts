@@ -1,2 +1,3 @@
-export * from './ReownConnector';
-export * from './types';
+export { ReownEvmConnector } from './ReownEvmConnector';
+export { ReownSvmConnector } from './ReownSvmConnector';
+export type { ReownConnectorConfig } from './types';

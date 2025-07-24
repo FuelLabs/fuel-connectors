@@ -1,9 +1,10 @@
 import { Routes, useConnectUI } from '../../../../providers/FuelUIProvider';
 import { ConnectorIcon } from '../Core/ConnectorIcon';
 
-import type { ConnectorMetadata } from 'fuels';
+import type { ConnectorEvent, ConnectorMetadata } from 'fuels';
 import { useEffect, useMemo, useState } from 'react';
 import { Spinner } from '../../../../icons/Spinner';
+import { useFuel } from '../../../../providers';
 import { isNativeConnector } from '../../../../utils/isNativeConnector';
 import { PREDICATE_DISCLAIMER_KEY } from '../PredicateAddressDisclaimer/PredicateAddressDisclaimer';
 import { ETHEREUM_ICON, SIGNATURE_PENDING_ERROR } from './constants';
@@ -26,7 +27,14 @@ enum ConnectStep {
   SIGN = 'sign',
 }
 
+export interface CustomCurrentConnectorEvent extends ConnectorEvent {
+  metadata: {
+    pendingSignature: boolean;
+  };
+}
+
 export function Connecting({ className }: ConnectorProps) {
+  const { fuel } = useFuel();
   const {
     error,
     isConnecting,
@@ -54,7 +62,7 @@ export function Connecting({ className }: ConnectorProps) {
     }
 
     return {
-      name: 'Ethereum Wallets',
+      name: actualName,
       metadata: {
         image: ETHEREUM_ICON,
         ...connector?.metadata,
@@ -103,18 +111,20 @@ export function Connecting({ className }: ConnectorProps) {
 
   // Switching to signing ownership mode
   useEffect(() => {
-    if (error?.message.includes(SIGNATURE_PENDING_ERROR)) {
-      setConnectStep(ConnectStep.SIGN);
-    }
-  }, [error]);
-
-  useEffect(() => {
-    if (error) {
-      if (error.message.includes('Failed to sign message')) {
-        setRoute(Routes.SignatureError);
+    const onCurrentConnectorChange = (e: CustomCurrentConnectorEvent) => {
+      if (e.metadata && 'pendingSignature' in e.metadata) {
+        setConnectStep(
+          e.metadata.pendingSignature ? ConnectStep.SIGN : ConnectStep.CONNECT,
+        );
       }
-    }
-  }, [error, setRoute]);
+    };
+
+    fuel.on(fuel.events.currentConnector, onCurrentConnectorChange);
+
+    return () => {
+      fuel.off(fuel.events.currentConnector, onCurrentConnectorChange);
+    };
+  }, [fuel]);
 
   useEffect(() => {
     if (error) {

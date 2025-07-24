@@ -4,15 +4,16 @@
   "version": "0.43.2",
   "type": "module",
   "files": ["dist"],
-  "main": "./dist/reown-connector.umd.cjs",
-  "module": "./dist/reown-connector.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/reown-connector.js",
-      "require": "./dist/reown-connector.umd.cjs"
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
     }
   },
-  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsup --dts-only",
     "build:watch": "tsup --watch --dts-only",
@@ -27,7 +28,7 @@
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
     "@solana/web3.js": "1.98.0",
-    "memoizee": "0.4.15"
+    "tweetnacl": "1.0.3"
   },
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",
@@ -35,7 +36,6 @@
     "@fuel-connectors/svm-predicates": "workspace:*",
     "@reown/appkit": "1.6.8",
     "@reown/appkit-utils": "1.6.8",
-    "@types/memoizee": "0.4.11",
     "jsdom": "24.0.0",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
