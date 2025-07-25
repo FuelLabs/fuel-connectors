@@ -92,6 +92,7 @@ export class EVMWalletConnector extends PredicateConnector {
   }
 
   private async setup() {
+    console.log('Setting up EVM Wallet Connector...');
     if (this.setupLock) return;
     this.setupLock = true;
 
@@ -160,6 +161,7 @@ export class EVMWalletConnector extends PredicateConnector {
   }
 
   protected async getProviders(): Promise<ProviderDictionary> {
+    console.log('Getting providers...');
     if (!this.fuelProvider || !this.ethProvider) {
       this.ethProvider = getOrThrow(
         await this.getLazyEthereum(),
@@ -189,6 +191,7 @@ export class EVMWalletConnector extends PredicateConnector {
   }
 
   public async connect(): Promise<boolean> {
+    console.log('Connecting to EVM wallet...');
     if (!(await this.isConnected())) {
       const { ethProvider } = await this.getProviders();
 

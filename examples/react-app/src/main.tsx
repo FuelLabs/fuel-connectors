@@ -20,6 +20,8 @@ import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import './index.css';
 import { CHAIN_IDS, type FuelConfig, Provider, bn } from 'fuels';
+import { WalletConnectConnector } from './connector/WalletConnectConnector.ts';
+import { defaultConfig } from './connector/constants.ts';
 import { ConfigProvider } from './context/ConfigContext.tsx';
 
 const queryClient = new QueryClient();
@@ -36,7 +38,7 @@ const METADATA = {
   url: location.href,
   icons: ['https://connectors.fuel.network/logo_white.png'],
 };
-const wagmiConfig = createConfig({
+const _wagmiConfig = createConfig({
   chains: [mainnet, sepolia],
   transports: {
     [mainnet.id]: http(),
@@ -77,13 +79,14 @@ const NETWORKS: NetworkConfig[] = [
 ];
 
 const FUEL_CONFIG: FuelConfig = {
-  connectors: defaultConnectors({
-    devMode: true,
-    wcProjectId: WC_PROJECT_ID,
-    ethWagmiConfig: wagmiConfig,
-    chainId: CHAIN_ID,
-    fuelProvider: new Provider(PROVIDER_URL),
-  }),
+  // connectors: defaultConnectors({
+  //   devMode: true,
+  //   wcProjectId: WC_PROJECT_ID,
+  //   ethWagmiConfig: wagmiConfig,
+  //   chainId: CHAIN_ID,
+  //   fuelProvider: new Provider(PROVIDER_URL),
+  // }),
+  connectors: [new WalletConnectConnector(defaultConfig)],
 };
 
 function getContractId() {
