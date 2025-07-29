@@ -59,7 +59,7 @@ export function ConsolidateCoins() {
   );
 
   // Functions
-  const setupConsolidation = async () => {
+  const setupConsolidation = useCallback(async () => {
     if (!wallet || !consolidation?.assetId) {
       return;
     }
@@ -79,9 +79,9 @@ export function ConsolidateCoins() {
         console.error('Error consolidating coins', error);
         setStatus('error');
       });
-  };
+  }, [wallet, consolidation?.assetId]);
 
-  const start = async () => {
+  const start = useCallback(async () => {
     if (status !== 'ready' || !wallet || !consolidation?.assetId) {
       return;
     }
@@ -99,11 +99,11 @@ export function ConsolidateCoins() {
         console.error('Error consolidating coins', error);
         setStatus('error');
       });
-  };
+  }, [wallet, consolidation?.assetId, status, submitAll]);
 
-  const retry = async () => {
+  const retry = useCallback(async () => {
     await setupConsolidation();
-  };
+  }, [setupConsolidation]);
 
   // Load our bundles
   useEffect(() => {

@@ -4,7 +4,7 @@ import { type UseNamedQueryParams, useNamedQuery } from '../../../core';
 import { useChain } from '../../../hooks';
 import { QUERY_KEYS } from '../../../utils';
 
-const VERIFIED_ASSETS_URL = 'https://fuel.network/verified-assets.json';
+const VERIFIED_ASSETS_URL = 'hhttps://verified-assets.fuel.network/assets.json';
 
 export type ResolvedAsset = Omit<Asset, 'networks'> & NetworkFuel;
 
