@@ -28,7 +28,6 @@
     "@synthetixio/synpress": "4.1.0",
     "@synthetixio/synpress-cache": "0.0.10",
     "dotenv": "16.4.5",
-    "@phantom/synpress": "4.0.0-alpha.53",
     "fuels": "0.101.3"
   }
 }
