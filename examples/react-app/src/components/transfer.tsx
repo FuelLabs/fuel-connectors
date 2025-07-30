@@ -177,7 +177,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
   }
 
   return (
-    <div>
+    <div style={{border: "1px solid red"}}>
       <Feature title="Transfer">
         <input
           type="text"
@@ -188,7 +188,8 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
         />
         <Button
           onClick={handleTransfer}
-          disabled={isLoading || !hasBalance || isSigning}
+          // disabled={isLoading || !hasBalance || isSigning}
+          disabled={isLoading || isSigning}
           className="mt-1 shrink-0 md:mt-2"
           loading={isLoading}
           loadingText="Transferring..."
