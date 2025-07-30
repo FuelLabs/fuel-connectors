@@ -15,7 +15,13 @@ import {
   watchAccount,
 } from "@wagmi/core";
 import type { Web3Modal } from "@web3modal/wagmi";
-import { BakoProvider, TypeUser, Vault } from "bakosafe";
+import {
+  bakoCoder,
+  BakoProvider,
+  SignatureType,
+  TypeUser,
+  Vault,
+} from "bakosafe";
 import {
   Address,
   CHAIN_IDS,
@@ -282,10 +288,45 @@ export class WalletConnectConnector extends PredicateConnector {
       const { tx, hashTxId } = await vault.BakoTransfer(transaction);
 
       console.log("[CONNECTOR]TRANSACTION", tx, hashTxId);
+      const signature = await this._sign_message(hashTxId);
+
+      console.log(signature);
+      // signature: bakoCoder.encode({
+      //   type: SignatureType.Fuel,
+      //   signature,
+      // }),
+      const _signature = bakoCoder.encode({
+        type: SignatureType.Evm,
+        signature,
+      });
+
+      console.log("[CONNECTOR]SIGNATURE", tx.witnesses);
+
+      const _a_ = await bakoProvider.signTransaction({
+        hash: hashTxId,
+        signature: _signature,
+      });
+      console.log("[CONNECTOR]SIGNATURE", _a_);
+
+      const _a = await vault.send(tx);
+      console.log(_a);
+
+      const r = await _a.waitForResult();
+      // .then(async (res) => {
+      //   const r = await res.waitForResult();
+      //   console.log("[CONNECTOR]SEND TX", r);
+      //   return r;
+      // })
+      // .catch((e) => {
+      //   console.error("[CONNECTOR]SEND TX ERROR", e);
+      //   throw e;
+      // });
+      console.log("[CONNECTOR]SIGNATURE", _a, r);
+
       // sign
       // send
 
-      return {} as TransactionResponse;
+      return _a;
     } catch (e) {
       console.error("[CONNECTOR]TRANSACTION ERROR", e);
       throw e;
