@@ -161,7 +161,7 @@ export abstract class PredicateConnector extends FuelConnector {
     });
   }
 
-  private getSessionId(): string {
+  protected getSessionId(): string {
     let sessionId = window?.localStorage.getItem(CONNECTOR.SESSION_ID) ?? null;
     if (!sessionId) {
       sessionId = crypto.randomUUID();
