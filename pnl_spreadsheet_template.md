@@ -15,10 +15,10 @@
 - **L (Realized PnL)**: `=IF(B4="SELL",IF(ROW()=4,0,(E4-K4)*F4),0)`
 - **M (Unrealized PnL)**: `=IF(ROW()=4,0,IF(H4>0,J4-I4,0))`
 - **N (Total PnL)**: `=L4+M4`
-- **O (ETH Realized)**: `=IF(C4="ETH",L4,IF(ROW()=4,0,O3))`
+- **O (ETH Realized)**: `=IF(C4="ETH",IF(B4="SELL",L4,IF(ROW()=4,0,O3)),IF(ROW()=4,0,O3))`
 - **P (ETH Unrealized)**: `=IF(C4="ETH",M4,IF(ROW()=4,0,P3))`
 - **Q (ETH Total)**: `=O4+P4`
-- **R (BTC Realized)**: `=IF(C4="BTC",L4,IF(ROW()=4,0,R3))`
+- **R (BTC Realized)**: `=IF(C4="BTC",IF(B4="SELL",L4,IF(ROW()=4,0,R3)),IF(ROW()=4,0,R3))`
 - **S (BTC Unrealized)**: `=IF(C4="BTC",M4,IF(ROW()=4,0,S3))`
 - **T (BTC Total)**: `=R4+S4`
 - **U (Total Realized)**: `=O4+R4`
