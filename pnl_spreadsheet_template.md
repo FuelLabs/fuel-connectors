@@ -12,7 +12,7 @@
 - **I (Open Entry Value)**: `=H4*K4`
 - **J (Open Current Value)**: `=H4*E4`
 - **K (Avg Entry Price)**: `=IF(B4="BUY",IF(C4="ETH",IF(Y4=0,E4,(Z4*Y4+E4*F4)/(Y4+F4)),IF(C4="BTC",IF(AA4=0,E4,(AB4*AA4+E4*F4)/(AA4+F4)),E4)),IF(C4="ETH",Z4,IF(C4="BTC",AB4,0)))`
-- **L (Realized PnL)**: `=IF(B4="SELL",IF(ROW()=4,0,IF(C4=C3,(E4-K3)*F4,0)),0)`
+- **L (Realized PnL)**: `=IF(B4="SELL",IF(ROW()=4,0,(E4-K4)*F4),0)`
 - **M (Unrealized PnL)**: `=IF(ROW()=4,0,IF(H4>0,J4-I4,0))`
 - **N (Total PnL)**: `=L4+M4`
 - **O (ETH Realized)**: `=IF(C4="ETH",L4,IF(ROW()=4,0,O3))`
