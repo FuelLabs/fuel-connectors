@@ -21,7 +21,7 @@ const { VITE_FUEL_PROVIDER_URL, VITE_WALLET_SECRET } = process.env as Record<
   string
 >;
 
-test.describe('ReownConnector', () => {
+test.describe('ReownEvmConnector', () => {
   let metamask: MetaMask;
   test.slow();
   test.beforeEach(async ({ context, extensionId, metamaskPage, page }) => {
@@ -37,11 +37,7 @@ test.describe('ReownConnector', () => {
   const commonConnect: ConnectorFunctions['connect'] = async (page) => {
     const connectButton = getButtonByText(page, 'Connect Wallet', true);
     await connectButton.click();
-    await getByAriaLabel(
-      page,
-      'Connect to Ethereum / Solana Wallets',
-      true,
-    ).click();
+    await getByAriaLabel(page, 'Connect to Ethereum Wallets', true).click();
     await page.getByText('Proceed').click();
     await getButtonByText(page, 'MetaMask', true).click();
     await metamask.connectToDapp();

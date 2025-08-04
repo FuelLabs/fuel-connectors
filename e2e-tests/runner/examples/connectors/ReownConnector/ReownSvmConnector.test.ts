@@ -36,11 +36,7 @@ test.describe('SolanaConnector', () => {
   const commonConnect: ConnectFunction = async (page: Page) => {
     const connectButton = getButtonByText(page, 'Connect Wallet', true);
     await connectButton.click();
-    await getByAriaLabel(
-      page,
-      'Connect to Ethereum / Solana Wallets',
-      true,
-    ).click();
+    await getByAriaLabel(page, 'Connect to Solana Wallets', true).click();
     await page.getByText('Proceed').click();
     await getButtonByText(page, 'Phantom').click();
     await phantom.connectToDapp().catch((error) => {
