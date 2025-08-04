@@ -15,7 +15,7 @@ import {
 } from '@reown/appkit/networks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors';
+import { coinbaseWallet, injected } from 'wagmi/connectors';
 
 import * as Toast from '@radix-ui/react-toast';
 
@@ -57,11 +57,6 @@ const wagmiAdapter = new WagmiAdapter({
   projectId: WC_PROJECT_ID,
   connectors: [
     injected({ shimDisconnect: false }),
-    walletConnect({
-      projectId: WC_PROJECT_ID,
-      metadata: METADATA,
-      showQrModal: false,
-    }),
     coinbaseWallet({
       appName: METADATA.name,
       appLogoUrl: METADATA.icons[0],
