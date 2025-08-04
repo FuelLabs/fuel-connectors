@@ -2,8 +2,7 @@
 const nextConfig = {
   transpilePackages: ['@fuels/connectors', '@fuels/react'],
   webpack: (config) => {
-    // https://github.com/WalletConnect/walletconnect-monorepo/issues/1908
-    // https://docs.walletconnect.com/web3modal/nextjs/about#extra-configuration
+    // https://docs.reown.com/appkit/next/core/installation#extra-configuration
     config.externals.push('pino-pretty', 'lokijs', 'encoding');
 
     return config;

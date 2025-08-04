@@ -12,13 +12,13 @@
   },
   "peerDependencies": {
     "fuels": "0.101.1",
-    "viem": ">=2.20.1"
+    "viem": ">=2.23.2"
   },
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",
     "dotenv": "16.4.5",
     "tsx": "4.9.3",
     "typescript": "5.4.5",
-    "viem": "2.20.1"
+    "viem": "2.23.2"
   }
 }

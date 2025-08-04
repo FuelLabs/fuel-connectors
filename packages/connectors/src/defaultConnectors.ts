@@ -6,51 +6,50 @@ import {
 import { FuelWalletDevelopmentConnector } from '@fuel-connectors/fuel-development-wallet';
 import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
 import { FueletWalletConnector } from '@fuel-connectors/fuelet-wallet';
-import { SolanaConnector } from '@fuel-connectors/solana-connector';
-import { WalletConnectConnector } from '@fuel-connectors/walletconnect-connector';
-import type { Config } from '@wagmi/core';
-import type { ProviderType } from '@web3modal/solana/dist/types/src/utils/scaffold';
+import {
+  ReownEvmConnector,
+  ReownSvmConnector,
+} from '@fuel-connectors/reown-connector';
+import type { AppKit } from '@reown/appkit';
+
 import type { FuelConnector } from 'fuels';
 import type { Provider as FuelProvider } from 'fuels';
 
 type DefaultConnectors = {
   devMode?: boolean;
-  wcProjectId?: string;
   burnerWalletConfig?: BurnerWalletConfig;
-  ethWagmiConfig?: Config;
-  ethSkipAutoReconnect?: boolean;
-  solanaConfig?: ProviderType;
+  appkit?: AppKit;
   chainId?: number;
-  fuelProvider?: FuelProvider | Promise<FuelProvider>;
+  fuelProvider?: FuelProvider;
 };
 
 export function defaultConnectors({
   devMode,
-  wcProjectId,
   burnerWalletConfig,
-  ethWagmiConfig,
-  ethSkipAutoReconnect,
-  solanaConfig: _solanaConfig,
+  appkit,
   chainId,
   fuelProvider,
-}: DefaultConnectors = {}): Array<FuelConnector> {
+}: DefaultConnectors): Array<FuelConnector> {
   const connectors: Array<FuelConnector> = [
     new FuelWalletConnector(),
     new BakoSafeConnector(),
     new FueletWalletConnector(),
-    new WalletConnectConnector({
-      projectId: wcProjectId,
-      wagmiConfig: ethWagmiConfig,
-      chainId,
-      fuelProvider,
-      skipAutoReconnect: ethSkipAutoReconnect,
-    }),
-    new SolanaConnector({
-      projectId: wcProjectId,
-      chainId,
-      fuelProvider,
-    }),
   ];
+
+  if (appkit) {
+    connectors.push(
+      new ReownEvmConnector({
+        appkit,
+        chainId,
+        fuelProvider,
+      }),
+      new ReownSvmConnector({
+        appkit,
+        chainId,
+        fuelProvider,
+      }),
+    );
+  }
 
   if (devMode) {
     connectors.push(

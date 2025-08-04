@@ -4,52 +4,59 @@ import { counter as COUNTER_CONTRACT_ID_LOCAL } from './types/contract-ids-local
 import { counter as COUNTER_CONTRACT_ID_MAINNET } from './types/contract-ids-mainnet.json';
 import { counter as COUNTER_CONTRACT_ID_TESTNET } from './types/contract-ids-testnet.json';
 
+import { FuelProvider, type NetworkConfig } from '@fuels/react';
+import {
+  type AppKitNetwork,
+  mainnet,
+  sepolia,
+  solana,
+  solanaDevnet,
+  solanaTestnet,
+} from '@reown/appkit/networks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
-import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
-import { http, createConfig, injected } from '@wagmi/core';
-import { mainnet, sepolia } from '@wagmi/core/chains';
-
-import { defaultConnectors } from '@fuels/connectors';
-import { FuelProvider, type NetworkConfig } from '@fuels/react';
+import { coinbaseWallet, injected } from 'wagmi/connectors';
 
 import * as Toast from '@radix-ui/react-toast';
 
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
+import { CHAIN_IDS, type FuelConfig, Provider, bn } from 'fuels';
 import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
-import './index.css';
-import { CHAIN_IDS, type FuelConfig, Provider, bn } from 'fuels';
 import { ConfigProvider } from './context/ConfigContext.tsx';
+import './index.css';
+import { defaultConnectors } from '@fuels/connectors';
+import { createAppKit } from '@reown/appkit';
+import { SolanaAdapter } from '@reown/appkit-adapter-solana';
 
 const queryClient = new QueryClient();
-const isDev = process.env.NODE_ENV === 'development';
 
 // ============================================================
-// WalletConnect Connector configurations
-// https://docs.walletconnect.com/web3modal/javascript/about
+// ReOwn Custom Connectors configurations
+// https://docs.reown.com/appkit/javascript/core/custom-connectors
 // ============================================================
 const WC_PROJECT_ID = import.meta.env.VITE_APP_WC_PROJECT_ID;
+
 const METADATA = {
   name: 'Wallet Demo',
   description: 'Fuel Wallets Demo',
   url: location.href,
   icons: ['https://connectors.fuel.network/logo_white.png'],
 };
-const wagmiConfig = createConfig({
-  chains: [mainnet, sepolia],
-  transports: {
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
-  },
+const networks: [AppKitNetwork, ...AppKitNetwork[]] = [
+  mainnet,
+  sepolia,
+  solana,
+  solanaTestnet,
+  solanaDevnet,
+];
+
+const wagmiAdapter = new WagmiAdapter({
+  networks,
   syncConnectedChain: true,
+  projectId: WC_PROJECT_ID,
   connectors: [
     injected({ shimDisconnect: false }),
-    walletConnect({
-      projectId: WC_PROJECT_ID,
-      metadata: METADATA,
-      showQrModal: false,
-    }),
     coinbaseWallet({
       appName: METADATA.name,
       appLogoUrl: METADATA.icons[0],
@@ -57,6 +64,26 @@ const wagmiConfig = createConfig({
       reloadOnDisconnect: true,
     }),
   ],
+});
+
+const solanaWeb3JsAdapter = new SolanaAdapter();
+
+const appkit = createAppKit({
+  adapters: [wagmiAdapter, solanaWeb3JsAdapter],
+  enableWalletConnect: !!WC_PROJECT_ID,
+  projectId: WC_PROJECT_ID,
+  networks,
+  allowUnsupportedChain: false,
+  allWallets: 'ONLY_MOBILE',
+  featuredWalletIds: [
+    '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0', // Trust Wallet
+    'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase Wallet
+  ],
+  features: {
+    email: false,
+    socials: false,
+    analytics: false,
+  },
 });
 
 const CHAIN_ID_NAME = import.meta.env
@@ -79,8 +106,7 @@ const NETWORKS: NetworkConfig[] = [
 const FUEL_CONFIG: FuelConfig = {
   connectors: defaultConnectors({
     devMode: true,
-    wcProjectId: WC_PROJECT_ID,
-    ethWagmiConfig: wagmiConfig,
+    appkit,
     chainId: CHAIN_ID,
     fuelProvider: new Provider(PROVIDER_URL),
   }),
@@ -133,7 +159,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <ScreenSizeIndicator />
       </FuelProvider>
 
-      {isDev && <ReactQueryDevtools initialIsOpen={false} />}
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </React.StrictMode>,
 );

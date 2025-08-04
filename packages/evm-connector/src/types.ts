@@ -1,5 +1,4 @@
-import type EventEmitter from 'node:events';
-import type { PredicateConfig } from '@fuel-connectors/common';
+import type { EIP1193Provider, PredicateConfig } from '@fuel-connectors/common';
 import type { Provider } from 'fuels';
 
 export type EVMWalletConnectorConfig = {
@@ -17,14 +16,6 @@ export enum EVMWalletConnectorEvents {
   CONNECT = 'connect',
   DISCONNECT = 'disconnect',
 }
-
-export interface EIP1193Provider extends EventEmitter {
-  request(args: {
-    method: string;
-    params?: unknown[];
-  }): Promise<unknown | unknown[]>;
-}
-
 export interface SignatureData {
   message: string;
   signature: string;

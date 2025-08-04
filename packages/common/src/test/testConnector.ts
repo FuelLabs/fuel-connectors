@@ -1,10 +1,10 @@
 import type { TransactionRequestLike } from 'fuels';
 
 import {
-  type ConnectorConfig,
   type Maybe,
   type MaybeAsync,
   PredicateConnector,
+  type PredicateCurrentState,
   type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
@@ -24,10 +24,6 @@ export class TestPredicatedConnector extends PredicateConnector {
     },
   };
 
-  protected configProviders(_config: ConnectorConfig): MaybeAsync<void> {
-    throw new Error('Method not implemented.');
-  }
-
   protected getWalletAdapter(): PredicateWalletAdapter {
     return new SolanaWalletAdapter();
   }
@@ -44,8 +40,6 @@ export class TestPredicatedConnector extends PredicateConnector {
     throw new Error('Method not implemented.');
   }
 
-  protected requireConnection(): MaybeAsync<void> {}
-
   protected walletAccounts(): Promise<Array<string>> {
     return Promise.resolve([]);
   }
@@ -58,6 +52,10 @@ export class TestPredicatedConnector extends PredicateConnector {
   }
 
   public connect(): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+
+  public getCurrentState(): Promise<PredicateCurrentState> {
     throw new Error('Method not implemented.');
   }
 
