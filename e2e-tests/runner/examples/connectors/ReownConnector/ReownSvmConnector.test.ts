@@ -49,8 +49,8 @@ test.describe('SolanaConnector', () => {
   const connect: ConnectorFunctions['connect'] = async (page) => {
     await commonConnect(page);
     // TODO: Re-add the sign step in the SvmPredicate
-    // await page.getByText('Sign', { exact: true }).click();
-    // await phantom.confirmSignature();
+    await page.getByText('Sign', { exact: true }).click();
+    await phantom.confirmSignature();
     // TODO: For now we select the latest predicate version
     // In the future we may want to test all predicate version
     await page.getByText('Latest version', { exact: true }).click();
