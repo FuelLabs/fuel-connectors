@@ -32,8 +32,8 @@ import type {
 
 const SELECTED_PREDICATE_KEY = 'fuel_selected_predicate_version';
 
-// enviar uma request connectDapp com uma autenticacao (sessão assinada) vincula o sessionId ao endereço
-// ao trocar de conta também é necessário desconectar
+// send a connectDapp request with an authenticated (signed session) to link the sessionId with the address
+// when switching accounts, it's also necessary to disconnect
 const CONNECTOR = {
   AUTH_PREFIX: 'connector',
   DEFAULT_ACCOUNT: 'default',
@@ -52,8 +52,8 @@ export abstract class PredicateConnector extends FuelConnector {
   protected subscriptions: Array<() => void> = [];
   protected hasProviderSucceeded = true;
 
-  // eventos sao ouvidos pelo event emmiter: socket recebe, filtra e repassa
-  // para emitir o evento, é necessário usar o socket (predicateClass.emitCustomEvent)
+  // events are handled by the event emitter: socket receives, filters and forwards them
+  // to emit an event, you must use the socket (predicateClass.emitCustomEvent)
   protected socketClient: Maybe<SocketClient> = null;
 
   public abstract name: string;
@@ -68,7 +68,7 @@ export abstract class PredicateConnector extends FuelConnector {
     const { fuelProvider } = await this._get_providers();
     const _account = this._get_current_evm_address();
     if (!_account) {
-      throw new Error('Endereço EVM não encontrado');
+      throw new Error('EVM address not found');
     }
 
     const account = new Address(_account).toB256();
@@ -128,10 +128,7 @@ export abstract class PredicateConnector extends FuelConnector {
       const signature = await this._sign_message(hashTxId);
 
       console.log(signature);
-      // signature: bakoCoder.encode({
-      //   type: SignatureType.Fuel,
-      //   signature,
-      // }),
+
       const _signature = bakoCoder.encode({
         type: SignatureType.Evm,
         signature,
@@ -149,19 +146,7 @@ export abstract class PredicateConnector extends FuelConnector {
       console.log(_a);
 
       const r = await _a.waitForResult();
-      // .then(async (res) => {
-      //   const r = await res.waitForResult();
-      //   console.log("[CONNECTOR]SEND TX", r);
-      //   return r;
-      // })
-      // .catch((e) => {
-      //   console.error("[CONNECTOR]SEND TX ERROR", e);
-      //   throw e;
-      // });
       console.log('[CONNECTOR]SIGNATURE', _a, r);
-
-      // sign
-      // send
 
       return _a;
     } catch (e) {
@@ -171,55 +156,55 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   // ============================================================
-  // Métodos abstratos que devem ser implementados pelas subclasses
+  // Abstract methods to be implemented by subclasses
   // ============================================================
 
   /**
-   * Assina uma mensagem usando a carteira conectada
-   * @param message - Mensagem a ser assinada
-   * @returns Promise com a assinatura
+   * Signs a message using the connected wallet
+   * @param message - Message to be signed
+   * @returns Promise with the signature
    */
   protected abstract _sign_message(message: string): Promise<string>;
 
   /**
-   * Obtém os providers configurados (Fuel e EVM)
-   * @returns Promise com os providers
+   * Gets the configured providers (Fuel and EVM)
+   * @returns Promise with the providers
    */
   protected abstract _get_providers(): Promise<ProviderDictionary>;
 
   /**
-   * Obtém o endereço EVM atual da carteira conectada
-   * @returns Endereço EVM ou null se não conectado
+   * Gets the current EVM address from the connected wallet
+   * @returns EVM address or null if not connected
    */
   protected abstract _get_current_evm_address(): Maybe<string>;
 
   /**
-   * Verifica se há uma conexão ativa, lança erro se não houver
+   * Checks if there is an active connection, throws if not
    */
   protected abstract _require_connection(): MaybeAsync<void>;
 
   /**
-   * Configura os providers com base na configuração do conector
-   * @param config - Configuração do conector
+   * Configures the providers based on the connector configuration
+   * @param config - Connector configuration
    */
   protected abstract _config_providers(
     config: ConnectorConfig,
   ): MaybeAsync<void>;
 
   /**
-   * Fica responsável pela lógica de conexão com a carteira
-   * É chamado pelo método connect() antes de executar qualquer lógica de conexão com a bako
+   * Handles the wallet connection logic
+   * Called by connect() before executing any Bako logic
    */
   protected abstract _connect(): Promise<boolean>;
 
   /**
-   * Fica responsável pela lógica de desconexão com a carteira
-   * É chamado pelo método disconnect()
+   * Handles the wallet disconnection logic
+   * Called by the disconnect() method
    */
   protected abstract _disconnect(): Promise<boolean>;
 
   // ============================================================
-  // Métodos base implementados (podem ser sobrescritos se necessário)
+  // Base methods implemented (can be overridden if needed)
   // ============================================================
 
   public async ping(): Promise<boolean> {
@@ -271,7 +256,7 @@ export abstract class PredicateConnector extends FuelConnector {
         window.localStorage.removeItem(CONNECTOR.CURRENT_ACCOUNT);
       }
     } catch (error) {
-      console.error('Erro ao limpar localStorage durante disconnect:', error);
+      console.error('Error clearing localStorage during disconnect:', error);
     }
 
     this.emit(this.events.connection, false);
