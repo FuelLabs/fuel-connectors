@@ -21,7 +21,6 @@ import {
   Vault,
   bakoCoder,
 } from 'bakosafe';
-import type { PredicateFactory } from './PredicateFactory';
 import { SocketClient } from './socketClient';
 import type {
   ConnectorConfig,
@@ -50,7 +49,6 @@ export abstract class PredicateConnector extends FuelConnector {
   public events = FuelConnectorEventTypes;
   protected predicateAddress!: string;
   protected customPredicate: Maybe<PredicateConfig>;
-  protected predicateAccount: Maybe<PredicateFactory> = null;
   protected subscriptions: Array<() => void> = [];
   protected hasProviderSucceeded = true;
 
@@ -265,7 +263,6 @@ export abstract class PredicateConnector extends FuelConnector {
 
   public async disconnect(): Promise<boolean> {
     await this._disconnect();
-    this.predicateAccount = null;
     this.connected = false;
 
     try {
@@ -363,14 +360,11 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   protected async emitAccountChange(
-    address: string,
+    _address: string,
     connected = true,
   ): Promise<void> {
     this.emit(this.events.connection, connected);
-    this.emit(
-      this.events.currentAccount,
-      this.predicateAccount?.getPredicateAddress(address),
-    );
+    this.emit(this.events.currentAccount, this.currentAccount());
     this.emit(
       this.events.accounts,
       [],
