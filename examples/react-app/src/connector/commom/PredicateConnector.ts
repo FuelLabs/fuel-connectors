@@ -12,31 +12,29 @@ import {
   type TransactionRequestLike,
   type TransactionResponse,
   type Version,
-  randomUUID,
-} from "fuels";
+} from 'fuels';
 
-import { PredicateFactory } from "./PredicateFactory";
+import { BakoProvider, TypeUser } from 'bakosafe';
+import type { PredicateFactory } from './PredicateFactory';
+import { SocketClient } from './socketClient';
 import type {
   ConnectorConfig,
   Maybe,
   MaybeAsync,
   PredicateConfig,
   ProviderDictionary,
-  SignedMessageCustomCurve,
-} from "./types";
-import { BakoProvider, TypeUser } from "bakosafe";
-import { SocketClient } from "./socketClient";
+} from './types';
 
-const SELECTED_PREDICATE_KEY = "fuel_selected_predicate_version";
+const SELECTED_PREDICATE_KEY = 'fuel_selected_predicate_version';
 
 // enviar uma request connectDapp com uma autenticacao (sessão assinada) vincula o sessionId ao endereço
 // ao trocar de conta também é necessário desconectar
 const CONNECTOR = {
-  AUTH_PREFIX: "connector",
-  DEFAULT_ACCOUNT: "default",
-  SESSION_ID: "sessionId",
-  ACCOUNT_VALIDATED: "accountValidated",
-  CURRENT_ACCOUNT: "currentAccount",
+  AUTH_PREFIX: 'connector',
+  DEFAULT_ACCOUNT: 'default',
+  SESSION_ID: 'sessionId',
+  ACCOUNT_VALIDATED: 'accountValidated',
+  CURRENT_ACCOUNT: 'currentAccount',
 };
 
 export abstract class PredicateConnector extends FuelConnector {
@@ -59,41 +57,26 @@ export abstract class PredicateConnector extends FuelConnector {
 
   public abstract sendTransaction(
     address: string,
-    transaction: TransactionRequestLike
+    transaction: TransactionRequestLike,
   ): Promise<string | TransactionResponse>;
 
-  // /**
-  //  * Derived classes MUST call `await super.disconnect();` as part of their
-  //  * disconnection logic. They remain responsible for their specific
-  //  * disconnection procedures (e.g., from the underlying wallet),
-  //  * updating `this.connected` status, and emitting events such as
-  //  * `connection`, `currentAccount`, and `accounts`.
-  //  * @returns A promise that resolves to true if the base cleanup is successful.
-  //  */
-  // public async disconnect(): Promise<boolean> {
-  //   this.predicateAccount = null; // Ensure predicate is fully re-setup on next connect
-
-  //   try {
-  //     if (typeof window !== "undefined" && window.localStorage) {
-  //       window.localStorage.removeItem(SELECTED_PREDICATE_KEY);
-  //     }
-  //   } catch (error) {
-  //     console.error(
-  //       "Failed to clear selected predicate version from localStorage during disconnect:",
-  //       error
-  //     );
-  //   }
-  //   return true;
-  // }
-
   public async connect(): Promise<boolean> {
+    const subclassConectionState = await this._connect();
+    if (!subclassConectionState) {
+      return false;
+    }
+
     const { fuelProvider } = await this._get_providers();
     const _account = this._get_current_evm_address();
-    const account = new Address(_account!).toB256();
+    if (!_account) {
+      throw new Error('Endereço EVM não encontrado');
+    }
+
+    const account = new Address(_account).toB256();
 
     const code = await BakoProvider.setup({
       provider: fuelProvider.url,
-      address: account!,
+      address: account,
       encoder: TypeUser.EVM,
     });
 
@@ -101,7 +84,7 @@ export abstract class PredicateConnector extends FuelConnector {
     const sessionId = this.getSessionId();
 
     const provider = await BakoProvider.authenticate(fuelProvider.url, {
-      address: account!,
+      address: account,
       challenge: code,
       encoder: TypeUser.EVM,
       token: signature,
@@ -109,28 +92,121 @@ export abstract class PredicateConnector extends FuelConnector {
 
     await provider.connectDapp(sessionId);
 
-    const a = await provider.wallet();
-    console.log(await a.getBalances());
+    const wallet = await provider.wallet();
 
     this.emit(this.events.connection, true);
-    this.emit(this.events.currentAccount, a.address);
-    this.emit(this.events.accounts, a.address ? [a.address] : []);
+    this.emit(this.events.currentAccount, wallet.address);
+    this.emit(this.events.accounts, wallet.address ? [wallet.address] : []);
     this.connected = true;
 
-    localStorage.setItem(CONNECTOR.CURRENT_ACCOUNT, a.address.toB256());
+    localStorage.setItem(CONNECTOR.CURRENT_ACCOUNT, wallet.address.toB256());
 
     return true;
   }
 
-  public async disconnect(): Promise<boolean> {
-    this.connected = false;
-    this.clearSubscriptions();
-    this.socketClient?.disconnect();
+  // ============================================================
+  // Métodos abstratos que devem ser implementados pelas subclasses
+  // ============================================================
 
-    // Clear the current account from localStorage
-    if (typeof window !== "undefined" && window.localStorage) {
-      window.localStorage.removeItem(CONNECTOR.CURRENT_ACCOUNT);
-      window.localStorage.removeItem(CONNECTOR.SESSION_ID);
+  /**
+   * Assina uma mensagem usando a carteira conectada
+   * @param message - Mensagem a ser assinada
+   * @returns Promise com a assinatura
+   */
+  protected abstract _sign_message(message: string): Promise<string>;
+
+  /**
+   * Obtém os providers configurados (Fuel e EVM)
+   * @returns Promise com os providers
+   */
+  protected abstract _get_providers(): Promise<ProviderDictionary>;
+
+  /**
+   * Obtém o endereço EVM atual da carteira conectada
+   * @returns Endereço EVM ou null se não conectado
+   */
+  protected abstract _get_current_evm_address(): Maybe<string>;
+
+  /**
+   * Verifica se há uma conexão ativa, lança erro se não houver
+   */
+  protected abstract _require_connection(): MaybeAsync<void>;
+
+  /**
+   * Configura os providers com base na configuração do conector
+   * @param config - Configuração do conector
+   */
+  protected abstract _config_providers(
+    config: ConnectorConfig,
+  ): MaybeAsync<void>;
+
+  /**
+   * Fica responsável pela lógica de conexão com a carteira
+   * É chamado pelo método connect() antes de executar qualquer lógica de conexão com a bako
+   */
+  protected abstract _connect(): Promise<boolean>;
+
+  /**
+   * Fica responsável pela lógica de desconexão com a carteira
+   * É chamado pelo método disconnect()
+   */
+  protected abstract _disconnect(): Promise<boolean>;
+
+  // ============================================================
+  // Métodos base implementados (podem ser sobrescritos se necessário)
+  // ============================================================
+
+  public async ping(): Promise<boolean> {
+    try {
+      await this._get_providers();
+      this.hasProviderSucceeded = true;
+      return true;
+    } catch (_error) {
+      this.hasProviderSucceeded = false;
+      return false;
+    }
+  }
+
+  public async version(): Promise<Version> {
+    return { app: '0.0.0', network: '0.0.0' };
+  }
+
+  public async isConnected(): Promise<boolean> {
+    try {
+      await this._require_connection();
+      const accounts = await this.accounts();
+      return accounts.length > 0;
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  public async accounts(): Promise<Array<string>> {
+    const currentAccount = window.localStorage.getItem(
+      CONNECTOR.CURRENT_ACCOUNT,
+    );
+    return currentAccount ? [currentAccount] : [];
+  }
+
+  public async currentAccount(): Promise<string | null> {
+    if (!this.connected) {
+      return null;
+    }
+    return window.localStorage.getItem(CONNECTOR.CURRENT_ACCOUNT) ?? null;
+  }
+
+  public async disconnect(): Promise<boolean> {
+    await this._disconnect();
+    this.predicateAccount = null;
+    this.connected = false;
+
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.removeItem(SELECTED_PREDICATE_KEY);
+        window.localStorage.removeItem(CONNECTOR.CURRENT_ACCOUNT);
+      }
+    } catch (error) {
+      console.error('Erro ao limpar localStorage durante disconnect:', error);
     }
 
     this.emit(this.events.connection, false);
@@ -140,18 +216,58 @@ export abstract class PredicateConnector extends FuelConnector {
     return true;
   }
 
-  // metodos privados que são obrigatórios para implementacao da subclasse
-  protected abstract _sign_message(message: string): Promise<string>;
-  protected abstract _get_providers(): Promise<ProviderDictionary>;
-  protected abstract _get_current_evm_address(): Maybe<string>;
-  protected abstract _require_connection(): MaybeAsync<void>;
-  protected abstract _config_providers(
-    config: ConnectorConfig
-  ): MaybeAsync<void>;
+  public async networks(): Promise<Network[]> {
+    return [await this.currentNetwork()];
+  }
 
-  abstract signMessageCustomCurve(
-    _message: string
-  ): Promise<SignedMessageCustomCurve>;
+  public async currentNetwork(): Promise<Network> {
+    const { fuelProvider } = await this._get_providers();
+    return {
+      url: fuelProvider.url,
+      chainId: await fuelProvider.getChainId(),
+    };
+  }
+
+  public async signMessage(
+    _address: string,
+    _message: HashableMessage,
+  ): Promise<string> {
+    throw new Error('Method not implemented');
+  }
+
+  public async addAssets(_assets: Asset[]): Promise<boolean> {
+    throw new Error('Method not implemented');
+  }
+
+  public async addAsset(_asset: Asset): Promise<boolean> {
+    throw new Error('Method not implemented');
+  }
+
+  public async assets(): Promise<Array<Asset>> {
+    throw new Error('Method not implemented');
+  }
+
+  public async addNetwork(_networkUrl: string): Promise<boolean> {
+    throw new Error('Method not implemented');
+  }
+
+  public async selectNetwork(
+    _network: SelectNetworkArguments,
+  ): Promise<boolean> {
+    throw new Error('Method not implemented');
+  }
+
+  public async addAbi(_abiMap: AbiMap): Promise<boolean> {
+    throw new Error('Method not implemented');
+  }
+
+  public async getAbi(_contractId: string): Promise<JsonAbi> {
+    throw new Error('Method not implemented');
+  }
+
+  public async hasAbi(_contractId: string): Promise<boolean> {
+    throw new Error('Method not implemented');
+  }
 
   constructor() {
     super();
@@ -171,25 +287,25 @@ export abstract class PredicateConnector extends FuelConnector {
     return sessionId;
   }
 
-  protected custonEvent(event: string, data: any): void {
+  protected custonEvent(event: string, data: unknown): void {
     if (!this.socketClient) {
-      throw new Error("Socket client is not initialized");
+      throw new Error('Socket client is not initialized');
     }
     this.socketClient.server.emit(event, data);
   }
 
   protected async emitAccountChange(
     address: string,
-    connected = true
+    connected = true,
   ): Promise<void> {
     this.emit(this.events.connection, connected);
     this.emit(
       this.events.currentAccount,
-      this.predicateAccount?.getPredicateAddress(address)
+      this.predicateAccount?.getPredicateAddress(address),
     );
     this.emit(
       this.events.accounts,
-      []
+      [],
       // this.predicateAccount?.getPredicateAddresses(await this.walletAccounts())
     );
   }
@@ -204,93 +320,5 @@ export abstract class PredicateConnector extends FuelConnector {
     }
     this.subscriptions.forEach((listener) => listener());
     this.subscriptions = [];
-  }
-
-  public async ping(): Promise<boolean> {
-    this._get_providers()
-      .catch(() => {
-        this.hasProviderSucceeded = false;
-      })
-      .then(() => {
-        this.hasProviderSucceeded = true;
-      });
-    return this.hasProviderSucceeded;
-  }
-
-  public async version(): Promise<Version> {
-    return { app: "0.0.0", network: "0.0.0" };
-  }
-
-  public async isConnected(): Promise<boolean> {
-    await this._require_connection();
-    const accounts = await this.accounts();
-    return accounts.length > 0;
-  }
-
-  public async accounts(): Promise<Array<string>> {
-    const a = window.localStorage.getItem(CONNECTOR.CURRENT_ACCOUNT) ?? null;
-
-    return !a ? [] : [a];
-  }
-
-  public async currentAccount(): Promise<string | null> {
-    if (!this.connected) {
-      throw Error("No connected accounts");
-    }
-    const a = window.localStorage.getItem(CONNECTOR.CURRENT_ACCOUNT) ?? null;
-
-    return a;
-  }
-
-  public async networks(): Promise<Network[]> {
-    return [await this.currentNetwork()];
-  }
-
-  public async currentNetwork(): Promise<Network> {
-    const { fuelProvider } = await this._get_providers();
-    const chainId = await fuelProvider.getChainId();
-
-    return { url: fuelProvider.url, chainId: chainId };
-  }
-
-  public async signMessage(
-    _address: string,
-    _message: HashableMessage
-  ): Promise<string> {
-    throw new Error("A predicate account cannot sign messages");
-  }
-
-  public async addAssets(_assets: Asset[]): Promise<boolean> {
-    throw new Error("Method not implemented.");
-  }
-
-  public async addAsset(_asset: Asset): Promise<boolean> {
-    throw new Error("Method not implemented.");
-  }
-
-  public async assets(): Promise<Array<Asset>> {
-    return [];
-  }
-
-  public async addNetwork(_networkUrl: string): Promise<boolean> {
-    throw new Error("Method not implemented.");
-  }
-
-  public async selectNetwork(
-    _network: SelectNetworkArguments
-  ): Promise<boolean> {
-    throw new Error("Method not implemented.");
-  }
-
-  public async addAbi(_abiMap: AbiMap): Promise<boolean> {
-    throw new Error("Method not implemented.");
-  }
-
-  public async getAbi(_contractId: string): Promise<JsonAbi> {
-    throw Error("Cannot get contractId ABI for a predicate");
-  }
-
-  public async hasAbi(_contractId: string): Promise<boolean> {
-    throw Error("A predicate account cannot have an ABI");
   }
 }

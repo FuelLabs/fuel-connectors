@@ -1,76 +1,50 @@
 import {
-  ecrecover,
-  fromRpcSig,
-  hashPersonalMessage,
-  hexToBytes,
-  pubToAddress,
-} from "@ethereumjs/util";
-import { hexlify, splitSignature } from "@ethersproject/bytes";
-import {
   type Config,
   type GetAccountReturnType,
   disconnect,
   getAccount,
   reconnect,
   watchAccount,
-} from "@wagmi/core";
-import type { Web3Modal } from "@web3modal/wagmi";
-import {
-  bakoCoder,
-  BakoProvider,
-  SignatureType,
-  TypeUser,
-  Vault,
-} from "bakosafe";
+} from '@wagmi/core';
+import type { Web3Modal } from '@web3modal/wagmi';
+import { BakoProvider, SignatureType, Vault, bakoCoder } from 'bakosafe';
 import {
   Address,
   CHAIN_IDS,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
-  type FuelConnectorSendTxParams,
   Provider as FuelProvider,
   LocalStorage,
   type StorageAbstract,
   type TransactionRequestLike,
   type TransactionResponse,
-} from "fuels";
+} from 'fuels';
 
-import { ApiController } from "@web3modal/core";
-import { type TransactionRequest, stringToHex } from "viem";
+import { ApiController } from '@web3modal/core';
+import { stringToHex } from 'viem';
 import {
   type EIP1193Provider,
-  EthereumWalletAdapter,
   type Maybe,
   PredicateConnector,
-  type PredicateVersion,
-  type PredicateWalletAdapter,
   type ProviderDictionary,
-  getFuelPredicateAddresses,
-  getMockedSignatureIndex,
   getOrThrow,
   getProviderUrl,
-} from "./commom";
-import {
-  ETHEREUM_ICON,
-  HAS_WINDOW,
-  SIGNATURE_VALIDATION_TIMEOUT,
-  WINDOW,
-} from "./constants";
-import type { CustomCurrentConnectorEvent, WalletConnectConfig } from "./types";
+} from './commom';
+import { ETHEREUM_ICON, HAS_WINDOW, WINDOW } from './constants';
+import type { WalletConnectConfig } from './types';
 // import { subscribeAndEnforceChain } from "./utils";
-import { createWagmiConfig, createWeb3ModalInstance } from "./web3Modal";
-import { randomUUID } from "fuels";
+import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
 export class WalletConnectConnector extends PredicateConnector {
-  name = "Ethereum Wallets";
+  name = 'Ethereum Wallets';
   installed = true;
   events = FuelConnectorEventTypes;
   metadata: ConnectorMetadata = {
     image: ETHEREUM_ICON,
     install: {
-      action: "Install",
-      description: "Install Ethereum Wallet to connect to Fuel",
-      link: "https://ethereum.org/en/wallets/find-wallet/",
+      action: 'Install',
+      description: 'Install Ethereum Wallet to connect to Fuel',
+      link: 'https://ethereum.org/en/wallets/find-wallet/',
     },
   };
 
@@ -114,29 +88,29 @@ export class WalletConnectConnector extends PredicateConnector {
 
   private async handleConnect(
     account: NonNullable<GetAccountReturnType<Config>>,
-    defaultAccount: string | null = null
+    defaultAccount: string | null = null,
   ) {
     this.emit(this.events.connection, true);
     this.emit(
       this.events.currentAccount,
-      defaultAccount ?? (account?.address as string)
+      defaultAccount ?? (account?.address as string),
     );
     this.emit(this.events.accounts, []);
   }
 
   private setupWatchers() {
     const wagmiConfig = this.getWagmiConfig();
-    if (!wagmiConfig) throw new Error("Wagmi config not found");
+    if (!wagmiConfig) throw new Error('Wagmi config not found');
 
     this.subscribe(
       watchAccount(wagmiConfig, {
         onChange: async (account) => {
           switch (account.status) {
-            case "connected": {
+            case 'connected': {
               await this.handleConnect(account);
               break;
             }
-            case "disconnected": {
+            case 'disconnected': {
               this.emit(this.events.connection, false);
               this.emit(this.events.currentAccount, null);
               this.emit(this.events.accounts, []);
@@ -144,7 +118,7 @@ export class WalletConnectConnector extends PredicateConnector {
             }
           }
         },
-      })
+      }),
     );
   }
 
@@ -176,7 +150,7 @@ export class WalletConnectConnector extends PredicateConnector {
     if (this.config.skipAutoReconnect || !wagmiConfig) return;
 
     const { status, connections } = wagmiConfig.state;
-    if (status === "disconnected" && connections.size > 0) {
+    if (status === 'disconnected' && connections.size > 0) {
       await reconnect(wagmiConfig);
     }
   }
@@ -191,14 +165,14 @@ export class WalletConnectConnector extends PredicateConnector {
     if (!this.fuelProvider) {
       this.fuelProvider = getOrThrow(
         await this.config.fuelProvider,
-        "Fuel provider is not available"
+        'Fuel provider is not available',
       );
     }
 
     const wagmiConfig = this.getWagmiConfig();
     const ethProvider = wagmiConfig
       ? ((await getAccount(
-          wagmiConfig
+          wagmiConfig,
         ).connector?.getProvider?.()) as EIP1193Provider)
       : undefined;
 
@@ -212,57 +186,53 @@ export class WalletConnectConnector extends PredicateConnector {
     const { ethProvider } = await this._get_providers();
     const currentAccount = this._get_current_evm_address();
     const a = await ethProvider?.request({
-      method: "personal_sign",
+      method: 'personal_sign',
       params: [stringToHex(message), currentAccount],
     });
     console.log(a);
     return a as string;
   }
 
-  public async connect(): Promise<boolean> {
+  public async _connect(): Promise<boolean> {
     const wagmiConfig = this.getWagmiConfig();
-    if (!wagmiConfig) throw new Error("Wagmi config not found");
+    if (!wagmiConfig) throw new Error('Wagmi config not found');
 
-    // // User might have connected already, now let's ask for the signatures
-    // const state = await this.requestSignatures(wagmiConfig);
-    // if (state === "validated") {
-    //   return true;
-    // }
-
-    // User not connected, let's show the WalletConnect modal
+    // Exibe o modal
     this.createModal();
     this.web3Modal.open();
-    const unsub = this.web3Modal.subscribeEvents(async (event) => {
-      switch (event.data.event) {
-        case "MODAL_OPEN":
-          // Ensures that the WC Web3Modal config is applied over pre-existing states (e.g. Solana Connect Web3Modal)
-          this.createModal();
-          break;
-        case "CONNECT_SUCCESS": {
-          await super.connect();
-          unsub();
-          break;
+
+    return new Promise<boolean>((resolve) => {
+      const unsub = this.web3Modal.subscribeEvents(async (event) => {
+        switch (event.data.event) {
+          case 'MODAL_OPEN':
+            this.createModal();
+            break;
+
+          case 'CONNECT_SUCCESS': {
+            unsub();
+            resolve(true);
+            break;
+          }
+
+          case 'MODAL_CLOSE':
+          case 'CONNECT_ERROR': {
+            unsub();
+            resolve(false);
+            break;
+          }
         }
-        case "MODAL_CLOSE":
-        case "CONNECT_ERROR": {
-          unsub();
-          break;
-        }
-      }
+      });
     });
-    return false;
   }
 
-  public async disconnect(): Promise<boolean> {
+  public async _disconnect(): Promise<boolean> {
     const wagmiConfig = this.getWagmiConfig();
-    if (!wagmiConfig) throw new Error("Wagmi config not found");
+    if (!wagmiConfig) throw new Error('Wagmi config not found');
 
     const { connector, isConnected } = getAccount(wagmiConfig);
     await disconnect(wagmiConfig, {
       connector,
     });
-
-    await super.disconnect();
 
     return isConnected || false;
   }
@@ -270,11 +240,12 @@ export class WalletConnectConnector extends PredicateConnector {
   public async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
-    params?: FuelConnectorSendTxParams
   ): Promise<TransactionResponse> {
     try {
       const { fuelProvider } = await this._get_providers();
-      const a = this._get_current_evm_address()!;
+
+      const a = this._get_current_evm_address();
+      if (!a) throw new Error('No connected accounts');
       const _address = new Address(a).toB256();
       const bakoProvider = await BakoProvider.create(fuelProvider.url, {
         address: _address,
@@ -283,11 +254,11 @@ export class WalletConnectConnector extends PredicateConnector {
 
       const vault = await Vault.fromAddress(
         new Address(address).toB256(),
-        bakoProvider
+        bakoProvider,
       );
       const { tx, hashTxId } = await vault.BakoTransfer(transaction);
 
-      console.log("[CONNECTOR]TRANSACTION", tx, hashTxId);
+      console.log('[CONNECTOR]TRANSACTION', tx, hashTxId);
       const signature = await this._sign_message(hashTxId);
 
       console.log(signature);
@@ -300,13 +271,13 @@ export class WalletConnectConnector extends PredicateConnector {
         signature,
       });
 
-      console.log("[CONNECTOR]SIGNATURE", tx.witnesses);
+      console.log('[CONNECTOR]SIGNATURE', tx.witnesses);
 
       const _a_ = await bakoProvider.signTransaction({
         hash: hashTxId,
         signature: _signature,
       });
-      console.log("[CONNECTOR]SIGNATURE", _a_);
+      console.log('[CONNECTOR]SIGNATURE', _a_);
 
       const _a = await vault.send(tx);
       console.log(_a);
@@ -321,29 +292,29 @@ export class WalletConnectConnector extends PredicateConnector {
       //   console.error("[CONNECTOR]SEND TX ERROR", e);
       //   throw e;
       // });
-      console.log("[CONNECTOR]SIGNATURE", _a, r);
+      console.log('[CONNECTOR]SIGNATURE', _a, r);
 
       // sign
       // send
 
       return _a;
     } catch (e) {
-      console.error("[CONNECTOR]TRANSACTION ERROR", e);
+      console.error('[CONNECTOR]TRANSACTION ERROR', e);
       throw e;
     }
   }
 
   async signMessageCustomCurve(message: string) {
     const { ethProvider } = await this._get_providers();
-    if (!ethProvider) throw new Error("Eth provider not found");
+    if (!ethProvider) throw new Error('Eth provider not found');
     const accountAddress = await this._get_current_evm_address();
-    if (!accountAddress) throw new Error("No connected accounts");
+    if (!accountAddress) throw new Error('No connected accounts');
     const signature = await ethProvider.request({
-      method: "personal_sign",
+      method: 'personal_sign',
       params: [accountAddress, message],
     });
     return {
-      curve: "secp256k1",
+      curve: 'secp256k1',
       signature: signature as string,
     };
   }
