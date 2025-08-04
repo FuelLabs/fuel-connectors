@@ -14,7 +14,13 @@ import {
   type Version,
 } from 'fuels';
 
-import { BakoProvider, TypeUser } from 'bakosafe';
+import {
+  BakoProvider,
+  SignatureType,
+  TypeUser,
+  Vault,
+  bakoCoder,
+} from 'bakosafe';
 import type { PredicateFactory } from './PredicateFactory';
 import { SocketClient } from './socketClient';
 import type {
@@ -54,11 +60,6 @@ export abstract class PredicateConnector extends FuelConnector {
 
   public abstract name: string;
   public abstract metadata: ConnectorMetadata;
-
-  public abstract sendTransaction(
-    address: string,
-    transaction: TransactionRequestLike,
-  ): Promise<string | TransactionResponse>;
 
   public async connect(): Promise<boolean> {
     const subclassConectionState = await this._connect();
@@ -102,6 +103,73 @@ export abstract class PredicateConnector extends FuelConnector {
     localStorage.setItem(CONNECTOR.CURRENT_ACCOUNT, wallet.address.toB256());
 
     return true;
+  }
+
+  public async sendTransaction(
+    address: string,
+    transaction: TransactionRequestLike,
+  ): Promise<TransactionResponse> {
+    try {
+      const { fuelProvider } = await this._get_providers();
+
+      const a = this._get_current_evm_address();
+      if (!a) throw new Error('No connected accounts');
+      const _address = new Address(a).toB256();
+      const bakoProvider = await BakoProvider.create(fuelProvider.url, {
+        address: _address,
+        token: `connector${this.getSessionId()}`,
+      });
+
+      const vault = await Vault.fromAddress(
+        new Address(address).toB256(),
+        bakoProvider,
+      );
+      const { tx, hashTxId } = await vault.BakoTransfer(transaction);
+
+      console.log('[CONNECTOR]TRANSACTION', tx, hashTxId);
+      const signature = await this._sign_message(hashTxId);
+
+      console.log(signature);
+      // signature: bakoCoder.encode({
+      //   type: SignatureType.Fuel,
+      //   signature,
+      // }),
+      const _signature = bakoCoder.encode({
+        type: SignatureType.Evm,
+        signature,
+      });
+
+      console.log('[CONNECTOR]SIGNATURE', tx.witnesses);
+
+      const _a_ = await bakoProvider.signTransaction({
+        hash: hashTxId,
+        signature: _signature,
+      });
+      console.log('[CONNECTOR]SIGNATURE', _a_);
+
+      const _a = await vault.send(tx);
+      console.log(_a);
+
+      const r = await _a.waitForResult();
+      // .then(async (res) => {
+      //   const r = await res.waitForResult();
+      //   console.log("[CONNECTOR]SEND TX", r);
+      //   return r;
+      // })
+      // .catch((e) => {
+      //   console.error("[CONNECTOR]SEND TX ERROR", e);
+      //   throw e;
+      // });
+      console.log('[CONNECTOR]SIGNATURE', _a, r);
+
+      // sign
+      // send
+
+      return _a;
+    } catch (e) {
+      console.error('[CONNECTOR]TRANSACTION ERROR', e);
+      throw e;
+    }
   }
 
   // ============================================================

@@ -7,17 +7,11 @@ import {
   watchAccount,
 } from '@wagmi/core';
 import type { Web3Modal } from '@web3modal/wagmi';
-import { BakoProvider, SignatureType, Vault, bakoCoder } from 'bakosafe';
 import {
-  Address,
   CHAIN_IDS,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
-  LocalStorage,
-  type StorageAbstract,
-  type TransactionRequestLike,
-  type TransactionResponse,
 } from 'fuels';
 
 import { ApiController } from '@web3modal/core';
@@ -30,7 +24,7 @@ import {
   getOrThrow,
   getProviderUrl,
 } from './commom';
-import { ETHEREUM_ICON, HAS_WINDOW, WINDOW } from './constants';
+import { ETHEREUM_ICON, HAS_WINDOW } from './constants';
 import type { WalletConnectConfig } from './types';
 // import { subscribeAndEnforceChain } from "./utils";
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
@@ -51,13 +45,10 @@ export class WalletConnectConnector extends PredicateConnector {
   private fuelProvider!: FuelProvider;
   private ethProvider!: EIP1193Provider;
   private web3Modal!: Web3Modal;
-  private storage: StorageAbstract;
   private config: WalletConnectConfig = {} as WalletConnectConfig;
 
   constructor(config: WalletConnectConfig) {
     super();
-    this.storage =
-      config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
     const wagmiConfig = config?.wagmiConfig ?? createWagmiConfig();
 
     // if (wagmiConfig._internal.syncConnectedChain !== false) {
@@ -189,7 +180,7 @@ export class WalletConnectConnector extends PredicateConnector {
       method: 'personal_sign',
       params: [stringToHex(message), currentAccount],
     });
-    console.log(a);
+    console.log('[SIGNED_MESSAGE]: ', a);
     return a as string;
   }
 
@@ -235,73 +226,6 @@ export class WalletConnectConnector extends PredicateConnector {
     });
 
     return isConnected || false;
-  }
-
-  public async sendTransaction(
-    address: string,
-    transaction: TransactionRequestLike,
-  ): Promise<TransactionResponse> {
-    try {
-      const { fuelProvider } = await this._get_providers();
-
-      const a = this._get_current_evm_address();
-      if (!a) throw new Error('No connected accounts');
-      const _address = new Address(a).toB256();
-      const bakoProvider = await BakoProvider.create(fuelProvider.url, {
-        address: _address,
-        token: `connector${this.getSessionId()}`,
-      });
-
-      const vault = await Vault.fromAddress(
-        new Address(address).toB256(),
-        bakoProvider,
-      );
-      const { tx, hashTxId } = await vault.BakoTransfer(transaction);
-
-      console.log('[CONNECTOR]TRANSACTION', tx, hashTxId);
-      const signature = await this._sign_message(hashTxId);
-
-      console.log(signature);
-      // signature: bakoCoder.encode({
-      //   type: SignatureType.Fuel,
-      //   signature,
-      // }),
-      const _signature = bakoCoder.encode({
-        type: SignatureType.Evm,
-        signature,
-      });
-
-      console.log('[CONNECTOR]SIGNATURE', tx.witnesses);
-
-      const _a_ = await bakoProvider.signTransaction({
-        hash: hashTxId,
-        signature: _signature,
-      });
-      console.log('[CONNECTOR]SIGNATURE', _a_);
-
-      const _a = await vault.send(tx);
-      console.log(_a);
-
-      const r = await _a.waitForResult();
-      // .then(async (res) => {
-      //   const r = await res.waitForResult();
-      //   console.log("[CONNECTOR]SEND TX", r);
-      //   return r;
-      // })
-      // .catch((e) => {
-      //   console.error("[CONNECTOR]SEND TX ERROR", e);
-      //   throw e;
-      // });
-      console.log('[CONNECTOR]SIGNATURE', _a, r);
-
-      // sign
-      // send
-
-      return _a;
-    } catch (e) {
-      console.error('[CONNECTOR]TRANSACTION ERROR', e);
-      throw e;
-    }
   }
 
   async signMessageCustomCurve(message: string) {
