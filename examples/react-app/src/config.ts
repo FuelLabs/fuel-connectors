@@ -7,8 +7,12 @@ export const CHAIN_ID_NAME = import.meta.env
   .VITE_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel;
 export const CHAIN_ID = CHAIN_IDS.fuel[CHAIN_ID_NAME] || 0;
 export const PROVIDER_URL = import.meta.env.VITE_FUEL_PROVIDER_URL;
+
+const CUSTOM_TRANSFER_AMOUNT = import.meta.env.VITE_CUSTOM_TRANSFER_AMOUNT;
+const FALLBACK_TRANSFER_AMOUNT =
+  CHAIN_ID_NAME === 'mainnet' ? '0.000000001' : '0.0001';
 export const DEFAULT_AMOUNT = bn.parseUnits(
-  CHAIN_ID_NAME === 'mainnet' ? '0.000000001' : '0.0001',
+  CUSTOM_TRANSFER_AMOUNT ?? FALLBACK_TRANSFER_AMOUNT,
 );
 
 function getContractId() {

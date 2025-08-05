@@ -18,6 +18,14 @@ const CHAIN_ID_NAME = process.env
   .NEXT_PUBLIC_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel;
 const CHAIN_ID = CHAIN_IDS.fuel[CHAIN_ID_NAME] || 0;
 const PROVIDER_URL = process.env.NEXT_PUBLIC_PROVIDER_URL;
+
+const CUSTOM_TRANSFER_AMOUNT = process.env.NEXT_PUBLIC_CUSTOM_TRANSFER_AMOUNT;
+const FALLBACK_TRANSFER_AMOUNT =
+  CHAIN_ID_NAME === 'mainnet' ? '0.000000001' : '0.0001';
+const DEFAULT_AMOUNT = bn.parseUnits(
+  CUSTOM_TRANSFER_AMOUNT ?? FALLBACK_TRANSFER_AMOUNT,
+);
+
 const CUSTOM_ASSET_ID = process.env.NEXT_PUBLIC_CUSTOM_ASSET_ID ?? undefined;
 const CUSTOM_ASSET_SYMBOL =
   process.env.NEXT_PUBLIC_CUSTOM_ASSET_SYMBOL ?? 'ETH';
@@ -100,9 +108,7 @@ const config: Config = {
   providerUrl: PROVIDER_URL,
   counterContractId: getContractId(),
   chainIdName: CHAIN_ID_NAME,
-  defaultAmount: bn.parseUnits(
-    CHAIN_ID_NAME === 'mainnet' ? '0.000000001' : '0.0001',
-  ),
+  defaultAmount: DEFAULT_AMOUNT,
   assetId: CUSTOM_ASSET_ID,
   assetSymbol: CUSTOM_ASSET_SYMBOL,
 };
