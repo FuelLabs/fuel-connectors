@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 
 import { QUERY_KEYS } from '../utils';
 
+import type { ConsolidateCoinsEvent } from 'fuels';
 import { useFuel } from './FuelHooksProvider';
 
 export function FuelEventsWatcher() {
@@ -69,6 +70,12 @@ export function FuelEventsWatcher() {
     queryClient.invalidateQueries({ queryKey: QUERY_KEYS.assets() });
   }
 
+  function onConsolidateCoinsChange(opts: ConsolidateCoinsEvent['data']) {
+    const consolidationKey = QUERY_KEYS.consolidation();
+    queryClient.invalidateQueries({ queryKey: consolidationKey });
+    queryClient.setQueryData(consolidationKey, opts);
+  }
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: We don't need to add all the dependencies here
   useEffect(() => {
     fuel.on(fuel.events.currentAccount, onCurrentAccountChange);
@@ -78,6 +85,7 @@ export function FuelEventsWatcher() {
     fuel.on(fuel.events.accounts, onAccountsChange);
     fuel.on(fuel.events.currentNetwork, onNetworkChange);
     fuel.on(fuel.events.assets, onAssetsChange);
+    fuel.on(fuel.events.consolidateCoins, onConsolidateCoinsChange);
 
     return () => {
       fuel.off(fuel.events.currentConnector, onCurrentConnectorChange);
@@ -87,6 +95,7 @@ export function FuelEventsWatcher() {
       fuel.off(fuel.events.accounts, onAccountsChange);
       fuel.off(fuel.events.currentNetwork, onNetworkChange);
       fuel.off(fuel.events.assets, onAssetsChange);
+      fuel.off(fuel.events.consolidateCoins, onConsolidateCoinsChange);
     };
   }, [fuel, queryClient]);
 

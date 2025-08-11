@@ -47,12 +47,12 @@
     "@changesets/get-github-info": "0.6.0",
     "@changesets/read": "0.6.3",
     "@changesets/types": "6.1.0",
-    "@fuels/ts-config": "0.20.0",
-    "@fuels/tsup-config": "0.20.0",
+    "@fuels/ts-config": "0.26.0",
+    "@fuels/tsup-config": "0.26.0",
     "@types/node": "20.12.11",
     "@vitest/coverage-v8": "2.1.9",
     "compare-versions": "6.1.0",
-    "fuels": "0.101.1",
+    "fuels": "0.101.3",
     "husky": "9.0.11",
     "lint-staged": "15.2.2",
     "tsx": "^4.16.2",
@@ -80,7 +80,8 @@
       "@babel/runtime@<7.26.10": ">=7.26.10",
       "@babel/helpers@<7.26.10": ">=7.26.10",
       "image-size@<1.2.1": ">=1.2.1",
-      "vite@>=5.0.0 <5.4.18": ">=5.4.18"
+      "vite@>=5.0.0 <5.4.18": ">=5.4.18",
+      "form-data@>=4.0.0 <4.0.4": ">=4.0.4"
     }
   }
 }

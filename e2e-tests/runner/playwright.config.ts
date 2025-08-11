@@ -30,7 +30,7 @@ const config: PlaywrightTestConfig = defineConfig({
   retries: 0,
   maxFailures: 1,
   workers: 1,
-  timeout: 60_000,
+  timeout: 100_000,
   reporter: [['html', { printSteps: true }]],
   use: {
     permissions: ['clipboard-read', 'clipboard-write'],

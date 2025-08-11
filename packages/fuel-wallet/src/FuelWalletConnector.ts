@@ -12,6 +12,7 @@ import {
   type Network,
   Provider,
   type SelectNetworkArguments,
+  type StartConsolidateCoins,
   type TransactionRequest,
   type TransactionRequestLike,
   type TransactionResponse,
@@ -382,5 +383,12 @@ export class FuelWalletConnector extends FuelConnector {
       app: '0.0.0',
       network: '0.0.0',
     });
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async startConsolidation(opts: StartConsolidateCoins): Promise<void> {
+    this.emit(FuelConnectorEventTypes.consolidateCoins, opts);
   }
 }

@@ -13,6 +13,9 @@ export const QUERY_KEYS = {
   assets: (): QueryKey => {
     return QUERY_KEYS.base.concat('assets');
   },
+  consolidation: (): QueryKey => {
+    return QUERY_KEYS.base.concat('consolidation');
+  },
   contract: (
     address: string,
     chainId: number | undefined,
@@ -95,6 +98,11 @@ export const QUERY_KEYS = {
     if (networks) queryKey.push(networks);
     if (network) queryKey.push(network);
     if (isConnected) queryKey.push(isConnected);
+    return queryKey;
+  },
+  verifiedAssets: (chainId?: number | null): QueryKey => {
+    const queryKey = QUERY_KEYS.base.concat('verifiedAssets');
+    if (chainId !== undefined) queryKey.push(chainId);
     return queryKey;
   },
 };
