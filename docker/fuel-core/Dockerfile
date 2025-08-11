@@ -17,7 +17,7 @@ WORKDIR /fuel
 
 COPY ./genesis_coins.json .
 
-#  Fuel Core 0.43.1
+#  Fuel Core 0.45.1
 RUN git clone \
     https://github.com/FuelLabs/chain-configuration.git \
     /chain-configuration && \
