@@ -1,5 +1,11 @@
 # @fuels/react
 
+## 0.44.0
+
+### Patch Changes
+
+- [#549](https://github.com/FuelLabs/fuel-connectors/pull/549) [`96cb643`](https://github.com/FuelLabs/fuel-connectors/commit/96cb6436677e0fbbec82cc3aa58fe56e6383679e) Thanks [@petertonysmith94](https://github.com/petertonysmith94)! - feat: auto-consolidate coins process
+
 ## 0.43.2
 
 ## 0.43.1

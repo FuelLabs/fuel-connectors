@@ -1,5 +1,11 @@
 # @fuel-connectors/evm-predicates
 
+## 0.44.0
+
+### Minor Changes
+
+- [#545](https://github.com/FuelLabs/fuel-connectors/pull/545) [`661f957`](https://github.com/FuelLabs/fuel-connectors/commit/661f95733e85159e7204efdd527058e200be08e7) Thanks [@petertonysmith94](https://github.com/petertonysmith94)! - fix: verify signature using EVM address instead of public key
+
 ## 0.43.2
 
 ## 0.43.1

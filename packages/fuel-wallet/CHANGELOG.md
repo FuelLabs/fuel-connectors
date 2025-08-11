@@ -1,5 +1,11 @@
 # @fuel-connectors/fuel-wallet
 
+## 0.44.0
+
+### Minor Changes
+
+- [#542](https://github.com/FuelLabs/fuel-connectors/pull/542) [`df234c1`](https://github.com/FuelLabs/fuel-connectors/commit/df234c10d4c884d3746ca4b37771081c6087d1ae) Thanks [@nelitow](https://github.com/nelitow)! - fix: validate empty signatures on personalSign
+
 ## 0.43.2
 
 ## 0.43.1
