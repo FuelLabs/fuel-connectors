@@ -1,6 +1,6 @@
 import { hexToBytes } from '@ethereumjs/util';
 // External libraries
-import { hexlify, splitSignature } from '@ethersproject/bytes';
+import { splitSignature } from '@ethersproject/bytes';
 
 import {
   CHAIN_IDS,
@@ -245,10 +245,12 @@ export class EVMWalletConnector extends PredicateConnector {
       await this.prepareTransaction(address, transaction);
 
     const txId = this.encodeTxId(transactionId);
+    console.log(`Sending transaction to predicate: ${txId}`);
     const signature = (await ethProvider?.request({
       method: 'personal_sign',
       params: [txId, account],
     })) as string;
+    console.log(signature);
 
     const predicateSignatureIndex = getMockedSignatureIndex(
       transactionRequest.witnesses,
@@ -256,6 +258,7 @@ export class EVMWalletConnector extends PredicateConnector {
 
     // Transform the signature into compact form for Sway to understand
     const compactSignature = splitSignature(hexToBytes(signature)).compact;
+    console.log(compactSignature);
     transactionRequest.witnesses[predicateSignatureIndex] = compactSignature;
 
     const transactionWithPredicateEstimated =
