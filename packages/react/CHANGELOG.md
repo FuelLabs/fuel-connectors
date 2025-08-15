@@ -1,5 +1,11 @@
 # @fuels/react
 
+## 0.44.1
+
+### Patch Changes
+
+- [#553](https://github.com/FuelLabs/fuel-connectors/pull/553) [`212e885`](https://github.com/FuelLabs/fuel-connectors/commit/212e88583277026170b99bc7a97e9f80c0b5dd7d) Thanks [@nelitow](https://github.com/nelitow)! - feat: Improve consolidation pop-up UI
+
 ## 0.44.0
 
 ### Patch Changes
