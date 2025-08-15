@@ -39,26 +39,22 @@ export const ConsolidateButtonPrimary = ({
   isLoading,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { isLoading?: boolean }) => {
+  const buttonStyle: React.CSSProperties = {
+    ...connectorButtonStyle,
+    color: '#ffffff',
+    ...(props.disabled || isLoading
+      ? {
+          backgroundColor: '#9ca3af',
+          cursor: 'not-allowed',
+        }
+      : {
+          backgroundColor: '#2563eb',
+        }),
+  };
+
   return (
     <button
-      style={{
-        ...connectorButtonStyle,
-        backgroundColor: '#2563eb',
-        color: '#ffffff',
-        ...(props.disabled || isLoading
-          ? {
-              backgroundColor: '#9ca3af',
-              cursor: 'not-allowed',
-            }
-          : {
-              ':hover': {
-                backgroundColor: '#1d4ed8',
-              },
-              ':active': {
-                backgroundColor: '#1e40af',
-              },
-            }),
-      }}
+      style={buttonStyle}
       {...props}
       disabled={!!isLoading || props.disabled}
       className="fuel-connectors-connector-button-primary"
