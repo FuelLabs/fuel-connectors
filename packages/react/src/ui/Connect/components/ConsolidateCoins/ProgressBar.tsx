@@ -20,23 +20,25 @@ export function ProgressBar({
 
   const { backgroundColor, progressColor } = useMemo(() => {
     return theme === 'dark'
-      ? { backgroundColor: '#e5e7eb', progressColor: '#22c55e' }
+      ? { backgroundColor: '#374151', progressColor: '#22c55e' }
       : { backgroundColor: '#e5e7eb', progressColor: '#2563eb' };
   }, [theme]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
+          alignItems: 'center',
           fontSize: '0.875rem',
-          color: '#6b7280',
+          color: theme === 'dark' ? '#9ca3af' : '#6b7280',
         }}
       >
-        <span>Progress</span>
+        <span style={{ fontWeight: '500' }}>Progress</span>
         <span>
-          {current}/{total} transactions
+          {current || 0} of {total || 0} transaction
+          {(total || 0) !== 1 ? 's' : ''}
         </span>
       </div>
       <div
@@ -45,6 +47,7 @@ export function ProgressBar({
           backgroundColor,
           borderRadius: '9999px',
           height: '0.5rem',
+          overflow: 'hidden',
         }}
       >
         <div
@@ -52,7 +55,7 @@ export function ProgressBar({
             backgroundColor: progressColor,
             height: '0.5rem',
             borderRadius: '9999px',
-            transition: 'width 0.3s',
+            transition: 'width 0.3s ease-in-out',
             width: `${progress}%`,
           }}
         />

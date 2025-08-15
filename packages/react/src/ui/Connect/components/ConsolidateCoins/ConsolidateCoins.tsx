@@ -137,7 +137,7 @@ export function ConsolidateCoins() {
         onClick={() => start()}
         isLoading={status === 'consolidating' || status === 'loading'}
       >
-        Start
+        Consolidate
       </ConsolidateButtonPrimary>
     );
   }, [status, retry, cancel, start]);
@@ -146,7 +146,7 @@ export function ConsolidateCoins() {
     <DialogFuel theme={theme} open={true} onOpenChange={() => cancel()}>
       <DialogContent data-connector={true}>
         <DialogHeader>
-          <DialogTitle>Consolidate coins</DialogTitle>
+          <DialogTitle>Account Consolidation Required</DialogTitle>
           <Close asChild>
             <CloseIcon size={26} onClick={() => cancel()} />
           </Close>
@@ -167,20 +167,91 @@ export function ConsolidateCoins() {
                 }}
               >
                 <Spinner size={48} color="#e5e7eb" />
+                <p
+                  style={{
+                    marginTop: '1rem',
+                    fontSize: '0.9rem',
+                    color: '#6b7280',
+                  }}
+                >
+                  Preparing consolidation...
+                </p>
               </div>
             )}
 
             {(status === 'ready' || status === 'consolidating') && (
               <>
-                <div className="text-sm text-gray-600">
-                  Consolidating {utxoCount} UTXOs
-                  {asset
-                    ? ` for the asset ${asset.name} (${asset.symbol})`
-                    : ''}
-                  .
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <h3
+                    style={{
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      marginBottom: '0.75rem',
+                      color: theme === 'dark' ? '#f9fafb' : '#111827',
+                    }}
+                  >
+                    Why is consolidation needed?
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: '0.875rem',
+                      lineHeight: '1.5',
+                      color: '#6b7280',
+                      marginBottom: '1rem',
+                    }}
+                  >
+                    This happens when you have many small transactions that
+                    create too many individual coins, making your account
+                    difficult to use.
+                  </p>
+
+                  <h3
+                    style={{
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      marginBottom: '0.75rem',
+                      color: theme === 'dark' ? '#f9fafb' : '#111827',
+                    }}
+                  >
+                    What is Coin Consolidation?
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: '0.875rem',
+                      lineHeight: '1.5',
+                      color: '#6b7280',
+                    }}
+                  >
+                    It's a process to combine many small coins into fewer,
+                    larger ones.
+                  </p>
                 </div>
 
-                <br />
+                <Divider />
+
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <h3
+                    style={{
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      marginBottom: '0.75rem',
+                      color: theme === 'dark' ? '#f9fafb' : '#111827',
+                    }}
+                  >
+                    Consolidation Summary
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: '0.875rem',
+                      lineHeight: '1.5',
+                      color: '#6b7280',
+                    }}
+                  >
+                    {utxoCount} individual {asset?.symbol || 'coin'} UTXOs will
+                    be consolidated. This will require {totalSteps} transaction
+                    {totalSteps !== 1 ? 's' : ''}.
+                  </p>
+                </div>
 
                 <ProgressBar
                   theme={theme}
@@ -192,10 +263,26 @@ export function ConsolidateCoins() {
 
             {status === 'finished' && (
               <>
-                <div style={{ textAlign: 'center', fontSize: '0.9rem' }}>
-                  <p>
-                    Consolidation finished! You can now close this window and
-                    continue your previous operation.
+                <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                  <h3
+                    style={{
+                      fontSize: '1.125rem',
+                      fontWeight: '600',
+                      marginBottom: '0.75rem',
+                      color: theme === 'dark' ? '#f9fafb' : '#111827',
+                    }}
+                  >
+                    Consolidation Successful!
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: '0.875rem',
+                      lineHeight: '1.5',
+                      color: '#6b7280',
+                    }}
+                  >
+                    Your coins have been successfully consolidated. You can now
+                    close this window and continue your previous operation.
                   </p>
                 </div>
 
@@ -214,7 +301,7 @@ export function ConsolidateCoins() {
             )}
 
             {status === 'error' && (
-              <div style={{ textAlign: 'center', fontSize: '0.9rem' }}>
+              <div style={{ textAlign: 'center' }}>
                 <div
                   style={{
                     display: 'flex',
@@ -225,8 +312,27 @@ export function ConsolidateCoins() {
                   }}
                 >
                   <ErrorIcon size={100} theme={theme} />
-                  <p>Error consolidating coins</p>
-                  <p>Please try again</p>
+                  <h3
+                    style={{
+                      fontSize: '1.125rem',
+                      fontWeight: '600',
+                      marginTop: '1rem',
+                      marginBottom: '0.5rem',
+                      color: theme === 'dark' ? '#f9fafb' : '#111827',
+                    }}
+                  >
+                    Consolidation Failed
+                  </h3>
+                  <p
+                    style={{
+                      fontSize: '0.875rem',
+                      lineHeight: '1.5',
+                      color: '#6b7280',
+                    }}
+                  >
+                    There was an error during the consolidation process. Please
+                    try again.
+                  </p>
                 </div>
               </div>
             )}
