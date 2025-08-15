@@ -1,5 +1,7 @@
 # @fuel-connectors/e2e-tests
 
+## 0.44.1
+
 ## 0.44.0
 
 ### Patch Changes
