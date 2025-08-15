@@ -24,10 +24,14 @@ const connectorButtonStyle: React.CSSProperties = {
   justifyContent: 'center',
   alignItems: 'center',
   margin: '0.4rem 1rem 0',
-  padding: '0.6rem 0',
-  fontSize: '0.875em',
+  padding: '0.75rem 1rem',
+  fontSize: '0.875rem',
+  fontWeight: '500',
   borderRadius: 'var(--fuel-border-radius)',
   width: '-webkit-fill-available',
+  border: 'none',
+  transition: 'all 0.2s ease-in-out',
+  minHeight: '44px',
 };
 
 export const ConsolidateButtonPrimary = ({
@@ -37,12 +41,29 @@ export const ConsolidateButtonPrimary = ({
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { isLoading?: boolean }) => {
   return (
     <button
-      style={connectorButtonStyle}
+      style={{
+        ...connectorButtonStyle,
+        backgroundColor: '#2563eb',
+        color: '#ffffff',
+        ...(props.disabled || isLoading
+          ? {
+              backgroundColor: '#9ca3af',
+              cursor: 'not-allowed',
+            }
+          : {
+              ':hover': {
+                backgroundColor: '#1d4ed8',
+              },
+              ':active': {
+                backgroundColor: '#1e40af',
+              },
+            }),
+      }}
       {...props}
       disabled={!!isLoading || props.disabled}
       className="fuel-connectors-connector-button-primary"
     >
-      {isLoading ? <Spinner size={16} color="#e5e7eb" /> : children}
+      {isLoading ? <Spinner size={16} color="#ffffff" /> : children}
     </button>
   );
 };
