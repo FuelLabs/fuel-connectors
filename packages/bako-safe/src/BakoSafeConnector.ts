@@ -103,7 +103,7 @@ export class BakoSafeConnector extends FuelConnector {
 
     // timeout to close
     const interval = setInterval(() => {
-      const isOpen = this.dAppWindow?.opned?.closed;
+      const isOpen = this.dAppWindow?.opened?.closed;
       if (isOpen) {
         this.emit(BakoSafeConnectorEvents.CLIENT_DISCONNECTED, {});
         clearInterval(interval);
