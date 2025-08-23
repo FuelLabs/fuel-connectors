@@ -8,7 +8,13 @@
     "fuels:typegen": "fuels typegen --output=./src/types/contracts --inputs=./contracts/out/debug/counter-abi.json",
     "dev": "vite",
     "preview": "vite preview",
-    "build": "vite build"
+    "build": "vite build",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:connector": "vitest run src/connector/test/connector.test.ts",
+    "test:mock-provider": "vitest run src/connector/test/mockProvider.test.ts",
+    "test:walletconnect": "vitest run src/connector/test/walletconnect.test.ts"
   },
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
@@ -21,7 +27,7 @@
     "@wagmi/connectors": "5.1.7",
     "@wagmi/core": "2.13.4",
     "@web3modal/wagmi": "5.0.0",
-    "bakosafe": "0.2.0-beta.1",
+    "bakosafe": "/Users/guimroque/Infinity/bsafe/bako-safe/packages/sdk/bakosafe-0.2.0-beta.1-devdmaspda.tgz",
     "bs58": "6.0.0",
     "clsx": "2.1.1",
     "fuels": "0.101.1",
@@ -39,13 +45,17 @@
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "5.35.1",
+    "@testing-library/jest-dom": "6.7.0",
+    "@testing-library/react": "16.3.0",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
     "@vitejs/plugin-react": "4.2.1",
     "autoprefixer": "10.4.19",
+    "jsdom": "24.0.0",
     "postcss": "8.4.38",
     "tailwindcss": "3.4.3",
     "typescript": "5.4.5",
-    "vite": "5.4.18"
+    "vite": "5.4.18",
+    "vitest": "2.1.9"
   }
 }

@@ -1,6 +1,0 @@
-[toolchain]
-channel = "testnet"
-
-[components]
-fuel-core = "0.43.1"
-forc = "0.68.1"

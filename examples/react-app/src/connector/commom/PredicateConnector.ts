@@ -14,6 +14,8 @@ import {
   type Version,
 } from 'fuels';
 
+import { hexToBytes } from '@ethereumjs/util';
+import { hexlify, splitSignature } from '@ethersproject/bytes';
 import {
   BakoProvider,
   SignatureType,
@@ -21,6 +23,7 @@ import {
   Vault,
   bakoCoder,
 } from 'bakosafe';
+import { stringToHex } from 'viem';
 import { SocketClient } from './socketClient';
 import type {
   ConnectorConfig,
@@ -30,6 +33,7 @@ import type {
   ProviderDictionary,
 } from './types';
 
+const BAKO_SERVER_URL = 'http://localhost:3333';
 const SELECTED_PREDICATE_KEY = 'fuel_selected_predicate_version';
 
 // send a connectDapp request with an authenticated (signed session) to link the sessionId with the address
@@ -72,11 +76,13 @@ export abstract class PredicateConnector extends FuelConnector {
     }
 
     const account = new Address(_account).toB256();
+    console.log('Connecting with account:', account);
 
     const code = await BakoProvider.setup({
       provider: fuelProvider.url,
       address: account,
       encoder: TypeUser.EVM,
+      serverApi: BAKO_SERVER_URL,
     });
 
     const signature = await this._sign_message(code);
@@ -87,6 +93,7 @@ export abstract class PredicateConnector extends FuelConnector {
       challenge: code,
       encoder: TypeUser.EVM,
       token: signature,
+      serverApi: BAKO_SERVER_URL,
     });
 
     await provider.connectDapp(sessionId);
@@ -124,29 +131,25 @@ export abstract class PredicateConnector extends FuelConnector {
       );
       const { tx, hashTxId } = await vault.BakoTransfer(transaction);
 
-      console.log('[CONNECTOR]TRANSACTION', tx, hashTxId);
-      const signature = await this._sign_message(hashTxId);
+      // todo: adicione um pre-coder aqui para formatar a mensagem antes de ser assinada
+      // const message = `0x${hashTxId}`;
+      const message = stringToHex(hashTxId);
 
-      console.log(signature);
+      // chamada para a sub implementar assinatura
+      const signature = await this._sign_message(message);
 
-      const _signature = bakoCoder.encode({
-        type: SignatureType.Evm,
-        signature,
-      });
+      // todo: chame o coder da bako, use o correto para o tipo da carteira (versoes antigas: CONN)
+      const compactSignature = splitSignature(hexToBytes(signature)).compact;
 
-      console.log('[CONNECTOR]SIGNATURE', tx.witnesses);
-
-      const _a_ = await bakoProvider.signTransaction({
+      await bakoProvider.signTransaction({
         hash: hashTxId,
-        signature: _signature,
+        signature: compactSignature,
       });
-      console.log('[CONNECTOR]SIGNATURE', _a_);
 
       const _a = await vault.send(tx);
       console.log(_a);
 
-      const r = await _a.waitForResult();
-      console.log('[CONNECTOR]SIGNATURE', _a, r);
+      await _a.waitForResult();
 
       return _a;
     } catch (e) {
@@ -280,9 +283,9 @@ export abstract class PredicateConnector extends FuelConnector {
 
   public async signMessage(
     _address: string,
-    _message: HashableMessage,
+    _message: string,
   ): Promise<string> {
-    throw new Error('Method not implemented');
+    return await this._sign_message(_message);
   }
 
   public async addAssets(_assets: Asset[]): Promise<boolean> {

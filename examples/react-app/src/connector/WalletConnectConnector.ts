@@ -12,10 +12,11 @@ import {
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
+  arrayify,
 } from 'fuels';
 
 import { ApiController } from '@web3modal/core';
-import { stringToHex } from 'viem';
+import { hexToString, stringToHex } from 'viem';
 import {
   type EIP1193Provider,
   type Maybe,
@@ -176,26 +177,34 @@ export class WalletConnectConnector extends PredicateConnector {
   protected async _sign_message(message: string): Promise<string> {
     const { ethProvider } = await this._get_providers();
     const currentAccount = this._get_current_evm_address();
+
+    console.log('[MESSAGE]: here', message);
+
     const a = await ethProvider?.request({
       method: 'personal_sign',
-      params: [stringToHex(message), currentAccount],
+      params: [message, currentAccount],
     });
-    console.log('[SIGNED_MESSAGE]: ', a);
+
     return a as string;
   }
 
   public async _connect(): Promise<boolean> {
+    console.log('[CONNECT] Connecting to Ethereum Wallets...');
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
+
+    console.log('[CONNECT] Creating Web3Modal instance...');
 
     // Exibe o modal
     this.createModal();
     this.web3Modal.open();
 
+    console.log('[CONNECT] Waiting for connection...');
     return new Promise<boolean>((resolve) => {
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
         switch (event.data.event) {
           case 'MODAL_OPEN':
+            console.log('[CONNECT] Modal opened');
             this.createModal();
             break;
 

@@ -1,10 +1,10 @@
-import type { PredicateConfig } from '@fuel-connectors/common';
 import type { Config as WagmiConfig } from '@wagmi/core';
 import type {
   ConnectorEvent,
   Provider as FuelProvider,
   StorageAbstract,
 } from 'fuels';
+import type { PredicateConfig } from './commom';
 
 export type WalletConnectConfig = {
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
