@@ -303,6 +303,7 @@ export abstract class PredicateConnector extends FuelConnector {
         window.localStorage.removeItem(STORAGE_KEYS.DEFAULT_ACCOUNT);
         window?.localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
       }
+      // todo: add disconnect dapp
     } catch (error) {
       console.error('Error clearing localStorage during disconnect:', error);
     }
