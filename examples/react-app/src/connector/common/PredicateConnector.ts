@@ -310,7 +310,7 @@ export abstract class PredicateConnector extends FuelConnector {
     this.emit(this.events.currentAccount, null);
     this.emit(this.events.accounts, []);
 
-    return true;
+    return false;
   }
 
   /**
