@@ -20,8 +20,8 @@ import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import './index.css';
 import { CHAIN_IDS, type FuelConfig, Provider, bn } from 'fuels';
-import { WalletConnectConnector } from './connector/WalletConnectConnector.ts';
-import { defaultConfig } from './connector/constants.ts';
+import { WalletConnectConnector } from './connector';
+import { defaultWalletConnectConfig } from './connector/wallet-connector';
 import { ConfigProvider } from './context/ConfigContext.tsx';
 
 const queryClient = new QueryClient();
@@ -86,7 +86,7 @@ const FUEL_CONFIG: FuelConfig = {
   //   chainId: CHAIN_ID,
   //   fuelProvider: new Provider(PROVIDER_URL),
   // }),
-  connectors: [new WalletConnectConnector(defaultConfig)],
+  connectors: [new WalletConnectConnector(defaultWalletConnectConfig)],
 };
 
 function getContractId() {

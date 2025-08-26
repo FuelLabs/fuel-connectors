@@ -1,3 +1,9 @@
-export * from './WalletConnectConnector';
-export * from './types';
-export * from './utils';
+// ============================================================
+// Main connector exports
+// ============================================================
+
+// WalletConnect connector implementation
+export * from './wallet-connector';
+
+// Common connector infrastructure
+export * from './common';
