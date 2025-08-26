@@ -301,6 +301,7 @@ export abstract class PredicateConnector extends FuelConnector {
         window.localStorage.removeItem(SELECTED_PREDICATE_KEY);
         window.localStorage.removeItem(STORAGE_KEYS.CURRENT_ACCOUNT);
         window.localStorage.removeItem(STORAGE_KEYS.DEFAULT_ACCOUNT);
+        window?.localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
       }
     } catch (error) {
       console.error('Error clearing localStorage during disconnect:', error);
