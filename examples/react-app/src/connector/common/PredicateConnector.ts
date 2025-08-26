@@ -145,7 +145,7 @@ export abstract class PredicateConnector extends FuelConnector {
 
       const fuelAddress = new Address(evmAddress).toB256();
       const bakoProvider = await BakoProvider.create(fuelProvider.url, {
-        address: fuelAddress,
+        address: (await this.currentAccount()) ?? fuelAddress,
         token: `connector${this.getSessionId()}`,
         serverApi: BAKO_SERVER_URL,
       });
