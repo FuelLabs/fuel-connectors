@@ -19,7 +19,6 @@
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
-    "@fuels/connectors": "workspace:*",
     "@fuels/react": "workspace:*",
     "@radix-ui/react-toast": "1.1.5",
     "@solana/web3.js": "1.93.2",
