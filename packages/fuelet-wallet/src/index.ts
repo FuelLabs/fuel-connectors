@@ -1,1 +1,0 @@
-export { FueletWalletConnector } from './FueletWalletConnector';

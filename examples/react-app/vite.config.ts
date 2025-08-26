@@ -2,7 +2,6 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from 'tailwindcss';
 import { defineConfig } from 'vite';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   css: {
@@ -11,8 +10,8 @@ export default defineConfig({
     },
   },
   build: {
-    sourcemap: false, // reduz memória
-    target: 'es2020', // (opcional) reduz transpilações
+    sourcemap: false,
+    target: 'es2020',
     cssMinify: true,
   },
 });
