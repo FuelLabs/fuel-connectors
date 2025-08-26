@@ -10,4 +10,9 @@ export default defineConfig({
       plugins: [tailwindcss()],
     },
   },
+  build: {
+    sourcemap: false, // reduz memória
+    target: 'es2020', // (opcional) reduz transpilações
+    cssMinify: true,
+  },
 });
