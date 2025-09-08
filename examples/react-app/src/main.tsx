@@ -11,7 +11,6 @@ import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
 import { http, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
 
-import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider, type NetworkConfig } from '@fuels/react';
 
 import * as Toast from '@radix-ui/react-toast';

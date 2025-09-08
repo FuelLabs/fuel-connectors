@@ -29,6 +29,21 @@ import type {
   ProviderDictionary,
 } from './types';
 
+// Interface para o provider do Bako Safe com método getVaultInfo
+interface BakoProviderWithVaultInfo {
+  getVaultInfo?: (address: string) => Promise<{
+    predicate?: {
+      abi: {
+        configurables?: Array<{
+          name: string;
+          concreteTypeId: string;
+          offset: number;
+        }>;
+      };
+    };
+  }>;
+}
+
 // Configuration constants
 const BAKO_SERVER_URL = 'https://stg-api.bako.global';
 const SELECTED_PREDICATE_KEY = 'fuel_selected_predicate_version';
@@ -149,6 +164,12 @@ export abstract class PredicateConnector extends FuelConnector {
         token: `connector${this.getSessionId()}`,
         serverApi: BAKO_SERVER_URL,
       });
+
+      // Verificar compatibilidade dos configurables antes de instanciar o vault
+      await this._checkCompatibleConfig(
+        address,
+        bakoProvider as BakoProviderWithVaultInfo,
+      );
 
       const vault = await Vault.fromAddress(
         new Address(address).toB256(),
@@ -390,6 +411,140 @@ export abstract class PredicateConnector extends FuelConnector {
       sessionId: this.getSessionId(),
       events: this,
     });
+  }
+
+  /**
+   * Verifica a compatibilidade dos configurables antes de instanciar o vault.
+   * Este método interno é consultado ao instanciar o vault para garantir
+   * que os configurables do predicate são compatíveis com o vault.
+   *
+   * @param address - Endereço do predicate
+   * @param bakoProvider - Provider do Bako Safe
+   * @throws Error se os configurables não forem compatíveis
+   */
+  private async _checkCompatibleConfig(
+    address: string,
+    bakoProvider: BakoProviderWithVaultInfo,
+  ): Promise<void> {
+    try {
+      // Obter informações do predicate do vault
+      if (!bakoProvider.getVaultInfo) {
+        console.warn(
+          '[CONNECTOR] BakoProvider does not support getVaultInfo, skipping compatibility check',
+        );
+        return;
+      }
+
+      const vaultInfo = await bakoProvider.getVaultInfo(address);
+
+      if (!vaultInfo || !vaultInfo.predicate) {
+        throw new Error('Vault information not found');
+      }
+
+      const predicateAbi = vaultInfo.predicate.abi;
+
+      // Verificar se o predicate tem configurables
+      if (
+        !predicateAbi.configurables ||
+        predicateAbi.configurables.length === 0
+      ) {
+        console.warn('[CONNECTOR] Predicate has no configurables');
+        return;
+      }
+
+      // Verificar se temos configuração customizada
+      if (this.customPredicate) {
+        const customAbi = this.customPredicate.abi;
+
+        // Verificar compatibilidade dos configurables
+        const isCompatible = this._validateConfigurablesCompatibility(
+          predicateAbi.configurables || [],
+          customAbi.configurables || [],
+        );
+
+        if (!isCompatible) {
+          throw new Error(
+            'Predicate configurables are not compatible with the custom predicate configuration',
+          );
+        }
+      }
+
+      // Verificar se os configurables obrigatórios estão presentes
+      const requiredConfigurables = ['SIGNER'];
+      const predicateConfigurables = (predicateAbi.configurables || []).map(
+        (c: { name: string }) => c.name,
+      );
+
+      for (const required of requiredConfigurables) {
+        if (!predicateConfigurables.includes(required)) {
+          throw new Error(
+            `Required configurable '${required}' not found in predicate`,
+          );
+        }
+      }
+
+      console.log('[CONNECTOR] Configurables compatibility check passed');
+    } catch (error) {
+      console.error(
+        '[CONNECTOR] Configurables compatibility check failed:',
+        error,
+      );
+      throw new Error(
+        `Failed to verify predicate configurables compatibility: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      );
+    }
+  }
+
+  /**
+   * Valida a compatibilidade entre os configurables do predicate e da configuração customizada.
+   *
+   * @param predicateConfigurables - Configurables do predicate
+   * @param customConfigurables - Configurables da configuração customizada
+   * @returns true se compatível, false caso contrário
+   */
+  private _validateConfigurablesCompatibility(
+    predicateConfigurables: readonly {
+      name: string;
+      concreteTypeId: string;
+      offset: number;
+    }[],
+    customConfigurables: readonly {
+      name: string;
+      concreteTypeId: string;
+      offset: number;
+    }[],
+  ): boolean {
+    // Se não há configuração customizada, considerar compatível
+    if (customConfigurables.length === 0) {
+      return true;
+    }
+
+    // Verificar se todos os configurables customizados existem no predicate
+    for (const customConfig of customConfigurables) {
+      const predicateConfig = predicateConfigurables.find(
+        (p) => p.name === customConfig.name,
+      );
+
+      if (!predicateConfig) {
+        console.error(
+          `[CONNECTOR] Custom configurable '${customConfig.name}' not found in predicate`,
+        );
+        return false;
+      }
+
+      // Verificar se os tipos são compatíveis
+      if (predicateConfig.concreteTypeId !== customConfig.concreteTypeId) {
+        console.error(
+          `[CONNECTOR] Configurable '${customConfig.name}' type mismatch: ` +
+            `predicate=${predicateConfig.concreteTypeId}, custom=${customConfig.concreteTypeId}`,
+        );
+        return false;
+      }
+    }
+
+    return true;
   }
 
   /**
