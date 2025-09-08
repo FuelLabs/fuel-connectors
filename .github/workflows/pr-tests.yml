@@ -4,10 +4,18 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - release
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
+env:
+  FORC_VERSION: 0.68.1
+  CORE_VERSION: 0.45.1
 
 jobs:
   tests-vitest:
@@ -15,21 +23,27 @@ jobs:
     runs-on: buildjet-4vcpu-ubuntu-2204
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node
         uses: FuelLabs/github-actions/setups/node@master
         with:
-          node-version: 20.11.0
-          pnpm-version: 8.15.7
-      
+          node-version: 20.14.0
+          pnpm-version: 9.5.0
+
       - uses: FuelLabs/github-actions/setups/docker@master
         with:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Unit tests running with Vitest
+      - name: Install Fuel toolchain
+        uses: FuelLabs/action-fuel-toolchain@v0.6.0
+        with:
+          name: my-toolchain
+          components: forc@${{ env.FORC_VERSION }}, fuel-core@${{ env.CORE_VERSION }}
+
       - name: Find PR number
         uses: jwalton/gh-find-current-pr@v1
+        if: ${{ github.event_name == 'pull_request' }}
         id: findPr
 
       - name: Run Vitest
@@ -63,3 +77,76 @@ jobs:
           json-summary-path: ./coverage/coverage-summary.json
           json-final-path: ./coverage/coverage-final.json
 
+  tests-e2e-connectors:
+    name: E2E
+    runs-on: buildjet-8vcpu-ubuntu-2204
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: FuelLabs/github-actions/setups/node@master
+        with:
+          node-version: 20.14.0
+          pnpm-version: 9.5.0
+
+      - uses: FuelLabs/github-actions/setups/docker@master
+        with:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Start Test Node
+        run: pnpm node:up
+
+      - name: Run PNPM install
+        id: pnpm-cache
+        run: pnpm install --frozen-lockfile
+
+      - name: Copy .env file for E2E Tests
+        run: cp e2e-tests/runner/.env.example e2e-tests/runner/.env
+
+      - name: Copy .env file for React Next
+        run: cp e2e-tests/react-next/.env.example e2e-tests/react-next/.env
+
+      - name: Copy .env file for React App
+        run: cp examples/react-app/.env.example examples/react-app/.env
+
+      - uses: ./.github/workflows/setup-rust
+
+      - name: Verify Forc and Fuel-Core
+        run: |
+          forc --version
+          fuel-core --version
+
+      - name: Run build:connectors
+        run: pnpm build:connectors
+
+      - name: Build & Deploy Contracts
+        run: pnpm deploy:contracts:ci
+        working-directory: e2e-tests/runner/scripts
+
+      - name: Build & Deploy EVM Predicates
+        run: pnpm versions:generate
+        working-directory: packages/evm-predicates
+
+      - name: Build & Deploy Solana Predicates
+        run: pnpm versions:generate
+        working-directory: packages/solana-connector
+
+      # Rebuild after building and deploying predicates
+      - name: Run build:connectors
+        run: pnpm build:connectors
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps chromium
+        working-directory: e2e-tests/runner
+
+      - name: Build Synpress cache
+        run: xvfb-run pnpm setup:synpress
+        working-directory: e2e-tests/runner
+
+      - name: Run Playwright tests locally for Preview
+        if: ${{ github.event_name == 'pull_request' }}
+        run: xvfb-run --auto-servernum -- pnpm --filter @e2e-tests/runner test:e2e
+        env:
+          VITE_MASTER_WALLET_MNEMONIC: ${{ secrets.VITE_MASTER_WALLET_MNEMONIC }}

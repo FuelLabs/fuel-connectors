@@ -1,12 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import {
-  Address,
-  type Asset,
-  type JsonAbi,
-  type Network,
-  type StorageAbstract,
-} from 'fuels';
+import { Address, type Asset, type JsonAbi, type StorageAbstract } from 'fuels';
 import { BakoSafeConnector } from '../src/BakoSafeConnector';
 import { BakoStorage } from '../src/BakoSafeStorage';
 import { APP_NAME, APP_NETWORK, APP_VERSION } from '../src/constants';
@@ -97,21 +91,12 @@ describe('isConnected()', () => {
   });
 });
 
-describe('disconnect()', () => {
-  test('returns a false', async () => {
-    const connector = new BakoSafeConnector();
-    const disconnect = await connector.disconnect();
-
-    expect(disconnect).toEqual(false);
-  });
-});
-
 describe('signMessage()', () => {
   test('throws error', async () => {
     const connector = new BakoSafeConnector();
 
     expect(
-      connector.signMessage(Address.fromRandom().toAddress(), 'message'),
+      connector.signMessage(Address.fromRandom().toString(), 'message'),
     ).rejects.toThrowError('Method not implemented.');
   });
 });
@@ -181,19 +166,6 @@ describe('addNetwork()', () => {
   test('throws error', async () => {
     const connector = new BakoSafeConnector();
     await expect(() => connector.addNetwork('')).rejects.toThrowError(
-      'Method not implemented.',
-    );
-  });
-});
-
-describe('selectNetwork()', () => {
-  const network: Network = {
-    chainId: 1,
-    url: '',
-  };
-  test('throws error', async () => {
-    const connector = new BakoSafeConnector();
-    await expect(() => connector.selectNetwork(network)).rejects.toThrowError(
       'Method not implemented.',
     );
   });

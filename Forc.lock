@@ -1,0 +1,40 @@
+[[package]]
+name = "counter"
+source = "member"
+dependencies = ["std"]
+
+[[package]]
+name = "custom_asset"
+source = "member"
+dependencies = [
+    "standards",
+    "std",
+    "sway_libs",
+]
+
+[[package]]
+name = "evm-verification-predicate"
+source = "member"
+dependencies = ["std"]
+
+[[package]]
+name = "sol-verification-predicate"
+source = "member"
+dependencies = ["std"]
+
+[[package]]
+name = "standards"
+source = "git+https://github.com/FuelLabs/sway-standards?tag=v0.7.0#7d35df95e0b96dc8ad188ab169fbbeeac896aae8"
+dependencies = ["std"]
+
+[[package]]
+name = "std"
+source = "git+https://github.com/fuellabs/sway?tag=v0.68.1#7e1bc152face6f1ae20b4274d98446100920e573"
+
+[[package]]
+name = "sway_libs"
+source = "git+https://github.com/FuelLabs/sway-libs?tag=v0.25.2#f43d8b4aacf60867989408991414958f8eab28c0"
+dependencies = [
+    "standards",
+    "std",
+]

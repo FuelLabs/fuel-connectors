@@ -1,0 +1,45 @@
+{
+  "name": "@fuel-connectors/common",
+  "version": "0.44.1",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./scripts": {
+      "types": "./dist/scripts/index.d.ts",
+      "require": "./dist/scripts/index.js",
+      "import": "./dist/scripts/index.mjs"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup --dts",
+    "build:watch": "tsup --watch --dts",
+    "ts:check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "peerDependencies": {
+    "fuels": "0.101.3"
+  },
+  "dependencies": {
+    "@ethersproject/bytes": "5.7.0",
+    "@solana/web3.js": "1.93.2",
+    "bs58": "6.0.0",
+    "memoizee": "0.4.15",
+    "tweetnacl": "1.0.3",
+    "viem": "2.20.1"
+  },
+  "devDependencies": {
+    "@types/memoizee": "0.4.11",
+    "terser": "5.31.0",
+    "tsup": "8.0.2",
+    "typescript": "5.4.5",
+    "vitest": "2.1.9"
+  }
+}

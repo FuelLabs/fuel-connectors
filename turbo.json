@@ -1,13 +1,20 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
-  "pipeline": {
+  "tasks": {
     "ts:check": {
-      "dependsOn": [],
+      "dependsOn": ["^build"],
       "outputs": []
     },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "fuels:build": {
+      "dependsOn": []
+    },
     "build": {
-      "dependsOn": ["ts:check", "^build"],
+      "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
     "build:watch": {
@@ -15,7 +22,13 @@
       "outputs": ["dist/**"]
     },
     "test": {
-      "dependsOn": []
+      "dependsOn": ["^build"]
+    },
+    "test:e2e": {
+      "cache": false
+    },
+    "test:e2e:local": {
+      "cache": false
     }
   }
 }

@@ -1,60 +1,24 @@
+import type { PredicateConfig } from '@fuel-connectors/common';
 import type { Config as WagmiConfig } from '@wagmi/core';
-import type { Provider as FuelProvider, JsonAbi } from 'fuels';
-
-export interface PredicateConfig {
-  abi: JsonAbi;
-  bytecode: Uint8Array;
-}
+import type {
+  ConnectorEvent,
+  Provider as FuelProvider,
+  StorageAbstract,
+} from 'fuels';
 
 export type WalletConnectConfig = {
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
   projectId?: string;
   wagmiConfig?: WagmiConfig;
   predicateConfig?: PredicateConfig;
+  storage?: StorageAbstract;
+  chainId?: number;
+  // if the dapp already has wagmi from eth connectors, it's better to skip auto reconnection as it can lead to session loss when refreshing the page
+  skipAutoReconnect?: boolean;
 };
 
-interface PredicateTypeComponents {
-  name: string;
-  type: number;
-  typeArguments: null;
-}
-
-export interface Predicate {
-  predicate: {
-    abi: {
-      types: {
-        typeId: number;
-        type: string;
-        components: PredicateTypeComponents[] | null;
-        typeParameters: null;
-      }[];
-      functions: {
-        inputs: {
-          name: string;
-          type: number;
-          typeArguments: null;
-        }[];
-        name: string;
-        output: {
-          name: string;
-          type: number;
-          typeArguments: null;
-        };
-        attributes: null;
-      }[];
-      loggedTypes: never[];
-      messagesTypes: never[];
-      configurables: {
-        name: string;
-        configurableType: {
-          name: string;
-          type: number;
-          typeArguments: never[] | null;
-        };
-        offset: number;
-      }[];
-    };
-    bytecode: Uint8Array;
+export interface CustomCurrentConnectorEvent extends ConnectorEvent {
+  metadata: {
+    pendingSignature: boolean;
   };
-  generatedAt: number;
 }

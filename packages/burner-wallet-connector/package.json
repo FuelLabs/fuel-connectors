@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/burner-wallet-connector",
-  "version": "0.6.0",
+  "version": "0.44.1",
   "private": true,
   "type": "module",
   "types": "./dist/index.d.ts",
@@ -14,17 +14,15 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": ">=0.88.1"
+    "fuels": "0.101.3"
   },
   "devDependencies": {
-    "@fuel-ts/account": "0.88.1",
-    "@fuel-ts/fuel-core": "0.88.1",
-    "fuels": "0.88.1",
+    "@fuel-connectors/common": "workspace:*",
     "jsdom": "24.0.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5",
-    "vite": "5.2.11",
+    "vite": "5.4.18",
     "vite-plugin-dts": "3.9.1",
-    "vitest": "1.6.0"
+    "vitest": "2.1.9"
   }
 }

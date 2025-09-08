@@ -1,20 +1,30 @@
 import {
+  Address,
   type Asset,
   type AssetFuel,
   type ConnectorMetadata,
   type FuelABI,
   FuelConnector,
+  FuelConnectorEventType,
   FuelConnectorEventTypes,
+  type FuelConnectorSendTxParams,
+  type HashableMessage,
   type Network,
   Provider,
+  type SelectNetworkArguments,
+  type StartConsolidateCoins,
+  type TransactionRequest,
   type TransactionRequestLike,
+  type TransactionResponse,
   type Version,
+  deserializeTransactionResponseJson,
   transactionRequestify,
 } from 'fuels';
 import type { JSONRPCRequest } from 'json-rpc-2.0';
 import { JSONRPCClient } from 'json-rpc-2.0';
 
 import {
+  APP_IMAGE,
   CONNECTOR_SCRIPT,
   CONTENT_SCRIPT_NAME,
   EVENT_MESSAGE,
@@ -30,9 +40,10 @@ export class FuelWalletConnector extends FuelConnector {
   name = '';
   connected = false;
   installed = false;
+  external = false;
   events = FuelConnectorEventTypes;
   metadata: ConnectorMetadata = {
-    image: '/connectors/fuel-wallet.svg',
+    image: APP_IMAGE,
     install: {
       action: 'Install',
       description:
@@ -65,7 +76,7 @@ export class FuelWalletConnector extends FuelConnector {
       this.ping()
         .then(() => {
           window.dispatchEvent(
-            new CustomEvent('FuelConnector', { detail: this }),
+            new CustomEvent(FuelConnectorEventType, { detail: this }),
           );
         })
         .catch(() => {});
@@ -143,6 +154,37 @@ export class FuelWalletConnector extends FuelConnector {
    * Connector methods
    * ============================================================
    */
+  private async prepareTransactionRequest(
+    transaction: TransactionRequestLike,
+    params?: FuelConnectorSendTxParams,
+  ) {
+    if (!transaction) {
+      throw new Error('Transaction is required');
+    }
+    let txRequest = transactionRequestify(transaction);
+
+    const {
+      onBeforeSend,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
+    } = params || {};
+
+    const providerToSend = params?.provider;
+
+    if (onBeforeSend) {
+      txRequest = await onBeforeSend(txRequest);
+    }
+
+    return {
+      txRequest,
+      providerToSend,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
+    };
+  }
+
   async ping(): Promise<boolean> {
     return this.client.timeout(800).request('ping', {});
   }
@@ -165,17 +207,31 @@ export class FuelWalletConnector extends FuelConnector {
   }
 
   async accounts(): Promise<Array<string>> {
-    return this.client.request('accounts', {});
+    const accounts = await this.client.request('accounts', {});
+    return accounts;
   }
 
   async currentAccount(): Promise<string | null> {
-    return this.client.request('currentAccount', {});
+    const account = await this.client.request('currentAccount', {});
+    if (!account) return null;
+    return Address.fromDynamicInput(account).toString();
   }
 
-  async signMessage(address: string, message: string): Promise<string> {
-    if (!message.trim()) {
+  async signMessage(
+    address: string,
+    message: HashableMessage,
+  ): Promise<string> {
+    if (typeof message === 'string' && !message.trim()) {
       throw new Error('Message is required');
     }
+    if (
+      typeof message === 'object' &&
+      message !== null &&
+      !message.personalSign
+    ) {
+      throw new Error('Message is required');
+    }
+
     return this.client.request('signMessage', {
       address,
       message,
@@ -185,27 +241,63 @@ export class FuelWalletConnector extends FuelConnector {
   async sendTransaction(
     address: string,
     transaction: TransactionRequestLike,
-  ): Promise<string> {
-    if (!transaction) {
-      throw new Error('Transaction is required');
-    }
-    // Transform transaction object to a transaction request
-    const txRequest = transactionRequestify(transaction);
+    params?: FuelConnectorSendTxParams,
+  ): Promise<string | TransactionResponse> {
+    const {
+      txRequest,
+      providerToSend,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
+    } = await this.prepareTransactionRequest(transaction, params);
 
-    /**
-     * @todo We should remove this once the chainId standard start to be used and chainId is required
-     * to be correct according to the network the transaction wants to target.
-     */
-    const network = await this.currentNetwork();
-    const provider = {
-      url: network.url,
-    };
-
-    return this.client.request('sendTransaction', {
+    const resp = await this.client.request('sendTransaction', {
       address,
       transaction: JSON.stringify(txRequest),
-      provider,
+      provider: providerToSend,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
+      returnTransactionResponse: true,
     });
+
+    if (typeof resp === 'object' && 'id' in resp && 'providerCache' in resp) {
+      return deserializeTransactionResponseJson(resp);
+    }
+
+    return resp?.id || resp;
+  }
+
+  async signTransaction(
+    address: string,
+    transaction: TransactionRequestLike,
+    params?: FuelConnectorSendTxParams,
+  ): Promise<TransactionRequest> {
+    const {
+      txRequest,
+      providerToSend,
+      skipCustomFee,
+      transactionState,
+      transactionSummary,
+    } = await this.prepareTransactionRequest(transaction, params);
+
+    const txRequestSerialized: string = await this.client.request(
+      'signTransaction',
+      {
+        address,
+        transaction: JSON.stringify(txRequest),
+        provider: providerToSend,
+        skipCustomFee,
+        transactionState,
+        transactionSummary,
+      },
+    );
+
+    const txRequestSigned = transactionRequestify(
+      JSON.parse(txRequestSerialized),
+    );
+
+    return txRequestSigned;
   }
 
   async assets(): Promise<Array<Asset>> {
@@ -262,8 +354,10 @@ export class FuelWalletConnector extends FuelConnector {
     return this.client.request('network', {});
   }
 
-  async selectNetwork(_network: Network): Promise<boolean> {
-    throw new Error('Method not implemented.');
+  async selectNetwork(network: SelectNetworkArguments): Promise<boolean> {
+    return this.client.request('selectNetwork', {
+      network,
+    });
   }
 
   async networks(): Promise<Network[]> {
@@ -275,11 +369,11 @@ export class FuelWalletConnector extends FuelConnector {
      * @todo: Remove fetch provider once Fuel Wallet supports adding networks
      * by URL
      */
-    const provider = await Provider.create(networkUrl);
+    const provider = new Provider(networkUrl);
     return this.client.request('addNetwork', {
       network: {
         url: provider.url,
-        name: provider.getChain().name,
+        name: (await provider.getChain()).name,
       },
     });
   }
@@ -289,5 +383,12 @@ export class FuelWalletConnector extends FuelConnector {
       app: '0.0.0',
       network: '0.0.0',
     });
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async startConsolidation(opts: StartConsolidateCoins): Promise<void> {
+    this.emit(FuelConnectorEventTypes.consolidateCoins, opts);
   }
 }

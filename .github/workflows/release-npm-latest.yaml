@@ -14,6 +14,7 @@ jobs:
   release-npm-latest:
     name: Tag packages as latest
     runs-on: buildjet-4vcpu-ubuntu-2204
+    environment: npm-deploy
     steps:
       - uses: actions/checkout@v3
         with:
@@ -21,12 +22,12 @@ jobs:
           fetch-depth: 0
       - uses: FuelLabs/github-actions/setups/node@master
         with:
-          node-version: 20.11.0
-          pnpm-version: 8.15.7
+          node-version: 20.14.0
+          pnpm-version: 9.5.0
       - uses: FuelLabs/github-actions/setups/npm@master
         with:
-          npm-token: ${{ secrets.NPM_TOKEN }}
-      
+          npm-token: ${{ secrets.NPM_TOKEN_CONNECTORS }}
+
       - name: Collect current version
         run: |
           echo "BUILD_VERSION=$(pnpm -s packages:version)" >> $GITHUB_ENV
@@ -34,3 +35,4 @@ jobs:
       - name: Change tag to latest
         run: |
           npm dist-tag add @fuels/connectors@${{ env.BUILD_VERSION }} latest
+          npm dist-tag add @fuels/react@${{ env.BUILD_VERSION }} latest

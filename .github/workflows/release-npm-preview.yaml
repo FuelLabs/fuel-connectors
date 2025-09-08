@@ -14,6 +14,7 @@ jobs:
   release-changesets:
     name: Release to @preview tag on npm
     runs-on: buildjet-4vcpu-ubuntu-2204
+    environment: npm-deploy
     permissions:
       pull-requests: write
     steps:
@@ -22,11 +23,11 @@ jobs:
           fetch-depth: 0
       - uses: FuelLabs/github-actions/setups/node@master
         with:
-          node-version: 20.11.0
-          pnpm-version: 8.15.7
+          node-version: 20.14.0
+          pnpm-version: 9.5.0
       - uses: FuelLabs/github-actions/setups/npm@master
         with:
-          npm-token: ${{ secrets.NPM_TOKEN }}
+          npm-token: ${{ secrets.NPM_TOKEN_CONNECTORS }}
 
       - name: Build Lib
         run: pnpm build
@@ -34,7 +35,7 @@ jobs:
           ## increase node.js m memory limit for building
           ## with sourcemaps
           NODE_OPTIONS: "--max-old-space-size=4096"
-      
+
       - name: Release to @preview tag on npm
         id: release
         run: |
@@ -42,7 +43,7 @@ jobs:
           changetsets=$(pnpm changeset publish --tag preview)
           echo "BUILD_VERSION=$(pnpm -s packages:version)" >> $GITHUB_ENV
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_CONNECTORS }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Comment release package name to PR

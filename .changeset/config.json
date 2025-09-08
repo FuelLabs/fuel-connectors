@@ -9,12 +9,19 @@
     { "repo": "FuelLabs/fuel-connectors" }
   ],
   "commit": false,
-  "fixed": [["@fuels/connectors", "@fuel-connectors/*"]],
+  "fixed": [
+    [
+      "@fuels/connectors",
+      "@fuel-connectors/*",
+      "@fuels/react",
+      "@e2e-tests/runner"
+    ]
+  ],
   "linked": [],
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["react-app", "react-next"],
+  "ignore": ["react-app", "react-next", "@e2e-tests/react-next"],
   "snapshot": {
     "useCalculatedVersion": true,
     "prereleaseTemplate": "{tag}-{commit}"

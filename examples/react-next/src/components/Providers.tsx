@@ -1,38 +1,21 @@
 'use client';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
-import {
-  BakoSafeConnector,
-  FuelWalletConnector,
-  FuelWalletDevelopmentConnector,
-  FueletWalletConnector,
-} from '@fuels/connectors';
-import { WalletConnectConnector } from '@fuels/connectors/walletconnect';
-import { FuelProvider } from '@fuels/react';
+import type React from 'react';
+import type { State } from 'wagmi';
+import { ConnectProvider } from './ConnectProvider';
+import { FuelProviders } from './FuelProviders';
 
 const queryClient = new QueryClient();
 
-export const Providers = ({ children }: { children: React.ReactNode }) => {
+export function Providers({
+  children,
+  initialState: wagmiInitialState,
+}: { children: React.ReactNode; initialState?: State }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <FuelProvider
-        theme="dark"
-        fuelConfig={{
-          connectors: [
-            new FuelWalletConnector(),
-            new FuelWalletDevelopmentConnector(),
-            new BakoSafeConnector(),
-            new FueletWalletConnector(),
-            new WalletConnectConnector(),
-          ],
-        }}
-      >
-        {children}
-      </FuelProvider>
-
-      <ReactQueryDevtools initialIsOpen={false} />
+      <ConnectProvider wagmiInitialState={wagmiInitialState}>
+        <FuelProviders>{children}</FuelProviders>
+      </ConnectProvider>
     </QueryClientProvider>
   );
-};
+}

@@ -60,6 +60,10 @@ export class MockProvider extends EventEmitter implements IMockProvider {
     }
   }
 
+  static create() {
+    return new MockProvider();
+  }
+
   get selectedAddress(): string {
     if (this.accounts && this.accounts.length > 0) {
       const selectedAddress = this.accounts[0]?.address;
