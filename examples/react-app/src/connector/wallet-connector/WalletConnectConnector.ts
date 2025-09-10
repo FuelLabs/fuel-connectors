@@ -141,19 +141,34 @@ export class WalletConnectConnector extends PredicateConnector {
    * Signs a message using the connected wallet.
    */
   protected async _sign_message(message: string): Promise<string> {
-    const { ethProvider } = await this._get_providers();
-    const currentAccount = this._get_current_evm_address();
+    return new Promise(async (resolve, reject) => {
+      const { ethProvider } = await this._get_providers();
+      const currentAccount = this._get_current_evm_address();
 
-    if (!ethProvider || !currentAccount) {
-      throw new Error('Provider or account not available');
-    }
+      if (!ethProvider || !currentAccount) {
+        reject(new Error('Provider or account not available'));
+        return;
+      }
 
-    const signature = await ethProvider.request({
-      method: 'personal_sign',
-      params: [message, currentAccount],
+      try {
+        const signature = await ethProvider.request({
+          method: 'personal_sign',
+          params: [message, currentAccount],
+        });
+
+        resolve(signature as string);
+      } catch (error: unknown) {
+        await this._disconnect();
+        console.log('Signing failed:', error);
+        reject(
+          new Error(
+            `Signing failed: ${
+              error instanceof Error ? error.message : 'Unknown error'
+            }`,
+          ),
+        );
+      }
     });
-
-    return signature as string;
   }
 
   /**

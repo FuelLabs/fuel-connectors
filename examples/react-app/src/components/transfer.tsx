@@ -177,7 +177,7 @@ export default function Transfer({ isSigning, setIsSigning }: Props) {
   }
 
   return (
-    <div style={{border: "1px solid red"}}>
+    <div>
       <Feature title="Transfer">
         <input
           type="text"
