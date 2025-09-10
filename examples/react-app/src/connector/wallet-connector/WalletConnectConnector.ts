@@ -158,15 +158,11 @@ export class WalletConnectConnector extends PredicateConnector {
 
         resolve(signature as string);
       } catch (error: unknown) {
+        const errorMessage = (error as Error).message.includes('rejected')
+          ? 'User rejected the request'
+          : (error as Error).message;
         await this._disconnect();
-        console.log('Signing failed:', error);
-        reject(
-          new Error(
-            `Signing failed: ${
-              error instanceof Error ? error.message : 'Unknown error'
-            }`,
-          ),
-        );
+        reject(new Error(`Signing failed: ${errorMessage}`));
       }
     });
   }
