@@ -106,7 +106,6 @@ export abstract class PredicateConnector extends FuelConnector {
     }
 
     const fuelAddress = new Address(evmAddress).toB256();
-    console.log('Connecting with account:', fuelAddress);
 
     // Step 3: Authenticate with Bako Safe
     const challengeCode = await BakoProvider.setup({
@@ -131,13 +130,14 @@ export abstract class PredicateConnector extends FuelConnector {
 
     // Step 4: Get wallet instance and update state
     const wallet = await bakoProvider.wallet();
+    const walletAddress = Address.fromB256(wallet.address.toB256()).toString();
 
     this.emit(this.events.connection, true);
-    this.emit(this.events.currentAccount, wallet.address);
-    this.emit(this.events.accounts, wallet.address ? [wallet.address] : []);
+    this.emit(this.events.currentAccount, walletAddress);
+    this.emit(this.events.accounts, walletAddress ? [walletAddress] : []);
     this.connected = true;
 
-    localStorage.setItem(STORAGE_KEYS.CURRENT_ACCOUNT, wallet.address.toB256());
+    localStorage.setItem(STORAGE_KEYS.CURRENT_ACCOUNT, walletAddress);
 
     return true;
   }
@@ -180,7 +180,7 @@ export abstract class PredicateConnector extends FuelConnector {
 
       // Encode message according to predicate version requirements
       const messageToSign = getTxIdEncoded(hashTxId, vault.version);
-      const signature = await this._sign_message(messageToSign);
+      const signature = await this._sign_message(messageToSign as string);
       const encodedSignature = encodeSignature(
         evmAddress,
         signature,
