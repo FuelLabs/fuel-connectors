@@ -2,6 +2,7 @@ import {
   type AbiMap,
   Address,
   type Asset,
+  type BytesLike,
   type ConnectorMetadata,
   FuelConnector,
   FuelConnectorEventTypes,
@@ -20,13 +21,17 @@ import {
   encodeSignature,
   getTxIdEncoded,
 } from 'bakosafe';
+import { PredicateFactory, type PredicateWalletAdapter } from './';
 import { SocketClient } from './SocketClient';
 import type {
   ConnectorConfig,
   Maybe,
   MaybeAsync,
   PredicateConfig,
+  PredicateVersion,
+  PredicateVersionWithMetadata,
   ProviderDictionary,
+  SignedMessageCustomCurve,
 } from './types';
 
 // Interface para o provider do Bako Safe com método getVaultInfo
@@ -45,7 +50,8 @@ interface BakoProviderWithVaultInfo {
 }
 
 // Configuration constants
-const BAKO_SERVER_URL = 'https://stg-api.bako.global';
+const BAKO_SERVER_URL = 'http://localhost:3333';
+// const BAKO_SERVER_URL = 'https://stg-api.bako.global';
 const SELECTED_PREDICATE_KEY = 'fuel_selected_predicate_version';
 
 // Local storage keys for session management
@@ -72,8 +78,12 @@ export abstract class PredicateConnector extends FuelConnector {
   // Protected properties for internal state management
   protected predicateAddress!: string;
   protected customPredicate: Maybe<PredicateConfig>;
+  protected predicateAccount: Maybe<PredicateFactory> = null;
   protected subscriptions: Array<() => void> = [];
   protected hasProviderSucceeded = true;
+  protected selectedPredicateVersion: Maybe<string> = null;
+
+  private _predicateVersions!: Array<PredicateFactory>;
 
   // Socket client for real-time communication with Bako Safe
   protected socketClient: Maybe<SocketClient> = null;
@@ -82,9 +92,31 @@ export abstract class PredicateConnector extends FuelConnector {
   public abstract name: string;
   public abstract metadata: ConnectorMetadata;
 
+  protected abstract getWalletAdapter(): PredicateWalletAdapter;
+  protected abstract getPredicateVersions(): Record<string, PredicateVersion>;
+  protected abstract getAccountAddress(): MaybeAsync<Maybe<string>>;
+  protected abstract requireConnection(): MaybeAsync<void>;
+  protected abstract walletAccounts(): Promise<Array<string>>;
+  abstract signMessageCustomCurve(
+    _message: string,
+  ): Promise<SignedMessageCustomCurve>;
+
   constructor() {
     super();
     this.initializeSocketClient();
+
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const savedVersion = window.localStorage.getItem(
+          SELECTED_PREDICATE_KEY,
+        );
+        if (savedVersion) {
+          this.selectedPredicateVersion = savedVersion;
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load saved predicate version:', error);
+    }
   }
 
   /**
@@ -580,6 +612,264 @@ export abstract class PredicateConnector extends FuelConnector {
     this.emit(this.events.connection, connected);
     this.emit(this.events.currentAccount, this.currentAccount());
     this.emit(this.events.accounts, []);
+  }
+
+  /**
+   * Gets all predicate versions.
+   * @returns Array of predicate versions
+   */
+  protected get predicateVersions(): Array<PredicateFactory> {
+    if (!this._predicateVersions) {
+      this._predicateVersions = Object.entries(this.getPredicateVersions())
+        .map(
+          ([key, pred]) =>
+            new PredicateFactory(
+              this.getWalletAdapter(),
+              pred.predicate,
+              key,
+              pred.generatedAt,
+            ),
+        )
+        .sort((a, b) => a.sort(b));
+    }
+
+    return this._predicateVersions;
+  }
+
+  /**
+   * Gets all available predicate versions.
+   * @returns Array of predicate versions
+   */
+  public getAvailablePredicateVersions(): Array<{
+    id: string;
+    generatedAt: number;
+  }> {
+    return this.predicateVersions.map((factory) => ({
+      id: factory.getRoot(),
+      generatedAt: factory.getGeneratedAt(),
+    }));
+  }
+
+  /**
+   * Get all predicate versions including metadata
+   * @returns Promise that resolves to the array of predicate versions with complete metadata
+   */
+  public async getAllPredicateVersionsWithMetadata(): Promise<
+    PredicateVersionWithMetadata[]
+  > {
+    const walletAccount = await this.getAccountAddress();
+
+    const result: PredicateVersionWithMetadata[] = this.predicateVersions.map(
+      (factory, index) => {
+        const metadata: PredicateVersionWithMetadata = {
+          id: factory.getRoot(),
+          generatedAt: factory.getGeneratedAt(),
+          isActive: false,
+          isSelected: factory.getRoot() === this.selectedPredicateVersion,
+          isNewest: index === 0,
+        };
+
+        if (walletAccount) {
+          metadata.accountAddress = factory.getPredicateAddress(walletAccount);
+        }
+
+        return metadata;
+      },
+    );
+
+    try {
+      // Check which versions have balances
+      const balancePromises = this.predicateVersions.map(async (factory) => {
+        try {
+          const address = await this.getAccountAddress();
+          if (!address) return { hasBalance: false };
+
+          const { fuelProvider } = await this._get_providers();
+          const predicate = factory.build(address, fuelProvider, [1]);
+          const balanceResult = await predicate.getBalances();
+
+          if (balanceResult.balances && balanceResult.balances.length > 0) {
+            const firstBalance = balanceResult.balances[0];
+            if (firstBalance) {
+              return {
+                hasBalance: true,
+                balance: firstBalance.amount.format(),
+                assetId: firstBalance.assetId,
+              };
+            }
+          }
+
+          return { hasBalance: false };
+        } catch (_error) {
+          return { hasBalance: false };
+        }
+      });
+
+      // Wait for all balance checks to complete
+      const balanceResults = await Promise.all(balancePromises);
+
+      balanceResults.forEach((balanceInfo, index) => {
+        if (index < result.length) {
+          // Use a local variable to satisfy TypeScript
+          const item = result[index];
+          if (item) {
+            item.isActive = balanceInfo.hasBalance;
+            if (balanceInfo.hasBalance) {
+              item.balance = balanceInfo.balance;
+              item.assetId = balanceInfo.assetId;
+            }
+          }
+        }
+      });
+    } catch (error) {
+      // If balance checks fail, we still return the result with isActive as false
+      console.error('Failed to check predicate balances:', error);
+    }
+
+    return result;
+  }
+
+  public setSelectedPredicateVersion(versionId: string): void {
+    const versionExists = this.predicateVersions.some(
+      (factory) => factory.getRoot() === versionId,
+    );
+
+    if (versionExists) {
+      this.selectedPredicateVersion = versionId;
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          window.localStorage.setItem(SELECTED_PREDICATE_KEY, versionId);
+        }
+      } catch (error) {
+        console.error(
+          'Failed to save predicate version to localStorage:',
+          error,
+        );
+      }
+    } else {
+      throw new Error(`Predicate version ${versionId} not found`);
+    }
+  }
+
+  public getSelectedPredicateVersion(): Maybe<string> {
+    return this.selectedPredicateVersion;
+  }
+
+  public async getSmartDefaultPredicateVersion(): Promise<Maybe<string>> {
+    try {
+      const predicateWithBalance = await this.getCurrentUserPredicate();
+      if (predicateWithBalance) {
+        return predicateWithBalance.getRoot();
+      }
+
+      const newestPredicate = this.getNewestPredicate();
+      return newestPredicate?.getRoot() || null;
+    } catch (error) {
+      console.error(
+        'Error determining smart default predicate version:',
+        error,
+      );
+      const newestPredicate = this.getNewestPredicate();
+      return newestPredicate?.getRoot() || null;
+    }
+  }
+
+  public async switchPredicateVersion(versionId: string): Promise<void> {
+    this.setSelectedPredicateVersion(versionId);
+    await this.setupPredicate();
+    const address = await this.getAccountAddress();
+    if (!address) {
+      throw new Error(
+        'No account address found after switching predicate version',
+      );
+    }
+    await this.emitAccountChange(address, true);
+  }
+
+  protected isAddressPredicate(b: BytesLike, walletAccount: string): boolean {
+    return this.predicateVersions.some(
+      (predicate) => predicate.getPredicateAddress(walletAccount) === b,
+    );
+  }
+
+  protected async getCurrentUserPredicate(): Promise<Maybe<PredicateFactory>> {
+    const oldFirstPredicateVersions = [...this.predicateVersions].reverse();
+    for (const predicateInstance of oldFirstPredicateVersions) {
+      const address = await this.getAccountAddress();
+      if (!address) {
+        continue;
+      }
+
+      const { fuelProvider } = await this._get_providers();
+      const predicate = predicateInstance.build(address, fuelProvider, [1]);
+
+      const { balances } = await predicate.getBalances();
+      if (balances?.length > 0) {
+        return predicateInstance;
+      }
+    }
+
+    return null;
+  }
+
+  protected getNewestPredicate(): Maybe<PredicateFactory> {
+    return this.predicateVersions[0];
+  }
+
+  protected getPredicateByVersion(versionId: string): Maybe<PredicateFactory> {
+    return (
+      this.predicateVersions.find(
+        (factory) => factory.getRoot() === versionId,
+      ) || null
+    );
+  }
+
+  protected async setupPredicate(): Promise<PredicateFactory> {
+    if (this.customPredicate?.abi && this.customPredicate?.bin) {
+      this.predicateAccount = new PredicateFactory(
+        this.getWalletAdapter(),
+        this.customPredicate,
+        'custom',
+      );
+      this.predicateAddress = 'custom';
+
+      return this.predicateAccount;
+    }
+
+    if (this.selectedPredicateVersion) {
+      const selectedPredicate = this.getPredicateByVersion(
+        this.selectedPredicateVersion,
+      );
+      if (selectedPredicate) {
+        this.predicateAddress = selectedPredicate.getRoot();
+        this.predicateAccount = selectedPredicate;
+        return this.predicateAccount;
+      }
+    }
+
+    const predicate =
+      (await this.getCurrentUserPredicate()) ?? this.getNewestPredicate();
+    if (!predicate) throw new Error('No predicate found');
+
+    this.predicateAddress = predicate.getRoot();
+    this.predicateAccount = predicate;
+
+    this.selectedPredicateVersion = predicate.getRoot();
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(
+          SELECTED_PREDICATE_KEY,
+          predicate.getRoot(),
+        );
+      }
+    } catch (error) {
+      console.error(
+        'Failed to save auto-selected predicate version to localStorage:',
+        error,
+      );
+    }
+
+    return this.predicateAccount;
   }
 
   /**

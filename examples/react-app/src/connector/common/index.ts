@@ -16,3 +16,12 @@ export * from './utils';
 
 // Type definitions
 export * from './types';
+
+// Fake account
+export * from './FakeAccount';
+
+// Predicate wallet adapter
+export * from './PredicateWalletAdapter';
+
+// Predicate factory
+export * from './PredicateFactory';
