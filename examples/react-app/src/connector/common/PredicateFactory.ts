@@ -1,6 +1,5 @@
 import { arrayify } from '@ethersproject/bytes';
 import {
-  type B256Address,
   type BN,
   type BytesLike,
   type InputValue,
@@ -40,29 +39,25 @@ export class PredicateFactory {
 
   getGeneratedAt = (): number => this.generatedAt;
 
-  getPredicateAddress = memoize((address: string | B256Address): string => {
+  getPredicateAddress = memoize((): string => {
     const predicateAddress = getFuelPredicateAddresses({
-      signerAddress: this.adapter.convertAddress(address),
       predicate: { abi: this.abi, bin: this.bytecode },
     });
     return predicateAddress;
   });
 
   build = memoize(
-    <T extends InputValue[]>(
-      address: string | B256Address,
+    (
       provider: Provider,
-      data?: T,
-    ): Predicate<InputValue[], { [name: string]: unknown }> =>
-      new Predicate({
+    ): Predicate<InputValue[], { [name: string]: unknown }> => {
+      const predicate = new Predicate({
         bytecode: arrayify(this.bytecode),
         abi: this.abi,
         provider,
-        configurableConstants: {
-          SIGNER: this.adapter.convertAddress(address),
-        },
-        data,
-      }) as Predicate<InputValue[], { [name: string]: unknown }>,
+      });
+
+      return predicate;
+    },
   );
 
   getAccountAddress = (

@@ -33,13 +33,13 @@ import {
   type PredicateWalletAdapter,
   type ProviderDictionary,
   getFuelPredicateAddresses,
-  getMockedSignatureIndex,
   getOrThrow,
   getProviderUrl,
 } from '../common';
 
 import { ApiController } from '@web3modal/core';
 import { stringToHex } from 'viem';
+import { PREDICATE_VERSIONS } from '../predicateVersions';
 import { subscribeAndEnforceChain } from '../utils';
 import {
   ETHEREUM_ICON,
@@ -164,44 +164,8 @@ export class WalletConnectConnector extends PredicateConnector {
     return new EthereumWalletAdapter();
   }
 
-  // Use mock version to get rid of the dependency on @fuel-connectors/evm-predicates.
   protected getPredicateVersions(): Record<string, PredicateVersion> {
-    return {
-      version1: {
-        generatedAt: 1,
-        predicate: {
-          abi: {
-            programType: 'predicate',
-            specVersion: '1',
-            encodingVersion: '1',
-            concreteTypes: [],
-            metadataTypes: [],
-            functions: [],
-            loggedTypes: [],
-            messagesTypes: [],
-            configurables: [],
-          },
-          bin: new Uint8Array([]),
-        },
-      },
-      version2: {
-        generatedAt: 2,
-        predicate: {
-          abi: {
-            programType: 'predicate',
-            specVersion: '1',
-            encodingVersion: '1',
-            concreteTypes: [],
-            metadataTypes: [],
-            functions: [],
-            loggedTypes: [],
-            messagesTypes: [],
-            configurables: [],
-          },
-          bin: new Uint8Array([]),
-        },
-      },
-    };
+    return PREDICATE_VERSIONS;
   }
 
   protected async configProviders(config: WalletConnectConfig = {}) {
@@ -448,31 +412,29 @@ export class WalletConnectConnector extends PredicateConnector {
     };
   }
 
-  // static getFuelPredicateAddresses(ethAddress: string) {
-  //   const predicateConfig = Object.entries(PREDICATE_VERSIONS)
-  //     .sort(([, a], [, b]) => b.generatedAt - a.generatedAt)
-  //     .map(([evmPredicateAddress, { predicate, generatedAt }]) => ({
-  //       abi: predicate.abi,
-  //       bin: predicate.bin,
-  //       evmPredicate: {
-  //         generatedAt,
-  //         address: evmPredicateAddress,
-  //       },
-  //     }));
+  static getFuelPredicateAddresses() {
+    const predicateConfig = Object.entries(PREDICATE_VERSIONS)
+      .sort(([, a], [, b]) => b.generatedAt - a.generatedAt)
+      .map(([evmPredicateAddress, { predicate, generatedAt }]) => ({
+        abi: predicate.abi,
+        bin: predicate.bin,
+        evmPredicate: {
+          generatedAt,
+          address: evmPredicateAddress,
+        },
+      }));
 
-  //   const address = new EthereumWalletAdapter().convertAddress(ethAddress);
-  //   const predicateAddresses = predicateConfig.map(
-  //     ({ abi, bin, evmPredicate }) => ({
-  //       fuelAddress: getFuelPredicateAddresses({
-  //         signerAddress: address,
-  //         predicate: { abi, bin },
-  //       }),
-  //       evmPredicate,
-  //     }),
-  //   );
+    const predicateAddresses = predicateConfig.map(
+      ({ abi, bin, evmPredicate }) => ({
+        fuelAddress: getFuelPredicateAddresses({
+          predicate: { abi, bin },
+        }),
+        evmPredicate,
+      }),
+    );
 
-  //   return predicateAddresses;
-  // }
+    return predicateAddresses;
+  }
 
   /**
    * @inheritdoc

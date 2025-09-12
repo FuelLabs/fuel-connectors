@@ -47,18 +47,14 @@ export const getOrThrow = <T>(value: Maybe<T>, message: string): T => {
  * ```
  */
 export const getFuelPredicateAddresses = ({
-  signerAddress,
   predicate: { abi, bin },
 }: {
-  signerAddress: string;
   predicate: PredicateConfig;
 }): Hex => {
   // Process predicate data to generate predicate bytes
   // Note: processPredicateData is only available in the Predicate class
   // @ts-expect-error processPredicateData is only available in the Predicate class
-  const { predicateBytes } = Predicate.processPredicateData(bin, abi, {
-    SIGNER: signerAddress,
-  });
+  const { predicateBytes } = Predicate.processPredicateData(bin, abi);
 
   // Convert predicate bytes to Fuel address format
   const predicateRoot = getPredicateRoot(predicateBytes);
