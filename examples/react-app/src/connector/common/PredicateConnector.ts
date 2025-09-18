@@ -2,7 +2,6 @@ import {
   type AbiMap,
   Address,
   type Asset,
-  type BytesLike,
   type ConnectorMetadata,
   FuelConnector,
   FuelConnectorEventTypes,
@@ -21,7 +20,7 @@ import {
   encodeSignature,
   getTxIdEncoded,
 } from 'bakosafe';
-import { PredicateFactory, type PredicateWalletAdapter } from './';
+import type { PredicateWalletAdapter } from './';
 import { SocketClient } from './SocketClient';
 import type {
   ConnectorConfig,
@@ -53,6 +52,8 @@ interface BakoProviderWithVaultInfo {
 const BAKO_SERVER_URL = 'http://localhost:3333';
 // const BAKO_SERVER_URL = 'https://stg-api.bako.global';
 const SELECTED_PREDICATE_KEY = 'fuel_selected_predicate_version';
+const ETH_ID =
+  '0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07';
 
 // Local storage keys for session management
 const STORAGE_KEYS = {
@@ -78,12 +79,10 @@ export abstract class PredicateConnector extends FuelConnector {
   // Protected properties for internal state management
   protected predicateAddress!: string;
   protected customPredicate: Maybe<PredicateConfig>;
-  protected predicateAccount: Maybe<PredicateFactory> = null;
+  protected predicateAccount: Maybe<Vault> = null;
   protected subscriptions: Array<() => void> = [];
   protected hasProviderSucceeded = true;
   protected selectedPredicateVersion: Maybe<string> = null;
-
-  private _predicateVersions!: Array<PredicateFactory>;
 
   // Socket client for real-time communication with Bako Safe
   protected socketClient: Maybe<SocketClient> = null;
@@ -94,6 +93,14 @@ export abstract class PredicateConnector extends FuelConnector {
 
   protected abstract getWalletAdapter(): PredicateWalletAdapter;
   protected abstract getPredicateVersions(): Record<string, PredicateVersion>;
+
+  /**
+   * Gets predicate versions as entries array for easier iteration.
+   * @returns Array of [key(version), predicate] tuples
+   */
+  protected getPredicateVersionsEntries(): Array<[string, PredicateVersion]> {
+    return Object.entries(this.getPredicateVersions());
+  }
   protected abstract getAccountAddress(): MaybeAsync<Maybe<string>>;
   protected abstract requireConnection(): MaybeAsync<void>;
   protected abstract walletAccounts(): Promise<Array<string>>;
@@ -615,38 +622,41 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   /**
-   * Gets all predicate versions.
-   * @returns Array of predicate versions
+   * Creates a BakoSafe Vault instance using the current account and provider.
+   *
+   * @returns Promise<Vault> - The initialized Vault instance
    */
-  protected get predicateVersions(): Array<PredicateFactory> {
-    if (!this._predicateVersions) {
-      this._predicateVersions = Object.entries(this.getPredicateVersions())
-        .map(
-          ([key, pred]) =>
-            new PredicateFactory(
-              this.getWalletAdapter(),
-              pred.predicate,
-              key,
-              pred.generatedAt,
-            ),
-        )
-        .sort((a, b) => a.sort(b));
+  public async getBakoSafePredicate(): Promise<Vault> {
+    const { fuelProvider } = await this._get_providers();
+    const evmAddress = this._get_current_evm_address();
+
+    if (!evmAddress) {
+      throw new Error('No account address found');
     }
 
-    return this._predicateVersions;
+    const connectorConfig = {
+      SIGNER: evmAddress,
+    };
+
+    const vault = new Vault(fuelProvider, connectorConfig);
+
+    return vault;
   }
 
   /**
    * Gets all available predicate versions.
    * @returns Array of predicate versions
    */
-  public getAvailablePredicateVersions(): Array<{
-    id: string;
-    generatedAt: number;
-  }> {
-    return this.predicateVersions.map((factory) => ({
-      id: factory.getRoot(),
-      generatedAt: factory.getGeneratedAt(),
+  public async getAvailablePredicateVersions(): Promise<
+    Array<{
+      id: string;
+      generatedAt: number;
+    }>
+  > {
+    const predicateVersions = this.getPredicateVersionsEntries();
+    return predicateVersions.map(([key, pred]) => ({
+      id: key,
+      generatedAt: pred.generatedAt,
     }));
   }
 
@@ -658,19 +668,20 @@ export abstract class PredicateConnector extends FuelConnector {
     PredicateVersionWithMetadata[]
   > {
     const walletAccount = await this.getAccountAddress();
+    const predicateVersions = this.getPredicateVersionsEntries();
 
-    const result: PredicateVersionWithMetadata[] = this.predicateVersions.map(
-      (factory, index) => {
+    const result: PredicateVersionWithMetadata[] = predicateVersions.map(
+      ([key, pred], index) => {
         const metadata: PredicateVersionWithMetadata = {
-          id: factory.getRoot(),
-          generatedAt: factory.getGeneratedAt(),
+          id: key,
+          generatedAt: pred.generatedAt,
           isActive: false,
-          isSelected: factory.getRoot() === this.selectedPredicateVersion,
+          isSelected: key === this.selectedPredicateVersion,
           isNewest: index === 0,
         };
 
         if (walletAccount) {
-          metadata.accountAddress = factory.getPredicateAddress(walletAccount);
+          metadata.accountAddress = key;
         }
 
         return metadata;
@@ -678,25 +689,17 @@ export abstract class PredicateConnector extends FuelConnector {
     );
 
     try {
-      // Check which versions have balances
-      const balancePromises = this.predicateVersions.map(async (factory) => {
+      const balancePromises = predicateVersions.map(async () => {
         try {
-          const address = await this.getAccountAddress();
-          if (!address) return { hasBalance: false };
+          const vault = await this.getBakoSafePredicate();
+          const balance = await vault.getBalance(ETH_ID);
 
-          const { fuelProvider } = await this._get_providers();
-          const predicate = factory.build(address, fuelProvider, [1]);
-          const balanceResult = await predicate.getBalances();
-
-          if (balanceResult.balances && balanceResult.balances.length > 0) {
-            const firstBalance = balanceResult.balances[0];
-            if (firstBalance) {
-              return {
-                hasBalance: true,
-                balance: firstBalance.amount.format(),
-                assetId: firstBalance.assetId,
-              };
-            }
+          if (balance) {
+            return {
+              hasBalance: true,
+              balance: balance.format() || '0',
+              assetId: ETH_ID,
+            };
           }
 
           return { hasBalance: false };
@@ -705,12 +708,10 @@ export abstract class PredicateConnector extends FuelConnector {
         }
       });
 
-      // Wait for all balance checks to complete
       const balanceResults = await Promise.all(balancePromises);
 
       balanceResults.forEach((balanceInfo, index) => {
         if (index < result.length) {
-          // Use a local variable to satisfy TypeScript
           const item = result[index];
           if (item) {
             item.isActive = balanceInfo.hasBalance;
@@ -722,17 +723,15 @@ export abstract class PredicateConnector extends FuelConnector {
         }
       });
     } catch (error) {
-      // If balance checks fail, we still return the result with isActive as false
       console.error('Failed to check predicate balances:', error);
     }
 
     return result;
   }
 
-  public setSelectedPredicateVersion(versionId: string): void {
-    const versionExists = this.predicateVersions.some(
-      (factory) => factory.getRoot() === versionId,
-    );
+  public async setSelectedPredicateVersion(versionId: string): Promise<void> {
+    const predicateVersions = this.getPredicateVersions();
+    const versionExists = versionId in predicateVersions;
 
     if (versionExists) {
       this.selectedPredicateVersion = versionId;
@@ -756,26 +755,25 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   public async getSmartDefaultPredicateVersion(): Promise<Maybe<string>> {
+    const newestPredicate = await this.getNewestPredicate();
     try {
       const predicateWithBalance = await this.getCurrentUserPredicate();
       if (predicateWithBalance) {
-        return predicateWithBalance.getRoot();
+        return predicateWithBalance.version;
       }
-
-      const newestPredicate = this.getNewestPredicate();
-      return newestPredicate?.getRoot() || null;
+      return newestPredicate?.version ?? null;
     } catch (error) {
       console.error(
         'Error determining smart default predicate version:',
         error,
       );
-      const newestPredicate = this.getNewestPredicate();
-      return newestPredicate?.getRoot() || null;
+
+      return newestPredicate?.version ?? null;
     }
   }
 
   public async switchPredicateVersion(versionId: string): Promise<void> {
-    this.setSelectedPredicateVersion(versionId);
+    await this.setSelectedPredicateVersion(versionId);
     await this.setupPredicate();
     const address = await this.getAccountAddress();
     if (!address) {
@@ -786,81 +784,89 @@ export abstract class PredicateConnector extends FuelConnector {
     await this.emitAccountChange(address, true);
   }
 
-  protected isAddressPredicate(b: BytesLike, walletAccount: string): boolean {
-    return this.predicateVersions.some(
-      (predicate) => predicate.getPredicateAddress(walletAccount) === b,
-    );
-  }
+  protected async getCurrentUserPredicate(): Promise<Maybe<Vault>> {
+    const predicateVersions = this.getPredicateVersionsEntries();
+    const oldFirstPredicateVersions = [...predicateVersions].reverse();
 
-  protected async getCurrentUserPredicate(): Promise<Maybe<PredicateFactory>> {
-    const oldFirstPredicateVersions = [...this.predicateVersions].reverse();
-    for (const predicateInstance of oldFirstPredicateVersions) {
-      const address = await this.getAccountAddress();
-      if (!address) {
-        continue;
-      }
+    for (const _ of oldFirstPredicateVersions) {
+      try {
+        const vault = await this.getBakoSafePredicate();
 
-      const { fuelProvider } = await this._get_providers();
-      const predicate = predicateInstance.build(address, fuelProvider, [1]);
-
-      const { balances } = await predicate.getBalances();
-      if (balances?.length > 0) {
-        return predicateInstance;
+        const balance = await vault.getBalance(ETH_ID);
+        if (balance?.gt(0)) {
+          return vault;
+        }
+      } catch (error) {
+        console.error('Error checking vault balance:', error);
       }
     }
 
     return null;
   }
 
-  protected getNewestPredicate(): Maybe<PredicateFactory> {
-    return this.predicateVersions[0];
+  protected async getNewestPredicate(): Promise<Maybe<Vault>> {
+    const predicateVersions = this.getPredicateVersionsEntries();
+    if (predicateVersions.length === 0) return null;
+
+    try {
+      const vault = await this.getBakoSafePredicate();
+      return vault;
+    } catch (error) {
+      console.error('Error creating newest predicate vault:', error);
+      return null;
+    }
   }
 
-  protected getPredicateByVersion(versionId: string): Maybe<PredicateFactory> {
-    return (
-      this.predicateVersions.find(
-        (factory) => factory.getRoot() === versionId,
-      ) || null
-    );
+  protected async getPredicateByVersion(
+    versionId: string,
+  ): Promise<Maybe<Vault>> {
+    const predicateVersions = this.getPredicateVersions();
+    const selectedVersion = predicateVersions[versionId];
+
+    if (!selectedVersion) return null;
+
+    try {
+      const vault = await this.getBakoSafePredicate();
+      return vault;
+    } catch (error) {
+      console.error('Error creating predicate vault for version:', error);
+      return null;
+    }
   }
 
-  protected async setupPredicate(): Promise<PredicateFactory> {
+  protected async setupPredicate(): Promise<Vault> {
     if (this.customPredicate?.abi && this.customPredicate?.bin) {
-      this.predicateAccount = new PredicateFactory(
-        this.getWalletAdapter(),
-        this.customPredicate,
-        'custom',
-      );
+      const vault = await this.getBakoSafePredicate();
       this.predicateAddress = 'custom';
-
-      return this.predicateAccount;
+      this.predicateAccount = vault;
+      return vault;
     }
 
     if (this.selectedPredicateVersion) {
-      const selectedPredicate = this.getPredicateByVersion(
+      const selectedPredicate = await this.getPredicateByVersion(
         this.selectedPredicateVersion,
       );
       if (selectedPredicate) {
-        this.predicateAddress = selectedPredicate.getRoot();
+        this.predicateAddress = this.selectedPredicateVersion;
         this.predicateAccount = selectedPredicate;
         return this.predicateAccount;
       }
     }
 
     const predicate =
-      (await this.getCurrentUserPredicate()) ?? this.getNewestPredicate();
+      (await this.getCurrentUserPredicate()) ??
+      (await this.getNewestPredicate());
     if (!predicate) throw new Error('No predicate found');
 
-    this.predicateAddress = predicate.getRoot();
-    this.predicateAccount = predicate;
+    const predicateVersion = predicate.version;
 
-    this.selectedPredicateVersion = predicate.getRoot();
+    this.predicateAddress = predicateVersion;
+    this.predicateAccount = predicate;
+    this.selectedPredicateVersion = predicateVersion;
+
     try {
       if (typeof window !== 'undefined' && window.localStorage) {
-        window.localStorage.setItem(
-          SELECTED_PREDICATE_KEY,
-          predicate.getRoot(),
-        );
+        window.localStorage.setItem(SELECTED_PREDICATE_KEY, predicateVersion);
       }
     } catch (error) {
       console.error(
