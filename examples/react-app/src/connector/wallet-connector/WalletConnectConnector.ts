@@ -1,11 +1,4 @@
 import {
-  ecrecover,
-  fromRpcSig,
-  hashPersonalMessage,
-  pubToAddress,
-} from '@ethereumjs/util';
-
-import {
   type Config,
   type GetAccountReturnType,
   disconnect,
@@ -38,16 +31,10 @@ import {
 } from '../common';
 
 import { ApiController } from '@web3modal/core';
-import { stringToHex } from 'viem';
 import { PREDICATE_VERSIONS } from '../predicateVersions';
 import { subscribeAndEnforceChain } from '../utils';
-import {
-  ETHEREUM_ICON,
-  HAS_WINDOW,
-  SIGNATURE_VALIDATION_TIMEOUT,
-  WINDOW,
-} from './constants';
-import type { CustomCurrentConnectorEvent, WalletConnectConfig } from './types';
+import { ETHEREUM_ICON, HAS_WINDOW, WINDOW } from './constants';
+import type { WalletConnectConfig } from './types';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
 export class WalletConnectConnector extends PredicateConnector {
@@ -83,19 +70,6 @@ export class WalletConnectConnector extends PredicateConnector {
     if (HAS_WINDOW) {
       this._config_providers({ ...config, wagmiConfig });
     }
-    this.loadPersistedConnection();
-  }
-
-  private async loadPersistedConnection() {
-    const wagmiConfig = this.getWagmiConfig();
-    if (!wagmiConfig) return;
-
-    await this.config?.fuelProvider;
-    await this._require_connection();
-    await this.handleConnect(
-      getAccount(wagmiConfig),
-      await this.getAccountAddress(),
-    );
   }
 
   // createModal re-instanciates the modal to update singletons from web3modal
@@ -117,19 +91,12 @@ export class WalletConnectConnector extends PredicateConnector {
     account: NonNullable<GetAccountReturnType<Config>>,
     defaultAccount: string | null = null,
   ) {
-    const address = defaultAccount ?? (account?.address as string);
-    if (!(await this.accountHasValidation(address))) return;
-    if (!address) return;
-    await this.setupPredicate();
     this.emit(this.events.connection, true);
     this.emit(
       this.events.currentAccount,
-      this.predicateAccount?.getPredicateAddress(address),
+      defaultAccount ?? (account?.address as string),
     );
-    this.emit(
-      this.events.accounts,
-      this.predicateAccount?.getPredicateAddresses(await this.walletAccounts()),
-    );
+    this.emit(this.events.accounts, []);
   }
 
   private setupWatchers() {
@@ -260,74 +227,6 @@ export class WalletConnectConnector extends PredicateConnector {
     return hasValidate;
   }
 
-  private async requestSignatures(
-    wagmiConfig: Config,
-  ): Promise<'validated' | 'pending'> {
-    const account = getAccount(wagmiConfig);
-
-    const { addresses = [], isConnected } = account;
-    for (const address of addresses) {
-      try {
-        await this.requestSignature(address);
-      } catch (err) {
-        this.disconnect();
-        throw err;
-      }
-    }
-
-    if (isConnected) {
-      try {
-        await this.handleConnect(account);
-        return 'validated';
-      } catch (err) {
-        this.disconnect();
-        throw err;
-      }
-    }
-
-    return 'pending';
-  }
-
-  private async requestSignature(address?: string) {
-    return new Promise(async (resolve, reject) => {
-      const hasSignature = await this.accountHasValidation(address);
-      if (hasSignature) return resolve(true);
-
-      // Disconnect if user doesn't provide signature in time
-      const validationTimeout = setTimeout(() => {
-        reject(
-          new Error("User didn't provide signature in less than 1 minute"),
-        );
-      }, SIGNATURE_VALIDATION_TIMEOUT);
-      const { ethProvider } = await this._get_providers();
-
-      if (!ethProvider) return;
-
-      this.signAndValidate(ethProvider, address)
-        .then(() => {
-          clearTimeout(validationTimeout);
-          this.storage.setItem(`SIGNATURE_VALIDATION_${address}`, 'true');
-          resolve(true);
-        })
-        .catch((err) => {
-          clearTimeout(validationTimeout);
-          this.storage.removeItem(`SIGNATURE_VALIDATION_${address}`);
-
-          const currentConnectorEvent: CustomCurrentConnectorEvent = {
-            type: this.events.currentConnector,
-            data: this,
-            metadata: {
-              pendingSignature: false,
-            },
-          };
-
-          // Workaround to tell Connecting dialog that now we'll request connection again
-          this.emit(this.events.currentConnector, currentConnectorEvent);
-          reject(err);
-        });
-    });
-  }
-
   public async disconnect(): Promise<boolean> {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
@@ -340,61 +239,6 @@ export class WalletConnectConnector extends PredicateConnector {
     await super.disconnect();
 
     return isConnected || false;
-  }
-
-  private validateSignature(
-    account: string,
-    message: string,
-    signature: string,
-  ) {
-    const msgBuffer = Uint8Array.from(Buffer.from(message));
-    const msgHash = hashPersonalMessage(msgBuffer);
-    const { v, r, s } = fromRpcSig(signature);
-    const pubKey = ecrecover(msgHash, v, r, s);
-    const recoveredAddress = Buffer.from(pubToAddress(pubKey)).toString('hex');
-
-    // The recovered address doesn't have the 0x prefix
-    return recoveredAddress.toLowerCase() === account.toLowerCase().slice(2);
-  }
-
-  private async signAndValidate(
-    ethProvider: EIP1193Provider | undefined,
-    account?: string,
-  ) {
-    try {
-      if (!ethProvider) {
-        throw new Error('No Ethereum provider found');
-      }
-      if (account && !account.startsWith('0x')) {
-        throw new Error('Invalid account address');
-      }
-      const currentAccount =
-        account ||
-        (
-          (await ethProvider.request({
-            method: 'eth_requestAccounts',
-          })) as string[]
-        )[0];
-
-      if (!currentAccount) {
-        throw new Error('No Ethereum account selected');
-      }
-
-      const message = `Sign this message to verify the connected account: ${currentAccount}`;
-      const signature = (await ethProvider.request({
-        method: 'personal_sign',
-        params: [stringToHex(message), currentAccount],
-      })) as string;
-
-      if (!this.validateSignature(currentAccount, message, signature)) {
-        throw new Error('Signature address validation failed');
-      }
-
-      return true;
-    } catch (error) {
-      this.disconnect();
-      throw error;
-    }
   }
 
   async signMessageCustomCurve(message: string) {
@@ -521,13 +365,6 @@ export class WalletConnectConnector extends PredicateConnector {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
 
-    // User might have connected already, now let's ask for the signatures
-    const state = await this.requestSignatures(wagmiConfig);
-
-    if (state === 'validated') {
-      return true;
-    }
-
     console.log('[CONNECT] Creating Web3Modal instance...');
 
     // Create and display the modal
@@ -544,34 +381,6 @@ export class WalletConnectConnector extends PredicateConnector {
             break;
 
           case 'CONNECT_SUCCESS': {
-            const { addresses = [] } = getAccount(wagmiConfig);
-
-            let hasAccountToSign = false;
-            for (const address of addresses) {
-              if (await this.accountHasValidation(address)) {
-                continue;
-              }
-
-              hasAccountToSign = true;
-              this.storage.setItem(
-                `SIGNATURE_VALIDATION_${address}`,
-                'pending',
-              );
-            }
-
-            if (hasAccountToSign) {
-              const currentConnectorEvent: CustomCurrentConnectorEvent = {
-                type: this.events.currentConnector,
-                data: this,
-                metadata: {
-                  pendingSignature: true,
-                },
-              };
-
-              // Workaround to tell Connecting dialog that now we'll request signature
-              this.emit(this.events.currentConnector, currentConnectorEvent);
-            }
-
             unsub();
             resolve(true);
             break;
