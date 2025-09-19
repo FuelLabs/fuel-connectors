@@ -16,6 +16,7 @@ import {
 import {
   BakoProvider,
   TypeUser,
+  type UsedPredicateVersions,
   Vault,
   Wallet,
   encodeSignature,
@@ -55,8 +56,6 @@ interface BakoProviderWithVaultInfo {
 const BAKO_SERVER_URL = 'http://localhost:3333';
 // const BAKO_SERVER_URL = 'https://stg-api.bako.global';
 const SELECTED_PREDICATE_KEY = 'fuel_selected_predicate_version';
-const ETH_ID =
-  '0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07';
 
 // Local storage keys for session management
 const STORAGE_KEYS = {
@@ -548,6 +547,23 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   /**
+   * Gets the legacy versions used by the current account and hash predicate.
+   * @returns Promise that resolves to the legacy versions with balance informations.
+   */
+  private async _getLegacyVersionResult(): Promise<UsedPredicateVersions[]> {
+    const evmAddress = this._get_current_evm_address();
+    const { fuelProvider } = await this._get_providers();
+    const configurable = JSON.parse(
+      localStorage.getItem(STORAGE_KEYS.CURRENT_ACCOUNT_CONFIGURABLE) ?? '{}',
+    );
+    return legacyConnectorVersion(
+      evmAddress ?? '',
+      fuelProvider.url,
+      configurable?.HASH_PREDICATE,
+    );
+  }
+
+  /**
    * Valida a compatibilidade entre os configurables do predicate e da configuração customizada.
    *
    * @param predicateConfigurables - Configurables do predicate
@@ -688,20 +704,10 @@ export abstract class PredicateConnector extends FuelConnector {
     PredicateVersionWithMetadata[]
   > {
     const walletAccount = await this.getAccountAddress();
-    const { fuelProvider } = await this._get_providers();
-
-    const evmAddress = this._get_current_evm_address();
-    const configurable = JSON.parse(
-      localStorage.getItem(STORAGE_KEYS.CURRENT_ACCOUNT_CONFIGURABLE) ?? '{}',
-    );
     const predicateVersions = this.getPredicateVersionsEntries();
     const latestPredicateVersion = this._getLatestPredicateVersion();
 
-    const legacyVersionResult = await legacyConnectorVersion(
-      evmAddress ?? '',
-      fuelProvider.url,
-      configurable?.HASH_PREDICATE,
-    );
+    const legacyVersionResult = await this._getLegacyVersionResult();
 
     const result: PredicateVersionWithMetadata[] = await Promise.all(
       predicateVersions.map(async ([key, pred]) => {
@@ -803,13 +809,17 @@ export abstract class PredicateConnector extends FuelConnector {
   protected async getCurrentUserPredicate(): Promise<Maybe<Vault>> {
     const predicateVersions = this.getPredicateVersionsEntries();
     const oldFirstPredicateVersions = [...predicateVersions].reverse();
+    const legacyVersionResult = await this._getLegacyVersionResult();
 
     for (const [key, _] of oldFirstPredicateVersions) {
       try {
-        const vault = await this.getBakoSafePredicate(key);
+        const legacyVersion = legacyVersionResult.find(
+          (v) => v.version === key,
+        );
 
-        const balance = await vault.getBalance(ETH_ID);
-        if (balance?.gt(0)) {
+        if (legacyVersion?.hasBalance) {
+          const vault = await this.getBakoSafePredicate(key);
+
           return vault;
         }
       } catch (error) {
