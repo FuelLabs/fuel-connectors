@@ -20,7 +20,7 @@ import {
   encodeSignature,
   getTxIdEncoded,
 } from 'bakosafe';
-import type { PredicateWalletAdapter } from './';
+import { type PredicateWalletAdapter, getFuelPredicateAddresses } from './';
 import { SocketClient } from './SocketClient';
 import type {
   ConnectorConfig,
@@ -196,6 +196,8 @@ export abstract class PredicateConnector extends FuelConnector {
       if (!evmAddress) {
         throw new Error('No connected accounts');
       }
+
+      console.log('address', address);
 
       // const fuelAddress = new Address(evmAddress).toB256();
       const bakoProvider = await BakoProvider.create(fuelProvider.url, {
@@ -626,7 +628,7 @@ export abstract class PredicateConnector extends FuelConnector {
    *
    * @returns Promise<Vault> - The initialized Vault instance
    */
-  public async getBakoSafePredicate(): Promise<Vault> {
+  public async getBakoSafePredicate(version?: string): Promise<Vault> {
     const { fuelProvider } = await this._get_providers();
     const evmAddress = this._get_current_evm_address();
 
@@ -638,7 +640,7 @@ export abstract class PredicateConnector extends FuelConnector {
       SIGNER: evmAddress,
     };
 
-    const vault = new Vault(fuelProvider, connectorConfig);
+    const vault = new Vault(fuelProvider, connectorConfig, version);
 
     return vault;
   }
@@ -676,12 +678,19 @@ export abstract class PredicateConnector extends FuelConnector {
           id: key,
           generatedAt: pred.generatedAt,
           isActive: false,
-          isSelected: key === this.selectedPredicateVersion,
+          isSelected:
+            key.toLowerCase() === this.selectedPredicateVersion?.toLowerCase(),
           isNewest: index === 0,
         };
 
         if (walletAccount) {
-          metadata.accountAddress = key;
+          const predicateAddress = getFuelPredicateAddresses({
+            predicate: {
+              abi: pred.predicate.abi,
+              bin: pred.predicate.bin,
+            },
+          });
+          metadata.accountAddress = predicateAddress;
         }
 
         return metadata;
@@ -689,21 +698,22 @@ export abstract class PredicateConnector extends FuelConnector {
     );
 
     try {
-      const balancePromises = predicateVersions.map(async () => {
+      const balancePromises = result.map(async (item) => {
         try {
-          const vault = await this.getBakoSafePredicate();
-          const balance = await vault.getBalance(ETH_ID);
+          const vault = await this.getBakoSafePredicate(item.id);
+          const balance = await vault.getBalance();
 
           if (balance) {
             return {
               hasBalance: true,
-              balance: balance.format() || '0',
+              balance: balance.format(),
               assetId: ETH_ID,
             };
           }
 
           return { hasBalance: false };
         } catch (_error) {
+          console.error('Failed to check predicate balances:', _error);
           return { hasBalance: false };
         }
       });
