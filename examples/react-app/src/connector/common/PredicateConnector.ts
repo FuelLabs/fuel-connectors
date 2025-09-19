@@ -17,7 +17,9 @@ import {
   BakoProvider,
   TypeUser,
   Vault,
+  Wallet,
   encodeSignature,
+  getLatestPredicateVersion,
   getTxIdEncoded,
 } from 'bakosafe';
 import { type PredicateWalletAdapter, getFuelPredicateAddresses } from './';
@@ -588,6 +590,11 @@ export abstract class PredicateConnector extends FuelConnector {
     return true;
   }
 
+  private _getLatestPredicateVersion(): string {
+    const latestPredicateVersion = getLatestPredicateVersion(Wallet.EVM);
+    return latestPredicateVersion.version;
+  }
+
   /**
    * Generates or retrieves a session ID for the current session.
    */
@@ -640,7 +647,11 @@ export abstract class PredicateConnector extends FuelConnector {
       SIGNER: evmAddress,
     };
 
-    const vault = new Vault(fuelProvider, connectorConfig, version);
+    const vault = new Vault(
+      fuelProvider,
+      connectorConfig,
+      version?.toLowerCase(),
+    );
 
     return vault;
   }
@@ -671,16 +682,17 @@ export abstract class PredicateConnector extends FuelConnector {
   > {
     const walletAccount = await this.getAccountAddress();
     const predicateVersions = this.getPredicateVersionsEntries();
+    const latestPredicateVersion = this._getLatestPredicateVersion();
 
     const result: PredicateVersionWithMetadata[] = predicateVersions.map(
-      ([key, pred], index) => {
+      ([key, pred]) => {
         const metadata: PredicateVersionWithMetadata = {
           id: key,
           generatedAt: pred.generatedAt,
           isActive: false,
           isSelected:
             key.toLowerCase() === this.selectedPredicateVersion?.toLowerCase(),
-          isNewest: index === 0,
+          isNewest: key.toLowerCase() === latestPredicateVersion.toLowerCase(),
         };
 
         if (walletAccount) {
@@ -817,9 +829,10 @@ export abstract class PredicateConnector extends FuelConnector {
   protected async getNewestPredicate(): Promise<Maybe<Vault>> {
     const predicateVersions = this.getPredicateVersionsEntries();
     if (predicateVersions.length === 0) return null;
+    const latestPredicateVersion = this._getLatestPredicateVersion();
 
     try {
-      const vault = await this.getBakoSafePredicate();
+      const vault = await this.getBakoSafePredicate(latestPredicateVersion);
       return vault;
     } catch (error) {
       console.error('Error creating newest predicate vault:', error);
