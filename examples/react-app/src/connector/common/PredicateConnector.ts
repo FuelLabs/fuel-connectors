@@ -810,9 +810,9 @@ export abstract class PredicateConnector extends FuelConnector {
     const predicateVersions = this.getPredicateVersionsEntries();
     const oldFirstPredicateVersions = [...predicateVersions].reverse();
 
-    for (const _ of oldFirstPredicateVersions) {
+    for (const [key, _] of oldFirstPredicateVersions) {
       try {
-        const vault = await this.getBakoSafePredicate();
+        const vault = await this.getBakoSafePredicate(key);
 
         const balance = await vault.getBalance(ETH_ID);
         if (balance?.gt(0)) {
@@ -840,23 +840,6 @@ export abstract class PredicateConnector extends FuelConnector {
     }
   }
 
-  protected async getPredicateByVersion(
-    versionId: string,
-  ): Promise<Maybe<Vault>> {
-    const predicateVersions = this.getPredicateVersions();
-    const selectedVersion = predicateVersions[versionId];
-
-    if (!selectedVersion) return null;
-
-    try {
-      const vault = await this.getBakoSafePredicate();
-      return vault;
-    } catch (error) {
-      console.error('Error creating predicate vault for version:', error);
-      return null;
-    }
-  }
-
   protected async setupPredicate(): Promise<Vault> {
     if (this.customPredicate?.abi && this.customPredicate?.bin) {
       const vault = await this.getBakoSafePredicate();
@@ -866,7 +849,7 @@ export abstract class PredicateConnector extends FuelConnector {
     }
 
     if (this.selectedPredicateVersion) {
-      const selectedPredicate = await this.getPredicateByVersion(
+      const selectedPredicate = await this.getBakoSafePredicate(
         this.selectedPredicateVersion,
       );
       if (selectedPredicate) {

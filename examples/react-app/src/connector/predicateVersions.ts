@@ -1,10 +1,8 @@
 import { arrayify } from '@ethersproject/bytes';
-import { getAllPredicateVersions, versions } from 'bakosafe';
+import { Wallet, getCompatiblePredicateVersions, versions } from 'bakosafe';
 import type { PredicateVersion } from '.';
 
-const compatibleVersions = getAllPredicateVersions().filter((version) => {
-  return versions[version].walletOrigin.includes('evm');
-});
+const compatibleVersions = getCompatiblePredicateVersions(Wallet.EVM);
 
 export const PREDICATE_VERSIONS = compatibleVersions.reduce(
   (acc, version) => {
