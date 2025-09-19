@@ -667,7 +667,8 @@ export abstract class PredicateConnector extends FuelConnector {
     }
 
     const connectorConfig = {
-      SIGNER: evmAddress,
+      SIGNERS: [evmAddress],
+      SIGNATURES_COUNT: 1,
     };
 
     const vault = new Vault(
@@ -776,10 +777,25 @@ export abstract class PredicateConnector extends FuelConnector {
     return this.selectedPredicateVersion;
   }
 
+  protected async getCurrentUserPredicate(): Promise<Maybe<Vault>> {
+    const legacyVersionResult = await this._getLegacyVersionResult();
+    const predicateWithBalance = legacyVersionResult.find((v) => v.hasBalance);
+
+    if (predicateWithBalance) {
+      const vault = await this.getBakoSafePredicate(
+        predicateWithBalance.version,
+      );
+      return vault;
+    }
+
+    return null;
+  }
+
   public async getSmartDefaultPredicateVersion(): Promise<Maybe<string>> {
     const newestPredicate = await this.getNewestPredicate();
+    const predicateWithBalance = await this.getCurrentUserPredicate();
+
     try {
-      const predicateWithBalance = await this.getCurrentUserPredicate();
       if (predicateWithBalance) {
         return predicateWithBalance.version;
       }
@@ -804,30 +820,6 @@ export abstract class PredicateConnector extends FuelConnector {
       );
     }
     await this.emitAccountChange(address, true);
-  }
-
-  protected async getCurrentUserPredicate(): Promise<Maybe<Vault>> {
-    const predicateVersions = this.getPredicateVersionsEntries();
-    const oldFirstPredicateVersions = [...predicateVersions].reverse();
-    const legacyVersionResult = await this._getLegacyVersionResult();
-
-    for (const [key, _] of oldFirstPredicateVersions) {
-      try {
-        const legacyVersion = legacyVersionResult.find(
-          (v) => v.version === key,
-        );
-
-        if (legacyVersion?.hasBalance) {
-          const vault = await this.getBakoSafePredicate(key);
-
-          return vault;
-        }
-      } catch (error) {
-        console.error('Error checking vault balance:', error);
-      }
-    }
-
-    return null;
   }
 
   protected async getNewestPredicate(): Promise<Maybe<Vault>> {
