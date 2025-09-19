@@ -688,13 +688,14 @@ export abstract class PredicateConnector extends FuelConnector {
     PredicateVersionWithMetadata[]
   > {
     const walletAccount = await this.getAccountAddress();
-    const predicateVersions = this.getPredicateVersionsEntries();
-    const latestPredicateVersion = this._getLatestPredicateVersion();
     const { fuelProvider } = await this._get_providers();
+
     const evmAddress = this._get_current_evm_address();
     const configurable = JSON.parse(
       localStorage.getItem(STORAGE_KEYS.CURRENT_ACCOUNT_CONFIGURABLE) ?? '{}',
     );
+    const predicateVersions = this.getPredicateVersionsEntries();
+    const latestPredicateVersion = this._getLatestPredicateVersion();
 
     const legacyVersionResult = await legacyConnectorVersion(
       evmAddress ?? '',
@@ -702,8 +703,8 @@ export abstract class PredicateConnector extends FuelConnector {
       configurable?.HASH_PREDICATE,
     );
 
-    const result: PredicateVersionWithMetadata[] = predicateVersions.map(
-      ([key, pred]) => {
+    const result: PredicateVersionWithMetadata[] = await Promise.all(
+      predicateVersions.map(async ([key, pred]) => {
         const metadata: PredicateVersionWithMetadata = {
           id: key,
           generatedAt: pred.generatedAt,
@@ -720,52 +721,26 @@ export abstract class PredicateConnector extends FuelConnector {
               bin: pred.predicate.bin,
             },
           });
+
           metadata.accountAddress = predicateAddress;
         }
 
-        return metadata;
-      },
-    );
-
-    try {
-      const balancePromises = result.map(async (item) => {
         try {
-          const getLegacyVersion = legacyVersionResult.find(
-            (version) => version.version === item.id,
+          const legacyVersion = legacyVersionResult.find(
+            (v) => v.version === key,
           );
-
-          if (getLegacyVersion?.hasBalance) {
-            return {
-              hasBalance: true,
-              balance: getLegacyVersion?.ethBalance.amount,
-              assetId: getLegacyVersion?.ethBalance.assetId,
-            };
+          if (legacyVersion?.hasBalance) {
+            metadata.isActive = true;
+            metadata.balance = legacyVersion.ethBalance.amount;
+            metadata.assetId = legacyVersion.ethBalance.assetId;
           }
-
-          return { hasBalance: false };
-        } catch (_error) {
-          console.error('Failed to check predicate balances:', _error);
-          return { hasBalance: false };
+        } catch (error) {
+          console.error(`Failed to check balance for predicate ${key}:`, error);
         }
-      });
 
-      const balanceResults = await Promise.all(balancePromises);
-
-      balanceResults.forEach((balanceInfo, index) => {
-        if (index < result.length) {
-          const item = result[index];
-          if (item) {
-            item.isActive = balanceInfo.hasBalance;
-            if (balanceInfo.hasBalance) {
-              item.balance = balanceInfo.balance;
-              item.assetId = balanceInfo.assetId;
-            }
-          }
-        }
-      });
-    } catch (error) {
-      console.error('Failed to check predicate balances:', error);
-    }
+        return metadata;
+      }),
+    );
 
     return result;
   }
