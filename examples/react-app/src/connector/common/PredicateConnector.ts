@@ -21,6 +21,7 @@ import {
   encodeSignature,
   getLatestPredicateVersion,
   getTxIdEncoded,
+  legacyConnectorVersion,
 } from 'bakosafe';
 import { type PredicateWalletAdapter, getFuelPredicateAddresses } from './';
 import { SocketClient } from './SocketClient';
@@ -64,6 +65,7 @@ const STORAGE_KEYS = {
   SESSION_ID: 'sessionId',
   ACCOUNT_VALIDATED: 'accountValidated',
   CURRENT_ACCOUNT: 'currentAccount',
+  CURRENT_ACCOUNT_CONFIGURABLE: 'currentAccountConfigurable',
 } as const;
 
 /**
@@ -177,8 +179,13 @@ export abstract class PredicateConnector extends FuelConnector {
     this.emit(this.events.currentAccount, walletAddress);
     this.emit(this.events.accounts, walletAddress ? [walletAddress] : []);
     this.connected = true;
+    const configurable = wallet.getConfigurable();
 
     localStorage.setItem(STORAGE_KEYS.CURRENT_ACCOUNT, walletAddress);
+    localStorage.setItem(
+      STORAGE_KEYS.CURRENT_ACCOUNT_CONFIGURABLE,
+      JSON.stringify(configurable),
+    );
 
     return true;
   }
@@ -683,6 +690,17 @@ export abstract class PredicateConnector extends FuelConnector {
     const walletAccount = await this.getAccountAddress();
     const predicateVersions = this.getPredicateVersionsEntries();
     const latestPredicateVersion = this._getLatestPredicateVersion();
+    const { fuelProvider } = await this._get_providers();
+    const evmAddress = this._get_current_evm_address();
+    const configurable = JSON.parse(
+      localStorage.getItem(STORAGE_KEYS.CURRENT_ACCOUNT_CONFIGURABLE) ?? '{}',
+    );
+
+    const legacyVersionResult = await legacyConnectorVersion(
+      evmAddress ?? '',
+      fuelProvider.url,
+      configurable?.HASH_PREDICATE,
+    );
 
     const result: PredicateVersionWithMetadata[] = predicateVersions.map(
       ([key, pred]) => {
@@ -712,14 +730,15 @@ export abstract class PredicateConnector extends FuelConnector {
     try {
       const balancePromises = result.map(async (item) => {
         try {
-          const vault = await this.getBakoSafePredicate(item.id);
-          const balance = await vault.getBalance();
+          const getLegacyVersion = legacyVersionResult.find(
+            (version) => version.version === item.id,
+          );
 
-          if (balance) {
+          if (getLegacyVersion?.hasBalance) {
             return {
               hasBalance: true,
-              balance: balance.format(),
-              assetId: ETH_ID,
+              balance: getLegacyVersion?.ethBalance.amount,
+              assetId: getLegacyVersion?.ethBalance.assetId,
             };
           }
 
@@ -849,9 +868,7 @@ export abstract class PredicateConnector extends FuelConnector {
     }
 
     if (this.selectedPredicateVersion) {
-      const selectedPredicate = await this.getBakoSafePredicate(
-        this.selectedPredicateVersion,
-      );
+      const selectedPredicate = await this.getBakoSafePredicate();
       if (selectedPredicate) {
         this.predicateAddress = this.selectedPredicateVersion;
         this.predicateAccount = selectedPredicate;
