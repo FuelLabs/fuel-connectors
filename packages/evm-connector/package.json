@@ -1,0 +1,46 @@
+{
+  "name": "@fuel-connectors/evm-connector",
+  "version": "0.43.2",
+  "private": true,
+  "type": "module",
+  "files": ["dist"],
+  "main": "./dist/wallet-connector-evm.umd.cjs",
+  "module": "./dist/wallet-connector-evm.js",
+  "exports": {
+    ".": {
+      "import": "./dist/wallet-connector-evm.js",
+      "require": "./dist/wallet-connector-evm.umd.cjs"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup --dts-only",
+    "build:watch": "tsup --watch --dts-only",
+    "ts:check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "peerDependencies": {
+    "fuels": "0.101.1"
+  },
+  "dependencies": {
+    "@ethereumjs/util": "9.0.3",
+    "@ethersproject/bytes": "5.7.0",
+    "memoizee": "0.4.15"
+  },
+  "devDependencies": {
+    "@fuel-connectors/common": "workspace:*",
+    "@fuel-connectors/evm-predicates": "workspace:*",
+    "@types/memoizee": "0.4.11",
+    "jsdom": "24.0.0",
+    "ts-loader": "9.5.1",
+    "ts-node": "10.9.2",
+    "tsup": "8.0.2",
+    "tsx": "4.9.3",
+    "typescript": "5.4.5",
+    "viem": "2.20.1",
+    "vite": "5.4.18",
+    "vite-plugin-dts": "3.9.1",
+    "vite-tsconfig-paths": "4.3.2",
+    "vitest": "2.1.9"
+  }
+}
