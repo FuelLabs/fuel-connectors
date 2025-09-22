@@ -53,8 +53,7 @@ interface BakoProviderWithVaultInfo {
 }
 
 // Configuration constants
-const BAKO_SERVER_URL = 'http://localhost:3333';
-// const BAKO_SERVER_URL = 'https://stg-api.bako.global';
+const BAKO_SERVER_URL = 'https://stg-api.bako.global';
 const SELECTED_PREDICATE_KEY = 'fuel_selected_predicate_version';
 
 // Local storage keys for session management
