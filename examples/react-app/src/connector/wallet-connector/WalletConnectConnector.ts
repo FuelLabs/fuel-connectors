@@ -159,11 +159,14 @@ export class WalletConnectConnector extends PredicateConnector {
 
   protected async getAccountAddresses(): Promise<Maybe<readonly string[]>> {
     const wagmiConfig = this.getWagmiConfig();
+    console.log('wagmiConfig', wagmiConfig);
     if (!wagmiConfig) return null;
     const { addresses = [] } = getAccount(wagmiConfig);
+    console.log('addresses', addresses);
     const accountsValidations = await this.getAccountValidations(
       addresses as `0x${string}`[],
     );
+    console.log('accountsValidations', accountsValidations);
     return addresses.filter((_, i) => accountsValidations[i]);
   }
 
@@ -214,6 +217,7 @@ export class WalletConnectConnector extends PredicateConnector {
         const isValidated = await this.storage.getItem(
           `SIGNATURE_VALIDATION_${a}`,
         );
+
         return isValidated === 'true';
       }),
     );
