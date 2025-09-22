@@ -153,21 +153,20 @@ export class WalletConnectConnector extends PredicateConnector {
     if (!addresses) return null;
     const address = addresses[0];
     if (!address) return null;
-    if (!(await this.accountHasValidation(address))) return null;
+    // if (!(await this.accountHasValidation(address))) return null;
     return address;
   }
 
   protected async getAccountAddresses(): Promise<Maybe<readonly string[]>> {
     const wagmiConfig = this.getWagmiConfig();
-    console.log('wagmiConfig', wagmiConfig);
     if (!wagmiConfig) return null;
     const { addresses = [] } = getAccount(wagmiConfig);
-    console.log('addresses', addresses);
-    const accountsValidations = await this.getAccountValidations(
-      addresses as `0x${string}`[],
-    );
-    console.log('accountsValidations', accountsValidations);
-    return addresses.filter((_, i) => accountsValidations[i]);
+    // const accountsValidations = await this.getAccountValidations(
+    //   addresses as `0x${string}`[],
+    // );
+
+    // return addresses.filter((_, i) => accountsValidations[i]);
+    return addresses;
   }
 
   protected async requireConnection() {
@@ -209,27 +208,27 @@ export class WalletConnectConnector extends PredicateConnector {
     };
   }
 
-  private async getAccountValidations(
-    accounts: `0x${string}`[] | string[],
-  ): Promise<boolean[]> {
-    return Promise.all(
-      accounts.map(async (a) => {
-        const isValidated = await this.storage.getItem(
-          `SIGNATURE_VALIDATION_${a}`,
-        );
+  // private async getAccountValidations(
+  //   accounts: `0x${string}`[] | string[],
+  // ): Promise<boolean[]> {
+  //   return Promise.all(
+  //     accounts.map(async (a) => {
+  //       const isValidated = await this.storage.getItem(
+  //         `SIGNATURE_VALIDATION_${a}`,
+  //       );
 
-        return isValidated === 'true';
-      }),
-    );
-  }
+  //       return isValidated === 'true';
+  //     }),
+  //   );
+  // }
 
-  private async accountHasValidation(
-    account: `0x${string}` | string | undefined,
-  ) {
-    if (!account) return false;
-    const [hasValidate] = await this.getAccountValidations([account]);
-    return hasValidate;
-  }
+  // private async accountHasValidation(
+  //   account: `0x${string}` | string | undefined,
+  // ) {
+  //   if (!account) return false;
+  //   const [hasValidate] = await this.getAccountValidations([account]);
+  //   return hasValidate;
+  // }
 
   public async disconnect(): Promise<boolean> {
     const wagmiConfig = this.getWagmiConfig();
