@@ -1,0 +1,1 @@
+export { FuelWalletDevelopmentConnector } from './FuelWalletDevelopmentConnector';

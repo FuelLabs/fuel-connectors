@@ -33,6 +33,3 @@ export const EXPLORER_LOCAL_URL = 'http://localhost:3001';
 
 export const EXPLORER_URL =
   EXPLORER_URL_MAP[CHAIN_ID_NAME] || EXPLORER_LOCAL_URL;
-
-
-  // force commit
