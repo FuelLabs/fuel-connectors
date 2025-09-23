@@ -176,6 +176,29 @@ export class WalletConnectConnector extends PredicateConnector {
     if (this.config.skipAutoReconnect || !wagmiConfig) return;
 
     const { status, connections } = wagmiConfig.state;
+
+    if (status === 'connected' && connections.size > 0) {
+      try {
+        const account = getAccount(wagmiConfig);
+        if (!account.isConnected || !account.address) {
+          await disconnect(wagmiConfig);
+          return;
+        }
+
+        const connector = account.connector;
+        if (connector) {
+          const provider = await connector.getProvider();
+          if (!provider) {
+            await disconnect(wagmiConfig);
+            return;
+          }
+        }
+      } catch {
+        await disconnect(wagmiConfig);
+        return;
+      }
+    }
+
     if (status === 'disconnected' && connections.size > 0) {
       await reconnect(wagmiConfig);
     }
@@ -367,6 +390,25 @@ export class WalletConnectConnector extends PredicateConnector {
     console.log('[CONNECT] Connecting to Ethereum Wallets...');
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
+
+    try {
+      const account = getAccount(wagmiConfig);
+      console.log('account on _connect', account);
+      if (account.isConnected && account.address) {
+        const connector = account.connector;
+        if (connector) {
+          const provider = await connector.getProvider();
+          if (provider) {
+            console.log('[CONNECT] Already connected with valid connection');
+            return true;
+          }
+        }
+      }
+    } catch {
+      console.log(
+        '[CONNECT] Existing connection is invalid, proceeding with new connection',
+      );
+    }
 
     console.log('[CONNECT] Creating Web3Modal instance...');
 
