@@ -884,6 +884,11 @@ export abstract class PredicateConnector extends FuelConnector {
           this.getSessionId(),
           predicate.address.toString(),
         );
+        window.localStorage.setItem(
+          STORAGE_KEYS.CURRENT_ACCOUNT,
+          JSON.stringify(predicate.getConfigurable()),
+        );
+        this.emitAccountChange(predicate.address.toString());
       }
     } catch (error) {
       console.error(
