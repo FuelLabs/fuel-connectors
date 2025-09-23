@@ -64,17 +64,15 @@ export class PredicateFactory {
     address: string,
     accounts: Array<string> = [],
   ): Maybe<string> =>
-    accounts.find(
-      (account: string) => this.getPredicateAddress(account) === address,
-    );
+    accounts.find(() => this.getPredicateAddress() === address);
 
   getPredicateAddresses = (accounts: Array<string> = []): Array<string> =>
-    accounts.map((account) => this.getPredicateAddress(account));
+    accounts.map(() => this.getPredicateAddress());
 
   getMaxPredicateGasUsed = memoize(async (provider: Provider): Promise<BN> => {
     const fakeAccount = this.adapter.generateFakeAccount();
     const chainId = await provider.getChainId();
-    const fakePredicate = this.build(fakeAccount.getAddress(), provider, [0]);
+    const fakePredicate = this.build(provider);
     const request = new ScriptTransactionRequest();
     request.addCoinInput({
       id: ZeroBytes32,
