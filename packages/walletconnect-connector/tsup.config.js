@@ -5,9 +5,9 @@ export default defineConfig((options) => ({
   ...baseConfig(options, { withReact: false }),
   format: ['cjs'],
   external: ['fuels'],
-  noExternal: ['@fuel-connectors/common'],
+  noExternal: ['@fuel-connectors/bako-predicate-connector'],
   dts: {
-    resolve: ['@fuel-connectors/common'],
+    resolve: ['@fuel-connectors/bako-predicate-connector'],
   },
   entry: ['src/index.ts'],
 }));

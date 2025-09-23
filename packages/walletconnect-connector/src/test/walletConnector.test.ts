@@ -1,5 +1,8 @@
 import path from 'node:path';
-import { MAINNET_NETWORK, PredicateFactory } from '@fuel-connectors/common';
+import {
+  MAINNET_NETWORK,
+  PredicateFactory,
+} from '@fuel-connectors/bako-predicate-connector';
 import { type Asset, type Network, Provider } from 'fuels';
 import { launchTestNode } from 'fuels/test-utils';
 import {

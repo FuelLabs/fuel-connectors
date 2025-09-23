@@ -29,12 +29,12 @@
     "@ethersproject/bytes": "5.7.0",
     "@wagmi/core": "2.13.4",
     "@web3modal/wagmi": "5.0.0",
+    "bakosafe": "0.2.0-beta.5",
     "memoizee": "0.4.15",
     "viem": "2.20.1"
   },
   "devDependencies": {
-    "@fuel-connectors/common": "workspace:*",
-    "@fuel-connectors/evm-predicates": "workspace:*",
+    "@fuel-connectors/bako-predicate-connector": "workspace:*",
     "@types/memoizee": "0.4.11",
     "@web3modal/core": "5.0.0",
     "jsdom": "24.0.0",
