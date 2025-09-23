@@ -54,6 +54,7 @@ interface BakoProviderWithVaultInfo {
 
 // Configuration constants
 const BAKO_SERVER_URL = 'https://stg-api.bako.global';
+// const BAKO_SERVER_URL = 'http://localhost:3333';
 const SELECTED_PREDICATE_KEY = 'fuel_selected_predicate_version';
 
 // Local storage keys for session management
@@ -197,21 +198,13 @@ export abstract class PredicateConnector extends FuelConnector {
     transaction: TransactionRequestLike,
   ): Promise<TransactionResponse> {
     try {
-      const { fuelProvider } = await this._get_providers();
       const evmAddress = this._get_current_evm_address();
 
       if (!evmAddress) {
         throw new Error('No connected accounts');
       }
 
-      console.log('address', address);
-
-      // const fuelAddress = new Address(evmAddress).toB256();
-      const bakoProvider = await BakoProvider.create(fuelProvider.url, {
-        address: address.toLocaleLowerCase(),
-        token: `connector${this.getSessionId()}`,
-        serverApi: BAKO_SERVER_URL,
-      });
+      const bakoProvider = await this._createBakoProvider();
 
       // Verificar compatibilidade dos configurables antes de instanciar o vault
       await this._checkCompatibleConfig(
@@ -458,6 +451,22 @@ export abstract class PredicateConnector extends FuelConnector {
     this.socketClient = SocketClient.create({
       sessionId: this.getSessionId(),
       events: this,
+    });
+  }
+
+  private async _createBakoProvider(): Promise<BakoProvider> {
+    const currentAccount = await this.currentAccount();
+
+    if (!currentAccount) {
+      throw new Error('No account address found');
+    }
+
+    const { fuelProvider } = await this._get_providers();
+
+    return BakoProvider.create(fuelProvider.url, {
+      address: currentAccount.toLowerCase(),
+      token: `connector${this.getSessionId()}`,
+      serverApi: BAKO_SERVER_URL,
     });
   }
 
@@ -718,18 +727,12 @@ export abstract class PredicateConnector extends FuelConnector {
           isSelected:
             key.toLowerCase() === this.selectedPredicateVersion?.toLowerCase(),
           isNewest: key.toLowerCase() === latestPredicateVersion.toLowerCase(),
+          ...(walletAccount && {
+            accountAddress: getFuelPredicateAddresses({
+              predicate: { abi: pred.predicate.abi, bin: pred.predicate.bin },
+            }),
+          }),
         };
-
-        if (walletAccount) {
-          const predicateAddress = getFuelPredicateAddresses({
-            predicate: {
-              abi: pred.predicate.abi,
-              bin: pred.predicate.bin,
-            },
-          });
-
-          metadata.accountAddress = predicateAddress;
-        }
 
         try {
           const legacyVersion = legacyVersionResult.find(
@@ -811,14 +814,23 @@ export abstract class PredicateConnector extends FuelConnector {
 
   public async switchPredicateVersion(versionId: string): Promise<void> {
     await this.setSelectedPredicateVersion(versionId);
-    await this.setupPredicate();
+    const selectedPredicate = await this.setupPredicate();
     const address = await this.getAccountAddress();
+    const bakoProvider = await this._createBakoProvider();
+    const selectedPredicateAddress = selectedPredicate.address
+      .toString()
+      .toLowerCase();
+
     if (!address) {
       throw new Error(
         'No account address found after switching predicate version',
       );
     }
-    await this.emitAccountChange(address, true);
+    await bakoProvider.changeAccount(
+      this.getSessionId(),
+      selectedPredicateAddress ?? '',
+    );
+    await this.emitAccountChange(selectedPredicateAddress, true);
   }
 
   protected async getNewestPredicate(): Promise<Maybe<Vault>> {
@@ -836,6 +848,8 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   protected async setupPredicate(): Promise<Vault> {
+    const bakoProvider = await this._createBakoProvider();
+
     if (this.customPredicate?.abi && this.customPredicate?.bin) {
       const vault = await this.getBakoSafePredicate();
       this.predicateAddress = 'custom';
@@ -866,6 +880,10 @@ export abstract class PredicateConnector extends FuelConnector {
     try {
       if (typeof window !== 'undefined' && window.localStorage) {
         window.localStorage.setItem(SELECTED_PREDICATE_KEY, predicateVersion);
+        await bakoProvider.changeAccount(
+          this.getSessionId(),
+          predicate.address.toString(),
+        );
       }
     } catch (error) {
       console.error(
