@@ -366,6 +366,8 @@ export abstract class PredicateConnector extends FuelConnector {
         window?.localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
       }
       // todo: add disconnect dapp
+      const bakoProvider = await this._createBakoProvider();
+      await bakoProvider.disconnect(this.getSessionId());
     } catch (error) {
       console.error('Error clearing localStorage during disconnect:', error);
     }
@@ -462,7 +464,6 @@ export abstract class PredicateConnector extends FuelConnector {
     }
 
     const { fuelProvider } = await this._get_providers();
-
     return BakoProvider.create(fuelProvider.url, {
       address: currentAccount.toLowerCase(),
       token: `connector${this.getSessionId()}`,
@@ -674,14 +675,17 @@ export abstract class PredicateConnector extends FuelConnector {
       throw new Error('No account address found');
     }
 
-    const connectorConfig = {
-      SIGNERS: [evmAddress],
-      SIGNATURES_COUNT: 1,
-    };
+    const connectorConfig = window.localStorage.getItem(
+      STORAGE_KEYS.CURRENT_ACCOUNT_CONFIGURABLE,
+    );
+
+    if (!connectorConfig) {
+      throw new Error('No connector config found');
+    }
 
     const vault = new Vault(
       fuelProvider,
-      connectorConfig,
+      JSON.parse(connectorConfig),
       version?.toLowerCase(),
     );
 
@@ -713,42 +717,24 @@ export abstract class PredicateConnector extends FuelConnector {
     PredicateVersionWithMetadata[]
   > {
     const walletAccount = await this.getAccountAddress();
-    const predicateVersions = this.getPredicateVersionsEntries();
+    // const predicateVersions = this.getPredicateVersionsEntries();
     const latestPredicateVersion = this._getLatestPredicateVersion();
 
     const legacyVersionResult = await this._getLegacyVersionResult();
 
-    const result: PredicateVersionWithMetadata[] = await Promise.all(
-      predicateVersions.map(async ([key, pred]) => {
-        const metadata: PredicateVersionWithMetadata = {
-          id: key,
-          generatedAt: pred.generatedAt,
-          isActive: false,
-          isSelected:
-            key.toLowerCase() === this.selectedPredicateVersion?.toLowerCase(),
-          isNewest: key.toLowerCase() === latestPredicateVersion.toLowerCase(),
+    const result: PredicateVersionWithMetadata[] = legacyVersionResult.map(
+      (v) => {
+        return {
+          id: v.version,
+          generatedAt: v.details.versionTime,
+          isActive: v.hasBalance,
+          isSelected: v.version === this.selectedPredicateVersion,
+          isNewest: v.version === latestPredicateVersion,
           ...(walletAccount && {
-            accountAddress: getFuelPredicateAddresses({
-              predicate: { abi: pred.predicate.abi, bin: pred.predicate.bin },
-            }),
+            accountAddress: v.predicateAddress,
           }),
         };
-
-        try {
-          const legacyVersion = legacyVersionResult.find(
-            (v) => v.version === key,
-          );
-          if (legacyVersion?.hasBalance) {
-            metadata.isActive = true;
-            metadata.balance = legacyVersion.ethBalance.amount;
-            metadata.assetId = legacyVersion.ethBalance.assetId;
-          }
-        } catch (error) {
-          console.error(`Failed to check balance for predicate ${key}:`, error);
-        }
-
-        return metadata;
-      }),
+      },
     );
 
     return result;
@@ -776,7 +762,10 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   public getSelectedPredicateVersion(): Maybe<string> {
-    return this.selectedPredicateVersion;
+    return (
+      window.localStorage.getItem(SELECTED_PREDICATE_KEY) ??
+      this.selectedPredicateVersion
+    );
   }
 
   protected async getCurrentUserPredicate(): Promise<Maybe<Vault>> {
@@ -849,6 +838,18 @@ export abstract class PredicateConnector extends FuelConnector {
 
   protected async setupPredicate(): Promise<Vault> {
     const bakoProvider = await this._createBakoProvider();
+    const selectedPredicateVersion = this.getSelectedPredicateVersion();
+
+    if (selectedPredicateVersion) {
+      const selectedPredicate = await this.getBakoSafePredicate(
+        selectedPredicateVersion,
+      );
+      if (selectedPredicate) {
+        this.predicateAddress = selectedPredicateVersion;
+        this.predicateAccount = selectedPredicate;
+        return selectedPredicate;
+      }
+    }
 
     if (this.customPredicate?.abi && this.customPredicate?.bin) {
       const vault = await this.getBakoSafePredicate();
@@ -897,6 +898,7 @@ export abstract class PredicateConnector extends FuelConnector {
       );
     }
 
+    // return "";
     return this.predicateAccount;
   }
 
