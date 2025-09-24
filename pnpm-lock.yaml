@@ -213,8 +213,8 @@ importers:
         specifier: 5.0.0
         version: 5.0.0(rmwn33nddaegeg5qwavnluo5fi)
       bakosafe:
-        specifier: 0.2.0-beta.5
-        version: 0.2.0-beta.5(bufferutil@4.0.9)(fuels@0.101.1(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
+        specifier: 0.2.0-beta.6
+        version: 0.2.0-beta.6(bufferutil@4.0.9)(fuels@0.101.1(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
       bs58:
         specifier: 6.0.0
         version: 6.0.0
@@ -5004,8 +5004,8 @@ packages:
   babel-types@6.26.0:
     resolution: {integrity: sha512-zhe3V/26rCWsEZK8kZN+HaQj5yQ1CilTObixFzKW1UWjqG7618Twz6YEsCnjfg5gBcJh02DrpCkS9h98ZqDY+g==}
 
-  bakosafe@0.2.0-beta.5:
-    resolution: {integrity: sha512-kc2xCeqgBgxvMLzvmfehgWLwpAomfI5odLaYZogHQJRwTrmvh+1v7JLloSU++Iyl66TkubZk3LLWTQiAX8Htag==}
+  bakosafe@0.2.0-beta.6:
+    resolution: {integrity: sha512-pcouIlixrjcceQrBB5+IY3y/+SlAQ0s74melzowEl9RBgXrM+SC/G9kRZ/nvtUIVsWIOzj9alyy2SzRzGm+uvg==}
     peerDependencies:
       fuels: ^0.101.0
 
@@ -17992,7 +17992,7 @@ snapshots:
       lodash: 4.17.21
       to-fast-properties: 1.0.3
 
-  bakosafe@0.2.0-beta.5(bufferutil@4.0.9)(fuels@0.101.1(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4):
+  bakosafe@0.2.0-beta.6(bufferutil@4.0.9)(fuels@0.101.1(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4):
     dependencies:
       '@ethereumjs/util': 9.0.3
       '@ethersproject/bytes': 5.7.0
@@ -22066,7 +22066,7 @@ snapshots:
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
       '@noble/ciphers': 1.3.0
-      '@noble/curves': 1.9.2
+      '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
