@@ -1,5 +1,5 @@
 import { Provider } from 'fuels';
-import type { WalletConnectConfig } from './types';
+import type { WalletConnectConfig } from '../../../../../packages/walletconnect-connector/src';
 
 // ============================================================
 // Default configuration values
