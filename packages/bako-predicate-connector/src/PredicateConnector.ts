@@ -24,7 +24,7 @@ import {
   getTxIdEncoded,
   legacyConnectorVersion,
 } from 'bakosafe';
-import { type PredicateWalletAdapter, getFuelPredicateAddresses } from './';
+import type { PredicateWalletAdapter } from './';
 import { SocketClient } from './SocketClient';
 import type {
   ConnectorConfig,
@@ -36,21 +36,6 @@ import type {
   ProviderDictionary,
   SignedMessageCustomCurve,
 } from './types';
-
-// Interface para o provider do Bako Safe com método getVaultInfo
-interface BakoProviderWithVaultInfo {
-  getVaultInfo?: (address: string) => Promise<{
-    predicate?: {
-      abi: {
-        configurables?: Array<{
-          name: string;
-          concreteTypeId: string;
-          offset: number;
-        }>;
-      };
-    };
-  }>;
-}
 
 // Configuration constants
 const BAKO_SERVER_URL = 'https://stg-api.bako.global';
@@ -65,6 +50,8 @@ const STORAGE_KEYS = {
   ACCOUNT_VALIDATED: 'accountValidated',
   CURRENT_ACCOUNT: 'currentAccount',
   CURRENT_ACCOUNT_CONFIGURABLE: 'currentAccountConfigurable',
+
+  BAKO_PERSONAL_WALLET: 'bakoPersonalWallet',
 } as const;
 
 /**
@@ -172,19 +159,19 @@ export abstract class PredicateConnector extends FuelConnector {
 
     // Step 4: Get wallet instance and update state
     const wallet = await bakoProvider.wallet();
-    const walletAddress = Address.fromB256(wallet.address.toB256()).toString();
+    const walletAddress = new Address(wallet.address.toB256()).toString();
 
-    this.emit(this.events.connection, true);
-    this.emit(this.events.currentAccount, walletAddress);
-    this.emit(this.events.accounts, walletAddress ? [walletAddress] : []);
-    this.connected = true;
-    const configurable = wallet.getConfigurable();
-
-    localStorage.setItem(STORAGE_KEYS.CURRENT_ACCOUNT, walletAddress);
+    // Store Bako personal wallet data for predicate operations
     localStorage.setItem(
-      STORAGE_KEYS.CURRENT_ACCOUNT_CONFIGURABLE,
-      JSON.stringify(configurable),
+      STORAGE_KEYS.BAKO_PERSONAL_WALLET,
+      JSON.stringify({
+        address: wallet.address.toB256(),
+        configurable: wallet.getConfigurable(),
+        version: wallet.version,
+      }),
     );
+
+    this.emitAccountChange(walletAddress);
 
     return true;
   }
@@ -205,12 +192,6 @@ export abstract class PredicateConnector extends FuelConnector {
       }
 
       const bakoProvider = await this._createBakoProvider();
-
-      // Verificar compatibilidade dos configurables antes de instanciar o vault
-      await this._checkCompatibleConfig(
-        address,
-        bakoProvider as BakoProviderWithVaultInfo,
-      );
 
       const vault = await Vault.fromAddress(
         new Address(address).toB256(),
@@ -234,7 +215,6 @@ export abstract class PredicateConnector extends FuelConnector {
       });
 
       const transactionResponse = await vault.send(tx);
-      console.log('Transaction sent:', transactionResponse);
 
       await transactionResponse.waitForResult();
 
@@ -365,14 +345,14 @@ export abstract class PredicateConnector extends FuelConnector {
         window.localStorage.removeItem(STORAGE_KEYS.DEFAULT_ACCOUNT);
         window?.localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
       }
-      // todo: add disconnect dapp
+
+      const bakoProvider = await this._createBakoProvider();
+      await bakoProvider.disconnect(this.getSessionId());
     } catch (error) {
       console.error('Error clearing localStorage during disconnect:', error);
     }
 
-    this.emit(this.events.connection, false);
-    this.emit(this.events.currentAccount, null);
-    this.emit(this.events.accounts, []);
+    this.emitAccountChange();
 
     return false;
   }
@@ -462,96 +442,11 @@ export abstract class PredicateConnector extends FuelConnector {
     }
 
     const { fuelProvider } = await this._get_providers();
-
     return BakoProvider.create(fuelProvider.url, {
       address: currentAccount.toLowerCase(),
       token: `connector${this.getSessionId()}`,
       serverApi: BAKO_SERVER_URL,
     });
-  }
-
-  /**
-   * Verifica a compatibilidade dos configurables antes de instanciar o vault.
-   * Este método interno é consultado ao instanciar o vault para garantir
-   * que os configurables do predicate são compatíveis com o vault.
-   *
-   * @param address - Endereço do predicate
-   * @param bakoProvider - Provider do Bako Safe
-   * @throws Error se os configurables não forem compatíveis
-   */
-  private async _checkCompatibleConfig(
-    address: string,
-    bakoProvider: BakoProviderWithVaultInfo,
-  ): Promise<void> {
-    try {
-      // Obter informações do predicate do vault
-      if (!bakoProvider.getVaultInfo) {
-        console.warn(
-          '[CONNECTOR] BakoProvider does not support getVaultInfo, skipping compatibility check',
-        );
-        return;
-      }
-
-      const vaultInfo = await bakoProvider.getVaultInfo(address);
-
-      if (!vaultInfo || !vaultInfo.predicate) {
-        throw new Error('Vault information not found');
-      }
-
-      const predicateAbi = vaultInfo.predicate.abi;
-
-      // Verificar se o predicate tem configurables
-      if (
-        !predicateAbi.configurables ||
-        predicateAbi.configurables.length === 0
-      ) {
-        console.warn('[CONNECTOR] Predicate has no configurables');
-        return;
-      }
-
-      // Verificar se temos configuração customizada
-      if (this.customPredicate) {
-        const customAbi = this.customPredicate.abi;
-
-        // Verificar compatibilidade dos configurables
-        const isCompatible = this._validateConfigurablesCompatibility(
-          predicateAbi.configurables || [],
-          customAbi.configurables || [],
-        );
-
-        if (!isCompatible) {
-          throw new Error(
-            'Predicate configurables are not compatible with the custom predicate configuration',
-          );
-        }
-      }
-
-      // Verificar se os configurables obrigatórios estão presentes
-      const requiredConfigurables = ['SIGNER'];
-      const predicateConfigurables = (predicateAbi.configurables || []).map(
-        (c: { name: string }) => c.name,
-      );
-
-      for (const required of requiredConfigurables) {
-        if (!predicateConfigurables.includes(required)) {
-          throw new Error(
-            `Required configurable '${required}' not found in predicate`,
-          );
-        }
-      }
-
-      console.log('[CONNECTOR] Configurables compatibility check passed');
-    } catch (error) {
-      console.error(
-        '[CONNECTOR] Configurables compatibility check failed:',
-        error,
-      );
-      throw new Error(
-        `Failed to verify predicate configurables compatibility: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`,
-      );
-    }
   }
 
   /**
@@ -561,64 +456,16 @@ export abstract class PredicateConnector extends FuelConnector {
   private async _getLegacyVersionResult(): Promise<UsedPredicateVersions[]> {
     const evmAddress = this._get_current_evm_address();
     const { fuelProvider } = await this._get_providers();
+
     const configurable = JSON.parse(
-      localStorage.getItem(STORAGE_KEYS.CURRENT_ACCOUNT_CONFIGURABLE) ?? '{}',
+      localStorage.getItem(STORAGE_KEYS.BAKO_PERSONAL_WALLET) ?? '{}',
     );
+
     return legacyConnectorVersion(
       evmAddress ?? '',
       fuelProvider.url,
-      configurable?.HASH_PREDICATE,
+      configurable?.configurable.HASH_PREDICATE,
     );
-  }
-
-  /**
-   * Valida a compatibilidade entre os configurables do predicate e da configuração customizada.
-   *
-   * @param predicateConfigurables - Configurables do predicate
-   * @param customConfigurables - Configurables da configuração customizada
-   * @returns true se compatível, false caso contrário
-   */
-  private _validateConfigurablesCompatibility(
-    predicateConfigurables: readonly {
-      name: string;
-      concreteTypeId: string;
-      offset: number;
-    }[],
-    customConfigurables: readonly {
-      name: string;
-      concreteTypeId: string;
-      offset: number;
-    }[],
-  ): boolean {
-    // Se não há configuração customizada, considerar compatível
-    if (customConfigurables.length === 0) {
-      return true;
-    }
-
-    // Verificar se todos os configurables customizados existem no predicate
-    for (const customConfig of customConfigurables) {
-      const predicateConfig = predicateConfigurables.find(
-        (p) => p.name === customConfig.name,
-      );
-
-      if (!predicateConfig) {
-        console.error(
-          `[CONNECTOR] Custom configurable '${customConfig.name}' not found in predicate`,
-        );
-        return false;
-      }
-
-      // Verificar se os tipos são compatíveis
-      if (predicateConfig.concreteTypeId !== customConfig.concreteTypeId) {
-        console.error(
-          `[CONNECTOR] Configurable '${customConfig.name}' type mismatch: ` +
-            `predicate=${predicateConfig.concreteTypeId}, custom=${customConfig.concreteTypeId}`,
-        );
-        return false;
-      }
-    }
-
-    return true;
   }
 
   private _getLatestPredicateVersion(): string {
@@ -650,15 +497,19 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   /**
-   * Emits account change events.
+   * Emits account change events for predicate operations.
+   * This method is specifically for when switching between predicate versions.
    */
-  protected async emitAccountChange(
-    _address: string,
+  protected emitAccountChange(
+    address: string | null = null,
     connected = true,
-  ): Promise<void> {
+  ): void {
+    window.localStorage.setItem(STORAGE_KEYS.CURRENT_ACCOUNT, address ?? '');
+
     this.emit(this.events.connection, connected);
-    this.emit(this.events.currentAccount, this.currentAccount());
-    this.emit(this.events.accounts, []);
+    this.emit(this.events.currentAccount, address);
+    this.emit(this.events.accounts, address ? [address] : []);
+    this.connected = connected;
   }
 
   /**
@@ -674,16 +525,30 @@ export abstract class PredicateConnector extends FuelConnector {
       throw new Error('No account address found');
     }
 
-    const connectorConfig = {
-      SIGNERS: [evmAddress],
-      SIGNATURES_COUNT: 1,
-    };
+    const bakoPersonalWallet = JSON.parse(
+      localStorage.getItem(STORAGE_KEYS.BAKO_PERSONAL_WALLET) ?? '{}',
+    );
+
+    if (!bakoPersonalWallet) {
+      throw new Error('No Bako personal wallet found');
+    }
+
+    const { configurable, version: _version } = bakoPersonalWallet;
+
+    const connectorConfig =
+      _version === version
+        ? configurable
+        : {
+            SIGNER: new Address(evmAddress).toB256(),
+          };
 
     const vault = new Vault(
       fuelProvider,
       connectorConfig,
       version?.toLowerCase(),
     );
+
+    this.emitAccountChange(vault.address.toString());
 
     return vault;
   }
@@ -713,44 +578,24 @@ export abstract class PredicateConnector extends FuelConnector {
     PredicateVersionWithMetadata[]
   > {
     const walletAccount = await this.getAccountAddress();
-    const predicateVersions = this.getPredicateVersionsEntries();
     const latestPredicateVersion = this._getLatestPredicateVersion();
-
     const legacyVersionResult = await this._getLegacyVersionResult();
 
-    const result: PredicateVersionWithMetadata[] = await Promise.all(
-      predicateVersions.map(async ([key, pred]) => {
-        const metadata: PredicateVersionWithMetadata = {
-          id: key,
-          generatedAt: pred.generatedAt,
-          isActive: false,
-          isSelected:
-            key.toLowerCase() === this.selectedPredicateVersion?.toLowerCase(),
-          isNewest: key.toLowerCase() === latestPredicateVersion.toLowerCase(),
+    const result: PredicateVersionWithMetadata[] = legacyVersionResult.map(
+      (v) => {
+        return {
+          id: v.version,
+          generatedAt: v.details.versionTime,
+          isActive: v.hasBalance,
+          balance: v.ethBalance.amount,
+          isSelected: v.version === this.selectedPredicateVersion,
+          isNewest: v.version === latestPredicateVersion,
           ...(walletAccount && {
-            accountAddress: getFuelPredicateAddresses({
-              predicate: { abi: pred.predicate.abi, bin: pred.predicate.bin },
-            }),
+            accountAddress: v.predicateAddress,
           }),
         };
-
-        try {
-          const legacyVersion = legacyVersionResult.find(
-            (v) => v.version === key,
-          );
-          if (legacyVersion?.hasBalance) {
-            metadata.isActive = true;
-            metadata.balance = legacyVersion.ethBalance.amount;
-            metadata.assetId = legacyVersion.ethBalance.assetId;
-          }
-        } catch (error) {
-          console.error(`Failed to check balance for predicate ${key}:`, error);
-        }
-
-        return metadata;
-      }),
+      },
     );
-
     return result;
   }
 
@@ -776,7 +621,10 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   public getSelectedPredicateVersion(): Maybe<string> {
-    return this.selectedPredicateVersion;
+    return (
+      window.localStorage.getItem(SELECTED_PREDICATE_KEY) ??
+      this.selectedPredicateVersion
+    );
   }
 
   protected async getCurrentUserPredicate(): Promise<Maybe<Vault>> {
@@ -830,7 +678,7 @@ export abstract class PredicateConnector extends FuelConnector {
       this.getSessionId(),
       selectedPredicateAddress ?? '',
     );
-    await this.emitAccountChange(selectedPredicateAddress, true);
+    this.emitAccountChange(selectedPredicateAddress, true);
   }
 
   protected async getNewestPredicate(): Promise<Maybe<Vault>> {
@@ -849,6 +697,18 @@ export abstract class PredicateConnector extends FuelConnector {
 
   protected async setupPredicate(): Promise<Vault> {
     const bakoProvider = await this._createBakoProvider();
+    const selectedPredicateVersion = this.getSelectedPredicateVersion();
+
+    if (selectedPredicateVersion) {
+      const selectedPredicate = await this.getBakoSafePredicate(
+        selectedPredicateVersion,
+      );
+      if (selectedPredicate) {
+        this.predicateAddress = selectedPredicateVersion;
+        this.predicateAccount = selectedPredicate;
+        return selectedPredicate;
+      }
+    }
 
     if (this.customPredicate?.abi && this.customPredicate?.bin) {
       const vault = await this.getBakoSafePredicate();
