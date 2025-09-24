@@ -464,13 +464,16 @@ export abstract class PredicateConnector extends FuelConnector {
   private async _getLegacyVersionResult(): Promise<UsedPredicateVersions[]> {
     const evmAddress = this._get_current_evm_address();
     const { fuelProvider } = await this._get_providers();
+
+    // TODO: Type local storage by keys
     const configurable = JSON.parse(
       localStorage.getItem(STORAGE_KEYS.BAKO_PERSONAL_WALLET) ?? '{}',
     );
+
     return legacyConnectorVersion(
       evmAddress ?? '',
       fuelProvider.url,
-      configurable?.HASH_PREDICATE,
+      configurable?.configurable.HASH_PREDICATE,
     );
   }
 
