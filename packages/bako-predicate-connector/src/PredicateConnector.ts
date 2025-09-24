@@ -387,37 +387,37 @@ export abstract class PredicateConnector extends FuelConnector {
   // ============================================================
 
   public async addAssets(_assets: Asset[]): Promise<boolean> {
-    throw new Error('Method not implemented');
+    throw new Error('Method not implemented.');
   }
 
   public async addAsset(_asset: Asset): Promise<boolean> {
-    throw new Error('Method not implemented');
+    throw new Error('Method not implemented.');
   }
 
   public async assets(): Promise<Array<Asset>> {
-    throw new Error('Method not implemented');
+    return [];
   }
 
   public async addNetwork(_networkUrl: string): Promise<boolean> {
-    throw new Error('Method not implemented');
+    throw new Error('Method not implemented.');
   }
 
   public async selectNetwork(
     _network: SelectNetworkArguments,
   ): Promise<boolean> {
-    throw new Error('Method not implemented');
+    throw new Error('Method not implemented.');
   }
 
   public async addAbi(_abiMap: AbiMap): Promise<boolean> {
-    throw new Error('Method not implemented');
+    throw new Error('Method not implemented.');
   }
 
   public async getAbi(_contractId: string): Promise<JsonAbi> {
-    throw new Error('Method not implemented');
+    throw new Error('Cannot get contractId ABI for a predicate');
   }
 
   public async hasAbi(_contractId: string): Promise<boolean> {
-    throw new Error('Method not implemented');
+    throw new Error('A predicate account cannot have an ABI');
   }
 
   // ============================================================
