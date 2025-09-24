@@ -377,7 +377,6 @@ export class WalletConnectConnector extends PredicateConnector {
         const errorMessage = (error as Error).message.includes('rejected')
           ? 'User rejected the request'
           : (error as Error).message;
-        await this._disconnect();
         reject(new Error(`Signing failed: ${errorMessage}`));
       }
     });
@@ -393,7 +392,6 @@ export class WalletConnectConnector extends PredicateConnector {
 
     try {
       const account = getAccount(wagmiConfig);
-      console.log('account on _connect', account);
       if (account.isConnected && account.address) {
         const connector = account.connector;
         if (connector) {
