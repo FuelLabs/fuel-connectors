@@ -24,7 +24,7 @@ import {
   getTxIdEncoded,
   legacyConnectorVersion,
 } from 'bakosafe';
-import type { PredicateWalletAdapter } from './';
+import { ORIGIN, type PredicateWalletAdapter } from './';
 import { SocketClient } from './SocketClient';
 import type {
   ConnectorConfig,
@@ -155,7 +155,7 @@ export abstract class PredicateConnector extends FuelConnector {
       serverApi: BAKO_SERVER_URL,
     });
 
-    await bakoProvider.connectDapp(sessionId);
+    await bakoProvider.connectDapp(sessionId, ORIGIN);
 
     // Step 4: Get wallet instance and update state
     const wallet = await bakoProvider.wallet();
