@@ -5,6 +5,7 @@ import {
   type ConnectorMetadata,
   FuelConnector,
   FuelConnectorEventTypes,
+  type HashableMessage,
   type JsonAbi,
   type Network,
   type SelectNetworkArguments,
@@ -379,8 +380,11 @@ export abstract class PredicateConnector extends FuelConnector {
   /**
    * Signs a message using the connected wallet.
    */
-  public async signMessage(_address: string, message: string): Promise<string> {
-    return await this._sign_message(message);
+  public async signMessage(
+    _address: string,
+    _message: HashableMessage,
+  ): Promise<string> {
+    throw new Error('A predicate account cannot sign messages');
   }
 
   // ============================================================
