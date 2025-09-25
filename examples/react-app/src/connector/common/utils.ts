@@ -29,7 +29,7 @@ export const getOrThrow = <T>(value: Maybe<T>, message: string): T => {
  * Checks if the code is running in a browser environment.
  * Used for conditional logic that depends on browser APIs.
  */
-export const HAS_WINDOW = typeof window !== 'undefined';
+export const HAS_WINDOW = typeof window !== 'undefined' && window.localStorage;
 
 /**
  * Global window object or empty object if not in browser.
