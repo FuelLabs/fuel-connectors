@@ -29,7 +29,7 @@
     "@ethersproject/bytes": "5.7.0",
     "@wagmi/core": "2.13.4",
     "@web3modal/wagmi": "5.0.0",
-    "bakosafe": "0.2.0-beta.5",
+    "bakosafe": "0.2.0-beta.6",
     "memoizee": "0.4.15",
     "viem": "2.20.1"
   },
