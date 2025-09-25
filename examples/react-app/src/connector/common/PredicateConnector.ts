@@ -54,6 +54,39 @@ const STORAGE_KEYS = {
   BAKO_PERSONAL_WALLET: 'bakoPersonalWallet',
 } as const;
 
+// TODO: increase this
+
+const bakosafe_encode = (txId: string, version: string) => {
+  // return txId.startsWith('0x') ? txId.slice(2) : txId;
+  return getTxIdEncoded(txId, version) as string;
+};
+
+const connector_encode = (txId: string) => {
+  return txId.startsWith('0x') ? txId : `0x${txId}`;
+};
+
+// TODO: We can improve this logic but it's working for all versions
+const TXID_ENCODE: Record<string, (txId: string) => string> = {
+  '0x967aaa71b3db34acd8104ed1d7ff3900e67cff3d153a0ffa86d85957f579aa6a': (
+    txId: string,
+  ) =>
+    bakosafe_encode(
+      txId,
+      '0x967aaa71b3db34acd8104ed1d7ff3900e67cff3d153a0ffa86d85957f579aa6a',
+    ),
+  '0xbbae06500cd11e6c1d024ac587198cb30c504bf14ba16548f19e21fa9e8f5f95':
+    connector_encode,
+  '0x3499b76bcb35d8bc68fb2fa74fbe1760461f64f0ac19890c0bacb69377ac19d2': (
+    txId: string,
+  ) =>
+    bakosafe_encode(
+      txId,
+      '0x3499b76bcb35d8bc68fb2fa74fbe1760461f64f0ac19890c0bacb69377ac19d2',
+    ),
+  '0xfdac03fc617c264fa6f325fd6f4d2a5470bf44cfbd33bc11efb3bf8b7ee2e938':
+    connector_encode,
+};
+
 /**
  * Abstract base class for predicate-based wallet connectors.
  * Handles common logic for Bako Safe integration, session management,
@@ -206,11 +239,19 @@ export abstract class PredicateConnector extends FuelConnector {
         bakoProvider,
       );
 
+      const version = vault.version;
+
       const { tx, hashTxId } = await vault.BakoTransfer(transaction);
 
       // Encode message according to predicate version requirements
-      const messageToSign = getTxIdEncoded(hashTxId, vault.version);
+      // const messageToSign = getTxIdEncoded(hashTxId, vault.version);
+      const encoder = TXID_ENCODE[version];
+      if (!encoder) throw new Error(`Unsupported version: ${version}`);
+      const messageToSign = encoder(`0x${hashTxId}`);
+      console.log('messageToSign', messageToSign);
+
       const signature = await this._sign_message(messageToSign as string);
+
       const encodedSignature = encodeSignature(
         evmAddress,
         signature,
