@@ -641,7 +641,7 @@ export abstract class PredicateConnector extends FuelConnector {
           isSelected: v.version === this.selectedPredicateVersion,
           isNewest: v.version === latestPredicateVersion,
           ...(walletAccount && {
-            accountAddress: v.predicateAddress,
+            accountAddress: Address.fromB256(v.predicateAddress).toString(),
           }),
         };
       },
