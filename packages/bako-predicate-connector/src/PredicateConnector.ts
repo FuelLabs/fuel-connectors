@@ -469,7 +469,7 @@ export abstract class PredicateConnector extends FuelConnector {
     return legacyConnectorVersion(
       evmAddress ?? '',
       fuelProvider.url,
-      configurable?.configurable.HASH_PREDICATE,
+      configurable?.configurable?.HASH_PREDICATE,
     );
   }
 
