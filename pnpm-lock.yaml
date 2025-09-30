@@ -216,8 +216,8 @@ importers:
         specifier: 5.0.0
         version: 5.0.0(rmwn33nddaegeg5qwavnluo5fi)
       bakosafe:
-        specifier: 0.2.0-beta.6
-        version: 0.2.0-beta.6(bufferutil@4.0.9)(fuels@0.101.1(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
+        specifier: 0.2.0-beta.9
+        version: 0.2.0-beta.9(bufferutil@4.0.9)(fuels@0.101.1(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
       bs58:
         specifier: 6.0.0
         version: 6.0.0
@@ -5098,6 +5098,11 @@ packages:
 
   bakosafe@0.2.0-beta.6:
     resolution: {integrity: sha512-pcouIlixrjcceQrBB5+IY3y/+SlAQ0s74melzowEl9RBgXrM+SC/G9kRZ/nvtUIVsWIOzj9alyy2SzRzGm+uvg==}
+    peerDependencies:
+      fuels: ^0.101.0
+
+  bakosafe@0.2.0-beta.9:
+    resolution: {integrity: sha512-Wu68hyDJlOhS9fvvRmt3bEr+Hip4lo7+OHpKbXH0ZfKSMgQEXkIyFxoKPBiDE52BuRXEEd08wtOgEPnS29mf1A==}
     peerDependencies:
       fuels: ^0.101.0
 
@@ -16704,7 +16709,7 @@ snapshots:
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
       tslib: 1.14.1
-      uint8arrays: 3.1.0
+      uint8arrays: 3.1.1
 
   '@walletconnect/relay-auth@1.1.0':
     dependencies:
@@ -17319,7 +17324,7 @@ snapshots:
 
   '@walletconnect/window-metadata@1.0.0':
     dependencies:
-      '@walletconnect/window-getters': 1.0.0
+      '@walletconnect/window-getters': 1.0.1
 
   '@walletconnect/window-metadata@1.0.1':
     dependencies:
@@ -18149,6 +18154,25 @@ snapshots:
       - zod
 
   bakosafe@0.2.0-beta.6(bufferutil@4.0.9)(fuels@0.101.1(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4):
+    dependencies:
+      '@ethereumjs/util': 9.0.3
+      '@ethersproject/bytes': 5.7.0
+      '@noble/curves': 1.9.7
+      '@noble/secp256k1': 2.3.0
+      axios: 1.11.0(debug@4.4.1)
+      build: 0.1.4
+      fuels: 0.101.1(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      pnpm: 10.17.1
+      uuid: 9.0.1
+      viem: 2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - typescript
+      - utf-8-validate
+      - zod
+
+  bakosafe@0.2.0-beta.9(bufferutil@4.0.9)(fuels@0.101.1(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4):
     dependencies:
       '@ethereumjs/util': 9.0.3
       '@ethersproject/bytes': 5.7.0

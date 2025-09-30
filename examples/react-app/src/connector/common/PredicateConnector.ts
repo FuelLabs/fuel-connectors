@@ -21,11 +21,11 @@ import {
   Wallet,
   encodeSignature,
   getLatestPredicateVersion,
-  getTxIdEncoded,
   legacyConnectorVersion,
 } from 'bakosafe';
-import { ORIGIN, type PredicateWalletAdapter } from './';
+import { ORIGIN, type PredicateWalletAdapter, WINDOW } from './';
 import { SocketClient } from './SocketClient';
+import { StoreManager } from './StoreManager';
 import type {
   ConnectorConfig,
   Maybe,
@@ -40,52 +40,6 @@ import type {
 // Configuration constants
 const BAKO_SERVER_URL = 'https://stg-api.bako.global';
 // const BAKO_SERVER_URL = 'http://localhost:3333';
-const SELECTED_PREDICATE_KEY = 'fuel_selected_predicate_version';
-
-// Local storage keys for session management
-const STORAGE_KEYS = {
-  AUTH_PREFIX: 'connector',
-  DEFAULT_ACCOUNT: 'default',
-  SESSION_ID: 'sessionId',
-  ACCOUNT_VALIDATED: 'accountValidated',
-  CURRENT_ACCOUNT: 'currentAccount',
-  CURRENT_ACCOUNT_CONFIGURABLE: 'currentAccountConfigurable',
-
-  BAKO_PERSONAL_WALLET: 'bakoPersonalWallet',
-} as const;
-
-// TODO: increase this
-
-const bakosafe_encode = (txId: string, version: string) => {
-  // return txId.startsWith('0x') ? txId.slice(2) : txId;
-  return getTxIdEncoded(txId, version) as string;
-};
-
-const connector_encode = (txId: string) => {
-  return txId.startsWith('0x') ? txId : `0x${txId}`;
-};
-
-// TODO: We can improve this logic but it's working for all versions
-const TXID_ENCODE: Record<string, (txId: string) => string> = {
-  '0x967aaa71b3db34acd8104ed1d7ff3900e67cff3d153a0ffa86d85957f579aa6a': (
-    txId: string,
-  ) =>
-    bakosafe_encode(
-      txId,
-      '0x967aaa71b3db34acd8104ed1d7ff3900e67cff3d153a0ffa86d85957f579aa6a',
-    ),
-  '0xbbae06500cd11e6c1d024ac587198cb30c504bf14ba16548f19e21fa9e8f5f95':
-    connector_encode,
-  '0x3499b76bcb35d8bc68fb2fa74fbe1760461f64f0ac19890c0bacb69377ac19d2': (
-    txId: string,
-  ) =>
-    bakosafe_encode(
-      txId,
-      '0x3499b76bcb35d8bc68fb2fa74fbe1760461f64f0ac19890c0bacb69377ac19d2',
-    ),
-  '0xfdac03fc617c264fa6f325fd6f4d2a5470bf44cfbd33bc11efb3bf8b7ee2e938':
-    connector_encode,
-};
 
 /**
  * Abstract base class for predicate-based wallet connectors.
@@ -136,10 +90,8 @@ export abstract class PredicateConnector extends FuelConnector {
     this.initializeSocketClient();
 
     try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        const savedVersion = window.localStorage.getItem(
-          SELECTED_PREDICATE_KEY,
-        );
+      if (WINDOW) {
+        const savedVersion = StoreManager.get('SELECTED_PREDICATE_KEY');
         if (savedVersion) {
           this.selectedPredicateVersion = savedVersion;
         }
@@ -195,14 +147,11 @@ export abstract class PredicateConnector extends FuelConnector {
     const walletAddress = new Address(wallet.address.toB256()).toString();
 
     // Store Bako personal wallet data for predicate operations
-    localStorage.setItem(
-      STORAGE_KEYS.BAKO_PERSONAL_WALLET,
-      JSON.stringify({
-        address: wallet.address.toB256(),
-        configurable: wallet.getConfigurable(),
-        version: wallet.version,
-      }),
-    );
+    StoreManager.setPersonalWallet({
+      address: wallet.address.toB256(),
+      configurable: wallet.getConfigurable(),
+      version: wallet.version,
+    });
 
     this.emitAccountChange(walletAddress);
 
@@ -239,19 +188,9 @@ export abstract class PredicateConnector extends FuelConnector {
         bakoProvider,
       );
 
-      const version = vault.version;
-
-      const { tx, hashTxId } = await vault.BakoTransfer(transaction);
-
-      // Encode message according to predicate version requirements
-      // const messageToSign = getTxIdEncoded(hashTxId, vault.version);
-      const encoder = TXID_ENCODE[version];
-      if (!encoder) throw new Error(`Unsupported version: ${version}`);
-      const messageToSign = encoder(`0x${hashTxId}`);
-      console.log('messageToSign', messageToSign);
-
-      const signature = await this._sign_message(messageToSign as string);
-
+      const { tx, hashTxId, encodedTxId } =
+        await vault.BakoTransfer(transaction);
+      const signature = await this._sign_message(encodedTxId);
       const encodedSignature = encodeSignature(
         evmAddress,
         signature,
@@ -364,9 +303,7 @@ export abstract class PredicateConnector extends FuelConnector {
    * Gets all available accounts.
    */
   public async accounts(): Promise<Array<string>> {
-    const currentAccount = window.localStorage.getItem(
-      STORAGE_KEYS.CURRENT_ACCOUNT,
-    );
+    const currentAccount = StoreManager.get('CURRENT_ACCOUNT');
     return currentAccount ? [currentAccount] : [];
   }
 
@@ -377,7 +314,7 @@ export abstract class PredicateConnector extends FuelConnector {
     if (!this.connected) {
       return null;
     }
-    return window.localStorage.getItem(STORAGE_KEYS.CURRENT_ACCOUNT) ?? null;
+    return StoreManager.get('CURRENT_ACCOUNT') ?? null;
   }
 
   /**
@@ -388,11 +325,10 @@ export abstract class PredicateConnector extends FuelConnector {
     this.connected = false;
 
     try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        window.localStorage.removeItem(SELECTED_PREDICATE_KEY);
-        window.localStorage.removeItem(STORAGE_KEYS.CURRENT_ACCOUNT);
-        window.localStorage.removeItem(STORAGE_KEYS.DEFAULT_ACCOUNT);
-        window?.localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
+      if (WINDOW) {
+        StoreManager.remove('SELECTED_PREDICATE_KEY');
+        StoreManager.remove('CURRENT_ACCOUNT');
+        StoreManager.remove('SESSION_ID');
       }
       // todo: add disconnect dapp
       const bakoProvider = await this._createBakoProvider();
@@ -506,15 +442,12 @@ export abstract class PredicateConnector extends FuelConnector {
     const evmAddress = this._get_current_evm_address();
     const { fuelProvider } = await this._get_providers();
 
-    // TODO: Type local storage by keys
-    const configurable = JSON.parse(
-      localStorage.getItem(STORAGE_KEYS.BAKO_PERSONAL_WALLET) ?? '{}',
-    );
+    const bakoPersonalWallet = StoreManager.getPersonalWallet();
 
     return legacyConnectorVersion(
       evmAddress ?? '',
       fuelProvider.url,
-      configurable?.configurable.HASH_PREDICATE,
+      bakoPersonalWallet?.configurable.HASH_PREDICATE,
     );
   }
 
@@ -527,11 +460,10 @@ export abstract class PredicateConnector extends FuelConnector {
    * Generates or retrieves a session ID for the current session.
    */
   protected getSessionId(): string {
-    let sessionId =
-      window?.localStorage.getItem(STORAGE_KEYS.SESSION_ID) ?? null;
+    let sessionId = StoreManager.get('SESSION_ID') ?? null;
     if (!sessionId) {
       sessionId = crypto.randomUUID();
-      window?.localStorage.setItem(STORAGE_KEYS.SESSION_ID, sessionId);
+      StoreManager.set('SESSION_ID', sessionId);
     }
     return sessionId;
   }
@@ -554,7 +486,7 @@ export abstract class PredicateConnector extends FuelConnector {
     address: string | null = null,
     connected = true,
   ): void {
-    window.localStorage.setItem(STORAGE_KEYS.CURRENT_ACCOUNT, address ?? '');
+    StoreManager.set('CURRENT_ACCOUNT', address ?? '');
 
     this.emit(this.events.connection, connected);
     this.emit(this.events.currentAccount, address);
@@ -575,9 +507,7 @@ export abstract class PredicateConnector extends FuelConnector {
       throw new Error('No account address found');
     }
 
-    const bakoPersonalWallet = JSON.parse(
-      localStorage.getItem(STORAGE_KEYS.BAKO_PERSONAL_WALLET) ?? '{}',
-    );
+    const bakoPersonalWallet = StoreManager.getPersonalWallet();
 
     if (!bakoPersonalWallet) {
       throw new Error('No Bako personal wallet found');
@@ -656,8 +586,8 @@ export abstract class PredicateConnector extends FuelConnector {
     if (versionExists) {
       this.selectedPredicateVersion = versionId;
       try {
-        if (typeof window !== 'undefined' && window.localStorage) {
-          window.localStorage.setItem(SELECTED_PREDICATE_KEY, versionId);
+        if (WINDOW) {
+          StoreManager.set('SELECTED_PREDICATE_KEY', versionId);
         }
       } catch (error) {
         console.error(
@@ -672,7 +602,7 @@ export abstract class PredicateConnector extends FuelConnector {
 
   public getSelectedPredicateVersion(): Maybe<string> {
     return (
-      window.localStorage.getItem(SELECTED_PREDICATE_KEY) ??
+      StoreManager.get('SELECTED_PREDICATE_KEY') ??
       this.selectedPredicateVersion
     );
   }
@@ -788,17 +718,14 @@ export abstract class PredicateConnector extends FuelConnector {
     this.selectedPredicateVersion = predicateVersion;
 
     try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        window.localStorage.setItem(SELECTED_PREDICATE_KEY, predicateVersion);
+      if (WINDOW) {
+        StoreManager.set('SELECTED_PREDICATE_KEY', predicateVersion);
         await bakoProvider.changeAccount(
           this.getSessionId(),
           predicate.address.toString(),
         );
-        window.localStorage.setItem(
-          STORAGE_KEYS.CURRENT_ACCOUNT,
-          JSON.stringify(predicate.getConfigurable()),
-        );
-        this.emitAccountChange(predicate.address.toString());
+        StoreManager.set('CURRENT_ACCOUNT', predicate.address.toString());
+        this.emitAccountChange(predicate.address.toString(), true);
       }
     } catch (error) {
       console.error(
@@ -807,7 +734,6 @@ export abstract class PredicateConnector extends FuelConnector {
       );
     }
 
-    // return "";
     return this.predicateAccount;
   }
 
