@@ -1,6 +1,7 @@
+import './mockedWagmi';
 import path from 'node:path';
-import { MAINNET_NETWORK, PredicateFactory } from '@fuel-connectors/common';
-import { type Asset, type Network, Provider } from 'fuels';
+import { MAINNET_NETWORK } from '@fuel-connectors/bako-predicate-connector';
+import { type Asset, type Network, Provider, Wallet } from 'fuels';
 import { launchTestNode } from 'fuels/test-utils';
 import {
   afterAll,
@@ -14,7 +15,7 @@ import { WalletConnectConnector } from '../WalletConnectConnector';
 import { PREDICATE_VERSIONS } from './mockedPredicate';
 
 describe('WalletConnect Connector', () => {
-  const predicate = Object.values(PREDICATE_VERSIONS)[0]?.predicate;
+  const predicateVersion = Object.keys(PREDICATE_VERSIONS)[0];
   const snapshotPath = path.join(__dirname, '');
 
   let connector: WalletConnectConnector;
@@ -131,24 +132,37 @@ describe('WalletConnect Connector', () => {
   });
 
   describe('setupPredicate()', () => {
-    test('should setup predicate with given config', async () => {
-      const walletConectconnector = connectorFactory({
-        predicateConfig: predicate,
-      });
+    test('should setup predicate with selectedPredicateVersion when account is connected', async () => {
+      // @ts-expect-error setSelectedPredicateVersion is protected
+      connector.setSelectedPredicateVersion(predicateVersion);
 
-      // @ts-expect-error predicateConfig is protected
-      const predicateAccount = await walletConectconnector.setupPredicate();
+      const wallet = Wallet.generate({ provider: fuelProvider });
+      // @ts-expect-error emitAccountChange is protected
+      connector.emitAccountChange(wallet.address);
 
-      expect(predicateAccount).to.be.instanceOf(PredicateFactory);
+      // @ts-expect-error setupPredicate is protected
+      const vault = await connector.setupPredicate();
+
+      // @ts-expect-error predicateAccount is protected
+      expect(connector.predicateAccount).toBe(vault);
+      // @ts-expect-error predicateAddress is protected
+      expect(connector.predicateAddress).toBe(predicateVersion);
     });
 
-    test('Should setup predicate without given config', async () => {
-      const walletConectconnector = connectorFactory();
+    test('should setup predicate with the latest version if no version is specified when account is connected', async () => {
+      const wallet = Wallet.generate({ provider: fuelProvider });
+      // @ts-expect-error emitAccountChange is protected
+      connector.emitAccountChange(wallet.address);
 
-      // @ts-expect-error predicateConfig is protected
-      const predicateAccount = await walletConectconnector.setupPredicate();
+      // @ts-expect-error setupPredicate is protected
+      const vault = await connector.setupPredicate();
+      // @ts-expect-error _getLatestPredicateVersion is protected
+      const latestPredicateVersion = connector._getLatestPredicateVersion();
 
-      expect(predicateAccount).to.be.instanceOf(PredicateFactory);
+      // @ts-expect-error predicateAccount is protected
+      expect(connector.predicateAccount).toBe(vault);
+      // @ts-expect-error predicateAddress is protected
+      expect(connector.predicateAddress).toBe(latestPredicateVersion);
     });
   });
 

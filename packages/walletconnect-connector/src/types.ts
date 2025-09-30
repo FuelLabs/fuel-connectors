@@ -1,4 +1,4 @@
-import type { PredicateConfig } from '@fuel-connectors/common';
+import type { PredicateConfig } from '@fuel-connectors/bako-predicate-connector';
 import type { Config as WagmiConfig } from '@wagmi/core';
 import type {
   ConnectorEvent,

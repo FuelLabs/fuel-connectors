@@ -3,11 +3,6 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig((options) => ({
   ...baseConfig(options, { withReact: false }),
-  format: ['cjs'],
-  external: ['fuels'],
-  noExternal: ['@fuel-connectors/bako-predicate-connector'],
-  dts: {
-    resolve: ['@fuel-connectors/bako-predicate-connector'],
-  },
+  external: ['fuels', 'socket.io-client'],
   entry: ['src/index.ts'],
 }));

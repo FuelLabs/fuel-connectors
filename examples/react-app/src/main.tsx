@@ -18,8 +18,8 @@ import * as Toast from '@radix-ui/react-toast';
 import App from './App.tsx';
 import ScreenSizeIndicator from './components/screensize-indicator.tsx';
 import './index.css';
-import { CHAIN_IDS, type FuelConfig, Provider, bn } from 'fuels';
-import { WalletConnectConnector } from './connector';
+import { CHAIN_IDS, type FuelConfig, bn } from 'fuels';
+import { WalletConnectConnector } from '../../../packages/walletconnect-connector/src';
 import { defaultWalletConnectConfig } from './connector/wallet-connector';
 import { ConfigProvider } from './context/ConfigContext.tsx';
 
