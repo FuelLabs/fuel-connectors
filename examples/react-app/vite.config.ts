@@ -13,5 +13,23 @@ export default defineConfig({
     sourcemap: false,
     target: 'es2020',
     cssMinify: true,
+    rollupOptions: {
+      external: [
+        'crypto',
+        'stream',
+        'util',
+        'url',
+        'http',
+        'https',
+        'zlib',
+        'events',
+      ],
+    },
+  },
+  define: {
+    global: 'globalThis',
+  },
+  optimizeDeps: {
+    include: ['@fuels/connectors', '@fuels/react'],
   },
 });
