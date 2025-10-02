@@ -1,3 +1,4 @@
+import type { VaultConfig } from 'bakosafe';
 import type {
   BytesLike,
   Predicate as FuelPredicate,
@@ -117,6 +118,20 @@ export type SignedMessageCustomCurve = {
   curve: string;
   signature: string;
 };
+
+// ============================================================
+// Bako Safe types
+// ============================================================
+
+/**
+ * Personal wallet data stored in Bako Safe.
+ * Contains address, configuration, and version information.
+ */
+export interface BakoPersonalWalletData {
+  address: string;
+  configurable: VaultConfig & { HASH_PREDICATE?: string };
+  version: string;
+}
 
 // ============================================================
 // Configuration types

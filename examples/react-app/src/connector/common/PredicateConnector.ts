@@ -21,6 +21,7 @@ import {
   Wallet,
   encodeSignature,
   getLatestPredicateVersion,
+  getTxIdEncoded,
   legacyConnectorVersion,
 } from 'bakosafe';
 import { ORIGIN, type PredicateWalletAdapter, WINDOW } from './';
@@ -188,9 +189,10 @@ export abstract class PredicateConnector extends FuelConnector {
         bakoProvider,
       );
 
-      const { tx, hashTxId, encodedTxId } =
-        await vault.BakoTransfer(transaction);
-      const signature = await this._sign_message(encodedTxId);
+      const { tx, hashTxId } = await vault.BakoTransfer(transaction);
+      // Encode message according to predicate version requirements
+      const messageToSign = getTxIdEncoded(hashTxId, vault.version);
+      const signature = await this._sign_message(messageToSign as string);
       const encodedSignature = encodeSignature(
         evmAddress,
         signature,
@@ -363,8 +365,11 @@ export abstract class PredicateConnector extends FuelConnector {
   /**
    * Signs a message using the connected wallet.
    */
-  public async signMessage(_address: string, message: string): Promise<string> {
-    return await this._sign_message(message);
+  public async signMessage(
+    _address: string,
+    _message: string,
+  ): Promise<string> {
+    throw new Error('A predicate account cannot sign messages');
   }
 
   // ============================================================

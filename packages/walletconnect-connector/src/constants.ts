@@ -4,6 +4,3 @@ export const ETHEREUM_ICON =
 
 // 1 minute timeout for request signature
 export const SIGNATURE_VALIDATION_TIMEOUT = 1000 * 60;
-
-export const HAS_WINDOW = typeof window !== 'undefined';
-export const WINDOW = HAS_WINDOW ? window : null;

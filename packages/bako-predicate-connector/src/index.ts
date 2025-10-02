@@ -14,6 +14,9 @@ export * from './networks';
 // Utility functions
 export * from './utils';
 
+// Storage management
+export { StoreManager } from './StoreManager';
+
 // Type definitions
 export * from './types';
 

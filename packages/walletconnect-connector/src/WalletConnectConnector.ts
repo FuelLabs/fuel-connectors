@@ -20,18 +20,20 @@ import {
 import {
   type EIP1193Provider,
   EthereumWalletAdapter,
+  HAS_WINDOW,
   type Maybe,
   PredicateConnector,
   type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
+  WINDOW,
   getFuelPredicateAddresses,
   getOrThrow,
   getProviderUrl,
 } from '@fuel-connectors/bako-predicate-connector';
 
 import { ApiController } from '@web3modal/core';
-import { ETHEREUM_ICON, HAS_WINDOW, WINDOW } from './constants';
+import { ETHEREUM_ICON } from './constants';
 import type { WalletConnectConfig } from './types';
 import { getPredicateVersions, subscribeAndEnforceChain } from './utils';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
