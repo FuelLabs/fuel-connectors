@@ -5,9 +5,11 @@ import {
   useCurrentConnector,
   useWallet as useFuelWallet,
 } from '@fuels/react';
+import { useConfig } from '../context/ConfigContext';
 import { getConnectorLogo } from '../utils/getConnectorInfo';
 
 export const useWallet = () => {
+  const { assetId } = useConfig();
   const {
     connect,
     isConnected,
@@ -21,6 +23,7 @@ export const useWallet = () => {
   const currentConnector = {
     logo: connectImage,
     name: _currentConnector?.name ?? 'Wallet Demo',
+    connector: _currentConnector,
   };
   const {
     account,
@@ -34,6 +37,7 @@ export const useWallet = () => {
     refetch: refetchBalance,
   } = useBalance({
     account,
+    assetId,
     query: {
       refetchInterval: 5000,
       refetchOnWindowFocus: true,

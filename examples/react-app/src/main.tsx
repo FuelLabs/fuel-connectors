@@ -1,5 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { counter as COUNTER_CONTRACT_ID_LOCAL } from './types/contract-ids-local.json';
+import { counter as COUNTER_CONTRACT_ID_MAINNET } from './types/contract-ids-mainnet.json';
+import { counter as COUNTER_CONTRACT_ID_TESTNET } from './types/contract-ids-testnet.json';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
