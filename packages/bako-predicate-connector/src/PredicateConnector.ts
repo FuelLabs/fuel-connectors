@@ -5,7 +5,6 @@ import {
   type ConnectorMetadata,
   FuelConnector,
   FuelConnectorEventTypes,
-  type HashableMessage,
   type JsonAbi,
   type Network,
   type SelectNetworkArguments,
@@ -323,7 +322,7 @@ export abstract class PredicateConnector extends FuelConnector {
         StoreManager.remove('CURRENT_ACCOUNT');
         StoreManager.remove('SESSION_ID');
       }
-      // todo: add disconnect dapp
+
       const bakoProvider = await this._createBakoProvider();
       await bakoProvider.disconnect(this.getSessionId());
     } catch (error) {
