@@ -43,7 +43,7 @@ describe('Bako Predicated Connector', () => {
 
   describe('setupPredicate()', () => {
     test('custom predicate', async () => {
-      const providersSpy = vi
+      const getProvidersSpy = vi
         // biome-ignore lint/suspicious/noExplicitAny: using any to mock function
         .spyOn(connector as any, '_get_providers')
         .mockResolvedValue({
@@ -60,13 +60,6 @@ describe('Bako Predicated Connector', () => {
       // @ts-expect-error customPredicate is protected
       connector.customPredicate = Object.values(versions)[0];
 
-      // biome-ignore lint/suspicious/noExplicitAny: using any to mock function
-      vi.spyOn(connector as any, '_get_providers').mockImplementation(
-        async () => ({
-          fuelProvider,
-        }),
-      );
-
       // @ts-expect-error setupPredicate is protected
       const predicateAccount = await connector.setupPredicate();
 
@@ -74,7 +67,7 @@ describe('Bako Predicated Connector', () => {
       // @ts-expect-error predicateAccount is protected
       expect(connector.predicateAccount).toBe(predicateAccount);
 
-      providersSpy.mockRestore();
+      getProvidersSpy.mockRestore();
     });
   });
 
