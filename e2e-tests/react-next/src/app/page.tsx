@@ -6,7 +6,10 @@ import { http, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
 import { CHAIN_IDS, Provider, bn } from 'fuels';
 import App from 'react-app/src/App';
-import { ConfigProvider } from 'react-app/src/context/ConfigContext';
+import {
+  type Config,
+  ConfigProvider,
+} from 'react-app/src/context/ConfigContext';
 import COUNTER_CONTRACT_ID_LOCAL from 'react-app/src/types/contract-ids-local.json';
 import COUNTER_CONTRACT_ID_MAINNET from 'react-app/src/types/contract-ids-mainnet.json';
 import COUNTER_CONTRACT_ID_TESTNET from 'react-app/src/types/contract-ids-testnet.json';
@@ -15,6 +18,17 @@ const CHAIN_ID_NAME = process.env
   .NEXT_PUBLIC_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel;
 const CHAIN_ID = CHAIN_IDS.fuel[CHAIN_ID_NAME] || 0;
 const PROVIDER_URL = process.env.NEXT_PUBLIC_PROVIDER_URL;
+
+const CUSTOM_TRANSFER_AMOUNT = process.env.NEXT_PUBLIC_CUSTOM_TRANSFER_AMOUNT;
+const FALLBACK_TRANSFER_AMOUNT =
+  CHAIN_ID_NAME === 'mainnet' ? '0.000000001' : '0.0001';
+const DEFAULT_AMOUNT = bn.parseUnits(
+  CUSTOM_TRANSFER_AMOUNT ?? FALLBACK_TRANSFER_AMOUNT,
+);
+
+const CUSTOM_ASSET_ID = process.env.NEXT_PUBLIC_CUSTOM_ASSET_ID ?? undefined;
+const CUSTOM_ASSET_SYMBOL =
+  process.env.NEXT_PUBLIC_CUSTOM_ASSET_SYMBOL ?? 'ETH';
 
 if (!PROVIDER_URL) {
   throw new Error(`PROVIDER_URL is not set: ${PROVIDER_URL}`);
@@ -87,16 +101,16 @@ const FUEL_CONFIG = {
   }),
 };
 
-const config = {
+const config: Config = {
   explorerUrl:
     EXPLORER_URL_MAP[CHAIN_ID_NAME as keyof typeof EXPLORER_URL_MAP] ||
     EXPLORER_LOCAL_URL,
   providerUrl: PROVIDER_URL,
   counterContractId: getContractId(),
   chainIdName: CHAIN_ID_NAME,
-  defaultAmount: bn.parseUnits(
-    CHAIN_ID_NAME === 'mainnet' ? '0.000000001' : '0.0001',
-  ),
+  defaultAmount: DEFAULT_AMOUNT,
+  assetId: CUSTOM_ASSET_ID,
+  assetSymbol: CUSTOM_ASSET_SYMBOL,
 };
 
 export default function Page() {

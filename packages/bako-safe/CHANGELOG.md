@@ -1,5 +1,13 @@
 # @fuel-connectors/bako-safe
 
+## 0.44.1
+
+## 0.44.0
+
+### Minor Changes
+
+- [#517](https://github.com/FuelLabs/fuel-connectors/pull/517) [`e3455ef`](https://github.com/FuelLabs/fuel-connectors/commit/e3455ef556ec82587d7755e09615270ac3c2071d) Thanks [@luisburigo](https://github.com/luisburigo)! - feat(bako): implement select network method and remove connection state polling
+
 ## 0.43.2
 
 ## 0.43.1

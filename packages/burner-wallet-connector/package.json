@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/burner-wallet-connector",
-  "version": "0.43.2",
+  "version": "0.44.1",
   "private": true,
   "type": "module",
   "types": "./dist/index.d.ts",
@@ -14,7 +14,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": "0.101.1"
+    "fuels": "0.101.3"
   },
   "devDependencies": {
     "@fuel-connectors/common": "workspace:*",

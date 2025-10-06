@@ -1,6 +1,6 @@
 {
   "name": "@fuel-connectors/bako-predicate-connector",
-  "version": "0.43.2",
+  "version": "0.44.1",
   "private": true,
   "files": ["dist"],
   "main": "./dist/index.js",
@@ -20,7 +20,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "fuels": "0.101.1"
+    "fuels": "0.101.3"
   },
   "dependencies": {
     "@ethersproject/bytes": "5.7.0",

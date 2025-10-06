@@ -10,10 +10,10 @@ import type { Web3Modal } from '@web3modal/wagmi';
 import {
   CHAIN_IDS,
   type ConnectorMetadata,
-  type ConsolidateCoins,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
   LocalStorage,
+  type StartConsolidateCoins,
   type StorageAbstract,
 } from 'fuels';
 
@@ -310,8 +310,8 @@ export class WalletConnectConnector extends PredicateConnector {
   /**
    * @inheritdoc
    */
-  async _start_consolidation(opts: ConsolidateCoins): Promise<void> {
-    this.emit('consolidateCoins' as unknown as string, opts);
+  async startConsolidation(opts: StartConsolidateCoins): Promise<void> {
+    this.emit(FuelConnectorEventTypes.consolidateCoins, opts);
   }
 
   // ============================================================
