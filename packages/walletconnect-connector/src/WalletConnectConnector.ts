@@ -388,7 +388,6 @@ export class WalletConnectConnector extends PredicateConnector {
    * Handles the wallet connection logic.
    */
   public async _connect(): Promise<boolean> {
-    console.log('[CONNECT] Connecting to Ethereum Wallets...');
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
 
@@ -400,29 +399,24 @@ export class WalletConnectConnector extends PredicateConnector {
         if (connector) {
           const provider = await connector.getProvider();
           if (provider) {
-            console.log('[CONNECT] Already connected with valid connection');
             return true;
           }
         }
       }
     } catch {
-      console.log(
-        '[CONNECT] Existing connection is invalid, proceeding with new connection',
+      console.error(
+        'Existing connection is invalid, proceeding with new connection',
       );
     }
-
-    console.log('[CONNECT] Creating Web3Modal instance...');
 
     // Create and display the modal
     this.createModal();
     this.web3Modal.open();
 
-    console.log('[CONNECT] Waiting for connection...');
     return new Promise<boolean>((resolve) => {
       const unsub = this.web3Modal.subscribeEvents(async (event) => {
         switch (event.data.event) {
           case 'MODAL_OPEN':
-            console.log('[CONNECT] Modal opened');
             this.createModal();
             break;
 
