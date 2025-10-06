@@ -70,7 +70,7 @@ export class TestPredicatedConnector extends PredicateConnector {
   }
 
   protected _get_current_evm_address(): Maybe<string> {
-    throw new Error('Method not implemented.');
+    return '0x1111111111111111111111111111111111111111';
   }
 
   protected _require_connection(): MaybeAsync<void> {
