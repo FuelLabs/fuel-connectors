@@ -93,7 +93,6 @@ export class EVMWalletConnector extends PredicateConnector {
   }
 
   private async setup() {
-    console.log('Setting up EVM Wallet Connector...');
     if (this.setupLock) return;
     this.setupLock = true;
 
@@ -162,7 +161,6 @@ export class EVMWalletConnector extends PredicateConnector {
   }
 
   protected async getProviders(): Promise<ProviderDictionary> {
-    console.log('Getting providers...');
     if (!this.fuelProvider || !this.ethProvider) {
       this.ethProvider = getOrThrow(
         await this.getLazyEthereum(),
@@ -192,7 +190,6 @@ export class EVMWalletConnector extends PredicateConnector {
   }
 
   public async connect(): Promise<boolean> {
-    console.log('Connecting to EVM wallet...');
     if (!(await this.isConnected())) {
       const { ethProvider } = await this.getProviders();
 
@@ -246,12 +243,10 @@ export class EVMWalletConnector extends PredicateConnector {
       await this.prepareTransaction(address, transaction);
 
     const txId = this.encodeTxId(transactionId);
-    console.log(`Sending transaction to predicate: ${txId}`);
     const signature = (await ethProvider?.request({
       method: 'personal_sign',
       params: [txId, account],
     })) as string;
-    console.log(signature);
 
     const predicateSignatureIndex = getMockedSignatureIndex(
       transactionRequest.witnesses,
@@ -259,7 +254,6 @@ export class EVMWalletConnector extends PredicateConnector {
 
     // Transform the signature into compact form for Sway to understand
     const compactSignature = splitSignature(hexToBytes(signature)).compact;
-    console.log(compactSignature);
     transactionRequest.witnesses[predicateSignatureIndex] = compactSignature;
 
     const transactionWithPredicateEstimated =
