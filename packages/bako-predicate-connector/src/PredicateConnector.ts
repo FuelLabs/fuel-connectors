@@ -305,7 +305,7 @@ export abstract class PredicateConnector extends FuelConnector {
    */
   public async currentAccount(): Promise<string | null> {
     if (!this.connected) {
-      return null;
+      throw Error('No connected accounts');
     }
     return StoreManager.get('CURRENT_ACCOUNT') ?? null;
   }
