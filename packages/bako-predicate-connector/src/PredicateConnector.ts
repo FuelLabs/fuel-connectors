@@ -443,7 +443,7 @@ export abstract class PredicateConnector extends FuelConnector {
     return legacyConnectorVersion(
       evmAddress ?? '',
       fuelProvider.url,
-      bakoPersonalWallet?.configurable.HASH_PREDICATE,
+      bakoPersonalWallet?.configurable?.HASH_PREDICATE,
     );
   }
 
