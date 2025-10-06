@@ -24,12 +24,6 @@ type DefaultConnectors = {
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
 };
 
-// use bakoProvider no lugar de fuel provider
-// atualize somente a classe de base (abstract)
-//    - abstract interage com BakoProvider (auth, sign, send, open modal)
-
-//    - em alguns casos, é necessário que a subclasse atualize/interaja com o provider (extensao)
-//    e chame o super.fn_mesma_assinatura()
 export function defaultConnectors({
   devMode,
   wcProjectId,
