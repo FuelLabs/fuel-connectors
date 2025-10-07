@@ -286,14 +286,9 @@ export class WalletConnectConnector extends PredicateConnector {
     this.emit(FuelConnectorEventTypes.consolidateCoins, opts);
   }
 
-  // ============================================================
-  // Abstract method implementations
-  // ============================================================
-
   /**
    * Configures providers based on connector configuration.
    */
-
   protected async _config_providers(config: WalletConnectConfig = {}) {
     return this.configProviders(config);
   }
@@ -301,7 +296,6 @@ export class WalletConnectConnector extends PredicateConnector {
   /**
    * Gets the current EVM address from the connected wallet.
    */
-
   protected _get_current_evm_address(): Maybe<string> {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) return null;
@@ -312,7 +306,6 @@ export class WalletConnectConnector extends PredicateConnector {
   /**
    * Checks if there is an active connection, throws if not.
    */
-
   protected async _require_connection() {
     return this.requireConnection();
   }
@@ -320,7 +313,6 @@ export class WalletConnectConnector extends PredicateConnector {
   /**
    * Gets the configured providers (Fuel and EVM).
    */
-
   protected async _get_providers(): Promise<ProviderDictionary> {
     return this.getProviders();
   }
@@ -328,7 +320,6 @@ export class WalletConnectConnector extends PredicateConnector {
   /**
    * Signs a message using the connected wallet.
    */
-
   protected async _sign_message(message: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       const { ethProvider } = await this._get_providers();
