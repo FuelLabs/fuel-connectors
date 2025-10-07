@@ -1,4 +1,3 @@
-import path from 'node:path';
 import { type Asset, type Network, type Provider, Wallet } from 'fuels';
 import { launchTestNode } from 'fuels/test-utils';
 import {
@@ -13,21 +12,12 @@ import {
 import { TestPredicatedConnector } from './testConnector';
 
 describe('Bako Predicated Connector', () => {
-  const snapshotPath = path.join(__dirname, '');
-
   let fuelProvider: Provider;
   let stopProvider: () => void;
   let connector: TestPredicatedConnector;
 
   beforeAll(async () => {
-    process.env.GENESIS_SECRET =
-      '0x6e48a022f9d4ae187bca4e2645abd62198ae294ee484766edbdaadf78160dc68';
-    const { cleanup, provider } = await launchTestNode({
-      nodeOptions: {
-        args: ['--snapshot', snapshotPath],
-        loggingEnabled: false,
-      },
-    });
+    const { cleanup, provider } = await launchTestNode();
 
     fuelProvider = provider;
     stopProvider = cleanup;
