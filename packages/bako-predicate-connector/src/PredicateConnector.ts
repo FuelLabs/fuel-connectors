@@ -37,7 +37,6 @@ import type {
   SignedMessageCustomCurve,
 } from './types';
 
-// Configuration constants
 const BAKO_SERVER_URL = 'https://stg-api.bako.global';
 // const BAKO_SERVER_URL = 'http://localhost:3333';
 
@@ -47,13 +46,11 @@ const BAKO_SERVER_URL = 'https://stg-api.bako.global';
  * and provides template methods for wallet-specific implementations.
  */
 export abstract class PredicateConnector extends FuelConnector {
-  // Connection state
   public connected = false;
   public installed = false;
   public external = true;
   public events = FuelConnectorEventTypes;
 
-  // Protected properties for internal state management
   protected predicateAddress!: string;
   protected customPredicate: Maybe<PredicateConfig>;
   protected predicateAccount: Maybe<Vault> = null;
@@ -61,10 +58,8 @@ export abstract class PredicateConnector extends FuelConnector {
   protected hasProviderSucceeded = true;
   protected selectedPredicateVersion: Maybe<string> = null;
 
-  // Socket client for real-time communication with Bako Safe
   protected socketClient: Maybe<SocketClient> = null;
 
-  // Abstract properties that subclasses must implement
   public abstract name: string;
   public abstract metadata: ConnectorMetadata;
 
@@ -205,10 +200,6 @@ export abstract class PredicateConnector extends FuelConnector {
     }
   }
 
-  // ============================================================
-  // Abstract methods to be implemented by subclasses
-  // ============================================================
-
   /**
    * Signs a message using the connected wallet.
    * @param message - Message to be signed
@@ -252,10 +243,6 @@ export abstract class PredicateConnector extends FuelConnector {
    * Called by the disconnect() method.
    */
   protected abstract _disconnect(): Promise<boolean>;
-
-  // ============================================================
-  // Base methods implemented (can be overridden if needed)
-  // ============================================================
 
   /**
    * Health check method to verify provider availability.
@@ -362,10 +349,6 @@ export abstract class PredicateConnector extends FuelConnector {
     throw new Error('A predicate account cannot sign messages');
   }
 
-  // ============================================================
-  // Unimplemented methods (throw errors as expected)
-  // ============================================================
-
   public async addAssets(_assets: Asset[]): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
@@ -399,10 +382,6 @@ export abstract class PredicateConnector extends FuelConnector {
   public async hasAbi(_contractId: string): Promise<boolean> {
     throw new Error('A predicate account cannot have an ABI');
   }
-
-  // ============================================================
-  // Private helper methods
-  // ============================================================
 
   /**
    * Initializes the socket client for real-time communication.
