@@ -41,7 +41,7 @@ interface VersionsData {
 }
 
 /**
- * Script para fazer deploy de todas as versões de vault existentes
+ * Script to deploy all existing vault versions
  */
 class PredicateDeployer {
   private readonly EVM_PREDICATES_PATH =
@@ -62,44 +62,44 @@ class PredicateDeployer {
   };
 
   /**
-   * Executa o deploy de todas as versões de predicates
+   * Deploys all versions of predicates
    */
   async run(): Promise<void> {
-    console.log('🚀 Iniciando deploy de todas as versões de vault...');
+    console.log('🚀 Starting deployment of all vault versions...');
 
     const results: DeployResult[] = [];
 
-    // Processar predicates EVM
-    console.log('\n📦 Processando predicates EVM...');
+    // Process EVM predicates
+    console.log('\n📦 Processing EVM predicates...');
     const evmResults = await this.deployPredicates(
       'EVM',
       this.EVM_PREDICATES_PATH,
     );
     results.push(...evmResults);
 
-    // Processar predicates Solana
-    console.log('\n📦 Processando predicates Solana...');
+    // Process Solana predicates
+    console.log('\n📦 Processing Solana predicates...');
     const solanaResults = await this.deployPredicates(
       'Solana',
       this.SOLANA_PREDICATES_PATH,
     );
     results.push(...solanaResults);
 
-    // Gerar arquivo versions.json
-    console.log('\n📋 Gerando arquivo versions.json...');
+    // Generate versions.json file
+    console.log('\n📋 Generating versions.json file...');
     await this.generateVersionsFile(results);
 
-    console.log('\n🎯 Deploy concluído!');
-    console.log(`   Total de predicates processados: ${results.length}`);
+    console.log('\n🎯 Deployment complete!');
+    console.log(`   Total predicates processed: ${results.length}`);
     console.log(
-      `   Deploy bem-sucedidos: ${results.filter((r) => r.deployed).length}`,
+      `   Successful deployments: ${results.filter((r) => r.deployed).length}`,
     );
-    console.log(`   Erros: ${results.filter((r) => !r.deployed).length}`);
-    console.log(`   Arquivo gerado: ${this.OUTPUT_FILE}`);
+    console.log(`   Errors: ${results.filter((r) => !r.deployed).length}`);
+    console.log(`   Generated file: ${this.OUTPUT_FILE}`);
   }
 
   /**
-   * Faz deploy dos predicates de um tipo específico
+   * Deploys predicates of a specific type
    */
   private async deployPredicates(
     type: string,
@@ -109,21 +109,18 @@ class PredicateDeployer {
 
     try {
       if (!existsSync(path)) {
-        console.log(`⚠️  Arquivo não encontrado: ${path}`);
+        console.log(`⚠️  File not found: ${path}`);
         return results;
       }
 
-      // Importar as versões dos predicates
       const predicateVersions = await this.importPredicateVersions(path);
 
       console.log(
-        `   Encontrados ${
-          Object.keys(predicateVersions).length
-        } predicates ${type}`,
+        `   Found ${Object.keys(predicateVersions).length} predicates ${type}`,
       );
 
       for (const [predicateId, version] of Object.entries(predicateVersions)) {
-        console.log(`   🚀 Deployando ${predicateId}...`);
+        console.log(`   🚀 Deploying ${predicateId}...`);
 
         try {
           const result = await this.deploySinglePredicate(
@@ -134,14 +131,14 @@ class PredicateDeployer {
           results.push(result);
 
           if (result.deployed) {
-            console.log(`   ✅ Deploy bem-sucedido: ${predicateId}`);
+            console.log(`   ✅ Deployment successful: ${predicateId}`);
           } else {
             console.log(
-              `   ❌ Erro no deploy: ${predicateId} - ${result.error}`,
+              `   ❌ Deployment error: ${predicateId} - ${result.error}`,
             );
           }
         } catch (error) {
-          console.log(`   ❌ Erro inesperado: ${predicateId} - ${error}`);
+          console.log(`   ❌ Unexpected error: ${predicateId} - ${error}`);
           results.push({
             predicateId,
             deployed: false,
@@ -152,30 +149,29 @@ class PredicateDeployer {
         }
       }
     } catch (error) {
-      console.error(`❌ Erro ao processar predicates ${type}:`, error);
+      console.error(`❌ Error processing predicates ${type}:`, error);
     }
 
     return results;
   }
 
   /**
-   * Importa as versões dos predicates do arquivo gerado
+   * Imports the versions of the predicates from the generated file
    */
   private async importPredicateVersions(
     path: string,
   ): Promise<Record<string, PredicateVersion>> {
     try {
-      // Importar dinamicamente o módulo
       const module = await import(join(process.cwd(), path));
       return module.PREDICATE_VERSIONS || {};
     } catch (error) {
-      console.error(`❌ Erro ao importar predicates de ${path}:`, error);
+      console.error(`❌ Error importing predicates from ${path}:`, error);
       return {};
     }
   }
 
   /**
-   * Faz deploy de um predicate individual
+   * Deploy an individual predicate
    */
   private async deploySinglePredicate(
     predicateId: string,
@@ -183,21 +179,19 @@ class PredicateDeployer {
     _type: string,
   ): Promise<DeployResult> {
     try {
-      const provider = new Provider(this.NETWORKS[0]); // Usar testnet para deploy
+      const provider = new Provider(this.NETWORKS[0]); // Use testnet for deployment
 
-      // Criar predicate
       const predicate = new Predicate({
         bytecode: arrayify(version.predicate.bin),
         abi: version.predicate.abi,
         provider,
       });
 
-      // Simular deploy (em um ambiente real, você faria o deploy real aqui)
+      // Simulate deployment (in a real environment, you would perform the actual deployment here)
       console.log(`     📝 Predicate criado: ${predicate.address.toB256()}`);
 
-      // Para demonstração, vamos simular um deploy bem-sucedido
-      // Em produção, você faria o deploy real aqui
-
+      // For demonstration purposes, let's simulate a successful deployment
+      // In production, you would do the actual deployment here
       return {
         predicateId,
         deployed: true,
@@ -216,14 +210,13 @@ class PredicateDeployer {
   }
 
   /**
-   * Gera o arquivo versions.json com os resultados dos deploys
+   * Generates the versions.json file with the results of the deploys
    */
   private async generateVersionsFile(results: DeployResult[]): Promise<void> {
     const versionsData: VersionsData = {};
 
     for (const result of results) {
       if (result.deployed) {
-        // Importar dados do predicate
         const predicateData = await this.getPredicateData(result.predicateId);
 
         if (predicateData) {
@@ -239,13 +232,12 @@ class PredicateDeployer {
       }
     }
 
-    // Salvar arquivo
     writeFileSync(this.OUTPUT_FILE, JSON.stringify(versionsData, null, 2));
-    console.log(`   📄 Arquivo salvo: ${this.OUTPUT_FILE}`);
+    console.log(`   📄 Saved file: ${this.OUTPUT_FILE}`);
   }
 
   /**
-   * Obtém os dados de um predicate específico
+   * Get data from a specific predicate
    */
   private async getPredicateData(predicateId: string): Promise<{
     bytecode: string;
@@ -253,7 +245,7 @@ class PredicateDeployer {
     type: string;
   } | null> {
     try {
-      // Tentar importar do EVM predicates
+      // Attempt to import from EVM predicates
       const evmPath = `packages/evm-predicates/src/generated/predicates/${predicateId}/index.ts`;
       if (existsSync(evmPath)) {
         const module = await import(join(process.cwd(), evmPath));
@@ -264,7 +256,7 @@ class PredicateDeployer {
         };
       }
 
-      // Tentar importar do Solana predicates
+      // Attempt to import from Solana predicates
       const solanaPath = `packages/solana-connector/src/generated/predicates/${predicateId}/index.ts`;
       if (existsSync(solanaPath)) {
         const module = await import(join(process.cwd(), solanaPath));
@@ -278,7 +270,7 @@ class PredicateDeployer {
       return null;
     } catch (error) {
       console.error(
-        `❌ Erro ao obter dados do predicate ${predicateId}:`,
+        `❌ Error retrieving data from predicate ${predicateId}:`,
         error,
       );
       return null;
@@ -286,7 +278,6 @@ class PredicateDeployer {
   }
 }
 
-// Executar o script
 async function main() {
   const deployer = new PredicateDeployer();
   await deployer.run();
