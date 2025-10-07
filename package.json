@@ -25,8 +25,6 @@
     "lint:check": "biome check --apply-unsafe .",
     "lint:ci": "biome lint --max-diagnostics=1000 --diagnostic-level=error .",
     "format": "biome format --write .",
-    "predicates:instantiate": "tsx scripts/instantiate-predicates.ts",
-    "predicates:deploy": "tsx scripts/predicateDeploy.ts",
     "changeset": "changeset",
     "changeset:empty": "changeset --empty",
     "changeset:release": "changeset publish --no-git-tag",
