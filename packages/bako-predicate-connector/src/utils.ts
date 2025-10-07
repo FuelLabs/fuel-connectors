@@ -2,10 +2,6 @@ import { Address, Predicate, getPredicateRoot } from 'fuels';
 import type { Hex } from 'viem';
 import type { Maybe, PredicateConfig } from './types';
 
-// ============================================================
-// Utility functions
-// ============================================================
-
 /**
  * Throws an error if the value is null or undefined.
  * Useful for runtime type checking and error handling.
@@ -38,9 +34,6 @@ export const HAS_WINDOW = typeof window !== 'undefined' && window.localStorage;
 export const WINDOW = HAS_WINDOW ? window : null;
 
 export const ORIGIN = WINDOW ? WINDOW.location.origin : 'testmode';
-// ============================================================
-// Predicate utility functions
-// ============================================================
 
 /**
  * Generates Fuel predicate addresses based on signer address and predicate configuration.
@@ -64,12 +57,8 @@ export const getFuelPredicateAddresses = ({
 }: {
   predicate: PredicateConfig;
 }): Hex => {
-  // Process predicate data to generate predicate bytes
-  // Note: processPredicateData is only available in the Predicate class
   // @ts-expect-error processPredicateData is only available in the Predicate class
   const { predicateBytes } = Predicate.processPredicateData(bin, abi);
-
-  // Convert predicate bytes to Fuel address format
   const predicateRoot = getPredicateRoot(predicateBytes);
   return Address.fromB256(predicateRoot).toString() as Hex;
 };

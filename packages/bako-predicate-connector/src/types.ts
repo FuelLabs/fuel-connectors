@@ -8,10 +8,6 @@ import type {
   TransactionRequest,
 } from 'fuels';
 
-// ============================================================
-// Utility types
-// ============================================================
-
 /**
  * Represents a value that might be undefined or null.
  */
@@ -32,10 +28,6 @@ export type Hash = `0x${string}`;
  * Represents a value that might be async or sync.
  */
 export type MaybeAsync<T> = Promise<T> | T;
-
-// ============================================================
-// Predicate-related types
-// ============================================================
 
 /**
  * Configuration for a custom predicate.
@@ -67,10 +59,6 @@ export interface PredicateVersionWithMetadata {
   accountAddress?: string;
 }
 
-// ============================================================
-// Provider types
-// ============================================================
-
 /**
  * EIP-1193 compatible provider interface.
  * Extends EventEmitter for event handling.
@@ -80,8 +68,6 @@ export interface EIP1193Provider {
     method: string;
     params?: unknown[];
   }): Promise<unknown | unknown[]>;
-
-  // Event emitter methods
   on(event: string, listener: (...args: unknown[]) => void): this;
   off(event: string, listener: (...args: unknown[]) => void): this;
   emit(event: string, ...args: unknown[]): boolean;
@@ -95,10 +81,6 @@ export type ProviderDictionary = {
   ethProvider?: EIP1193Provider;
   [key: string]: Maybe<Option<FuelProvider, EIP1193Provider>>;
 };
-
-// ============================================================
-// Transaction types
-// ============================================================
 
 /**
  * Prepared transaction with predicate information.
@@ -119,10 +101,6 @@ export type SignedMessageCustomCurve = {
   signature: string;
 };
 
-// ============================================================
-// Bako Safe types
-// ============================================================
-
 /**
  * Personal wallet data stored in Bako Safe.
  * Contains address, configuration, and version information.
@@ -132,10 +110,6 @@ export interface BakoPersonalWalletData {
   configurable: VaultConfig & { HASH_PREDICATE?: string };
   version: string;
 }
-
-// ============================================================
-// Configuration types
-// ============================================================
 
 /**
  * Base configuration for connectors.

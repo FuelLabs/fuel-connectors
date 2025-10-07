@@ -1,9 +1,5 @@
 import { CHAIN_IDS, type Network } from 'fuels';
 
-// ============================================================
-// Network configurations
-// ============================================================
-
 /**
  * Testnet network configuration for Fuel.
  */
@@ -36,10 +32,6 @@ export const AVAILABLE_NETWORKS: Network[] = [
   DEVNET_NETWORK,
   MAINNET_NETWORK,
 ];
-
-// ============================================================
-// Network utility functions
-// ============================================================
 
 /**
  * Gets the provider URL for a given chain ID.

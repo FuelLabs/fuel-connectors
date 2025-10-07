@@ -1,30 +1,9 @@
-// ============================================================
-// Common connector exports
-// ============================================================
-
-// Core connector classes
 export { PredicateConnector } from './PredicateConnector';
-
-// Socket client for real-time communication
 export { SocketClient } from './SocketClient';
-
-// Network configurations and utilities
 export * from './networks';
-
-// Utility functions
 export * from './utils';
-
-// Storage management
 export { StoreManager } from './StoreManager';
-
-// Type definitions
 export * from './types';
-
-// Fake account
 export * from './FakeAccount';
-
-// Predicate wallet adapter
 export * from './PredicateWalletAdapter';
-
-// Predicate factory
 export * from './PredicateFactory';

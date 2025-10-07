@@ -1,48 +1,32 @@
 import type { EventEmitter } from 'node:events';
 import { type Socket, io } from 'socket.io-client';
 
-// Configuration constants
 export const SOCKET_URL = 'https://api.bako.global';
 export const APP_URL = 'https://safe.bako.global';
 
-// Environment detection
 export const HAS_WINDOW = typeof window !== 'undefined';
 export const WINDOW: Window | Record<string, never> = HAS_WINDOW ? window : {};
 
-// Event types for Bako Safe communication
 export enum BakoSafeConnectorEvents {
-  // Default events
   DEFAULT = 'message',
-
-  // Client events
   CLIENT_DISCONNECTED = '[CLIENT_DISCONNECTED]',
   CLIENT_CONNECTED = '[CONNECTED]',
-
-  // Transaction events
   TX_PENDING = '[TX_EVENT_REQUESTED]',
   TX_CONFIRMED = '[TX_EVENT_CONFIRMED]',
   TX_TIMEOUT = '[TX_EVENT_TIMEOUT]',
-
-  // Network events
   CHANGE_NETWORK = '[CHANGE_NETWORK]',
   NETWORK_CHANGED = '[NETWORK_CHANGED]',
-
-  // Authentication events
   AUTH_CONFIRMED = '[AUTH_CONFIRMED]',
-
-  // Connection events
   CONNECTION_STATE = '[CONNECTION_STATE]',
   DISCONNECT = '[DISCONNECT]',
 }
 
-// Username identifiers for different components
 export enum BakoSafeUsernames {
   CONNECTOR = '[CONNECTOR]',
   CLIENT = '[UI]',
   SERVER = '[API]',
 }
 
-// Type definitions
 export interface ISocketAuth {
   username: string;
   data: Date;
@@ -64,7 +48,7 @@ export interface ICreateClientSocket {
 }
 
 export interface IRequestTxPending {
-  _transaction: unknown; // TransactionRequestLike from fuels
+  _transaction: unknown;
   _address: string;
 }
 
@@ -76,7 +60,6 @@ export interface IResponseAuthConfirmed {
   connected: boolean;
 }
 
-// Default socket authentication configuration
 const DEFAULT_SOCKET_AUTH: Omit<ISocketAuth, 'sessionId'> = {
   username: BakoSafeUsernames.CONNECTOR,
   data: new Date(),
@@ -89,11 +72,8 @@ const DEFAULT_SOCKET_AUTH: Omit<ISocketAuth, 'sessionId'> = {
  */
 export class SocketClient {
   private static instance: SocketClient | null = null;
-
-  // Connection state
   private isConnecting = false;
 
-  // Public properties
   public server: Socket;
   public events: EventEmitter;
   public requestId: string;
@@ -102,7 +82,6 @@ export class SocketClient {
     this.requestId = crypto.randomUUID();
     this.events = events;
 
-    // Initialize socket connection
     this.server = io(SOCKET_URL, {
       auth: {
         ...DEFAULT_SOCKET_AUTH,
@@ -165,10 +144,6 @@ export class SocketClient {
     this.isConnecting = false;
   }
 
-  // ============================================================
-  // Private helper methods
-  // ============================================================
-
   /**
    * Sets up event listeners for socket events.
    */
@@ -184,7 +159,6 @@ export class SocketClient {
       console.error('[SocketClient] Connection error');
     });
 
-    // Message handling
     this.server.on(
       BakoSafeConnectorEvents.DEFAULT,
       (data: ISocketMessage<IResponseTxConfirmed | IResponseAuthConfirmed>) => {
