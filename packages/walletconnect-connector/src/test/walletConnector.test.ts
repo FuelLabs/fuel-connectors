@@ -1,15 +1,16 @@
-import './mockedWagmi';
 import path from 'node:path';
 import { MAINNET_NETWORK } from '@fuel-connectors/bako-predicate-connector';
 import { type Asset, type Network, Provider, Wallet } from 'fuels';
 import { launchTestNode } from 'fuels/test-utils';
 import {
   afterAll,
+  afterEach,
   beforeAll,
   beforeEach,
   describe,
   expect,
   test,
+  vi,
 } from 'vitest';
 import { WalletConnectConnector } from '../WalletConnectConnector';
 import { PREDICATE_VERSIONS } from './mockedPredicate';
@@ -132,6 +133,19 @@ describe('WalletConnect Connector', () => {
   });
 
   describe('setupPredicate()', () => {
+    let getEvmAddressSpy: ReturnType<typeof vi.spyOn> | undefined;
+
+    beforeEach(() => {
+      getEvmAddressSpy = vi
+        // biome-ignore lint/suspicious/noExplicitAny: using any to mock function
+        .spyOn(connector as any, '_get_current_evm_address')
+        .mockReturnValue('0x1111111111111111111111111111111111111111');
+    });
+
+    afterEach(() => {
+      getEvmAddressSpy?.mockRestore();
+    });
+
     test('should setup predicate with selectedPredicateVersion when account is connected', async () => {
       // @ts-expect-error setSelectedPredicateVersion is protected
       connector.setSelectedPredicateVersion(predicateVersion);
