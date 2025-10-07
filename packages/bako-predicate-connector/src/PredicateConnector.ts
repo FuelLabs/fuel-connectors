@@ -38,7 +38,6 @@ import type {
 } from './types';
 
 const BAKO_SERVER_URL = 'https://stg-api.bako.global';
-// const BAKO_SERVER_URL = 'http://localhost:3333';
 
 /**
  * Abstract base class for predicate-based wallet connectors.
