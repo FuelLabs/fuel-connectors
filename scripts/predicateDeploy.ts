@@ -188,7 +188,7 @@ class PredicateDeployer {
       });
 
       // Simulate deployment (in a real environment, you would perform the actual deployment here)
-      console.log(`     📝 Predicate criado: ${predicate.address.toB256()}`);
+      console.log(`     📝 Created predicate: ${predicate.address.toB256()}`);
 
       // For demonstration purposes, let's simulate a successful deployment
       // In production, you would do the actual deployment here
