@@ -73,7 +73,6 @@ export class WalletConnectConnector extends PredicateConnector {
     }
   }
 
-  // createModal re-instanciates the modal to update singletons from web3modal
   private createModal() {
     this.clearSubscriptions();
     this.web3Modal = this.modalFactory(this.config);
@@ -154,7 +153,6 @@ export class WalletConnectConnector extends PredicateConnector {
     if (!addresses) return null;
     const address = addresses[0];
     if (!address) return null;
-    // if (!(await this.accountHasValidation(address))) return null;
     return address;
   }
 
@@ -162,11 +160,7 @@ export class WalletConnectConnector extends PredicateConnector {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) return null;
     const { addresses = [] } = getAccount(wagmiConfig);
-    // const accountsValidations = await this.getAccountValidations(
-    //   addresses as `0x${string}`[],
-    // );
 
-    // return addresses.filter((_, i) => accountsValidations[i]);
     return addresses;
   }
 
@@ -231,28 +225,6 @@ export class WalletConnectConnector extends PredicateConnector {
       ethProvider,
     };
   }
-
-  // private async getAccountValidations(
-  //   accounts: `0x${string}`[] | string[],
-  // ): Promise<boolean[]> {
-  //   return Promise.all(
-  //     accounts.map(async (a) => {
-  //       const isValidated = await this.storage.getItem(
-  //         `SIGNATURE_VALIDATION_${a}`,
-  //       );
-
-  //       return isValidated === 'true';
-  //     }),
-  //   );
-  // }
-
-  // private async accountHasValidation(
-  //   account: `0x${string}` | string | undefined,
-  // ) {
-  //   if (!account) return false;
-  //   const [hasValidate] = await this.getAccountValidations([account]);
-  //   return hasValidate;
-  // }
 
   public async disconnect(): Promise<boolean> {
     const wagmiConfig = this.getWagmiConfig();
@@ -409,7 +381,6 @@ export class WalletConnectConnector extends PredicateConnector {
       );
     }
 
-    // Create and display the modal
     this.createModal();
     this.web3Modal.open();
 
@@ -436,6 +407,7 @@ export class WalletConnectConnector extends PredicateConnector {
       });
     });
   }
+
   /**
    * Handles the wallet disconnection logic.
    */
