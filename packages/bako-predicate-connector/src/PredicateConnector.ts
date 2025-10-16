@@ -19,7 +19,6 @@ import {
   type UsedPredicateVersions,
   Vault,
   Wallet,
-  encodeSignature,
   getLatestPredicateVersion,
   legacyConnectorVersion,
 } from 'bakosafe';
@@ -177,11 +176,7 @@ export abstract class PredicateConnector extends FuelConnector {
       const { tx, hashTxId, encodedTxId } =
         await vault.BakoTransfer(transaction);
       const signature = await this._sign_message(encodedTxId);
-      const encodedSignature = encodeSignature(
-        evmAddress,
-        signature,
-        vault.version,
-      );
+      const encodedSignature = vault.encodeSignature(evmAddress, signature);
 
       await bakoProvider.signTransaction({
         hash: hashTxId,

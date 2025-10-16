@@ -33,6 +33,7 @@ import {
 } from '@fuel-connectors/bako-predicate-connector';
 
 import { ApiController } from '@web3modal/core';
+import { stringToHex } from 'viem';
 import { ETHEREUM_ICON } from './constants';
 import type { WalletConnectConfig } from './types';
 import { getPredicateVersions, subscribeAndEnforceChain } from './utils';
@@ -331,9 +332,13 @@ export class WalletConnectConnector extends PredicateConnector {
       }
 
       try {
+        const messageToSign = message.startsWith('0x')
+          ? message
+          : stringToHex(message);
+
         const signature = await ethProvider.request({
           method: 'personal_sign',
-          params: [message, currentAccount],
+          params: [messageToSign, currentAccount],
         });
 
         resolve(signature as string);
