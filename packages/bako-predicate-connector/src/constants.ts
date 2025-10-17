@@ -6,3 +6,7 @@ export const STORAGE_KEYS = {
   BAKO_PERSONAL_WALLET: 'bako_personal_wallet',
   SELECTED_PREDICATE_KEY: 'fuel_selected_predicate_version',
 } as const;
+
+export const HAS_WINDOW = typeof window !== 'undefined';
+export const WINDOW = HAS_WINDOW ? window : null;
+export const ORIGIN = WINDOW ? WINDOW.location.origin : 'testmode';

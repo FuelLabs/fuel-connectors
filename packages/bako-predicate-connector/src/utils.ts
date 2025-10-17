@@ -22,20 +22,6 @@ export const getOrThrow = <T>(value: Maybe<T>, message: string): T => {
 };
 
 /**
- * Checks if the code is running in a browser environment.
- * Used for conditional logic that depends on browser APIs.
- */
-export const HAS_WINDOW = typeof window !== 'undefined' && window.localStorage;
-
-/**
- * Global window object or empty object if not in browser.
- * Provides safe access to browser APIs.
- */
-export const WINDOW = HAS_WINDOW ? window : null;
-
-export const ORIGIN = WINDOW ? WINDOW.location.origin : 'testmode';
-
-/**
  * Generates Fuel predicate addresses based on signer address and predicate configuration.
  * This function processes predicate data and generates the corresponding Fuel address.
  *

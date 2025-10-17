@@ -1,6 +1,5 @@
-import { STORAGE_KEYS } from './constants';
+import { STORAGE_KEYS, WINDOW } from './constants';
 import type { BakoPersonalWalletData } from './types';
-import { WINDOW } from './utils';
 
 // biome-ignore lint/complexity/noStaticOnlyClass: util class
 export class StoreManager {
