@@ -1,10 +1,7 @@
 import type { EventEmitter } from 'node:events';
 import { type Socket, io } from 'socket.io-client';
 
-import { WINDOW } from './constants';
-
-export const SOCKET_URL = 'https://api.bako.global';
-export const APP_URL = 'https://safe.bako.global';
+import { APP_URL, SOCKET_URL, WINDOW } from './constants';
 
 export enum BakoSafeConnectorEvents {
   DEFAULT = 'message',

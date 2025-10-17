@@ -1,4 +1,6 @@
 export const BAKO_SERVER_URL = 'https://stg-api.bako.global';
+export const SOCKET_URL = 'https://stg-api.bako.global';
+export const APP_URL = 'https://stg-safe.bako.global/';
 
 export const STORAGE_KEYS = {
   SESSION_ID: 'session_id',
