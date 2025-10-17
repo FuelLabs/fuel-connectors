@@ -1,14 +1,8 @@
+import { STORAGE_KEYS } from './constants';
 import type { BakoPersonalWalletData } from './types';
 import { WINDOW } from './utils';
 
-const STORAGE_KEYS = {
-  SESSION_ID: 'sessionId',
-  CURRENT_ACCOUNT: 'currentAccount',
-  BAKO_PERSONAL_WALLET: 'bakoPersonalWallet',
-  SELECTED_PREDICATE_KEY: 'fuel_selected_predicate_version',
-} as const;
-
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
+// biome-ignore lint/complexity/noStaticOnlyClass: util class
 export class StoreManager {
   static get(key: keyof typeof STORAGE_KEYS): string | null {
     if (!WINDOW) return null;
@@ -36,6 +30,8 @@ export class StoreManager {
 
   static clear(): void {
     if (!WINDOW) return;
-    window.localStorage.clear();
+    Object.values(STORAGE_KEYS).forEach((key) => {
+      window.localStorage.removeItem(key);
+    });
   }
 }
