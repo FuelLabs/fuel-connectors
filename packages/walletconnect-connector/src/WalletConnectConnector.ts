@@ -1,12 +1,4 @@
 import {
-  ecrecover,
-  fromRpcSig,
-  hashPersonalMessage,
-  hexToBytes,
-  pubToAddress,
-} from '@ethereumjs/util';
-import { hexlify, splitSignature } from '@ethersproject/bytes';
-import {
   type Config,
   type GetAccountReturnType,
   disconnect,
@@ -19,13 +11,8 @@ import {
   CHAIN_IDS,
   type ConnectorMetadata,
   FuelConnectorEventTypes,
-  type FuelConnectorSendTxParams,
   Provider as FuelProvider,
-  LocalStorage,
   type StartConsolidateCoins,
-  type StorageAbstract,
-  type TransactionRequestLike,
-  type TransactionResponse,
 } from 'fuels';
 
 import {
@@ -37,25 +24,15 @@ import {
   type PredicateWalletAdapter,
   type ProviderDictionary,
   getFuelPredicateAddresses,
-  getMockedSignatureIndex,
   getOrThrow,
   getProviderUrl,
-} from '@fuel-connectors/common';
-import {
-  type EvmPredicateRoot,
-  PREDICATE_VERSIONS,
-  txIdEncoders,
-} from '@fuel-connectors/evm-predicates';
+} from '@fuel-connectors/bako-predicate-connector';
+
 import { ApiController } from '@web3modal/core';
-import { type TransactionRequest, stringToHex } from 'viem';
-import {
-  ETHEREUM_ICON,
-  HAS_WINDOW,
-  SIGNATURE_VALIDATION_TIMEOUT,
-  WINDOW,
-} from './constants';
-import type { CustomCurrentConnectorEvent, WalletConnectConfig } from './types';
-import { subscribeAndEnforceChain } from './utils';
+import { stringToHex } from 'viem';
+import { ETHEREUM_ICON, HAS_WINDOW, WINDOW } from './constants';
+import type { WalletConnectConfig } from './types';
+import { getPredicateVersions, subscribeAndEnforceChain } from './utils';
 import { createWagmiConfig, createWeb3ModalInstance } from './web3Modal';
 
 export class WalletConnectConnector extends PredicateConnector {
@@ -74,13 +51,10 @@ export class WalletConnectConnector extends PredicateConnector {
   private fuelProvider!: FuelProvider;
   private ethProvider!: EIP1193Provider;
   private web3Modal!: Web3Modal;
-  private storage: StorageAbstract;
   private config: WalletConnectConfig = {} as WalletConnectConfig;
 
   constructor(config: WalletConnectConfig) {
     super();
-    this.storage =
-      config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
     const wagmiConfig = config?.wagmiConfig ?? createWagmiConfig();
 
     if (wagmiConfig._internal.syncConnectedChain !== false) {
@@ -89,24 +63,10 @@ export class WalletConnectConnector extends PredicateConnector {
 
     this.customPredicate = config.predicateConfig || null;
     if (HAS_WINDOW) {
-      this.configProviders({ ...config, wagmiConfig });
+      this._config_providers({ ...config, wagmiConfig });
     }
-    this.loadPersistedConnection();
   }
 
-  private async loadPersistedConnection() {
-    const wagmiConfig = this.getWagmiConfig();
-    if (!wagmiConfig) return;
-
-    await this.config?.fuelProvider;
-    await this.requireConnection();
-    await this.handleConnect(
-      getAccount(wagmiConfig),
-      await this.getAccountAddress(),
-    );
-  }
-
-  // createModal re-instanciates the modal to update singletons from web3modal
   private createModal() {
     this.clearSubscriptions();
     this.web3Modal = this.modalFactory(this.config);
@@ -125,19 +85,12 @@ export class WalletConnectConnector extends PredicateConnector {
     account: NonNullable<GetAccountReturnType<Config>>,
     defaultAccount: string | null = null,
   ) {
-    const address = defaultAccount ?? (account?.address as string);
-    if (!(await this.accountHasValidation(address))) return;
-    if (!address) return;
-    await this.setupPredicate();
     this.emit(this.events.connection, true);
     this.emit(
       this.events.currentAccount,
-      this.predicateAccount?.getPredicateAddress(address),
+      defaultAccount ?? (account?.address as string),
     );
-    this.emit(
-      this.events.accounts,
-      this.predicateAccount?.getPredicateAddresses(await this.walletAccounts()),
-    );
+    this.emit(this.events.accounts, []);
   }
 
   private setupWatchers() {
@@ -173,7 +126,7 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   protected getPredicateVersions(): Record<string, PredicateVersion> {
-    return PREDICATE_VERSIONS;
+    return getPredicateVersions();
   }
 
   protected async configProviders(config: WalletConnectConfig = {}) {
@@ -194,7 +147,6 @@ export class WalletConnectConnector extends PredicateConnector {
     if (!addresses) return null;
     const address = addresses[0];
     if (!address) return null;
-    if (!(await this.accountHasValidation(address))) return null;
     return address;
   }
 
@@ -202,10 +154,8 @@ export class WalletConnectConnector extends PredicateConnector {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) return null;
     const { addresses = [] } = getAccount(wagmiConfig);
-    const accountsValidations = await this.getAccountValidations(
-      addresses as `0x${string}`[],
-    );
-    return addresses.filter((_, i) => accountsValidations[i]);
+
+    return addresses;
   }
 
   protected async requireConnection() {
@@ -215,6 +165,29 @@ export class WalletConnectConnector extends PredicateConnector {
     if (this.config.skipAutoReconnect || !wagmiConfig) return;
 
     const { status, connections } = wagmiConfig.state;
+
+    if (status === 'connected' && connections.size > 0) {
+      try {
+        const account = getAccount(wagmiConfig);
+        if (!account.isConnected || !account.address) {
+          await disconnect(wagmiConfig);
+          return;
+        }
+
+        const connector = account.connector;
+        if (connector) {
+          const provider = await connector.getProvider();
+          if (!provider) {
+            await disconnect(wagmiConfig);
+            return;
+          }
+        }
+      } catch {
+        await disconnect(wagmiConfig);
+        return;
+      }
+    }
+
     if (status === 'disconnected' && connections.size > 0) {
       await reconnect(wagmiConfig);
     }
@@ -247,153 +220,6 @@ export class WalletConnectConnector extends PredicateConnector {
     };
   }
 
-  public async connect(): Promise<boolean> {
-    const wagmiConfig = this.getWagmiConfig();
-    if (!wagmiConfig) throw new Error('Wagmi config not found');
-
-    // User might have connected already, now let's ask for the signatures
-    const state = await this.requestSignatures(wagmiConfig);
-    if (state === 'validated') {
-      return true;
-    }
-
-    // User not connected, let's show the WalletConnect modal
-    this.createModal();
-    this.web3Modal.open();
-    const unsub = this.web3Modal.subscribeEvents(async (event) => {
-      switch (event.data.event) {
-        case 'MODAL_OPEN':
-          // Ensures that the WC Web3Modal config is applied over pre-existing states (e.g. Solana Connect Web3Modal)
-          this.createModal();
-          break;
-        case 'CONNECT_SUCCESS': {
-          const { addresses = [] } = getAccount(wagmiConfig);
-
-          let hasAccountToSign = false;
-          for (const address of addresses) {
-            if (await this.accountHasValidation(address)) {
-              continue;
-            }
-
-            hasAccountToSign = true;
-            this.storage.setItem(`SIGNATURE_VALIDATION_${address}`, 'pending');
-          }
-
-          if (hasAccountToSign) {
-            const currentConnectorEvent: CustomCurrentConnectorEvent = {
-              type: this.events.currentConnector,
-              data: this,
-              metadata: {
-                pendingSignature: true,
-              },
-            };
-
-            // Workaround to tell Connecting dialog that now we'll request signature
-            this.emit(this.events.currentConnector, currentConnectorEvent);
-          }
-
-          unsub();
-          break;
-        }
-        case 'MODAL_CLOSE':
-        case 'CONNECT_ERROR': {
-          unsub();
-          break;
-        }
-      }
-    });
-    return false;
-  }
-
-  private async getAccountValidations(
-    accounts: `0x${string}`[] | string[],
-  ): Promise<boolean[]> {
-    return Promise.all(
-      accounts.map(async (a) => {
-        const isValidated = await this.storage.getItem(
-          `SIGNATURE_VALIDATION_${a}`,
-        );
-        return isValidated === 'true';
-      }),
-    );
-  }
-
-  private async accountHasValidation(
-    account: `0x${string}` | string | undefined,
-  ) {
-    if (!account) return false;
-    const [hasValidate] = await this.getAccountValidations([account]);
-    return hasValidate;
-  }
-
-  private async requestSignatures(
-    wagmiConfig: Config,
-  ): Promise<'validated' | 'pending'> {
-    const account = getAccount(wagmiConfig);
-
-    const { addresses = [], isConnected } = account;
-    for (const address of addresses) {
-      try {
-        await this.requestSignature(address);
-      } catch (err) {
-        this.disconnect();
-        throw err;
-      }
-    }
-
-    if (isConnected) {
-      try {
-        await this.handleConnect(account);
-        return 'validated';
-      } catch (err) {
-        this.disconnect();
-        throw err;
-      }
-    }
-
-    return 'pending';
-  }
-
-  private async requestSignature(address?: string) {
-    return new Promise(async (resolve, reject) => {
-      const hasSignature = await this.accountHasValidation(address);
-      if (hasSignature) return resolve(true);
-
-      // Disconnect if user doesn't provide signature in time
-      const validationTimeout = setTimeout(() => {
-        reject(
-          new Error("User didn't provide signature in less than 1 minute"),
-        );
-      }, SIGNATURE_VALIDATION_TIMEOUT);
-      const { ethProvider } = await this.getProviders();
-
-      if (!ethProvider) return;
-
-      this.signAndValidate(ethProvider, address)
-        .then(() => {
-          clearTimeout(validationTimeout);
-          this.storage.setItem(`SIGNATURE_VALIDATION_${address}`, 'true');
-          resolve(true);
-        })
-        .catch((err) => {
-          clearTimeout(validationTimeout);
-          this.storage.removeItem(`SIGNATURE_VALIDATION_${address}`);
-
-          const currentConnectorEvent: CustomCurrentConnectorEvent = {
-            type: this.events.currentConnector,
-            data: this,
-            metadata: {
-              pendingSignature: false,
-            },
-          };
-
-          // Workaround to tell Connecting dialog that now we'll request connection again
-          this.emit(this.events.currentConnector, currentConnectorEvent);
-          reject(err);
-        });
-    });
-  }
-
   public async disconnect(): Promise<boolean> {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) throw new Error('Wagmi config not found');
@@ -408,126 +234,8 @@ export class WalletConnectConnector extends PredicateConnector {
     return isConnected || false;
   }
 
-  public async sendTransaction(
-    address: string,
-    transaction: TransactionRequestLike,
-    params?: FuelConnectorSendTxParams,
-  ): Promise<TransactionResponse> {
-    const { ethProvider, fuelProvider } = await this.getProviders();
-    const { predicate, request, transactionId, account, transactionRequest } =
-      await this.prepareTransaction(address, transaction);
-
-    const txId = this.encodeTxId(transactionId);
-    const signature = (await ethProvider?.request({
-      method: 'personal_sign',
-      params: [txId, account],
-    })) as string;
-
-    const predicateSignatureIndex = getMockedSignatureIndex(
-      transactionRequest.witnesses,
-    );
-
-    // Transform the signature into compact form for Sway to understand
-    const compactSignature = splitSignature(hexToBytes(signature)).compact;
-
-    transactionRequest.witnesses[predicateSignatureIndex] = compactSignature;
-
-    const transactionWithPredicateEstimated =
-      await fuelProvider.estimatePredicates(request);
-
-    let txAfterUserCallback = transactionWithPredicateEstimated;
-    if (params?.onBeforeSend) {
-      txAfterUserCallback = await params.onBeforeSend(
-        transactionWithPredicateEstimated,
-      );
-    }
-
-    const response = await predicate.sendTransaction(txAfterUserCallback);
-
-    await response.waitForPreConfirmation();
-
-    return response;
-  }
-
-  private isValidPredicateAddress(
-    address: string,
-  ): address is EvmPredicateRoot {
-    return address in txIdEncoders;
-  }
-
-  private encodeTxId(txId: string): string {
-    if (!this.isValidPredicateAddress(this.predicateAddress)) {
-      return txId;
-    }
-
-    const encoder = txIdEncoders[this.predicateAddress];
-
-    if (!encoder) {
-      throw new Error(
-        `TxIdEncoder not found for this predicate address: ${this.predicateAddress}`,
-      );
-    }
-
-    return encoder.encodeTxId(txId);
-  }
-
-  private validateSignature(
-    account: string,
-    message: string,
-    signature: string,
-  ) {
-    const msgBuffer = Uint8Array.from(Buffer.from(message));
-    const msgHash = hashPersonalMessage(msgBuffer);
-    const { v, r, s } = fromRpcSig(signature);
-    const pubKey = ecrecover(msgHash, v, r, s);
-    const recoveredAddress = Buffer.from(pubToAddress(pubKey)).toString('hex');
-
-    // The recovered address doesn't have the 0x prefix
-    return recoveredAddress.toLowerCase() === account.toLowerCase().slice(2);
-  }
-
-  private async signAndValidate(
-    ethProvider: EIP1193Provider | undefined,
-    account?: string,
-  ) {
-    try {
-      if (!ethProvider) {
-        throw new Error('No Ethereum provider found');
-      }
-      if (account && !account.startsWith('0x')) {
-        throw new Error('Invalid account address');
-      }
-      const currentAccount =
-        account ||
-        (
-          (await ethProvider.request({
-            method: 'eth_requestAccounts',
-          })) as string[]
-        )[0];
-
-      if (!currentAccount) {
-        throw new Error('No Ethereum account selected');
-      }
-
-      const message = `Sign this message to verify the connected account: ${currentAccount}`;
-      const signature = (await ethProvider.request({
-        method: 'personal_sign',
-        params: [stringToHex(message), currentAccount],
-      })) as string;
-
-      if (!this.validateSignature(currentAccount, message, signature)) {
-        throw new Error('Signature address validation failed');
-      }
-
-      return true;
-    } catch (error) {
-      this.disconnect();
-      throw error;
-    }
-  }
-
   async signMessageCustomCurve(message: string) {
-    const { ethProvider } = await this.getProviders();
+    const { ethProvider } = await this._get_providers();
     if (!ethProvider) throw new Error('Eth provider not found');
     const accountAddress = await this.getAccountAddress();
     if (!accountAddress) throw new Error('No connected accounts');
@@ -541,8 +249,8 @@ export class WalletConnectConnector extends PredicateConnector {
     };
   }
 
-  static getFuelPredicateAddresses(ethAddress: string) {
-    const predicateConfig = Object.entries(PREDICATE_VERSIONS)
+  static getFuelPredicateAddresses() {
+    const predicateConfig = Object.entries(getPredicateVersions())
       .sort(([, a], [, b]) => b.generatedAt - a.generatedAt)
       .map(([evmPredicateAddress, { predicate, generatedAt }]) => ({
         abi: predicate.abi,
@@ -553,11 +261,9 @@ export class WalletConnectConnector extends PredicateConnector {
         },
       }));
 
-    const address = new EthereumWalletAdapter().convertAddress(ethAddress);
     const predicateAddresses = predicateConfig.map(
       ({ abi, bin, evmPredicate }) => ({
         fuelAddress: getFuelPredicateAddresses({
-          signerAddress: address,
           predicate: { abi, bin },
         }),
         evmPredicate,
@@ -572,5 +278,137 @@ export class WalletConnectConnector extends PredicateConnector {
    */
   async startConsolidation(opts: StartConsolidateCoins): Promise<void> {
     this.emit(FuelConnectorEventTypes.consolidateCoins, opts);
+  }
+
+  /**
+   * Configures providers based on connector configuration.
+   */
+  protected async _config_providers(config: WalletConnectConfig = {}) {
+    return this.configProviders(config);
+  }
+
+  /**
+   * Gets the current EVM address from the connected wallet.
+   */
+  protected _get_current_evm_address(): Maybe<string> {
+    const wagmiConfig = this.getWagmiConfig();
+    if (!wagmiConfig) return null;
+    const { address } = getAccount(wagmiConfig);
+    return address || null;
+  }
+
+  /**
+   * Checks if there is an active connection, throws if not.
+   */
+  protected async _require_connection() {
+    return this.requireConnection();
+  }
+
+  /**
+   * Gets the configured providers (Fuel and EVM).
+   */
+  protected async _get_providers(): Promise<ProviderDictionary> {
+    return this.getProviders();
+  }
+
+  /**
+   * Signs a message using the connected wallet.
+   */
+  protected async _sign_message(message: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      const { ethProvider } = await this._get_providers();
+      const currentAccount = this._get_current_evm_address();
+
+      if (!ethProvider || !currentAccount) {
+        reject(new Error('Provider or account not available'));
+        return;
+      }
+
+      try {
+        const messageToSign = message.startsWith('0x')
+          ? message
+          : stringToHex(message);
+
+        const signature = await ethProvider.request({
+          method: 'personal_sign',
+          params: [messageToSign, currentAccount],
+        });
+
+        resolve(signature as string);
+      } catch (error: unknown) {
+        const errorMessage = (error as Error).message.includes('rejected')
+          ? 'User rejected the request'
+          : (error as Error).message;
+
+        reject(new Error(`Signing failed: ${errorMessage}`));
+      }
+    });
+  }
+
+  /**
+   * Handles the wallet connection logic.
+   */
+  public async _connect(): Promise<boolean> {
+    const wagmiConfig = this.getWagmiConfig();
+    if (!wagmiConfig) throw new Error('Wagmi config not found');
+
+    try {
+      const account = getAccount(wagmiConfig);
+
+      if (account.isConnected && account.address) {
+        const connector = account.connector;
+        if (connector) {
+          const provider = await connector.getProvider();
+          if (provider) {
+            return true;
+          }
+        }
+      }
+    } catch {
+      console.error(
+        'Existing connection is invalid, proceeding with new connection',
+      );
+    }
+
+    this.createModal();
+    this.web3Modal.open();
+
+    return new Promise<boolean>((resolve) => {
+      const unsub = this.web3Modal.subscribeEvents(async (event) => {
+        switch (event.data.event) {
+          case 'MODAL_OPEN':
+            this.createModal();
+            break;
+
+          case 'CONNECT_SUCCESS': {
+            unsub();
+            resolve(true);
+            break;
+          }
+
+          case 'MODAL_CLOSE':
+          case 'CONNECT_ERROR': {
+            unsub();
+            resolve(false);
+            break;
+          }
+        }
+      });
+    });
+  }
+
+  /**
+   * Handles the wallet disconnection logic.
+   */
+  public async _disconnect(): Promise<boolean> {
+    const wagmiConfig = this.getWagmiConfig();
+    if (!wagmiConfig) throw new Error('Wagmi config not found');
+
+    const { connector, isConnected } = getAccount(wagmiConfig);
+    await disconnect(wagmiConfig, {
+      connector,
+    });
+
+    return isConnected || false;
   }
 }

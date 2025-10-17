@@ -1,6 +1,6 @@
 import { hexToBytes } from '@ethereumjs/util';
 // External libraries
-import { hexlify, splitSignature } from '@ethersproject/bytes';
+import { splitSignature } from '@ethersproject/bytes';
 
 import {
   CHAIN_IDS,

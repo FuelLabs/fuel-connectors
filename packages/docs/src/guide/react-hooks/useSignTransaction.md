@@ -6,7 +6,7 @@ A hook to sign transactions in the connected app without sending them.
 #### Params
 
 The parameters to sign a transaction.
-- `address`: The address to sign the transaction from. Can be a string or an Address.
+- `address`: The address to sign the transaction from.
 - `transaction`: The transaction request object that defines the transaction details.
 - `params`: Optional parameters for the transaction.
 
@@ -32,6 +32,6 @@ await signTransactionAsync({ address: '0x...', transaction: {...}, params: { pro
 ```
 
 #### Defined in
-[packages/react/src/hooks/useSignTransaction.ts:46](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useSignTransaction.ts#L46)
+[packages/react/src/hooks/useSignTransaction.ts:51](https://github.com/fuellabs/fuel-connectors/blob/main/packages/react/src/hooks/useSignTransaction.ts#L51)
 
 ___

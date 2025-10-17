@@ -1,20 +1,22 @@
 import path from 'node:path';
-import { MAINNET_NETWORK, PredicateFactory } from '@fuel-connectors/common';
-import { type Asset, type Network, Provider } from 'fuels';
+import { MAINNET_NETWORK } from '@fuel-connectors/bako-predicate-connector';
+import { type Asset, type Network, Provider, Wallet } from 'fuels';
 import { launchTestNode } from 'fuels/test-utils';
 import {
   afterAll,
+  afterEach,
   beforeAll,
   beforeEach,
   describe,
   expect,
   test,
+  vi,
 } from 'vitest';
 import { WalletConnectConnector } from '../WalletConnectConnector';
 import { PREDICATE_VERSIONS } from './mockedPredicate';
 
 describe('WalletConnect Connector', () => {
-  const predicate = Object.values(PREDICATE_VERSIONS)[0]?.predicate;
+  const predicateVersion = Object.keys(PREDICATE_VERSIONS)[0];
   const snapshotPath = path.join(__dirname, '');
 
   let connector: WalletConnectConnector;
@@ -131,24 +133,50 @@ describe('WalletConnect Connector', () => {
   });
 
   describe('setupPredicate()', () => {
-    test('should setup predicate with given config', async () => {
-      const walletConectconnector = connectorFactory({
-        predicateConfig: predicate,
-      });
+    let getEvmAddressSpy: ReturnType<typeof vi.spyOn> | undefined;
 
-      // @ts-expect-error predicateConfig is protected
-      const predicateAccount = await walletConectconnector.setupPredicate();
-
-      expect(predicateAccount).to.be.instanceOf(PredicateFactory);
+    beforeEach(() => {
+      getEvmAddressSpy = vi
+        // biome-ignore lint/suspicious/noExplicitAny: using any to mock function
+        .spyOn(connector as any, '_get_current_evm_address')
+        .mockReturnValue('0x1111111111111111111111111111111111111111');
     });
 
-    test('Should setup predicate without given config', async () => {
-      const walletConectconnector = connectorFactory();
+    afterEach(() => {
+      getEvmAddressSpy?.mockRestore();
+    });
 
-      // @ts-expect-error predicateConfig is protected
-      const predicateAccount = await walletConectconnector.setupPredicate();
+    test('should setup predicate with selectedPredicateVersion when account is connected', async () => {
+      // @ts-expect-error setSelectedPredicateVersion is protected
+      connector.setSelectedPredicateVersion(predicateVersion);
 
-      expect(predicateAccount).to.be.instanceOf(PredicateFactory);
+      const wallet = Wallet.generate({ provider: fuelProvider });
+      // @ts-expect-error emitAccountChange is protected
+      connector.emitAccountChange(wallet.address);
+
+      // @ts-expect-error setupPredicate is protected
+      const vault = await connector.setupPredicate();
+
+      // @ts-expect-error predicateAccount is protected
+      expect(connector.predicateAccount).toBe(vault);
+      // @ts-expect-error predicateAddress is protected
+      expect(connector.predicateAddress).toBe(predicateVersion);
+    });
+
+    test('should setup predicate with the latest version if no version is specified when account is connected', async () => {
+      const wallet = Wallet.generate({ provider: fuelProvider });
+      // @ts-expect-error emitAccountChange is protected
+      connector.emitAccountChange(wallet.address);
+
+      // @ts-expect-error setupPredicate is protected
+      const vault = await connector.setupPredicate();
+      // @ts-expect-error _getLatestPredicateVersion is protected
+      const latestPredicateVersion = connector._getLatestPredicateVersion();
+
+      // @ts-expect-error predicateAccount is protected
+      expect(connector.predicateAccount).toBe(vault);
+      // @ts-expect-error predicateAddress is protected
+      expect(connector.predicateAddress).toBe(latestPredicateVersion);
     });
   });
 
