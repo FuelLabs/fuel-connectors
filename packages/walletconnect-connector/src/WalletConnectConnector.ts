@@ -12,9 +12,7 @@ import {
   type ConnectorMetadata,
   FuelConnectorEventTypes,
   Provider as FuelProvider,
-  LocalStorage,
   type StartConsolidateCoins,
-  type StorageAbstract,
 } from 'fuels';
 
 import {
@@ -53,13 +51,10 @@ export class WalletConnectConnector extends PredicateConnector {
   private fuelProvider!: FuelProvider;
   private ethProvider!: EIP1193Provider;
   private web3Modal!: Web3Modal;
-  private storage: StorageAbstract;
   private config: WalletConnectConfig = {} as WalletConnectConfig;
 
   constructor(config: WalletConnectConfig) {
     super();
-    this.storage =
-      config.storage || new LocalStorage(WINDOW?.localStorage as Storage);
     const wagmiConfig = config?.wagmiConfig ?? createWagmiConfig();
 
     if (wagmiConfig._internal.syncConnectedChain !== false) {
