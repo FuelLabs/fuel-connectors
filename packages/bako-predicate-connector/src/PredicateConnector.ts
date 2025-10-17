@@ -25,6 +25,7 @@ import {
 import { ORIGIN, type PredicateWalletAdapter, WINDOW } from './';
 import { SocketClient } from './SocketClient';
 import { StoreManager } from './StoreManager';
+import { BAKO_SERVER_URL } from './constants';
 import type {
   ConnectorConfig,
   Maybe,
@@ -35,8 +36,6 @@ import type {
   ProviderDictionary,
   SignedMessageCustomCurve,
 } from './types';
-
-const BAKO_SERVER_URL = 'https://stg-api.bako.global';
 
 /**
  * Abstract base class for predicate-based wallet connectors.
