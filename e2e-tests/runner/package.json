@@ -25,7 +25,8 @@
     "@fuels/connectors": "workspace:*",
     "@fuels/playwright-utils": "0.49.0",
     "@playwright/test": "1.48.2",
-    "@synthetixio/synpress": "4.1.1",
+    "@synthetixio/synpress": "4.1.0",
+    "@synthetixio/synpress-cache": "0.0.10",
     "dotenv": "16.4.5",
     "fuels": "0.102.0"
   }
