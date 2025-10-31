@@ -28,7 +28,7 @@
   "dependencies": {
     "@ethereumjs/util": "9.0.3",
     "@ethersproject/bytes": "5.7.0",
-    "@solana/web3.js": "1.93.1",
+    "@solana/web3.js": "1.98.4",
     "@web3modal/solana": "5.0.0",
     "bs58": "6.0.0",
     "memoizee": "0.4.15",
