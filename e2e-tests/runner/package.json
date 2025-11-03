@@ -27,6 +27,7 @@
     "@playwright/test": "1.48.2",
     "@synthetixio/synpress": "4.1.0",
     "dotenv": "16.4.5",
+    "playwright-core": "1.48.2",
     "fuels": "0.102.0"
   }
 }
