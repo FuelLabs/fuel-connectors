@@ -19,14 +19,13 @@
     "start:servers": "pnpm run start:react-app & pnpm run start:react-next",
     "deploy:contracts": "sh ./scripts/deployLocal.sh",
     "deploy:contracts:ci": "sh ./scripts/deployCI.sh",
-    "setup:synpress": "synpress examples/synpress/metamask && synpress --phantom examples/synpress/phantom"
+    "setup:synpress": "synpress examples/synpress/metamask"
   },
   "devDependencies": {
     "@fuels/connectors": "workspace:*",
     "@fuels/playwright-utils": "0.49.0",
-    "@playwright/test": "1.48.2",
+    "@playwright/test": "1.40.1",
     "@synthetixio/synpress": "4.1.0",
-    "@synthetixio/synpress-cache": "0.0.10",
     "dotenv": "16.4.5",
     "fuels": "0.101.3"
   }
