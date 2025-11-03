@@ -144,6 +144,8 @@ jobs:
       - name: Build Synpress cache
         run: xvfb-run pnpm setup:synpress
         working-directory: e2e-tests/runner
+        env:
+          METAMASK_VERSION: "12.0.0"
 
       - name: Run Playwright tests locally for Preview
         if: ${{ github.event_name == 'pull_request' }}
