@@ -4,7 +4,7 @@ The predicate is employed to authenticate that the signer in a transaction corre
 
 ## Building the projects
 
-Prerequsite: have `forc` installed.
+Prerequisite: have `forc` installed.
 
 In the root of the repository run
 
