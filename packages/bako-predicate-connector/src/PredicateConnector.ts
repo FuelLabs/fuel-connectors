@@ -35,6 +35,7 @@ import {
   WINDOW,
 } from './constants';
 import type {
+  BakoPersonalWalletData,
   ConnectorConfig,
   Maybe,
   MaybeAsync,
@@ -116,6 +117,18 @@ export abstract class PredicateConnector extends FuelConnector {
     }
 
     const fuelAddress = new Address(evmAddress).toB256();
+
+    // Clear old personal wallet data if address changed
+    const existingPersonalWallet = StoreManager.getPersonalWallet();
+    if (existingPersonalWallet) {
+      const currentFuelAddress = fuelAddress.toLowerCase();
+      const storedSigner = this._getSignerFromConfigurable(
+        existingPersonalWallet.configurable,
+      );
+      if (storedSigner && storedSigner.toLowerCase() !== currentFuelAddress) {
+        StoreManager.clear();
+      }
+    }
 
     // Step 3: Authenticate with Bako Safe
     const challengeCode = await BakoProvider.setup({
@@ -301,9 +314,14 @@ export abstract class PredicateConnector extends FuelConnector {
     } catch {
       // Silently handle disconnect errors
     } finally {
+      // Clear all storage data
       if (WINDOW) {
         StoreManager.clear();
       }
+
+      // Reset internal state
+      this.predicateAccount = null;
+      this.selectedPredicateVersion = null;
     }
 
     this.connected = false;
@@ -702,6 +720,28 @@ export abstract class PredicateConnector extends FuelConnector {
       name: DEFAULT_CONNECTOR_WALLET_NAME,
       description: DEFAULT_CONNECTOR_WALLET_DESCRIPTION,
     });
+  }
+
+  /**
+   * Extracts the signer address from a configurable object.
+   * Handles both SIGNER (single owner) and SIGNERS (multisig) formats.
+   */
+  private _getSignerFromConfigurable(
+    configurable: BakoPersonalWalletData['configurable'],
+  ): string | null {
+    // Check for SIGNER format (single owner / connector)
+    const signer = (configurable as { SIGNER?: string }).SIGNER;
+    if (signer && typeof signer === 'string') {
+      return signer;
+    }
+
+    // Check for SIGNERS format (multisig / fuel wallet)
+    const signers = (configurable as { SIGNERS?: string[] }).SIGNERS;
+    if (Array.isArray(signers) && signers.length > 0) {
+      return signers[0] ?? null;
+    }
+
+    return null;
   }
 
   protected async getNewestPredicate(): Promise<Maybe<Vault>> {
