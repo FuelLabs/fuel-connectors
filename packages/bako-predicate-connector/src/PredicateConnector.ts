@@ -19,6 +19,7 @@ import {
   type UsedPredicateVersions,
   Vault,
   Wallet,
+  getAllVersionsDetails,
   getLatestPredicateVersion,
   legacyConnectorVersion,
 } from 'bakosafe';
@@ -482,18 +483,39 @@ export abstract class PredicateConnector extends FuelConnector {
 
     const { configurable, version: _version } = bakoPersonalWallet;
 
-    const connectorConfig =
-      _version === version
-        ? configurable
-        : {
-            SIGNER: new Address(evmAddress).toB256(),
-          };
+    // If same version as personal wallet, use its configurable
+    // Otherwise, determine the correct configurable based on version's walletOrigin
+    const signer = new Address(evmAddress).toB256();
 
-    const vault = new Vault(
-      fuelProvider,
-      connectorConfig,
-      version?.toLowerCase(),
-    );
+    let vault: Vault;
+
+    if (_version === version) {
+      vault = new Vault(fuelProvider, configurable, version?.toLowerCase());
+    } else {
+      const versions = getAllVersionsDetails();
+      const versionKey = version?.toLowerCase() ?? '';
+      const versionDetails = versions[versionKey];
+
+      // Use same logic as legacyConnectorVersion in bakosafe SDK:
+      // If version supports FUEL wallet, use SIGNERS format, otherwise use SIGNER
+      if (versionDetails?.walletOrigin?.includes(Wallet.FUEL)) {
+        vault = new Vault(
+          fuelProvider,
+          {
+            SIGNERS: [signer],
+            SIGNATURES_COUNT: 1,
+            HASH_PREDICATE: bakoPersonalWallet.configurable?.HASH_PREDICATE,
+          },
+          version?.toLowerCase(),
+        );
+      } else {
+        vault = new Vault(
+          fuelProvider,
+          { SIGNER: signer },
+          version?.toLowerCase(),
+        );
+      }
+    }
 
     this.emitAccountChange(vault.address.toString());
 
