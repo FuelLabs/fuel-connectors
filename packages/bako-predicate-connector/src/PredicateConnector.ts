@@ -608,19 +608,29 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   public async switchPredicateVersion(versionId: string): Promise<void> {
+    console.log('[SWITCH_VERSION] Starting switch to version:', versionId);
+
     await this.setSelectedPredicateVersion(versionId);
     const selectedPredicate = await this.setupPredicate();
     const address = await this.getAccountAddress();
-    const bakoProvider = await this._createBakoProvider();
     const selectedPredicateAddress = selectedPredicate.address
       .toString()
       .toLowerCase();
+
+    console.log(
+      '[SWITCH_VERSION] Selected predicate address:',
+      selectedPredicateAddress,
+    );
 
     if (!address) {
       throw new Error(
         'No account address found after switching predicate version',
       );
     }
+
+    // Use user address provider for all operations
+    // (new predicate isn't currentVault yet, so predicate address won't work)
+    const bakoProvider = await this._createUserBakoProvider();
 
     // Check if predicate exists in API, create if not
     await this._ensurePredicateExists(
@@ -629,11 +639,34 @@ export abstract class PredicateConnector extends FuelConnector {
       selectedPredicateAddress,
     );
 
+    console.log('[SWITCH_VERSION] Calling changeAccount...');
     await bakoProvider.changeAccount(
       this.getSessionId(),
       selectedPredicateAddress ?? '',
     );
+    console.log('[SWITCH_VERSION] changeAccount success');
     this.emitAccountChange(selectedPredicateAddress, true);
+  }
+
+  /**
+   * Creates a BakoProvider using the user's address (not predicate address).
+   * This allows operations before the predicate is set as currentVault in the API.
+   */
+  private async _createUserBakoProvider(): Promise<BakoProvider> {
+    const { fuelProvider } = await this._get_providers();
+    const evmAddress = this._get_current_evm_address();
+
+    if (!evmAddress) {
+      throw new Error('No EVM address found');
+    }
+
+    const userAddress = new Address(evmAddress).toB256().toLowerCase();
+
+    return BakoProvider.create(fuelProvider.url, {
+      address: userAddress,
+      token: `connector${this.getSessionId()}`,
+      serverApi: BAKO_SERVER_URL,
+    });
   }
 
   /**
@@ -641,20 +674,42 @@ export abstract class PredicateConnector extends FuelConnector {
    * If not, creates it using vault.save().
    */
   private async _ensurePredicateExists(
-    bakoProvider: BakoProvider,
+    userProvider: BakoProvider,
     vault: Vault,
     predicateAddress: string,
   ): Promise<void> {
+    console.log(
+      '[ENSURE_PREDICATE] Checking if predicate exists:',
+      predicateAddress,
+    );
+
     try {
-      await bakoProvider.findPredicateByAddress(predicateAddress);
-    } catch (_error) {
-      // Predicate doesn't exist, create it
-      console.log('[CONNECTOR] Predicate not found in API, creating...');
+      const existingPredicate =
+        await userProvider.findPredicateByAddress(predicateAddress);
+
+      console.log(
+        '[ENSURE_PREDICATE] findPredicateByAddress result:',
+        existingPredicate ? 'FOUND' : 'NULL/UNDEFINED',
+      );
+
+      // Check if predicate was found (may return null/undefined instead of throwing)
+      if (!existingPredicate) {
+        console.log('[ENSURE_PREDICATE] Creating predicate (null response)...');
+        await this._createPredicateInApi(userProvider, vault);
+      } else {
+        console.log('[ENSURE_PREDICATE] Predicate already exists in API');
+      }
+    } catch (findError) {
+      // Predicate doesn't exist (API threw error), create it
+      console.log(
+        '[ENSURE_PREDICATE] findPredicateByAddress threw error:',
+        findError,
+      );
+      console.log('[ENSURE_PREDICATE] Creating predicate (error case)...');
       try {
-        await this._createPredicateInApi(vault);
-        console.log('[CONNECTOR] Predicate created successfully');
+        await this._createPredicateInApi(userProvider, vault);
       } catch (createError) {
-        console.error('[CONNECTOR] Failed to create predicate:', createError);
+        console.error('[ENSURE_PREDICATE] Failed to create:', createError);
         throw new Error(
           `Failed to create predicate in API: ${
             createError instanceof Error ? createError.message : 'Unknown error'
@@ -665,42 +720,15 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   /**
-   * Creates a predicate in the Bako API.
+   * Creates a predicate in the Bako API using the provided provider.
    */
-  private async _createPredicateInApi(vault: Vault): Promise<void> {
-    const { fuelProvider } = await this._get_providers();
-    const evmAddress = this._get_current_evm_address();
-
-    if (!evmAddress) {
-      throw new Error('No EVM address found');
-    }
-
-    const fuelAddress = new Address(evmAddress).toB256();
-
-    // Authenticate with Bako to get proper permissions
-    const challengeCode = await BakoProvider.setup({
-      provider: fuelProvider.url,
-      address: fuelAddress,
-      encoder: TypeUser.EVM,
-      serverApi: BAKO_SERVER_URL,
-    });
-
-    const challengeSignature = await this._sign_message(challengeCode);
-
-    const authenticatedProvider = await BakoProvider.authenticate(
-      fuelProvider.url,
-      {
-        address: fuelAddress,
-        challenge: challengeCode,
-        encoder: TypeUser.EVM,
-        token: challengeSignature,
-        serverApi: BAKO_SERVER_URL,
-      },
-    );
-
-    // Create vault with authenticated provider and save
+  private async _createPredicateInApi(
+    userProvider: BakoProvider,
+    vault: Vault,
+  ): Promise<void> {
+    // Create vault with provider and save
     const vaultToSave = new Vault(
-      authenticatedProvider,
+      userProvider,
       vault.configurable,
       vault.predicateVersion,
     );
@@ -709,6 +737,8 @@ export abstract class PredicateConnector extends FuelConnector {
       name: 'Connector Wallet',
       description: 'Auto-created predicate for connector',
     });
+
+    console.log('[CONNECTOR] Predicate created successfully');
   }
 
   protected async getNewestPredicate(): Promise<Maybe<Vault>> {
