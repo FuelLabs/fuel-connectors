@@ -23,7 +23,7 @@ export class TestPredicatedConnector extends PredicateConnector {
     },
   };
 
-  protected _config_providers(_config: ConnectorConfig): MaybeAsync<void> {
+  protected _configProviders(_config: ConnectorConfig): MaybeAsync<void> {
     throw new Error('Method not implemented.');
   }
 
@@ -48,7 +48,7 @@ export class TestPredicatedConnector extends PredicateConnector {
     return Promise.resolve(null);
   }
 
-  protected _get_providers(): Promise<ProviderDictionary> {
+  protected _getProviders(): Promise<ProviderDictionary> {
     throw new Error('Method not implemented.');
   }
 
@@ -65,15 +65,15 @@ export class TestPredicatedConnector extends PredicateConnector {
     throw new Error('Method not implemented.');
   }
 
-  protected _sign_message(_message: string): Promise<string> {
+  protected _signMessage(_message: string): Promise<string> {
     throw new Error('Method not implemented.');
   }
 
-  protected _get_current_evm_address(): Maybe<string> {
+  protected _getCurrentEvmAddress(): Maybe<string> {
     return '0x1111111111111111111111111111111111111111';
   }
 
-  protected _require_connection(): MaybeAsync<void> {
+  protected _requireConnection(): MaybeAsync<void> {
     throw new Error('Method not implemented.');
   }
 

@@ -26,7 +26,14 @@ import {
 import type { PredicateWalletAdapter } from './';
 import { SocketClient } from './SocketClient';
 import { StoreManager } from './StoreManager';
-import { BAKO_SERVER_URL, ORIGIN, WINDOW } from './constants';
+import {
+  BAKO_SERVER_URL,
+  DEFAULT_CONNECTOR_WALLET_DESCRIPTION,
+  DEFAULT_CONNECTOR_WALLET_NAME,
+  DEFAULT_VERSION,
+  ORIGIN,
+  WINDOW,
+} from './constants';
 import type {
   ConnectorConfig,
   Maybe,
@@ -82,15 +89,11 @@ export abstract class PredicateConnector extends FuelConnector {
     super();
     this.initializeSocketClient();
 
-    try {
-      if (WINDOW) {
-        const savedVersion = StoreManager.get('SELECTED_PREDICATE_KEY');
-        if (savedVersion) {
-          this.selectedPredicateVersion = savedVersion;
-        }
+    if (WINDOW) {
+      const savedVersion = StoreManager.get('SELECTED_PREDICATE_KEY');
+      if (savedVersion) {
+        this.selectedPredicateVersion = savedVersion;
       }
-    } catch (error) {
-      console.error('Failed to load saved predicate version:', error);
     }
   }
 
@@ -106,8 +109,8 @@ export abstract class PredicateConnector extends FuelConnector {
     }
 
     // Step 2: Setup Bako Safe integration
-    const { fuelProvider } = await this._get_providers();
-    const evmAddress = this._get_current_evm_address();
+    const { fuelProvider } = await this._getProviders();
+    const evmAddress = this._getCurrentEvmAddress();
     if (!evmAddress) {
       throw new Error('EVM address not found');
     }
@@ -122,7 +125,7 @@ export abstract class PredicateConnector extends FuelConnector {
       serverApi: BAKO_SERVER_URL,
     });
 
-    const challengeSignature = await this._sign_message(challengeCode);
+    const challengeSignature = await this._signMessage(challengeCode);
     const sessionId = this.getSessionId();
 
     const bakoProvider = await BakoProvider.authenticate(fuelProvider.url, {
@@ -159,39 +162,33 @@ export abstract class PredicateConnector extends FuelConnector {
     address: string,
     transaction: TransactionRequestLike,
   ): Promise<TransactionResponse> {
-    try {
-      const evmAddress = this._get_current_evm_address();
+    const evmAddress = this._getCurrentEvmAddress();
 
-      if (!evmAddress) {
-        throw new Error('No connected accounts');
-      }
-
-      const bakoProvider = await this._createBakoProvider();
-
-      const vault = await Vault.fromAddress(
-        new Address(address).toB256(),
-        bakoProvider,
-      );
-
-      const { tx, hashTxId, encodedTxId } =
-        await vault.BakoTransfer(transaction);
-      const signature = await this._sign_message(encodedTxId);
-      const encodedSignature = vault.encodeSignature(evmAddress, signature);
-
-      await bakoProvider.signTransaction({
-        hash: hashTxId,
-        signature: encodedSignature,
-      });
-
-      const transactionResponse = await vault.send(tx);
-
-      await transactionResponse.waitForResult();
-
-      return transactionResponse;
-    } catch (error) {
-      console.error('[CONNECTOR] Transaction error:', error);
-      throw error;
+    if (!evmAddress) {
+      throw new Error('No connected accounts');
     }
+
+    const bakoProvider = await this._createBakoProvider();
+
+    const vault = await Vault.fromAddress(
+      new Address(address).toB256(),
+      bakoProvider,
+    );
+
+    const { tx, hashTxId, encodedTxId } = await vault.BakoTransfer(transaction);
+    const signature = await this._signMessage(encodedTxId);
+    const encodedSignature = vault.encodeSignature(evmAddress, signature);
+
+    await bakoProvider.signTransaction({
+      hash: hashTxId,
+      signature: encodedSignature,
+    });
+
+    const transactionResponse = await vault.send(tx);
+
+    await transactionResponse.waitForResult();
+
+    return transactionResponse;
   }
 
   /**
@@ -199,30 +196,30 @@ export abstract class PredicateConnector extends FuelConnector {
    * @param message - Message to be signed
    * @returns Promise with the signature
    */
-  protected abstract _sign_message(message: string): Promise<string>;
+  protected abstract _signMessage(message: string): Promise<string>;
 
   /**
    * Gets the configured providers (Fuel and EVM).
    * @returns Promise with the providers dictionary
    */
-  protected abstract _get_providers(): Promise<ProviderDictionary>;
+  protected abstract _getProviders(): Promise<ProviderDictionary>;
 
   /**
    * Gets the current EVM address from the connected wallet.
    * @returns EVM address or null if not connected
    */
-  protected abstract _get_current_evm_address(): Maybe<string>;
+  protected abstract _getCurrentEvmAddress(): Maybe<string>;
 
   /**
    * Checks if there is an active connection, throws if not.
    */
-  protected abstract _require_connection(): MaybeAsync<void>;
+  protected abstract _requireConnection(): MaybeAsync<void>;
 
   /**
    * Configures the providers based on the connector configuration.
    * @param config - Connector configuration
    */
-  protected abstract _config_providers(
+  protected abstract _configProviders(
     config: ConnectorConfig,
   ): MaybeAsync<void>;
 
@@ -243,10 +240,10 @@ export abstract class PredicateConnector extends FuelConnector {
    */
   public async ping(): Promise<boolean> {
     try {
-      await this._get_providers();
+      await this._getProviders();
       this.hasProviderSucceeded = true;
       return true;
-    } catch (_error) {
+    } catch {
       this.hasProviderSucceeded = false;
       return false;
     }
@@ -256,7 +253,7 @@ export abstract class PredicateConnector extends FuelConnector {
    * Returns connector version information.
    */
   public async version(): Promise<Version> {
-    return { app: '0.0.0', network: '0.0.0' };
+    return DEFAULT_VERSION;
   }
 
   /**
@@ -264,10 +261,10 @@ export abstract class PredicateConnector extends FuelConnector {
    */
   public async isConnected(): Promise<boolean> {
     try {
-      await this._require_connection();
+      await this._requireConnection();
       const accounts = await this.accounts();
       return accounts.length > 0;
-    } catch (_error) {
+    } catch {
       return false;
     }
   }
@@ -292,27 +289,27 @@ export abstract class PredicateConnector extends FuelConnector {
 
   /**
    * Disconnects the connector and cleans up resources.
+   * @returns true if disconnection was successful
    */
   public async disconnect(): Promise<boolean> {
-    await this._disconnect();
-    this.connected = false;
-
     try {
-      if (WINDOW) {
-        StoreManager.remove('SELECTED_PREDICATE_KEY');
-        StoreManager.remove('CURRENT_ACCOUNT');
-        StoreManager.remove('SESSION_ID');
-      }
+      const sessionId = this.getSessionId();
+      await this._disconnect();
 
       const bakoProvider = await this._createBakoProvider();
-      await bakoProvider.disconnect(this.getSessionId());
-    } catch (error) {
-      console.error('Error clearing localStorage during disconnect:', error);
+      await bakoProvider.disconnect(sessionId);
+    } catch {
+      // Silently handle disconnect errors
+    } finally {
+      if (WINDOW) {
+        StoreManager.clear();
+      }
     }
 
+    this.connected = false;
     this.emitAccountChange();
 
-    return false;
+    return true;
   }
 
   /**
@@ -326,7 +323,7 @@ export abstract class PredicateConnector extends FuelConnector {
    * Gets the current network information.
    */
   public async currentNetwork(): Promise<Network> {
-    const { fuelProvider } = await this._get_providers();
+    const { fuelProvider } = await this._getProviders();
     return {
       url: fuelProvider.url,
       chainId: await fuelProvider.getChainId(),
@@ -394,9 +391,16 @@ export abstract class PredicateConnector extends FuelConnector {
       throw new Error('No account address found');
     }
 
-    const { fuelProvider } = await this._get_providers();
+    return this._createBakoProviderWithAddress(currentAccount.toLowerCase());
+  }
+
+  private async _createBakoProviderWithAddress(
+    address: string,
+  ): Promise<BakoProvider> {
+    const { fuelProvider } = await this._getProviders();
+
     return BakoProvider.create(fuelProvider.url, {
-      address: currentAccount.toLowerCase(),
+      address,
       token: `connector${this.getSessionId()}`,
       serverApi: BAKO_SERVER_URL,
     });
@@ -407,8 +411,8 @@ export abstract class PredicateConnector extends FuelConnector {
    * @returns Promise that resolves to the legacy versions with balance informations.
    */
   private async _getLegacyVersionResult(): Promise<UsedPredicateVersions[]> {
-    const evmAddress = this._get_current_evm_address();
-    const { fuelProvider } = await this._get_providers();
+    const evmAddress = this._getCurrentEvmAddress();
+    const { fuelProvider } = await this._getProviders();
 
     const bakoPersonalWallet = StoreManager.getPersonalWallet();
 
@@ -468,8 +472,8 @@ export abstract class PredicateConnector extends FuelConnector {
    * @returns Promise<Vault> - The initialized Vault instance
    */
   public async getBakoSafePredicate(version?: string): Promise<Vault> {
-    const { fuelProvider } = await this._get_providers();
-    const evmAddress = this._get_current_evm_address();
+    const { fuelProvider } = await this._getProviders();
+    const evmAddress = this._getCurrentEvmAddress();
 
     if (!evmAddress) {
       throw new Error('No account address found');
@@ -572,20 +576,14 @@ export abstract class PredicateConnector extends FuelConnector {
     const predicateVersions = this.getPredicateVersions();
     const versionExists = versionId in predicateVersions;
 
-    if (versionExists) {
-      this.selectedPredicateVersion = versionId;
-      try {
-        if (WINDOW) {
-          StoreManager.set('SELECTED_PREDICATE_KEY', versionId);
-        }
-      } catch (error) {
-        console.error(
-          'Failed to save predicate version to localStorage:',
-          error,
-        );
-      }
-    } else {
+    if (!versionExists) {
       throw new Error(`Predicate version ${versionId} not found`);
+    }
+
+    this.selectedPredicateVersion = versionId;
+
+    if (WINDOW) {
+      StoreManager.set('SELECTED_PREDICATE_KEY', versionId);
     }
   }
 
@@ -614,24 +612,14 @@ export abstract class PredicateConnector extends FuelConnector {
     const newestPredicate = await this.getNewestPredicate();
     const predicateWithBalance = await this.getCurrentUserPredicate();
 
-    try {
-      if (predicateWithBalance) {
-        return predicateWithBalance.version;
-      }
-      return newestPredicate?.version ?? null;
-    } catch (error) {
-      console.error(
-        'Error determining smart default predicate version:',
-        error,
-      );
-
-      return newestPredicate?.version ?? null;
+    if (predicateWithBalance) {
+      return predicateWithBalance.version;
     }
+
+    return newestPredicate?.version ?? null;
   }
 
   public async switchPredicateVersion(versionId: string): Promise<void> {
-    console.log('[SWITCH_VERSION] Starting switch to version:', versionId);
-
     await this.setSelectedPredicateVersion(versionId);
     const selectedPredicate = await this.setupPredicate();
     const address = await this.getAccountAddress();
@@ -639,105 +627,61 @@ export abstract class PredicateConnector extends FuelConnector {
       .toString()
       .toLowerCase();
 
-    console.log(
-      '[SWITCH_VERSION] Selected predicate address:',
-      selectedPredicateAddress,
-    );
-
     if (!address) {
       throw new Error(
         'No account address found after switching predicate version',
       );
     }
 
-    // Use user address provider for all operations
-    // (new predicate isn't currentVault yet, so predicate address won't work)
-    const bakoProvider = await this._createUserBakoProvider();
+    const bakoProvider = await this._createBakoProviderWithAddress(
+      new Address(this._getCurrentEvmAddress() ?? '').toB256().toLowerCase(),
+    );
 
-    // Check if predicate exists in API, create if not
     await this._ensurePredicateExists(
       bakoProvider,
       selectedPredicate,
       selectedPredicateAddress,
     );
 
-    console.log('[SWITCH_VERSION] Calling changeAccount...');
     await bakoProvider.changeAccount(
       this.getSessionId(),
       selectedPredicateAddress ?? '',
     );
-    console.log('[SWITCH_VERSION] changeAccount success');
+
     this.emitAccountChange(selectedPredicateAddress, true);
   }
 
   /**
-   * Creates a BakoProvider using the user's address (not predicate address).
-   * This allows operations before the predicate is set as currentVault in the API.
-   */
-  private async _createUserBakoProvider(): Promise<BakoProvider> {
-    const { fuelProvider } = await this._get_providers();
-    const evmAddress = this._get_current_evm_address();
-
-    if (!evmAddress) {
-      throw new Error('No EVM address found');
-    }
-
-    const userAddress = new Address(evmAddress).toB256().toLowerCase();
-
-    return BakoProvider.create(fuelProvider.url, {
-      address: userAddress,
-      token: `connector${this.getSessionId()}`,
-      serverApi: BAKO_SERVER_URL,
-    });
-  }
-
-  /**
    * Ensures the predicate exists in the Bako API.
-   * If not, creates it using vault.save().
+   * If not found, creates it using vault.save().
    */
   private async _ensurePredicateExists(
-    userProvider: BakoProvider,
+    provider: BakoProvider,
     vault: Vault,
     predicateAddress: string,
   ): Promise<void> {
-    console.log(
-      '[ENSURE_PREDICATE] Checking if predicate exists:',
+    const predicateExists = await this._checkPredicateExists(
+      provider,
       predicateAddress,
     );
 
+    if (!predicateExists) {
+      await this._createPredicateInApi(provider, vault);
+    }
+  }
+
+  /**
+   * Checks if a predicate exists in the Bako API.
+   */
+  private async _checkPredicateExists(
+    provider: BakoProvider,
+    predicateAddress: string,
+  ): Promise<boolean> {
     try {
-      const existingPredicate =
-        await userProvider.findPredicateByAddress(predicateAddress);
-
-      console.log(
-        '[ENSURE_PREDICATE] findPredicateByAddress result:',
-        existingPredicate ? 'FOUND' : 'NULL/UNDEFINED',
-      );
-
-      // Check if predicate was found (may return null/undefined instead of throwing)
-      if (!existingPredicate) {
-        console.log('[ENSURE_PREDICATE] Creating predicate (null response)...');
-        await this._createPredicateInApi(userProvider, vault);
-      } else {
-        console.log('[ENSURE_PREDICATE] Predicate already exists in API');
-      }
-    } catch (findError) {
-      // Predicate doesn't exist (API threw error), create it
-      console.log(
-        '[ENSURE_PREDICATE] findPredicateByAddress threw error:',
-        findError,
-      );
-      console.log('[ENSURE_PREDICATE] Creating predicate (error case)...');
-      try {
-        await this._createPredicateInApi(userProvider, vault);
-      } catch (createError) {
-        console.error('[ENSURE_PREDICATE] Failed to create:', createError);
-        throw new Error(
-          `Failed to create predicate in API: ${
-            createError instanceof Error ? createError.message : 'Unknown error'
-          }`,
-        );
-      }
+      const predicate = await provider.findPredicateByAddress(predicateAddress);
+      return predicate !== null && predicate !== undefined;
+    } catch {
+      return false;
     }
   }
 
@@ -745,22 +689,19 @@ export abstract class PredicateConnector extends FuelConnector {
    * Creates a predicate in the Bako API using the provided provider.
    */
   private async _createPredicateInApi(
-    userProvider: BakoProvider,
+    provider: BakoProvider,
     vault: Vault,
   ): Promise<void> {
-    // Create vault with provider and save
     const vaultToSave = new Vault(
-      userProvider,
+      provider,
       vault.configurable,
       vault.predicateVersion,
     );
 
     await vaultToSave.save({
-      name: 'Connector Wallet',
-      description: 'Auto-created predicate for connector',
+      name: DEFAULT_CONNECTOR_WALLET_NAME,
+      description: DEFAULT_CONNECTOR_WALLET_DESCRIPTION,
     });
-
-    console.log('[CONNECTOR] Predicate created successfully');
   }
 
   protected async getNewestPredicate(): Promise<Maybe<Vault>> {
@@ -771,27 +712,19 @@ export abstract class PredicateConnector extends FuelConnector {
     try {
       const vault = await this.getBakoSafePredicate(latestPredicateVersion);
       return vault;
-    } catch (error) {
-      console.error('Error creating newest predicate vault:', error);
+    } catch {
       return null;
     }
   }
 
   protected async setupPredicate(): Promise<Vault> {
-    const bakoProvider = await this._createBakoProvider();
-    const selectedPredicateVersion = this.getSelectedPredicateVersion();
-
-    if (selectedPredicateVersion) {
-      const selectedPredicate = await this.getBakoSafePredicate(
-        selectedPredicateVersion,
-      );
-      if (selectedPredicate) {
-        this.predicateAddress = selectedPredicateVersion;
-        this.predicateAccount = selectedPredicate;
-        return selectedPredicate;
-      }
+    // Priority 1: Use explicitly selected predicate version
+    const selectedVersion = this.getSelectedPredicateVersion();
+    if (selectedVersion) {
+      return this._setupPredicateByVersion(selectedVersion);
     }
 
+    // Priority 2: Use custom predicate if configured
     if (this.customPredicate?.abi && this.customPredicate?.bin) {
       const vault = await this.getBakoSafePredicate();
       this.predicateAddress = 'custom';
@@ -799,44 +732,51 @@ export abstract class PredicateConnector extends FuelConnector {
       return vault;
     }
 
-    if (this.selectedPredicateVersion) {
-      const selectedPredicate = await this.getBakoSafePredicate();
-      if (selectedPredicate) {
-        this.predicateAddress = this.selectedPredicateVersion;
-        this.predicateAccount = selectedPredicate;
-        return this.predicateAccount;
-      }
-    }
+    // Priority 3: Use predicate with balance or newest available
+    const predicate = await this._getDefaultPredicate();
 
+    await this._persistPredicateSelection(predicate);
+
+    return predicate;
+  }
+
+  private async _setupPredicateByVersion(version: string): Promise<Vault> {
+    const predicate = await this.getBakoSafePredicate(version);
+    this.predicateAddress = version;
+    this.predicateAccount = predicate;
+    return predicate;
+  }
+
+  private async _getDefaultPredicate(): Promise<Vault> {
     const predicate =
       (await this.getCurrentUserPredicate()) ??
       (await this.getNewestPredicate());
-    if (!predicate) throw new Error('No predicate found');
 
+    if (!predicate) {
+      throw new Error('No predicate found');
+    }
+
+    return predicate;
+  }
+
+  private async _persistPredicateSelection(predicate: Vault): Promise<void> {
     const predicateVersion = predicate.version;
 
     this.predicateAddress = predicateVersion;
     this.predicateAccount = predicate;
     this.selectedPredicateVersion = predicateVersion;
 
-    try {
-      if (WINDOW) {
-        StoreManager.set('SELECTED_PREDICATE_KEY', predicateVersion);
-        await bakoProvider.changeAccount(
-          this.getSessionId(),
-          predicate.address.toString(),
-        );
-        StoreManager.set('CURRENT_ACCOUNT', predicate.address.toString());
-        this.emitAccountChange(predicate.address.toString(), true);
-      }
-    } catch (error) {
-      console.error(
-        'Failed to save auto-selected predicate version to localStorage:',
-        error,
-      );
-    }
+    if (WINDOW) {
+      const bakoProvider = await this._createBakoProvider();
 
-    return this.predicateAccount;
+      StoreManager.set('SELECTED_PREDICATE_KEY', predicateVersion);
+      await bakoProvider.changeAccount(
+        this.getSessionId(),
+        predicate.address.toString(),
+      );
+      StoreManager.set('CURRENT_ACCOUNT', predicate.address.toString());
+      this.emitAccountChange(predicate.address.toString(), true);
+    }
   }
 
   /**

@@ -9,6 +9,7 @@ import {
   test,
   vi,
 } from 'vitest';
+import { StoreManager } from '../StoreManager';
 import { TestPredicatedConnector } from './testConnector';
 
 describe('Bako Predicated Connector', () => {
@@ -35,9 +36,24 @@ describe('Bako Predicated Connector', () => {
     test('custom predicate', async () => {
       const getProvidersSpy = vi
         // biome-ignore lint/suspicious/noExplicitAny: using any to mock function
-        .spyOn(connector as any, '_get_providers')
+        .spyOn(connector as any, '_getProviders')
         .mockResolvedValue({
           fuelProvider,
+        });
+
+      const getEvmAddressSpy = vi
+        // biome-ignore lint/suspicious/noExplicitAny: using any to mock function
+        .spyOn(connector as any, '_getCurrentEvmAddress')
+        .mockReturnValue('0x1111111111111111111111111111111111111111');
+
+      const getPersonalWalletSpy = vi
+        .spyOn(StoreManager, 'getPersonalWallet')
+        .mockReturnValue({
+          address:
+            '0x1111111111111111111111111111111111111111111111111111111111111111',
+          // biome-ignore lint/suspicious/noExplicitAny: mocking with minimal required fields
+          configurable: { SIGNER: '0x1111' } as any,
+          version: '0.0.1',
         });
 
       const wallet = Wallet.generate({ provider: fuelProvider });
@@ -48,7 +64,7 @@ describe('Bako Predicated Connector', () => {
       // @ts-expect-error getPredicateVersions is protected
       const versions = connector.getPredicateVersions();
       // @ts-expect-error customPredicate is protected
-      connector.customPredicate = Object.values(versions)[0];
+      connector.customPredicate = Object.values(versions)[0].predicate;
 
       // @ts-expect-error setupPredicate is protected
       const predicateAccount = await connector.setupPredicate();
@@ -58,6 +74,8 @@ describe('Bako Predicated Connector', () => {
       expect(connector.predicateAccount).toBe(predicateAccount);
 
       getProvidersSpy.mockRestore();
+      getEvmAddressSpy.mockRestore();
+      getPersonalWalletSpy.mockRestore();
     });
   });
 

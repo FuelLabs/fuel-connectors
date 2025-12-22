@@ -1,5 +1,8 @@
 import path from 'node:path';
-import { MAINNET_NETWORK } from '@fuel-connectors/bako-predicate-connector';
+import {
+  MAINNET_NETWORK,
+  StoreManager,
+} from '@fuel-connectors/bako-predicate-connector';
 import { type Asset, type Network, Provider, Wallet } from 'fuels';
 import { launchTestNode } from 'fuels/test-utils';
 import {
@@ -134,16 +137,28 @@ describe('WalletConnect Connector', () => {
 
   describe('setupPredicate()', () => {
     let getEvmAddressSpy: ReturnType<typeof vi.spyOn> | undefined;
+    let getPersonalWalletSpy: ReturnType<typeof vi.spyOn> | undefined;
 
     beforeEach(() => {
       getEvmAddressSpy = vi
         // biome-ignore lint/suspicious/noExplicitAny: using any to mock function
-        .spyOn(connector as any, '_get_current_evm_address')
+        .spyOn(connector as any, '_getCurrentEvmAddress')
         .mockReturnValue('0x1111111111111111111111111111111111111111');
+
+      getPersonalWalletSpy = vi
+        .spyOn(StoreManager, 'getPersonalWallet')
+        .mockReturnValue({
+          address:
+            '0x1111111111111111111111111111111111111111111111111111111111111111',
+          // biome-ignore lint/suspicious/noExplicitAny: mocking with minimal required fields
+          configurable: { SIGNER: '0x1111' } as any,
+          version: '0.0.1',
+        });
     });
 
     afterEach(() => {
       getEvmAddressSpy?.mockRestore();
+      getPersonalWalletSpy?.mockRestore();
     });
 
     test('should setup predicate with selectedPredicateVersion when account is connected', async () => {

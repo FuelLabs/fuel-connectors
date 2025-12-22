@@ -63,7 +63,7 @@ export class WalletConnectConnector extends PredicateConnector {
 
     this.customPredicate = config.predicateConfig || null;
     if (HAS_WINDOW) {
-      this._config_providers({ ...config, wagmiConfig });
+      this._configProviders({ ...config, wagmiConfig });
     }
   }
 
@@ -235,7 +235,7 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   async signMessageCustomCurve(message: string) {
-    const { ethProvider } = await this._get_providers();
+    const { ethProvider } = await this._getProviders();
     if (!ethProvider) throw new Error('Eth provider not found');
     const accountAddress = await this.getAccountAddress();
     if (!accountAddress) throw new Error('No connected accounts');
@@ -283,14 +283,14 @@ export class WalletConnectConnector extends PredicateConnector {
   /**
    * Configures providers based on connector configuration.
    */
-  protected async _config_providers(config: WalletConnectConfig = {}) {
+  protected async _configProviders(config: WalletConnectConfig = {}) {
     return this.configProviders(config);
   }
 
   /**
    * Gets the current EVM address from the connected wallet.
    */
-  protected _get_current_evm_address(): Maybe<string> {
+  protected _getCurrentEvmAddress(): Maybe<string> {
     const wagmiConfig = this.getWagmiConfig();
     if (!wagmiConfig) return null;
     const { address } = getAccount(wagmiConfig);
@@ -300,24 +300,24 @@ export class WalletConnectConnector extends PredicateConnector {
   /**
    * Checks if there is an active connection, throws if not.
    */
-  protected async _require_connection() {
+  protected async _requireConnection() {
     return this.requireConnection();
   }
 
   /**
    * Gets the configured providers (Fuel and EVM).
    */
-  protected async _get_providers(): Promise<ProviderDictionary> {
+  protected async _getProviders(): Promise<ProviderDictionary> {
     return this.getProviders();
   }
 
   /**
    * Signs a message using the connected wallet.
    */
-  protected async _sign_message(message: string): Promise<string> {
+  protected async _signMessage(message: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      const { ethProvider } = await this._get_providers();
-      const currentAccount = this._get_current_evm_address();
+      const { ethProvider } = await this._getProviders();
+      const currentAccount = this._getCurrentEvmAddress();
 
       if (!ethProvider || !currentAccount) {
         reject(new Error('Provider or account not available'));
@@ -365,9 +365,7 @@ export class WalletConnectConnector extends PredicateConnector {
         }
       }
     } catch {
-      console.error(
-        'Existing connection is invalid, proceeding with new connection',
-      );
+      // Existing connection is invalid, proceeding with new connection
     }
 
     this.createModal();
