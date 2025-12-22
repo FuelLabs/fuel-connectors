@@ -621,11 +621,94 @@ export abstract class PredicateConnector extends FuelConnector {
         'No account address found after switching predicate version',
       );
     }
+
+    // Check if predicate exists in API, create if not
+    await this._ensurePredicateExists(
+      bakoProvider,
+      selectedPredicate,
+      selectedPredicateAddress,
+    );
+
     await bakoProvider.changeAccount(
       this.getSessionId(),
       selectedPredicateAddress ?? '',
     );
     this.emitAccountChange(selectedPredicateAddress, true);
+  }
+
+  /**
+   * Ensures the predicate exists in the Bako API.
+   * If not, creates it using vault.save().
+   */
+  private async _ensurePredicateExists(
+    bakoProvider: BakoProvider,
+    vault: Vault,
+    predicateAddress: string,
+  ): Promise<void> {
+    try {
+      await bakoProvider.findPredicateByAddress(predicateAddress);
+    } catch (_error) {
+      // Predicate doesn't exist, create it
+      console.log('[CONNECTOR] Predicate not found in API, creating...');
+      try {
+        await this._createPredicateInApi(vault);
+        console.log('[CONNECTOR] Predicate created successfully');
+      } catch (createError) {
+        console.error('[CONNECTOR] Failed to create predicate:', createError);
+        throw new Error(
+          `Failed to create predicate in API: ${
+            createError instanceof Error ? createError.message : 'Unknown error'
+          }`,
+        );
+      }
+    }
+  }
+
+  /**
+   * Creates a predicate in the Bako API.
+   */
+  private async _createPredicateInApi(vault: Vault): Promise<void> {
+    const { fuelProvider } = await this._get_providers();
+    const evmAddress = this._get_current_evm_address();
+
+    if (!evmAddress) {
+      throw new Error('No EVM address found');
+    }
+
+    const fuelAddress = new Address(evmAddress).toB256();
+
+    // Authenticate with Bako to get proper permissions
+    const challengeCode = await BakoProvider.setup({
+      provider: fuelProvider.url,
+      address: fuelAddress,
+      encoder: TypeUser.EVM,
+      serverApi: BAKO_SERVER_URL,
+    });
+
+    const challengeSignature = await this._sign_message(challengeCode);
+
+    const authenticatedProvider = await BakoProvider.authenticate(
+      fuelProvider.url,
+      {
+        address: fuelAddress,
+        challenge: challengeCode,
+        encoder: TypeUser.EVM,
+        token: challengeSignature,
+        serverApi: BAKO_SERVER_URL,
+      },
+    );
+
+    // Create vault with authenticated provider and save
+    const vaultToSave = new Vault(
+      authenticatedProvider,
+      vault.configurable,
+      vault.predicateVersion,
+    );
+
+    await vaultToSave.save({
+      name: 'Connector Wallet',
+      description: 'Auto-created predicate for connector',
+    });
   }
 
   protected async getNewestPredicate(): Promise<Maybe<Vault>> {
