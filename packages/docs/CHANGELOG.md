@@ -1,5 +1,11 @@
 # docs
 
+## 0.32.0
+
+### Minor Changes
+
+- [#558](https://github.com/FuelLabs/fuel-connectors/pull/558) [`4249c53`](https://github.com/FuelLabs/fuel-connectors/commit/4249c5369ab230e397de33238990a45a71092eb4) Thanks [@nelitow](https://github.com/nelitow)! - feat: update fuels to 0.102.0
+
 ## 0.31.1
 
 ### Patch Changes

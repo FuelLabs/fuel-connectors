@@ -137,9 +137,11 @@ jobs:
       - name: Run build:connectors
         run: pnpm build:connectors
 
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps chromium
-        working-directory: e2e-tests/runner
+      - name: Install Playwright Dependencies
+        run: pnpm dlx playwright@1.48.2 install-deps
+
+      - name: Install Chromium
+        run: pnpm dlx playwright@1.48.2 install chromium
 
       - name: Build Synpress cache
         run: xvfb-run pnpm setup:synpress

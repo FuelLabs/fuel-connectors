@@ -61,13 +61,13 @@ importers:
         version: 20.12.11
       '@vitest/coverage-v8':
         specifier: 2.1.9
-        version: 2.1.9(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        version: 2.1.9(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
       compare-versions:
         specifier: 6.1.0
         version: 6.1.0
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
       husky:
         specifier: 9.0.11
         version: 9.0.11
@@ -82,7 +82,7 @@ importers:
         version: 2.0.11
       vitest:
         specifier: 2.1.9
-        version: 2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)
+        version: 2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1)
 
   e2e-tests/react-next:
     dependencies:
@@ -100,7 +100,7 @@ importers:
         version: 5.35.1(react@18.3.1)
       '@wagmi/connectors':
         specifier: 5.1.7
-        version: 5.1.7(@types/react@18.3.1)(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
+        version: 5.1.7(@types/react@18.3.1)(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
       '@wagmi/core':
         specifier: 2.13.4
         version: 2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))
@@ -109,10 +109,10 @@ importers:
         version: 2.1.1
       connectkit:
         specifier: 1.8.2
-        version: 1.8.2(@babel/core@7.28.3)(@tanstack/react-query@5.35.1(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(wagmi@2.12.7(@tanstack/query-core@5.35.1)(@tanstack/react-query@5.35.1(react@18.3.1))(@types/react@18.3.1)(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))
+        version: 1.8.2(@babel/core@7.28.3)(@tanstack/react-query@5.35.1(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(wagmi@2.12.7(@tanstack/query-core@5.35.1)(@tanstack/react-query@5.35.1(react@18.3.1))(@types/react@18.3.1)(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
       next:
         specifier: 14.2.26
         version: 14.2.26(@babel/core@7.28.3)(@playwright/test@1.48.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -121,7 +121,7 @@ importers:
         version: link:../../examples/react-app
       wagmi:
         specifier: 2.12.7
-        version: 2.12.7(@tanstack/query-core@5.35.1)(@tanstack/react-query@5.35.1(react@18.3.1))(@types/react@18.3.1)(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
+        version: 2.12.7(@tanstack/query-core@5.35.1)(@tanstack/react-query@5.35.1(react@18.3.1))(@types/react@18.3.1)(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
     devDependencies:
       '@tanstack/react-query-devtools':
         specifier: 5.35.1
@@ -158,22 +158,22 @@ importers:
         version: link:../../packages/connectors
       '@fuels/playwright-utils':
         specifier: 0.49.0
-        version: 0.49.0(@playwright/test@1.48.2)(fuels@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))
+        version: 0.49.0(@playwright/test@1.48.2)(fuels@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))
       '@playwright/test':
         specifier: 1.48.2
         version: 1.48.2
       '@synthetixio/synpress':
         specifier: 4.1.0
         version: 4.1.0(@depay/solana-web3.js@1.98.3)(@depay/web3-blockchains@9.8.6)(@microsoft/api-extractor@7.43.0(@types/node@22.7.5))(@playwright/test@1.48.2)(bufferutil@4.0.9)(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(playwright-core@1.48.2)(postcss@8.5.6)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
-      '@synthetixio/synpress-cache':
-        specifier: 0.0.10
-        version: 0.0.10(@microsoft/api-extractor@7.43.0(@types/node@22.7.5))(playwright-core@1.48.2)(postcss@8.5.6)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(typescript@5.4.5)
       dotenv:
         specifier: 16.4.5
         version: 16.4.5
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      playwright-core:
+        specifier: 1.48.2
+        version: 1.48.2
 
   examples/react-app:
     dependencies:
@@ -191,7 +191,7 @@ importers:
         version: 5.35.1(react@18.3.1)
       '@wagmi/connectors':
         specifier: 5.1.7
-        version: 5.1.7(@types/react@18.3.1)(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
+        version: 5.1.7(@types/react@18.3.1)(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
       '@wagmi/core':
         specifier: 2.13.4
         version: 2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))
@@ -199,8 +199,8 @@ importers:
         specifier: 2.1.1
         version: 2.1.1
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -328,8 +328,8 @@ importers:
   packages/bako-safe:
     dependencies:
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
       socket.io-client:
         specifier: 4.7.2
         version: 4.7.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -347,8 +347,8 @@ importers:
   packages/burner-wallet-connector:
     dependencies:
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
     devDependencies:
       '@fuel-connectors/common':
         specifier: workspace:*
@@ -378,14 +378,14 @@ importers:
         specifier: 5.7.0
         version: 5.7.0
       '@solana/web3.js':
-        specifier: 1.93.2
-        version: 1.93.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+        specifier: 1.98.4
+        version: 1.98.4(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)
       bs58:
         specifier: 6.0.0
         version: 6.0.0
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
       memoizee:
         specifier: 0.4.15
         version: 0.4.15
@@ -421,8 +421,8 @@ importers:
         specifier: 5.7.0
         version: 5.7.0
       '@solana/web3.js':
-        specifier: 1.93.1
-        version: 1.93.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+        specifier: 1.98.4
+        version: 1.98.4(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)
       '@wagmi/core':
         specifier: 2.13.4
         version: 2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))
@@ -437,13 +437,13 @@ importers:
         version: 5.0.0(@types/react@18.3.1)(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(vue@3.5.20(typescript@5.4.5))(zod@3.22.4)
       '@web3modal/wagmi':
         specifier: 5.0.0
-        version: 5.0.0(@wagmi/connectors@5.1.7(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(vue@3.5.20(typescript@5.4.5))
+        version: 5.0.0(@wagmi/connectors@5.1.7(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(vue@3.5.20(typescript@5.4.5))
       bakosafe:
         specifier: 0.5.0
-        version: 0.5.0(bufferutil@4.0.9)(fuels@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
+        version: 0.5.0(bufferutil@4.0.9)(fuels@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
       rpc-websockets:
         specifier: 7.11.0
         version: 7.11.0
@@ -491,8 +491,8 @@ importers:
   packages/docs:
     dependencies:
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
       typedoc-plugin-markdown:
         specifier: ^3.17.1
         version: 3.17.1(typedoc@0.25.13(typescript@5.4.5))
@@ -540,8 +540,8 @@ importers:
         specifier: 5.7.0
         version: 5.7.0
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
       memoizee:
         specifier: 0.4.15
         version: 0.4.15
@@ -592,8 +592,8 @@ importers:
   packages/evm-predicates:
     dependencies:
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
     devDependencies:
       '@fuel-connectors/common':
         specifier: workspace:*
@@ -614,8 +614,8 @@ importers:
   packages/fuel-development-wallet:
     dependencies:
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
     devDependencies:
       '@fuel-connectors/fuel-wallet':
         specifier: workspace:*
@@ -636,8 +636,8 @@ importers:
   packages/fuel-wallet:
     dependencies:
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
       json-rpc-2.0:
         specifier: 1.7.0
         version: 1.7.0
@@ -661,8 +661,8 @@ importers:
   packages/fuelet-wallet:
     dependencies:
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
     devDependencies:
       '@fuel-connectors/fuel-wallet':
         specifier: workspace:*
@@ -692,8 +692,8 @@ importers:
         specifier: 3.3.0
         version: 3.3.0
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
     devDependencies:
       '@tanstack/react-query':
         specifier: 5.35.1
@@ -726,8 +726,8 @@ importers:
         specifier: 5.7.0
         version: 5.7.0
       '@solana/web3.js':
-        specifier: 1.93.1
-        version: 1.93.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+        specifier: 1.98.4
+        version: 1.98.4(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)
       '@web3modal/scaffold':
         specifier: '>=5.0.0'
         version: 5.0.0(@types/react@18.3.1)(react@18.3.1)
@@ -738,8 +738,8 @@ importers:
         specifier: 6.0.0
         version: 6.0.0
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
       memoizee:
         specifier: 0.4.15
         version: 0.4.15
@@ -803,13 +803,13 @@ importers:
         version: 5.0.0(@types/react@18.3.1)(react@18.3.1)
       '@web3modal/wagmi':
         specifier: 5.0.0
-        version: 5.0.0(@wagmi/connectors@5.1.7(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(vue@3.5.20(typescript@5.4.5))
+        version: 5.0.0(@wagmi/connectors@5.1.7(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(vue@3.5.20(typescript@5.4.5))
       bakosafe:
         specifier: 0.5.0
-        version: 0.5.0(bufferutil@4.0.9)(fuels@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
+        version: 0.5.0(bufferutil@4.0.9)(fuels@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
       fuels:
-        specifier: 0.101.3
-        version: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+        specifier: 0.102.0
+        version: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
       memoizee:
         specifier: 0.4.15
         version: 0.4.15
@@ -2085,8 +2085,17 @@ packages:
     resolution: {integrity: sha512-ZlifuRVn7yuR3VknX1vHWDX9BmUFryoGiNqdGTXCBq5XC6Z2ASmdJTis4wcGYaBsrlZv95RWym9i9TtRLA+Y1A==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
 
+  '@fuel-ts/abi-coder@0.102.0':
+    resolution: {integrity: sha512-eVbLGnDsGQXCwT4mA4xvasI6Jh+xEiSRbskAu8cUwSoVnaDBCUYH9EXFEOFBdM45hzXwh1+buhnigkF1cOZ5ZA==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+
   '@fuel-ts/abi-typegen@0.101.3':
     resolution: {integrity: sha512-WWXESg9SaBOLBXYsTeW5We3LA2aHzRhCzUAp5UDqaCChztzAyyj4aXd68zpUiJ5UlH3C6bxgv2zHMhWMo+rriA==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+    hasBin: true
+
+  '@fuel-ts/abi-typegen@0.102.0':
+    resolution: {integrity: sha512-PkTsOluacxSLh4I/7+G0lia+hKYHvqe6eXx59Cvd3/91i16a/U8+owtqj2m5YUZtgb36tU1ewvTarVuFvZxbSA==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
     hasBin: true
 
@@ -2094,48 +2103,96 @@ packages:
     resolution: {integrity: sha512-ubDVW4NSRdTEyaAFUnL75+ysjLcb+/5M3Rtk5hFDawhcrA9rSB0UDel5lOavERuJlKPtu4jngcv8nTiXdu4mGw==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
 
+  '@fuel-ts/account@0.102.0':
+    resolution: {integrity: sha512-VvoHV/5AsFAu+SZbR1d/+aE7dtSQ+qQuzHOexm3kk4dtTQA9v7RRl+2gA1GDJo01Zc5529mkXcZnb346+0odcw==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+
   '@fuel-ts/address@0.101.3':
     resolution: {integrity: sha512-GbolfGNSSx8hEHPxI4ayD3MAhnHMCg3mqCFncTXXFaL2uMK82aSvab8s0QLNxcIPZmS9T5rOCMY0sqwm5ahh7w==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+
+  '@fuel-ts/address@0.102.0':
+    resolution: {integrity: sha512-//u/BpJSCLppnRv73c7fbJn7+m6cxOmq7BKyLyNrO66Fuq9NnKmgDrDtY4nErSBrYBdjPepvpLp5wzs9jVytEg==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
 
   '@fuel-ts/contract@0.101.3':
     resolution: {integrity: sha512-uMpELAr/jkyyNIUCuCrTKbhT1oH/smUEVKL7D+4HvJ2nqn7xO4XdaNFGf6/5qylElDP8xn4Xtte8sb+d9UeZTA==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
 
+  '@fuel-ts/contract@0.102.0':
+    resolution: {integrity: sha512-PUUiySGKb9usznxY99zl8S9X3L0XIlQKu1NzVVT9f0YXhwIqAkDvoCvCGgsPpF4RQAK7Q4KiJI0N/EGPL6PIXA==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+
   '@fuel-ts/crypto@0.101.3':
     resolution: {integrity: sha512-bb/wnMMcf8czSpsamPfJx/I3/ag/mcmO2B9Tzy5Z4cFYbRs1Vzm2rVAmh7qsr00evxhftiu9QesPACZUjabZag==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+
+  '@fuel-ts/crypto@0.102.0':
+    resolution: {integrity: sha512-RFrca2bxG56j5WA9EwJYIeEzCfDH2nAU/g9rgEJr/wmMvSOH97QW3Nxym/o/bssdkEln++s51govXeBv8o+ztA==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
 
   '@fuel-ts/errors@0.101.3':
     resolution: {integrity: sha512-c2WqH0fkSLPqDmAeCNJonca1Ui9CElFz3PEh/77btIE61bX9Iclq/L7/GtZabz8jsedBBbGJwyrgE4GTgNMwXQ==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
 
+  '@fuel-ts/errors@0.102.0':
+    resolution: {integrity: sha512-h/UXMnyY19G6UBOjiF2dXqv/pxPQW/EDbcGe9ELdOe8cXCItmnO8oTLtAvPHH4Z4IEK87CUpTW4+wD+MTj2Rqw==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+
   '@fuel-ts/hasher@0.101.3':
     resolution: {integrity: sha512-XaT1Gwq7KdQQUEDXrY3Vx7c6vgIAZlAVG6RszkY6a2Gl72eYGB1tMf1GKkkKEMw5/liF/C8OG9/recwbxlI4XQ==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+
+  '@fuel-ts/hasher@0.102.0':
+    resolution: {integrity: sha512-KkcdfSyzorNvKJKfrXBQjmJFuYVk1ABEwo3I0VtnWgNnDlHNmkmN8RzkPBnGmmPUWz+Nncf4PhlqjOhyamFa8Q==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
 
   '@fuel-ts/math@0.101.3':
     resolution: {integrity: sha512-vqU4rzBjDkLHT7YTjhFWvbo3LDnDR3vgl33kMDj93eMu2tfm8W8WWRxOoqzLNf18sl8dcoYMrNvIgXIOplddOQ==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
 
+  '@fuel-ts/math@0.102.0':
+    resolution: {integrity: sha512-jo63N1b9+KHYUxWRS3ZPHkaxFmiiAyRUT6Xo8mVQ0LbtDxx0ulqexCBw1ITN5BYfarTOigF0I1GFgBLIVY6xSA==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+
   '@fuel-ts/merkle@0.101.3':
     resolution: {integrity: sha512-zOLlsSjmCmjACHPiJscVRIfq2DKtHd4eOPFwhQkaBedzp/NRAINAaapFayTJiyF8sBucCQN4cOyC6ZGD7jjf4w==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+
+  '@fuel-ts/merkle@0.102.0':
+    resolution: {integrity: sha512-pnNzU25GxE/3mUdTh0UC/KwrDp/paGAOwOaheTTGPftx7gHSgzrFfEnEzJf/i+y+eNK9fFOkav1gQ5dMkshqQg==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
 
   '@fuel-ts/program@0.101.3':
     resolution: {integrity: sha512-DZzP8CiqXqhi+jR9m0u+lbCrDtojGX5pv+j2lAyGRdyt80UIkFucDrbVXD0v2Iuni02PIaLDEAoum+y/sqGgrw==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
 
+  '@fuel-ts/program@0.102.0':
+    resolution: {integrity: sha512-oR+Hj0kx8Z3TZoStRhik+q4+pNYHatTuasd50H1TAR/7H7Zs6ZNfs7cARVuqDhqvDNaV1ChYrjnkdDB65RHG8g==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+
   '@fuel-ts/recipes@0.101.3':
     resolution: {integrity: sha512-rzVDeJM69Wth8wXly656g3VCNbFpouHfZQA2vJiEoAZn+YB9m9Z73DfAIDn7WUw3Sy/iBAw884OKoV3zZjV8qw==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+
+  '@fuel-ts/recipes@0.102.0':
+    resolution: {integrity: sha512-cq0ljg6QtByyCv7ntC56wc+x6GcKmwGAClEQRLRcj69WyZsy1uOlfZhLzWY3c4wa/TXgyyjijBN/XvMrCEavOg==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
 
   '@fuel-ts/script@0.101.3':
     resolution: {integrity: sha512-Bt5NT9R9S9PNi9xmeq20J27QWgD9H4/csH1zXLVkWqS/hy+HKwojwn1n8Nje0ZgbQIBB52OHGiq/txz2XaIsrg==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
 
+  '@fuel-ts/script@0.102.0':
+    resolution: {integrity: sha512-WkDHcgEbrcsZk/1z+q+31Sx7JKuNtjVL09L4Rx7dLJMHoM1X5rlQdVvg6PZRFq3DUmHcZXjvG1p+/3nIu16UNA==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+
   '@fuel-ts/transactions@0.101.3':
     resolution: {integrity: sha512-JBQ6BOUFiI/UX1VAvY+8AdS73XCTRirOBF/aLrnc8X+uVpoyHKvDaM+oWzl6YMMkgAGVz+D4DgYkjNWiKN+oag==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+
+  '@fuel-ts/transactions@0.102.0':
+    resolution: {integrity: sha512-UtWZPD6WvZud4Otmh9f7CwcAyvMARMprzUco8Qz7WT1dPXT6zflAqLtGx47BQG0nCt1LlrqpCUvDrRNq6WDadA==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
 
   '@fuel-ts/utils@0.101.3':
@@ -2144,8 +2201,19 @@ packages:
     peerDependencies:
       vitest: 3.0.9
 
+  '@fuel-ts/utils@0.102.0':
+    resolution: {integrity: sha512-u6IJfo+SCEGZycnHxjHZFQpBKnO3xqyP6kMpVSl/uHa2IxKJl68QZmMXqjU8+JkXZ2uP+Ui56gZGoFeje0sPng==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+    peerDependencies:
+      vitest: 3.0.9
+
   '@fuel-ts/versions@0.101.3':
     resolution: {integrity: sha512-IVsK4t/ouxtvsWZNxLccOUVe+3BIsjsXhok74jWiwB8ATGmf/CtKnvsDJhhx9OrALZFdMz7WiCXrsBkhEITpCA==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+    hasBin: true
+
+  '@fuel-ts/versions@0.102.0':
+    resolution: {integrity: sha512-r71sNrg69uvnVyVsdivPQzlon3Aoa21tmPp8lFZ3PeVFpzh1NQ5H2tkUgFjvjX4WmbnSGeBvMjEd0WWWkY/Isw==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
     hasBin: true
 
@@ -2167,6 +2235,9 @@ packages:
 
   '@fuels/vm-asm@0.60.2':
     resolution: {integrity: sha512-wkCu63jTGJWpRZQirTaB8S4/gyoebEJLk3AKfnykt/lgWp1U9iHOcCICVHQP547i+y8jEVKwk18+huINFyYVFQ==}
+
+  '@fuels/vm-asm@0.62.0':
+    resolution: {integrity: sha512-W2XoFIzHtHmWaTKzGKhDzkuQHCJO3j/wU3x1ngyleucsjCv3nUUqkRoSPhEo6wTGRqwiq6cmoqOk+FEi4vmxww==}
 
   '@graphql-typed-document-node/core@3.2.0':
     resolution: {integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==}
@@ -3167,6 +3238,25 @@ packages:
     resolution: {integrity: sha512-E1ImOIAD1tBZFRdjeM4/pzTiTApC0AOBGwyAMS4fwIodCWArzJ3DWdoh8cKxeFM2fElkxBh2Aqts1BPC373rHA==}
     engines: {node: '>=5.10'}
 
+  '@solana/codecs-core@2.3.0':
+    resolution: {integrity: sha512-oG+VZzN6YhBHIoSKgS5ESM9VIGzhWjEHEGNPSibiDTxFhsFWxNaz8LbMDPjBUE69r9wmdGLkrQ+wVPbnJcZPvw==}
+    engines: {node: '>=20.18.0'}
+    peerDependencies:
+      typescript: '>=5.3.3'
+
+  '@solana/codecs-numbers@2.3.0':
+    resolution: {integrity: sha512-jFvvwKJKffvG7Iz9dmN51OGB7JBcy2CJ6Xf3NqD/VP90xak66m/Lg48T01u5IQ/hc15mChVHiBm+HHuOFDUrQg==}
+    engines: {node: '>=20.18.0'}
+    peerDependencies:
+      typescript: '>=5.3.3'
+
+  '@solana/errors@2.3.0':
+    resolution: {integrity: sha512-66RI9MAbwYV0UtP7kGcTBVLxJgUxoZGm8Fbc0ah+lGiAw17Gugco6+9GrJCV83VyF2mDWyYnYM9qdI3yjgpnaQ==}
+    engines: {node: '>=20.18.0'}
+    hasBin: true
+    peerDependencies:
+      typescript: '>=5.3.3'
+
   '@solana/wallet-adapter-backpack@0.1.14':
     resolution: {integrity: sha512-DfNLd5S1P7rmrgqMp+jRd21ryuXUxia1mu4qmZ+cau1NGFO2v5ep14LhzYXmqPde6kgbzPLPkLdRnkffLdI4TA==}
     engines: {node: '>=16'}
@@ -3216,11 +3306,11 @@ packages:
   '@solana/web3.js@1.91.7':
     resolution: {integrity: sha512-HqljZKDwk6Z4TajKRGhGLlRsbGK4S8EY27DA7v1z6yakewiUY3J7ZKDZRxcqz2MYV/ZXRrJ6wnnpiHFkPdv0WA==}
 
-  '@solana/web3.js@1.93.1':
-    resolution: {integrity: sha512-3TzngqyzukYbuuweL1ejJJEPXmSRoOjaUsfBcfdx9RyDZtyP9av/GerV52mF6Lj2zEVkE7ZczpEP4tKJ8anxVQ==}
-
   '@solana/web3.js@1.93.2':
     resolution: {integrity: sha512-U8GlrvjfheJTFNavJHb2v/CnpzoqbGKaShLJGf1cELeFUlweUrfYXc9YFX0tw8Icb4ll48vDxt/zEPQOQ29+kw==}
+
+  '@solana/web3.js@1.98.4':
+    resolution: {integrity: sha512-vv9lfnvjUsRiq//+j5pBdXig0IQdtzA0BRZ3bXEP4KaIyF1CcaydWqgyzQgfZMNIsWNWmG+AUHwPy4AHOD6gpw==}
 
   '@solflare-wallet/metamask-sdk@1.0.3':
     resolution: {integrity: sha512-os5Px5PTMYKGS5tzOoyjDxtOtj0jZKnbI1Uwt8+Jsw1HHIA+Ib2UACCGNhQ/un2f8sIbTfLD1WuucNMOy8KZpQ==}
@@ -3299,12 +3389,6 @@ packages:
     resolution: {integrity: sha512-n1b59v61cPBRA1ryJIqBZ2VybArkRN+7/Hjl24A51J0nKFUED646/EzHRxl3qvLN7Xv3lcmjcmXX0KOcRozFXg==}
     peerDependencies:
       '@playwright/test': '*'
-
-  '@synthetixio/synpress-cache@0.0.10':
-    resolution: {integrity: sha512-JxK7VeqXREUXo7He1CJ/ymKGdlzyjeKsrmghjt3H6eul2d329HqM7VUwFUoMoKQogFZrHDaHVN5MdRyDwpcOBw==}
-    hasBin: true
-    peerDependencies:
-      playwright-core: 1.48.2
 
   '@synthetixio/synpress-cache@0.0.12':
     resolution: {integrity: sha512-+3ry/p0TnW8yS2d6i9uFPQcHQ20DqeJoDVya0rBus0VPQy0zWxFQ4JWOlb2MyxBaog3shbX+G96UOfvdbpHqNA==}
@@ -4527,6 +4611,10 @@ packages:
     resolution: {integrity: sha512-dLitG79d+GV1Nb/VYcCDFivJeK1hiukt9QjRNVOsUtTy1rR1YJsmpGGTZ3qJos+uw7WmWF4wUwBd9jxjocFC2w==}
     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
 
+  chalk@5.6.2:
+    resolution: {integrity: sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==}
+    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
+
   character-entities-html4@2.1.0:
     resolution: {integrity: sha512-1v7fgQRj6hnSwFpq1Eu0ynr/CDEw0rXo2B61qXrLNdHZmPKgb7fqS1a2JwF0rISo9q77jDI8VMEHoApn8qDoZA==}
 
@@ -4655,6 +4743,10 @@ packages:
   commander@13.1.0:
     resolution: {integrity: sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==}
     engines: {node: '>=18'}
+
+  commander@14.0.2:
+    resolution: {integrity: sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ==}
+    engines: {node: '>=20'}
 
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
@@ -5392,6 +5484,11 @@ packages:
 
   fuels@0.101.3:
     resolution: {integrity: sha512-NTCYDT2lZ8ZjVAkA1rfp37r7fMM8V/91Qx0KUGYqXqjHl9ySsmL3ay64NP4W0gczpwipc3K5j/WWxvVZ9fcQ+Q==}
+    engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
+    hasBin: true
+
+  fuels@0.102.0:
+    resolution: {integrity: sha512-zDcSSnyPkxAqed8liHhRO7aQabQ4RY06hpSIbNl9A7F1go01Airn4FE47jc1zNGGO3nWQpf5G1pzOXNjnvVsKw==}
     engines: {node: ^20.0.0 || ^22.0.0 || ^24.0.0}
     hasBin: true
 
@@ -7769,6 +7866,10 @@ packages:
 
   superstruct@1.0.4:
     resolution: {integrity: sha512-7JpaAoX2NGyoFlI9NBh66BQXGONc+uE+MRS5i2iOBKuS4e+ccgMDjATgZldkah+33DakBxDHiss9kvUcGAO8UQ==}
+    engines: {node: '>=14.0.0'}
+
+  superstruct@2.0.2:
+    resolution: {integrity: sha512-uV+TFRZdXsqXTL2pRvujROjdZQ4RAlBUS5BTh9IGm+jTqQntYThciG/qu57Gs69yjnVUSqdxF9YLmSnpupBW9A==}
     engines: {node: '>=14.0.0'}
 
   supports-color@5.5.0:
@@ -10427,17 +10528,6 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
-  '@fuel-ts/abi-coder@0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
-    dependencies:
-      '@fuel-ts/crypto': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/hasher': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      type-fest: 4.34.1
-    transitivePeerDependencies:
-      - vitest
-
   '@fuel-ts/abi-coder@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
     dependencies:
       '@fuel-ts/crypto': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
@@ -10449,28 +10539,36 @@ snapshots:
     transitivePeerDependencies:
       - vitest
 
-  '@fuel-ts/abi-coder@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/abi-coder@0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
     dependencies:
-      '@fuel-ts/crypto': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/hasher': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
       type-fest: 4.34.1
     transitivePeerDependencies:
       - vitest
 
-  '@fuel-ts/abi-typegen@0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/abi-coder@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
     dependencies:
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/versions': 0.101.3
-      commander: 13.1.0
-      glob: 10.4.5
-      handlebars: 4.7.8
-      mkdirp: 3.0.1
-      ramda: 0.30.1
-      rimraf: 5.0.10
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      type-fest: 4.34.1
+    transitivePeerDependencies:
+      - vitest
+
+  '@fuel-ts/abi-coder@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      type-fest: 4.34.1
     transitivePeerDependencies:
       - vitest
 
@@ -10488,11 +10586,11 @@ snapshots:
     transitivePeerDependencies:
       - vitest
 
-  '@fuel-ts/abi-typegen@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/abi-typegen@0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
     dependencies:
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/versions': 0.101.3
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/versions': 0.102.0
       commander: 13.1.0
       glob: 10.4.5
       handlebars: 4.7.8
@@ -10502,27 +10600,32 @@ snapshots:
     transitivePeerDependencies:
       - vitest
 
-  '@fuel-ts/account@0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/abi-typegen@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
     dependencies:
-      '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/address': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/crypto': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/hasher': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/merkle': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/transactions': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/versions': 0.101.3
-      '@fuels/vm-asm': 0.60.2
-      '@noble/curves': 1.8.1
-      events: 3.3.0
-      graphql: 16.10.0
-      graphql-request: 6.1.0(graphql@16.10.0)
-      graphql-tag: 2.12.6(graphql@16.10.0)
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/versions': 0.102.0
+      commander: 13.1.0
+      glob: 10.4.5
+      handlebars: 4.7.8
+      mkdirp: 3.0.1
       ramda: 0.30.1
+      rimraf: 5.0.10
     transitivePeerDependencies:
-      - encoding
+      - vitest
+
+  '@fuel-ts/abi-typegen@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/versions': 0.102.0
+      commander: 13.1.0
+      glob: 10.4.5
+      handlebars: 4.7.8
+      mkdirp: 3.0.1
+      ramda: 0.30.1
+      rimraf: 5.0.10
+    transitivePeerDependencies:
       - vitest
 
   '@fuel-ts/account@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
@@ -10548,19 +10651,19 @@ snapshots:
       - encoding
       - vitest
 
-  '@fuel-ts/account@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/account@0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
     dependencies:
-      '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/address': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/crypto': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/hasher': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/merkle': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/transactions': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/versions': 0.101.3
-      '@fuels/vm-asm': 0.60.2
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/merkle': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/versions': 0.102.0
+      '@fuels/vm-asm': 0.62.0
       '@noble/curves': 1.8.1
       events: 3.3.0
       graphql: 16.10.0
@@ -10571,13 +10674,73 @@ snapshots:
       - encoding
       - vitest
 
-  '@fuel-ts/address@0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/account@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
     dependencies:
-      '@fuel-ts/crypto': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@noble/hashes': 1.7.1
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/merkle': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/versions': 0.102.0
+      '@fuels/vm-asm': 0.62.0
+      '@noble/curves': 1.8.1
+      events: 3.3.0
+      graphql: 16.10.0
+      graphql-request: 6.1.0(graphql@16.10.0)
+      graphql-tag: 2.12.6(graphql@16.10.0)
+      ramda: 0.30.1
     transitivePeerDependencies:
+      - encoding
+      - vitest
+
+  '@fuel-ts/account@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/merkle': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/versions': 0.102.0
+      '@fuels/vm-asm': 0.62.0
+      '@noble/curves': 1.8.1
+      events: 3.3.0
+      graphql: 16.10.0
+      graphql-request: 6.1.0(graphql@16.10.0)
+      graphql-tag: 2.12.6(graphql@16.10.0)
+      ramda: 0.30.1
+    transitivePeerDependencies:
+      - encoding
+      - vitest
+
+  '@fuel-ts/account@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/merkle': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/versions': 0.102.0
+      '@fuels/vm-asm': 0.62.0
+      '@noble/curves': 1.8.1
+      events: 3.3.0
+      graphql: 16.10.0
+      graphql-request: 6.1.0(graphql@16.10.0)
+      graphql-tag: 2.12.6(graphql@16.10.0)
+      ramda: 0.30.1
+    transitivePeerDependencies:
+      - encoding
       - vitest
 
   '@fuel-ts/address@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
@@ -10589,31 +10752,31 @@ snapshots:
     transitivePeerDependencies:
       - vitest
 
-  '@fuel-ts/address@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/address@0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
     dependencies:
-      '@fuel-ts/crypto': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
       '@noble/hashes': 1.7.1
     transitivePeerDependencies:
       - vitest
 
-  '@fuel-ts/contract@0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/address@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
     dependencies:
-      '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/account': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/crypto': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/hasher': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/merkle': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/program': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/transactions': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuels/vm-asm': 0.60.2
-      ramda: 0.30.1
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@noble/hashes': 1.7.1
     transitivePeerDependencies:
-      - encoding
+      - vitest
+
+  '@fuel-ts/address@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@noble/hashes': 1.7.1
+    transitivePeerDependencies:
       - vitest
 
   '@fuel-ts/contract@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
@@ -10634,30 +10797,76 @@ snapshots:
       - encoding
       - vitest
 
-  '@fuel-ts/contract@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/contract@0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
     dependencies:
-      '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/account': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/crypto': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/hasher': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/merkle': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/program': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/transactions': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuels/vm-asm': 0.60.2
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/merkle': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuels/vm-asm': 0.62.0
       ramda: 0.30.1
     transitivePeerDependencies:
       - encoding
       - vitest
 
-  '@fuel-ts/crypto@0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/contract@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
     dependencies:
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@noble/hashes': 1.7.1
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/merkle': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuels/vm-asm': 0.62.0
+      ramda: 0.30.1
     transitivePeerDependencies:
+      - encoding
+      - vitest
+
+  '@fuel-ts/contract@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/merkle': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuels/vm-asm': 0.62.0
+      ramda: 0.30.1
+    transitivePeerDependencies:
+      - encoding
+      - vitest
+
+  '@fuel-ts/contract@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/merkle': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuels/vm-asm': 0.62.0
+      ramda: 0.30.1
+    transitivePeerDependencies:
+      - encoding
       - vitest
 
   '@fuel-ts/crypto@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
@@ -10668,10 +10877,26 @@ snapshots:
     transitivePeerDependencies:
       - vitest
 
-  '@fuel-ts/crypto@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/crypto@0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
     dependencies:
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@noble/hashes': 1.7.1
+    transitivePeerDependencies:
+      - vitest
+
+  '@fuel-ts/crypto@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
+    dependencies:
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@noble/hashes': 1.7.1
+    transitivePeerDependencies:
+      - vitest
+
+  '@fuel-ts/crypto@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
       '@noble/hashes': 1.7.1
     transitivePeerDependencies:
       - vitest
@@ -10680,13 +10905,9 @@ snapshots:
     dependencies:
       '@fuel-ts/versions': 0.101.3
 
-  '@fuel-ts/hasher@0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/errors@0.102.0':
     dependencies:
-      '@fuel-ts/crypto': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@noble/hashes': 1.7.1
-    transitivePeerDependencies:
-      - vitest
+      '@fuel-ts/versions': 0.102.0
 
   '@fuel-ts/hasher@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
     dependencies:
@@ -10696,10 +10917,26 @@ snapshots:
     transitivePeerDependencies:
       - vitest
 
-  '@fuel-ts/hasher@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/hasher@0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
     dependencies:
-      '@fuel-ts/crypto': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@noble/hashes': 1.7.1
+    transitivePeerDependencies:
+      - vitest
+
+  '@fuel-ts/hasher@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
+    dependencies:
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@noble/hashes': 1.7.1
+    transitivePeerDependencies:
+      - vitest
+
+  '@fuel-ts/hasher@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
       '@noble/hashes': 1.7.1
     transitivePeerDependencies:
       - vitest
@@ -10710,12 +10947,11 @@ snapshots:
       '@types/bn.js': 5.1.6
       bn.js: 5.2.1
 
-  '@fuel-ts/merkle@0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/math@0.102.0':
     dependencies:
-      '@fuel-ts/hasher': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/math': 0.101.3
-    transitivePeerDependencies:
-      - vitest
+      '@fuel-ts/errors': 0.102.0
+      '@types/bn.js': 5.1.6
+      bn.js: 5.2.1
 
   '@fuel-ts/merkle@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
     dependencies:
@@ -10724,26 +10960,25 @@ snapshots:
     transitivePeerDependencies:
       - vitest
 
-  '@fuel-ts/merkle@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/merkle@0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
     dependencies:
-      '@fuel-ts/hasher': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/math': 0.101.3
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
     transitivePeerDependencies:
       - vitest
 
-  '@fuel-ts/program@0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/merkle@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
     dependencies:
-      '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/account': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/address': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/transactions': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuels/vm-asm': 0.60.2
-      ramda: 0.30.1
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/math': 0.102.0
     transitivePeerDependencies:
-      - encoding
+      - vitest
+
+  '@fuel-ts/merkle@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+    transitivePeerDependencies:
       - vitest
 
   '@fuel-ts/program@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
@@ -10761,31 +10996,62 @@ snapshots:
       - encoding
       - vitest
 
-  '@fuel-ts/program@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/program@0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
     dependencies:
-      '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/account': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/address': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/transactions': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuels/vm-asm': 0.60.2
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuels/vm-asm': 0.62.0
       ramda: 0.30.1
     transitivePeerDependencies:
       - encoding
       - vitest
 
-  '@fuel-ts/recipes@0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/program@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
     dependencies:
-      '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/abi-typegen': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/account': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/address': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/contract': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/program': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/transactions': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuels/vm-asm': 0.62.0
+      ramda: 0.30.1
+    transitivePeerDependencies:
+      - encoding
+      - vitest
+
+  '@fuel-ts/program@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuels/vm-asm': 0.62.0
+      ramda: 0.30.1
+    transitivePeerDependencies:
+      - encoding
+      - vitest
+
+  '@fuel-ts/program@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuels/vm-asm': 0.62.0
+      ramda: 0.30.1
     transitivePeerDependencies:
       - encoding
       - vitest
@@ -10804,29 +11070,58 @@ snapshots:
       - encoding
       - vitest
 
-  '@fuel-ts/recipes@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/recipes@0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
     dependencies:
-      '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/abi-typegen': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/account': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/address': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/contract': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/program': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/transactions': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/abi-typegen': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/contract': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
     transitivePeerDependencies:
       - encoding
       - vitest
 
-  '@fuel-ts/script@0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/recipes@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
     dependencies:
-      '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/account': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/program': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/transactions': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/abi-typegen': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/contract': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+    transitivePeerDependencies:
+      - encoding
+      - vitest
+
+  '@fuel-ts/recipes@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/abi-typegen': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/contract': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+    transitivePeerDependencies:
+      - encoding
+      - vitest
+
+  '@fuel-ts/recipes@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/abi-typegen': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/contract': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
     transitivePeerDependencies:
       - encoding
       - vitest
@@ -10844,28 +11139,56 @@ snapshots:
       - encoding
       - vitest
 
-  '@fuel-ts/script@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/script@0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
     dependencies:
-      '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/account': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/program': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/transactions': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
     transitivePeerDependencies:
       - encoding
       - vitest
 
-  '@fuel-ts/transactions@0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/script@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
     dependencies:
-      '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/address': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/hasher': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
     transitivePeerDependencies:
+      - encoding
+      - vitest
+
+  '@fuel-ts/script@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+    transitivePeerDependencies:
+      - encoding
+      - vitest
+
+  '@fuel-ts/script@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+    transitivePeerDependencies:
+      - encoding
       - vitest
 
   '@fuel-ts/transactions@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
@@ -10879,24 +11202,49 @@ snapshots:
     transitivePeerDependencies:
       - vitest
 
-  '@fuel-ts/transactions@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/transactions@0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
     dependencies:
-      '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/address': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/hasher': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
     transitivePeerDependencies:
       - vitest
 
-  '@fuel-ts/utils@0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/transactions@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
     dependencies:
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/versions': 0.101.3
-      fflate: 0.8.2
-      vitest: 2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+    transitivePeerDependencies:
+      - vitest
+
+  '@fuel-ts/transactions@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+    transitivePeerDependencies:
+      - vitest
+
+  '@fuel-ts/transactions@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+    transitivePeerDependencies:
+      - vitest
 
   '@fuel-ts/utils@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
     dependencies:
@@ -10906,11 +11254,27 @@ snapshots:
       fflate: 0.8.2
       vitest: 2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0)
 
-  '@fuel-ts/utils@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@fuel-ts/utils@0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
     dependencies:
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/versions': 0.101.3
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/versions': 0.102.0
+      fflate: 0.8.2
+      vitest: 2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1)
+
+  '@fuel-ts/utils@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))':
+    dependencies:
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/versions': 0.102.0
+      fflate: 0.8.2
+      vitest: 2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0)
+
+  '@fuel-ts/utils@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+    dependencies:
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/versions': 0.102.0
       fflate: 0.8.2
       vitest: 2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)
 
@@ -10919,11 +11283,16 @@ snapshots:
       chalk: 4.1.2
       cli-table: 0.3.11
 
-  '@fuels/playwright-utils@0.49.0(@playwright/test@1.48.2)(fuels@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))':
+  '@fuel-ts/versions@0.102.0':
+    dependencies:
+      chalk: 4.1.2
+      cli-table: 0.3.11
+
+  '@fuels/playwright-utils@0.49.0(@playwright/test@1.48.2)(fuels@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))':
     dependencies:
       '@playwright/test': 1.48.2
       adm-zip: 0.5.16
-      fuels: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      fuels: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
 
   '@fuels/ts-config@0.26.0(typescript@5.4.5)':
     dependencies:
@@ -10937,6 +11306,8 @@ snapshots:
       tsup: 8.0.2(@microsoft/api-extractor@7.43.0(@types/node@20.12.11))(postcss@8.5.6)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(typescript@5.4.5)
 
   '@fuels/vm-asm@0.60.2': {}
+
+  '@fuels/vm-asm@0.62.0': {}
 
   '@graphql-typed-document-node/core@3.2.0(graphql@16.10.0)':
     dependencies:
@@ -11183,30 +11554,30 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@metamask/sdk-install-modal-web@0.26.5(i18next@23.11.5)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)':
+  '@metamask/sdk-install-modal-web@0.26.5(i18next@23.11.5)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)':
     dependencies:
       i18next: 23.11.5
       qr-code-styling: 1.9.2
     optionalDependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-native: 0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
+      react-native: 0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
 
-  '@metamask/sdk-install-modal-web@0.26.5(i18next@23.11.5)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)':
+  '@metamask/sdk-install-modal-web@0.26.5(i18next@23.11.5)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)':
     dependencies:
       i18next: 23.11.5
       qr-code-styling: 1.9.2
     optionalDependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-native: 0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
+      react-native: 0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
 
-  '@metamask/sdk@0.27.0(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(utf-8-validate@5.0.10)':
+  '@metamask/sdk@0.27.0(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(utf-8-validate@5.0.10)':
     dependencies:
       '@metamask/onboarding': 1.0.1
       '@metamask/providers': 16.1.0
       '@metamask/sdk-communication-layer': 0.27.0(cross-fetch@4.1.0)(eciesjs@0.3.21)(eventemitter2@6.4.9)(readable-stream@3.6.2)(socket.io-client@4.7.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@metamask/sdk-install-modal-web': 0.26.5(i18next@23.11.5)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
+      '@metamask/sdk-install-modal-web': 0.26.5(i18next@23.11.5)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
       '@types/dom-screen-wake-lock': 1.0.3
       bowser: 2.12.1
       cross-fetch: 4.1.0
@@ -11219,7 +11590,7 @@ snapshots:
       obj-multiplex: 1.0.0
       pump: 3.0.3
       qrcode-terminal-nooctal: 0.12.1
-      react-native-webview: 11.26.1(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
+      react-native-webview: 11.26.1(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
       readable-stream: 3.6.2
       rollup-plugin-visualizer: 5.14.0(rollup@4.48.1)
       socket.io-client: 4.7.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -11237,12 +11608,12 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@metamask/sdk@0.27.0(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(utf-8-validate@5.0.10)':
+  '@metamask/sdk@0.27.0(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(utf-8-validate@5.0.10)':
     dependencies:
       '@metamask/onboarding': 1.0.1
       '@metamask/providers': 16.1.0
       '@metamask/sdk-communication-layer': 0.27.0(cross-fetch@4.1.0)(eciesjs@0.3.21)(eventemitter2@6.4.9)(readable-stream@3.6.2)(socket.io-client@4.7.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@metamask/sdk-install-modal-web': 0.26.5(i18next@23.11.5)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
+      '@metamask/sdk-install-modal-web': 0.26.5(i18next@23.11.5)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
       '@types/dom-screen-wake-lock': 1.0.3
       bowser: 2.12.1
       cross-fetch: 4.1.0
@@ -11255,7 +11626,7 @@ snapshots:
       obj-multiplex: 1.0.0
       pump: 3.0.3
       qrcode-terminal-nooctal: 0.12.1
-      react-native-webview: 11.26.1(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
+      react-native-webview: 11.26.1(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
       readable-stream: 3.6.2
       rollup-plugin-visualizer: 5.14.0(rollup@4.48.1)
       socket.io-client: 4.7.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -11937,10 +12308,10 @@ snapshots:
       nullthrows: 1.1.1
       yargs: 17.7.2
 
-  '@react-native/community-cli-plugin@0.81.0(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+  '@react-native/community-cli-plugin@0.81.0(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
     dependencies:
       '@react-native/dev-middleware': 0.81.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      '@react-native/metro-config': 0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@react-native/metro-config': 0.81.0(@babel/core@7.28.3)
       debug: 4.4.1(supports-color@5.5.0)
       invariant: 2.2.4
       metro: 0.83.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -11985,7 +12356,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+  '@react-native/metro-config@0.81.0(@babel/core@7.28.3)':
     dependencies:
       '@react-native/js-polyfills': 0.81.0
       '@react-native/metro-babel-transformer': 0.81.0(@babel/core@7.28.3)
@@ -11993,27 +12364,25 @@ snapshots:
       metro-runtime: 0.83.1
     transitivePeerDependencies:
       - '@babel/core'
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   '@react-native/normalize-colors@0.81.0': {}
 
-  '@react-native/virtualized-lists@0.81.0(@types/react@18.3.1)(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)':
+  '@react-native/virtualized-lists@0.81.0(@types/react@18.3.1)(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)':
     dependencies:
       invariant: 2.2.4
       nullthrows: 1.1.1
       react: 18.3.1
-      react-native: 0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
+      react-native: 0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
     optionalDependencies:
       '@types/react': 18.3.1
 
-  '@react-native/virtualized-lists@0.81.0(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)':
+  '@react-native/virtualized-lists@0.81.0(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)':
     dependencies:
       invariant: 2.2.4
       nullthrows: 1.1.1
       react: 18.3.1
-      react-native: 0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
+      react-native: 0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
 
   '@rollup/pluginutils@5.2.0(rollup@4.48.1)':
     dependencies:
@@ -12260,6 +12629,23 @@ snapshots:
     dependencies:
       buffer: 6.0.3
 
+  '@solana/codecs-core@2.3.0(typescript@5.4.5)':
+    dependencies:
+      '@solana/errors': 2.3.0(typescript@5.4.5)
+      typescript: 5.4.5
+
+  '@solana/codecs-numbers@2.3.0(typescript@5.4.5)':
+    dependencies:
+      '@solana/codecs-core': 2.3.0(typescript@5.4.5)
+      '@solana/errors': 2.3.0(typescript@5.4.5)
+      typescript: 5.4.5
+
+  '@solana/errors@2.3.0(typescript@5.4.5)':
+    dependencies:
+      chalk: 5.6.2
+      commander: 14.0.2
+      typescript: 5.4.5
+
   '@solana/wallet-adapter-backpack@0.1.14(@solana/web3.js@1.91.7(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.91.7(bufferutil@4.0.9)(utf-8-validate@5.0.10))
@@ -12353,7 +12739,7 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@solana/web3.js@1.93.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+  '@solana/web3.js@1.93.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
     dependencies:
       '@babel/runtime': 7.28.3
       '@noble/curves': 1.9.7
@@ -12375,14 +12761,14 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@solana/web3.js@1.93.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+  '@solana/web3.js@1.98.4(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)':
     dependencies:
       '@babel/runtime': 7.28.3
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@solana/buffer-layout': 4.0.1
+      '@solana/codecs-numbers': 2.3.0(typescript@5.4.5)
       agentkeepalive: 4.6.0
-      bigint-buffer: 1.1.5
       bn.js: 5.2.2
       borsh: 0.7.0
       bs58: 4.0.1
@@ -12391,10 +12777,11 @@ snapshots:
       jayson: 4.2.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       node-fetch: 2.7.0
       rpc-websockets: 9.1.3
-      superstruct: 1.0.4
+      superstruct: 2.0.2
     transitivePeerDependencies:
       - bufferutil
       - encoding
+      - typescript
       - utf-8-validate
 
   '@solflare-wallet/metamask-sdk@1.0.3(@solana/web3.js@1.91.7(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
@@ -12520,29 +12907,6 @@ snapshots:
       - typescript
       - utf-8-validate
       - zod
-
-  '@synthetixio/synpress-cache@0.0.10(@microsoft/api-extractor@7.43.0(@types/node@22.7.5))(playwright-core@1.48.2)(postcss@8.5.6)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(typescript@5.4.5)':
-    dependencies:
-      axios: 1.6.7
-      chalk: 5.3.0
-      commander: 12.0.0
-      esbuild: 0.25.9
-      fs-extra: 11.2.0
-      glob: 10.3.10
-      gradient-string: 2.0.2
-      playwright-core: 1.48.2
-      progress: 2.0.3
-      tsup: 8.0.2(@microsoft/api-extractor@7.43.0(@types/node@22.7.5))(postcss@8.5.6)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(typescript@5.4.5)
-      unzipper: 0.10.14
-      zod: 3.22.4
-    transitivePeerDependencies:
-      - '@microsoft/api-extractor'
-      - '@swc/core'
-      - debug
-      - postcss
-      - supports-color
-      - ts-node
-      - typescript
 
   '@synthetixio/synpress-cache@0.0.12(@microsoft/api-extractor@7.43.0(@types/node@22.7.5))(playwright-core@1.48.2)(postcss@8.5.6)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))(typescript@5.4.5)':
     dependencies:
@@ -12842,7 +13206,7 @@ snapshots:
       vite: 5.4.18(@types/node@22.7.5)(terser@5.43.1)
       vue: 3.5.20(typescript@5.4.5)
 
-  '@vitest/coverage-v8@2.1.9(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))':
+  '@vitest/coverage-v8@2.1.9(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -12856,7 +13220,7 @@ snapshots:
       std-env: 3.9.0
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)
+      vitest: 2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -13050,10 +13414,10 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
-  '@wagmi/connectors@5.1.7(@types/react@18.3.1)(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)':
+  '@wagmi/connectors@5.1.7(@types/react@18.3.1)(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)':
     dependencies:
       '@coinbase/wallet-sdk': 4.0.4
-      '@metamask/sdk': 0.27.0(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(utf-8-validate@5.0.10)
+      '@metamask/sdk': 0.27.0(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(utf-8-validate@5.0.10)
       '@safe-global/safe-apps-provider': 0.18.3(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
       '@safe-global/safe-apps-sdk': 9.1.0(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
       '@wagmi/core': 2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))
@@ -13098,7 +13462,7 @@ snapshots:
   '@wagmi/connectors@5.1.7(@types/react@18.3.1)(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)':
     dependencies:
       '@coinbase/wallet-sdk': 4.0.4
-      '@metamask/sdk': 0.27.0(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(utf-8-validate@5.0.10)
+      '@metamask/sdk': 0.27.0(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(utf-8-validate@5.0.10)
       '@safe-global/safe-apps-provider': 0.18.3(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
       '@safe-global/safe-apps-sdk': 9.1.0(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
       '@wagmi/core': 2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))
@@ -13140,10 +13504,10 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@wagmi/connectors@5.1.7(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)':
+  '@wagmi/connectors@5.1.7(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)':
     dependencies:
       '@coinbase/wallet-sdk': 4.0.4
-      '@metamask/sdk': 0.27.0(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(utf-8-validate@5.0.10)
+      '@metamask/sdk': 0.27.0(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(utf-8-validate@5.0.10)
       '@safe-global/safe-apps-provider': 0.18.3(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
       '@safe-global/safe-apps-sdk': 9.1.0(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
       '@wagmi/core': 2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))
@@ -14458,9 +14822,9 @@ snapshots:
       lit: 3.1.0
       qrcode: 1.5.3
 
-  '@web3modal/wagmi@5.0.0(@wagmi/connectors@5.1.7(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(vue@3.5.20(typescript@5.4.5))':
+  '@web3modal/wagmi@5.0.0(@wagmi/connectors@5.1.7(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(vue@3.5.20(typescript@5.4.5))':
     dependencies:
-      '@wagmi/connectors': 5.1.7(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
+      '@wagmi/connectors': 5.1.7(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
       '@wagmi/core': 2.13.4(@tanstack/query-core@5.35.1)(react@18.3.1)(typescript@5.4.5)(viem@2.20.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))
       '@walletconnect/ethereum-provider': 2.13.0(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
       '@web3modal/polyfills': 5.0.0
@@ -14918,7 +15282,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  bakosafe@0.5.0(bufferutil@4.0.9)(fuels@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4):
+  bakosafe@0.5.0(bufferutil@4.0.9)(fuels@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4):
     dependencies:
       '@ethereumjs/util': 9.0.3
       '@ethersproject/bytes': 5.7.0
@@ -14926,7 +15290,27 @@ snapshots:
       '@noble/secp256k1': 2.3.0
       axios: 1.11.0
       build: 0.1.4
-      fuels: 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      fuels: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      lodash.partition: 4.6.0
+      pnpm: 10.17.1
+      uuid: 9.0.1
+      viem: 2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - typescript
+      - utf-8-validate
+      - zod
+
+  bakosafe@0.5.0(bufferutil@4.0.9)(fuels@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4):
+    dependencies:
+      '@ethereumjs/util': 9.0.3
+      '@ethersproject/bytes': 5.7.0
+      '@noble/curves': 1.9.7
+      '@noble/secp256k1': 2.3.0
+      axios: 1.11.0
+      build: 0.1.4
+      fuels: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
       lodash.partition: 4.6.0
       pnpm: 10.17.1
       uuid: 9.0.1
@@ -15169,6 +15553,8 @@ snapshots:
 
   chalk@5.3.0: {}
 
+  chalk@5.6.2: {}
+
   character-entities-html4@2.1.0: {}
 
   character-entities-legacy@3.0.0: {}
@@ -15303,6 +15689,8 @@ snapshots:
 
   commander@13.1.0: {}
 
+  commander@14.0.2: {}
+
   commander@2.20.3: {}
 
   commander@4.1.1: {}
@@ -15325,7 +15713,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  connectkit@1.8.2(@babel/core@7.28.3)(@tanstack/react-query@5.35.1(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(wagmi@2.12.7(@tanstack/query-core@5.35.1)(@tanstack/react-query@5.35.1(react@18.3.1))(@types/react@18.3.1)(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)):
+  connectkit@1.8.2(@babel/core@7.28.3)(@tanstack/react-query@5.35.1(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(wagmi@2.12.7(@tanstack/query-core@5.35.1)(@tanstack/react-query@5.35.1(react@18.3.1))(@types/react@18.3.1)(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)):
     dependencies:
       '@tanstack/react-query': 5.35.1(react@18.3.1)
       buffer: 6.0.3
@@ -15339,7 +15727,7 @@ snapshots:
       resize-observer-polyfill: 1.5.1
       styled-components: 5.3.11(@babel/core@7.28.3)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)
       viem: 2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
-      wagmi: 2.12.7(@tanstack/query-core@5.35.1)(@tanstack/react-query@5.35.1(react@18.3.1))(@types/react@18.3.1)(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
+      wagmi: 2.12.7(@tanstack/query-core@5.35.1)(@tanstack/react-query@5.35.1(react@18.3.1))(@types/react@18.3.1)(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
     transitivePeerDependencies:
       - '@babel/core'
       - react-is
@@ -16212,42 +16600,6 @@ snapshots:
       mkdirp: 0.5.6
       rimraf: 2.7.1
 
-  fuels@0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)):
-    dependencies:
-      '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/abi-typegen': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/account': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/address': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/contract': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/crypto': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/hasher': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/program': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/recipes': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/script': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/transactions': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/versions': 0.101.3
-      '@fuels/vm-asm': 0.60.2
-      bundle-require: 5.1.0(esbuild@0.25.3)
-      chalk: 4.1.2
-      chokidar: 3.6.0
-      commander: 13.1.0
-      esbuild: 0.25.3
-      glob: 10.4.5
-      handlebars: 4.7.8
-      joycon: 3.1.1
-      lodash.camelcase: 4.3.0
-      portfinder: 1.0.32
-      toml: 3.0.0
-      uglify-js: 3.19.3
-      yup: 1.6.1
-    transitivePeerDependencies:
-      - encoding
-      - supports-color
-      - vitest
-
   fuels@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0)):
     dependencies:
       '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
@@ -16284,24 +16636,132 @@ snapshots:
       - supports-color
       - vitest
 
-  fuels@0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)):
+  fuels@0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1)):
     dependencies:
-      '@fuel-ts/abi-coder': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/abi-typegen': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/account': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/address': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/contract': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/crypto': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/errors': 0.101.3
-      '@fuel-ts/hasher': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/math': 0.101.3
-      '@fuel-ts/program': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/recipes': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/script': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/transactions': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/utils': 0.101.3(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
-      '@fuel-ts/versions': 0.101.3
-      '@fuels/vm-asm': 0.60.2
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/abi-typegen': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/contract': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/recipes': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/script': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/versions': 0.102.0
+      '@fuels/vm-asm': 0.62.0
+      bundle-require: 5.1.0(esbuild@0.25.3)
+      chalk: 4.1.2
+      chokidar: 3.6.0
+      commander: 13.1.0
+      esbuild: 0.25.3
+      glob: 10.4.5
+      handlebars: 4.7.8
+      joycon: 3.1.1
+      lodash.camelcase: 4.3.0
+      portfinder: 1.0.32
+      toml: 3.0.0
+      uglify-js: 3.19.3
+      yup: 1.6.1
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+      - vitest
+
+  fuels@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0)):
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/abi-typegen': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/contract': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/recipes': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/script': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
+      '@fuel-ts/versions': 0.102.0
+      '@fuels/vm-asm': 0.62.0
+      bundle-require: 5.1.0(esbuild@0.25.3)
+      chalk: 4.1.2
+      chokidar: 3.6.0
+      commander: 13.1.0
+      esbuild: 0.25.3
+      glob: 10.4.5
+      handlebars: 4.7.8
+      joycon: 3.1.1
+      lodash.camelcase: 4.3.0
+      portfinder: 1.0.32
+      toml: 3.0.0
+      uglify-js: 3.19.3
+      yup: 1.6.1
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+      - vitest
+
+  fuels@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1)):
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/abi-typegen': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/contract': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/recipes': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/script': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/versions': 0.102.0
+      '@fuels/vm-asm': 0.62.0
+      bundle-require: 5.1.0(esbuild@0.25.3)
+      chalk: 4.1.2
+      chokidar: 3.6.0
+      commander: 13.1.0
+      esbuild: 0.25.3
+      glob: 10.4.5
+      handlebars: 4.7.8
+      joycon: 3.1.1
+      lodash.camelcase: 4.3.0
+      portfinder: 1.0.32
+      toml: 3.0.0
+      uglify-js: 3.19.3
+      yup: 1.6.1
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+      - vitest
+
+  fuels@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1)):
+    dependencies:
+      '@fuel-ts/abi-coder': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/abi-typegen': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/account': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/address': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/contract': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/crypto': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/errors': 0.102.0
+      '@fuel-ts/hasher': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/math': 0.102.0
+      '@fuel-ts/program': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/recipes': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/script': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/transactions': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0)(terser@5.43.1))
+      '@fuel-ts/utils': 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      '@fuel-ts/versions': 0.102.0
+      '@fuels/vm-asm': 0.62.0
       bundle-require: 5.1.0(esbuild@0.25.3)
       chalk: 4.1.2
       chokidar: 3.6.0
@@ -18240,30 +18700,30 @@ snapshots:
 
   react-is@18.3.1: {}
 
-  react-native-webview@11.26.1(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1):
+  react-native-webview@11.26.1(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1):
     dependencies:
       escape-string-regexp: 2.0.0
       invariant: 2.2.4
       react: 18.3.1
-      react-native: 0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
+      react-native: 0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
 
-  react-native-webview@11.26.1(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1):
+  react-native-webview@11.26.1(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1):
     dependencies:
       escape-string-regexp: 2.0.0
       invariant: 2.2.4
       react: 18.3.1
-      react-native: 0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
+      react-native: 0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10)
 
-  react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10):
+  react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10):
     dependencies:
       '@jest/create-cache-key-function': 29.7.0
       '@react-native/assets-registry': 0.81.0
       '@react-native/codegen': 0.81.0(@babel/core@7.28.3)
-      '@react-native/community-cli-plugin': 0.81.0(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@react-native/community-cli-plugin': 0.81.0(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@react-native/gradle-plugin': 0.81.0
       '@react-native/js-polyfills': 0.81.0
       '@react-native/normalize-colors': 0.81.0
-      '@react-native/virtualized-lists': 0.81.0(@types/react@18.3.1)(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
+      '@react-native/virtualized-lists': 0.81.0(@types/react@18.3.1)(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
       abort-controller: 3.0.0
       anser: 1.4.10
       ansi-regex: 5.0.1
@@ -18301,16 +18761,16 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10):
+  react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10):
     dependencies:
       '@jest/create-cache-key-function': 29.7.0
       '@react-native/assets-registry': 0.81.0
       '@react-native/codegen': 0.81.0(@babel/core@7.28.3)
-      '@react-native/community-cli-plugin': 0.81.0(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@react-native/community-cli-plugin': 0.81.0(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@react-native/gradle-plugin': 0.81.0
       '@react-native/js-polyfills': 0.81.0
       '@react-native/normalize-colors': 0.81.0
-      '@react-native/virtualized-lists': 0.81.0(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
+      '@react-native/virtualized-lists': 0.81.0(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
       abort-controller: 3.0.0
       anser: 1.4.10
       ansi-regex: 5.0.1
@@ -19091,6 +19551,8 @@ snapshots:
   superstruct@0.14.2: {}
 
   superstruct@1.0.4: {}
+
+  superstruct@2.0.2: {}
 
   supports-color@5.5.0:
     dependencies:
@@ -20034,7 +20496,7 @@ snapshots:
       - typescript
       - universal-cookie
 
-  vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1):
+  vitest@2.1.9(@types/node@20.12.11)(jsdom@24.0.0)(terser@5.43.1):
     dependencies:
       '@vitest/expect': 2.1.9
       '@vitest/mocker': 2.1.9(vite@5.4.18(@types/node@20.12.11)(terser@5.43.1))
@@ -20178,10 +20640,10 @@ snapshots:
     dependencies:
       xml-name-validator: 5.0.0
 
-  wagmi@2.12.7(@tanstack/query-core@5.35.1)(@tanstack/react-query@5.35.1(react@18.3.1))(@types/react@18.3.1)(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4):
+  wagmi@2.12.7(@tanstack/query-core@5.35.1)(@tanstack/react-query@5.35.1(react@18.3.1))(@types/react@18.3.1)(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4):
     dependencies:
       '@tanstack/react-query': 5.35.1(react@18.3.1)
-      '@wagmi/connectors': 5.1.7(@types/react@18.3.1)(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
+      '@wagmi/connectors': 5.1.7(@types/react@18.3.1)(@wagmi/core@2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)))(bufferutil@4.0.9)(react-dom@18.3.1(react@18.3.1))(react-native@0.81.0(@babel/core@7.28.3)(@react-native/metro-config@0.81.0(@babel/core@7.28.3))(@types/react@18.3.1)(bufferutil@4.0.9)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@4.48.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
       '@wagmi/core': 2.13.4(@tanstack/query-core@5.35.1)(@types/react@18.3.1)(react@18.3.1)(typescript@5.4.5)(viem@2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4))
       react: 18.3.1
       use-sync-external-store: 1.2.0(react@18.3.1)
