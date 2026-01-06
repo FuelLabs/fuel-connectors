@@ -18,7 +18,7 @@
     "start:react-next": "pnpm --filter @e2e-tests/react-next dev",
     "start:servers": "pnpm run start:react-app & pnpm run start:react-next",
     "deploy:contracts": "sh ./scripts/deployLocal.sh",
-    "deploy:contracts:ci": "sh ./scripts/deployCI.sh",
+    "deploy:contracts:ci": "bash ./scripts/deployCI.sh",
     "setup:synpress": "synpress examples/synpress/metamask && synpress --phantom examples/synpress/phantom"
   },
   "devDependencies": {
