@@ -1,2 +1,6 @@
 export { SocialConnector } from './SocialConnector';
-export type { SocialConnectorConfig, PrivyAuthInterface } from './types';
+export type {
+  SocialConnectorConfig,
+  PrivyAuthInterface,
+  PrivyEmbeddedWallet,
+} from './types';

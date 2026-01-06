@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import { counter as COUNTER_CONTRACT_ID_LOCAL } from './types/contract-ids-local.json';
 import { counter as COUNTER_CONTRACT_ID_MAINNET } from './types/contract-ids-mainnet.json';
@@ -11,8 +11,14 @@ import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
 import { http, createConfig, injected } from '@wagmi/core';
 import { mainnet, sepolia } from '@wagmi/core/chains';
 
-import { defaultConnectors } from '@fuels/connectors';
+import { SocialConnector, defaultConnectors } from '@fuels/connectors';
 import { FuelProvider, type NetworkConfig } from '@fuels/react';
+import {
+  PrivyProvider,
+  usePrivy,
+  useSignMessage,
+  useWallets,
+} from '@privy-io/react-auth';
 
 import * as Toast from '@radix-ui/react-toast';
 
@@ -80,15 +86,8 @@ const NETWORKS: NetworkConfig[] = [
   },
 ];
 
-const FUEL_CONFIG: FuelConfig = {
-  connectors: defaultConnectors({
-    devMode: true,
-    wcProjectId: WC_PROJECT_ID,
-    ethWagmiConfig: wagmiConfig,
-    chainId: CHAIN_ID,
-    fuelProvider: new Provider(PROVIDER_URL),
-  }),
-};
+// Privy App ID - replace with your own or use Bako's default
+const PRIVY_APP_ID = 'cmdddunbk00njjf0nz6r5r3e9';
 
 const config: Config = {
   explorerUrl: EXPLORER_URL,
@@ -100,22 +99,98 @@ const config: Config = {
   assetSymbol: CUSTOM_ASSET_SYMBOL,
 };
 
+// Bridge component that injects Privy into connectors
+function FuelProviderBridge({ children }: { children: React.ReactNode }) {
+  const privy = usePrivy();
+  const { wallets } = useWallets();
+  const { signMessage } = useSignMessage();
+  const connectorsRef = useRef<ReturnType<typeof defaultConnectors> | null>(
+    null,
+  );
+
+  // Find the embedded wallet (Privy's internal wallet)
+  const embeddedWallet = useMemo(() => {
+    return wallets.find((wallet) => wallet.walletClientType === 'privy');
+  }, [wallets]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: connectors should only be created once
+  const fuelConfig: FuelConfig = useMemo(() => {
+    const connectors = defaultConnectors({
+      devMode: true,
+      wcProjectId: WC_PROJECT_ID,
+      ethWagmiConfig: wagmiConfig,
+      chainId: CHAIN_ID,
+      fuelProvider: new Provider(PROVIDER_URL),
+      privyAuth: {
+        ...privy,
+        signMessage,
+        embeddedWallet,
+      },
+    });
+    connectorsRef.current = connectors;
+    console.log(
+      'Connectors:',
+      connectors.map((c) => c.name),
+    );
+    return { connectors };
+  }, []);
+
+  // Update SocialConnector's privyAuth on every render to keep it in sync
+  useEffect(() => {
+    if (connectorsRef.current) {
+      const socialConnector = connectorsRef.current.find(
+        (c) => c instanceof SocialConnector,
+      ) as SocialConnector | undefined;
+      if (socialConnector) {
+        socialConnector.setPrivyAuth({
+          ...privy,
+          signMessage,
+          embeddedWallet,
+        });
+        console.log('Updated SocialConnector privyAuth', {
+          ready: privy.ready,
+          authenticated: privy.authenticated,
+          hasEmbeddedWallet: !!embeddedWallet,
+          embeddedWalletAddress: embeddedWallet?.address,
+        });
+      }
+    }
+  }); // No deps - update on every render to ensure privyAuth is always current
+
+  return (
+    <FuelProvider theme="dark" networks={NETWORKS} fuelConfig={fuelConfig}>
+      {children}
+    </FuelProvider>
+  );
+}
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <FuelProvider theme="dark" networks={NETWORKS} fuelConfig={FUEL_CONFIG}>
-        <ConfigProvider config={config}>
-          <Toast.Provider>
-            <App />
-            <Toast.Viewport
-              id="toast-viewport"
-              className="fixed bottom-0 right-0 z-[100] m-0 flex w-[420px] max-w-[100vw] list-none flex-col gap-[10px] p-[var(--viewport-padding)] outline-none [--viewport-padding:_25px]"
-            />
-          </Toast.Provider>
-        </ConfigProvider>
-        <ScreenSizeIndicator />
-      </FuelProvider>
-
+      <PrivyProvider
+        appId={PRIVY_APP_ID}
+        config={{
+          appearance: {
+            theme: 'dark',
+          },
+          embeddedWallets: {
+            createOnLogin: 'users-without-wallets',
+          },
+        }}
+      >
+        <FuelProviderBridge>
+          <ConfigProvider config={config}>
+            <Toast.Provider>
+              <App />
+              <Toast.Viewport
+                id="toast-viewport"
+                className="fixed bottom-0 right-0 z-[100] m-0 flex w-[420px] max-w-[100vw] list-none flex-col gap-[10px] p-[var(--viewport-padding)] outline-none [--viewport-padding:_25px]"
+              />
+            </Toast.Provider>
+          </ConfigProvider>
+          <ScreenSizeIndicator />
+        </FuelProviderBridge>
+      </PrivyProvider>
       {isDev && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   </React.StrictMode>,

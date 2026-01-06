@@ -16,6 +16,20 @@ export interface SocialConnectorConfig {
 }
 
 /**
+ * Embedded wallet interface from useWallets() hook
+ */
+export interface PrivyEmbeddedWallet {
+  /** EVM address of the wallet */
+  address: string;
+  /** Type of wallet client */
+  walletClientType: string;
+  /** Get EIP1193 provider for the wallet */
+  getEthereumProvider: () => Promise<{
+    request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+  }>;
+}
+
+/**
  * Minimal interface representing the Privy authentication object.
  * This interface matches the shape returned by usePrivy() from @privy-io/react-auth.
  */
@@ -36,9 +50,11 @@ export interface PrivyAuthInterface {
   login: (options?: { loginMethods?: string[] }) => Promise<void>;
   /** Logout method to disconnect the user */
   logout: () => Promise<void>;
-  /** Sign a message using the embedded wallet */
+  /** Sign a message using useSignMessage hook (Privy v2 API) */
   signMessage: (
-    message: string,
-    options?: { uiOptions?: unknown },
+    params: { message: string },
+    options?: { uiOptions?: unknown; address?: string },
   ) => Promise<{ signature: string }>;
+  /** Embedded wallet from useWallets() - optional for direct provider access */
+  embeddedWallet?: PrivyEmbeddedWallet;
 }
