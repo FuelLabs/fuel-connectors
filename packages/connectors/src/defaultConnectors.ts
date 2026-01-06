@@ -6,6 +6,10 @@ import {
 import { FuelWalletDevelopmentConnector } from '@fuel-connectors/fuel-development-wallet';
 import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
 import { FueletWalletConnector } from '@fuel-connectors/fuelet-wallet';
+import {
+  type PrivyAuthInterface,
+  SocialConnector,
+} from '@fuel-connectors/social-connector';
 import { SolanaConnector } from '@fuel-connectors/solana-connector';
 import { WalletConnectConnector } from '@fuel-connectors/walletconnect-connector';
 import type { Config } from '@wagmi/core';
@@ -22,6 +26,8 @@ type DefaultConnectors = {
   solanaConfig?: ProviderType;
   chainId?: number;
   fuelProvider?: FuelProvider | Promise<FuelProvider>;
+  /** Privy auth interface from usePrivy() hook for social login */
+  privyAuth?: PrivyAuthInterface;
 };
 
 export function defaultConnectors({
@@ -33,6 +39,7 @@ export function defaultConnectors({
   solanaConfig: _solanaConfig,
   chainId,
   fuelProvider,
+  privyAuth,
 }: DefaultConnectors = {}): Array<FuelConnector> {
   const connectors: Array<FuelConnector> = [
     new FuelWalletConnector(),
@@ -47,6 +54,11 @@ export function defaultConnectors({
     }),
     new SolanaConnector({
       projectId: wcProjectId,
+      chainId,
+      fuelProvider,
+    }),
+    new SocialConnector({
+      privyAuth,
       chainId,
       fuelProvider,
     }),

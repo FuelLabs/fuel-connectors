@@ -41,6 +41,7 @@
     "@fuel-connectors/fuel-development-wallet": "workspace:*",
     "@fuel-connectors/fuel-wallet": "workspace:*",
     "@fuel-connectors/fuelet-wallet": "workspace:*",
+    "@fuel-connectors/social-connector": "workspace:*",
     "@fuel-connectors/solana-connector": "workspace:*",
     "@fuel-connectors/walletconnect-connector": "workspace:*",
     "terser": "5.31.0",
