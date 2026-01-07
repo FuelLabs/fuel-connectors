@@ -135,7 +135,7 @@ function FuelProviderBridge({ children }: { children: React.ReactNode }) {
     return { connectors };
   }, []);
 
-  // Update SocialConnector's privyAuth on every render to keep it in sync
+  // Update SocialConnector's privyAuth when Privy state changes
   useEffect(() => {
     if (connectorsRef.current) {
       const socialConnector = connectorsRef.current.find(
@@ -155,7 +155,7 @@ function FuelProviderBridge({ children }: { children: React.ReactNode }) {
         });
       }
     }
-  }); // No deps - update on every render to ensure privyAuth is always current
+  }, [privy, signMessage, embeddedWallet]);
 
   return (
     <FuelProvider theme="dark" networks={NETWORKS} fuelConfig={fuelConfig}>
