@@ -53,6 +53,11 @@ export class SocialConnector extends PredicateConnector {
    */
   public setPrivyAuth(privyAuth: PrivyAuthInterface): void {
     this.privyAuth = privyAuth;
+    console.log('[SocialConnector] setPrivyAuth called', {
+      authenticated: privyAuth.authenticated,
+      userWallet: privyAuth.user?.wallet?.address,
+      embeddedWallet: privyAuth.embeddedWallet?.address,
+    });
   }
 
   /**
@@ -264,6 +269,25 @@ export class SocialConnector extends PredicateConnector {
   }
 
   /**
+   * Waits for logout to complete (authenticated becomes false).
+   */
+  private async waitForLogoutComplete(timeoutMs = 5000): Promise<boolean> {
+    if (!this.privyAuth) return true;
+    if (!this.privyAuth.authenticated) return true;
+
+    const startTime = Date.now();
+    while (Date.now() - startTime < timeoutMs) {
+      if (!this.privyAuth.authenticated) {
+        console.log('[SocialConnector] Logout complete');
+        return true;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    console.log('[SocialConnector] Logout timeout, proceeding anyway');
+    return false;
+  }
+
+  /**
    * Waits for authentication to complete after login modal.
    * Checks for wallet address from either user.wallet or embeddedWallet.
    */
@@ -292,6 +316,13 @@ export class SocialConnector extends PredicateConnector {
         return true;
       }
 
+      // If authenticated but no wallet yet, keep waiting
+      // The React component will update privyAuth when embeddedWallet is ready
+      if (this.privyAuth.authenticated) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        continue;
+      }
+
       await new Promise((resolve) => setTimeout(resolve, 200));
     }
 
@@ -310,16 +341,7 @@ export class SocialConnector extends PredicateConnector {
       throw new Error('Privy auth not configured');
     }
 
-    // If already authenticated with wallet, return true
-    if (this.privyAuth.authenticated && this.privyAuth.user?.wallet?.address) {
-      console.log(
-        '[SocialConnector] Already authenticated:',
-        this.privyAuth.user.wallet.address,
-      );
-      return true;
-    }
-
-    // Wait for Privy to be ready
+    // Wait for Privy to be ready first
     console.log('[SocialConnector] Waiting for Privy to be ready...');
     const isReady = await this.waitForPrivyReady();
     if (!isReady) {
@@ -328,7 +350,48 @@ export class SocialConnector extends PredicateConnector {
     }
     console.log('[SocialConnector] Privy is ready');
 
-    // Trigger Privy login modal (this may return before login completes)
+    // Check for wallet address from either source
+    const existingWalletAddress =
+      this.privyAuth.user?.wallet?.address ||
+      this.privyAuth.embeddedWallet?.address;
+
+    // If already authenticated with wallet, return true
+    if (this.privyAuth.authenticated && existingWalletAddress) {
+      console.log(
+        '[SocialConnector] Already authenticated:',
+        existingWalletAddress,
+      );
+      return true;
+    }
+
+    // If authenticated but no wallet, try to create one manually
+    // This handles edge cases where automatic wallet creation failed
+    if (this.privyAuth.authenticated && !existingWalletAddress) {
+      console.log(
+        '[SocialConnector] Authenticated but no wallet, creating wallet...',
+      );
+      const walletCreated = await this.ensureEmbeddedWallet();
+      if (walletCreated) {
+        return true;
+      }
+    }
+
+    // Always logout before showing login modal to ensure clean session
+    // This prevents "Invalid code" errors from corrupted/stale sessions
+    console.log('[SocialConnector] Ensuring clean session before login...');
+    try {
+      await this.privyAuth.logout();
+      await this.waitForLogoutComplete();
+      // Give Privy backend time to fully clear the session
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } catch (e) {
+      console.log(
+        '[SocialConnector] Logout before login failed (expected if not logged in):',
+        e,
+      );
+    }
+
+    // Trigger Privy login modal
     console.log('[SocialConnector] Triggering Privy login...');
     try {
       await this.privyAuth.login({
@@ -347,8 +410,56 @@ export class SocialConnector extends PredicateConnector {
       return false;
     }
 
+    // After authentication, ensure embedded wallet exists
+    // This is needed because automatic wallet creation doesn't trigger for some login methods
+    await this.ensureEmbeddedWallet();
+
     console.log('[SocialConnector] _connect successful');
     return true;
+  }
+
+  /**
+   * Ensures an embedded wallet exists for the authenticated user.
+   * Creates one manually if it doesn't exist.
+   */
+  private async ensureEmbeddedWallet(): Promise<boolean> {
+    if (!this.privyAuth) return false;
+
+    // Check if wallet already exists
+    const walletAddress =
+      this.privyAuth.user?.wallet?.address ||
+      this.privyAuth.embeddedWallet?.address;
+
+    if (walletAddress) {
+      console.log('[SocialConnector] Embedded wallet exists:', walletAddress);
+      return true;
+    }
+
+    // Try to create wallet manually
+    if (this.privyAuth.createWallet) {
+      console.log('[SocialConnector] Creating embedded wallet manually...');
+      try {
+        await this.privyAuth.createWallet();
+        // Wait for wallet to be available
+        const walletReady = await this.waitForWallet(10000);
+        if (walletReady) {
+          console.log('[SocialConnector] Embedded wallet created successfully');
+          return true;
+        }
+        console.log(
+          '[SocialConnector] Wallet creation completed but not ready',
+        );
+      } catch (error) {
+        console.error(
+          '[SocialConnector] Failed to create embedded wallet:',
+          error,
+        );
+      }
+    } else {
+      console.warn('[SocialConnector] createWallet method not available');
+    }
+
+    return false;
   }
 
   /**

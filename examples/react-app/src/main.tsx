@@ -129,6 +129,7 @@ function FuelProviderBridge({ children }: { children: React.ReactNode }) {
         embeddedWallet,
         sendCode,
         loginWithCode,
+        createWallet: privy.createWallet,
       },
     });
     connectorsRef.current = connectors;
@@ -152,6 +153,7 @@ function FuelProviderBridge({ children }: { children: React.ReactNode }) {
           embeddedWallet,
           sendCode,
           loginWithCode,
+          createWallet: privy.createWallet,
         });
         console.log('Updated SocialConnector privyAuth', {
           ready: privy.ready,

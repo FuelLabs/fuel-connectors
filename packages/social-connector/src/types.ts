@@ -61,4 +61,6 @@ export interface PrivyAuthInterface {
   sendCode?: (params: { email: string }) => Promise<void>;
   /** Login with OTP code (from useLoginWithEmail hook) */
   loginWithCode?: (params: { code: string }) => Promise<void>;
+  /** Manually create embedded wallet (from usePrivy hook) */
+  createWallet?: () => Promise<unknown>;
 }
