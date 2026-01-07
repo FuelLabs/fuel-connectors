@@ -301,7 +301,7 @@ export class SocialConnector extends PredicateConnector {
     console.log('[SocialConnector] Triggering Privy login...');
     try {
       await this.privyAuth.login({
-        loginMethods: ['google', 'email'],
+        loginMethods: ['email'],
       });
     } catch (e) {
       console.log('[SocialConnector] Login modal closed or error:', e);
