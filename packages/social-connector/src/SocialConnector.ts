@@ -134,12 +134,13 @@ export class SocialConnector extends PredicateConnector {
 
   /**
    * Gets the current EVM address from Privy's embedded wallet.
+   * Checks both user.wallet and embeddedWallet for the address.
    */
   protected _getCurrentEvmAddress(): Maybe<string> {
-    if (!this.privyAuth?.user?.wallet?.address) {
-      return null;
-    }
-    return this.privyAuth.user.wallet.address;
+    const address =
+      this.privyAuth?.user?.wallet?.address ||
+      this.privyAuth?.embeddedWallet?.address;
+    return address || null;
   }
 
   /**
@@ -264,6 +265,7 @@ export class SocialConnector extends PredicateConnector {
 
   /**
    * Waits for authentication to complete after login modal.
+   * Checks for wallet address from either user.wallet or embeddedWallet.
    */
   private async waitForAuthentication(timeoutMs = 60000): Promise<boolean> {
     if (!this.privyAuth) return false;
@@ -276,14 +278,16 @@ export class SocialConnector extends PredicateConnector {
         continue;
       }
 
+      // Get wallet address from either source
+      const walletAddress =
+        this.privyAuth.user?.wallet?.address ||
+        this.privyAuth.embeddedWallet?.address;
+
       // Check if authenticated with wallet
-      if (
-        this.privyAuth.authenticated &&
-        this.privyAuth.user?.wallet?.address
-      ) {
+      if (this.privyAuth.authenticated && walletAddress) {
         console.log(
           '[SocialConnector] Authentication successful:',
-          this.privyAuth.user.wallet.address,
+          walletAddress,
         );
         return true;
       }
@@ -349,7 +353,7 @@ export class SocialConnector extends PredicateConnector {
 
   /**
    * Handles the wallet disconnection logic via Privy logout.
-   * Also clears Privy-related localStorage data to allow fresh login with different email.
+   * Clears Bako personal wallet data to allow fresh login with different account.
    */
   public async _disconnect(): Promise<boolean> {
     if (!this.privyAuth) {
@@ -366,30 +370,12 @@ export class SocialConnector extends PredicateConnector {
       console.error('[SocialConnector] Privy logout error:', error);
     }
 
-    // Clear Privy-related localStorage data to allow fresh login
+    // Clear only the personal wallet key to allow fresh login with different account
+    // Other keys (session_id, etc) are managed by PredicateConnector.disconnect()
     if (typeof window !== 'undefined') {
-      const keysToRemove: string[] = [];
-      for (let i = 0; i < window.localStorage.length; i++) {
-        const key = window.localStorage.key(i);
-        if (
-          key?.startsWith('privy:') ||
-          key?.startsWith('privy-') ||
-          key?.startsWith('privy_')
-        ) {
-          keysToRemove.push(key);
-        }
-      }
-      console.log(
-        '[SocialConnector] Clearing localStorage keys:',
-        keysToRemove,
-      );
-      keysToRemove.forEach((key) => window.localStorage.removeItem(key));
-
-      // Also clear privy-token cookie if exists
-      document.cookie =
-        'privy-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-      document.cookie =
-        'privy-refresh-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      const keyToRemove = 'bako_connector_personal_wallet';
+      window.localStorage.removeItem(keyToRemove);
+      console.log('[SocialConnector] Cleared:', keyToRemove);
     }
 
     return wasAuthenticated;
