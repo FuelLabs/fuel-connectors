@@ -15,6 +15,7 @@ import { SocialConnector, defaultConnectors } from '@fuels/connectors';
 import { FuelProvider, type NetworkConfig } from '@fuels/react';
 import {
   PrivyProvider,
+  useLoginWithEmail,
   usePrivy,
   useSignMessage,
   useWallets,
@@ -104,6 +105,7 @@ function FuelProviderBridge({ children }: { children: React.ReactNode }) {
   const privy = usePrivy();
   const { wallets } = useWallets();
   const { signMessage } = useSignMessage();
+  const { sendCode, loginWithCode } = useLoginWithEmail();
   const connectorsRef = useRef<ReturnType<typeof defaultConnectors> | null>(
     null,
   );
@@ -125,6 +127,8 @@ function FuelProviderBridge({ children }: { children: React.ReactNode }) {
         ...privy,
         signMessage,
         embeddedWallet,
+        sendCode,
+        loginWithCode,
       },
     });
     connectorsRef.current = connectors;
@@ -146,6 +150,8 @@ function FuelProviderBridge({ children }: { children: React.ReactNode }) {
           ...privy,
           signMessage,
           embeddedWallet,
+          sendCode,
+          loginWithCode,
         });
         console.log('Updated SocialConnector privyAuth', {
           ready: privy.ready,
@@ -155,7 +161,7 @@ function FuelProviderBridge({ children }: { children: React.ReactNode }) {
         });
       }
     }
-  }, [privy, signMessage, embeddedWallet]);
+  }, [privy, signMessage, embeddedWallet, sendCode, loginWithCode]);
 
   return (
     <FuelProvider theme="dark" networks={NETWORKS} fuelConfig={fuelConfig}>

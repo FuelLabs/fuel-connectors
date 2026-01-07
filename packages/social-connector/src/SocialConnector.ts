@@ -54,6 +54,32 @@ export class SocialConnector extends PredicateConnector {
     this.privyAuth = privyAuth;
   }
 
+  /**
+   * Send OTP code to email for headless login.
+   * Requires sendCode to be provided in privyAuth from useLoginWithEmail hook.
+   */
+  public async sendCode(email: string): Promise<void> {
+    if (!this.privyAuth?.sendCode) {
+      throw new Error(
+        'sendCode not available - ensure useLoginWithEmail hook is configured',
+      );
+    }
+    await this.privyAuth.sendCode({ email });
+  }
+
+  /**
+   * Login with OTP code for headless login.
+   * Requires loginWithCode to be provided in privyAuth from useLoginWithEmail hook.
+   */
+  public async loginWithCode(code: string): Promise<void> {
+    if (!this.privyAuth?.loginWithCode) {
+      throw new Error(
+        'loginWithCode not available - ensure useLoginWithEmail hook is configured',
+      );
+    }
+    await this.privyAuth.loginWithCode({ code });
+  }
+
   protected getWalletAdapter(): PredicateWalletAdapter {
     return new EthereumWalletAdapter();
   }

@@ -57,4 +57,8 @@ export interface PrivyAuthInterface {
   ) => Promise<{ signature: string }>;
   /** Embedded wallet from useWallets() - optional for direct provider access */
   embeddedWallet?: PrivyEmbeddedWallet;
+  /** Send OTP code to email (from useLoginWithEmail hook) */
+  sendCode?: (params: { email: string }) => Promise<void>;
+  /** Login with OTP code (from useLoginWithEmail hook) */
+  loginWithCode?: (params: { code: string }) => Promise<void>;
 }
