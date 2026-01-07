@@ -23,6 +23,7 @@ export class SocialConnector extends PredicateConnector {
   name = 'Social Login';
   installed = true;
   events = FuelConnectorEventTypes;
+  skipVersionSelection = true;
   metadata: ConnectorMetadata = {
     image: SOCIAL_ICON,
     install: {
@@ -348,6 +349,7 @@ export class SocialConnector extends PredicateConnector {
 
   /**
    * Handles the wallet disconnection logic via Privy logout.
+   * Also clears Privy-related localStorage data to allow fresh login with different email.
    */
   public async _disconnect(): Promise<boolean> {
     if (!this.privyAuth) {
@@ -356,7 +358,39 @@ export class SocialConnector extends PredicateConnector {
 
     const wasAuthenticated = this.privyAuth.authenticated;
 
-    await this.privyAuth.logout();
+    try {
+      console.log('[SocialConnector] Logging out from Privy...');
+      await this.privyAuth.logout();
+      console.log('[SocialConnector] Privy logout completed');
+    } catch (error) {
+      console.error('[SocialConnector] Privy logout error:', error);
+    }
+
+    // Clear Privy-related localStorage data to allow fresh login
+    if (typeof window !== 'undefined') {
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < window.localStorage.length; i++) {
+        const key = window.localStorage.key(i);
+        if (
+          key?.startsWith('privy:') ||
+          key?.startsWith('privy-') ||
+          key?.startsWith('privy_')
+        ) {
+          keysToRemove.push(key);
+        }
+      }
+      console.log(
+        '[SocialConnector] Clearing localStorage keys:',
+        keysToRemove,
+      );
+      keysToRemove.forEach((key) => window.localStorage.removeItem(key));
+
+      // Also clear privy-token cookie if exists
+      document.cookie =
+        'privy-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      document.cookie =
+        'privy-refresh-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    }
 
     return wasAuthenticated;
   }
