@@ -1,4 +1,5 @@
 'use client';
+
 import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
 import { coinbaseWallet, walletConnect } from '@wagmi/connectors';
@@ -17,7 +18,10 @@ import COUNTER_CONTRACT_ID_TESTNET from 'react-app/src/types/contract-ids-testne
 const CHAIN_ID_NAME = process.env
   .NEXT_PUBLIC_CHAIN_ID_NAME as keyof typeof CHAIN_IDS.fuel;
 const CHAIN_ID = CHAIN_IDS.fuel[CHAIN_ID_NAME] || 0;
-const PROVIDER_URL = process.env.NEXT_PUBLIC_PROVIDER_URL;
+// Use a fallback for build time when env vars are not available
+const PROVIDER_URL =
+  process.env.NEXT_PUBLIC_PROVIDER_URL ||
+  'https://testnet.fuel.network/v1/graphql';
 
 const CUSTOM_TRANSFER_AMOUNT = process.env.NEXT_PUBLIC_CUSTOM_TRANSFER_AMOUNT;
 const FALLBACK_TRANSFER_AMOUNT =
@@ -29,10 +33,6 @@ const DEFAULT_AMOUNT = bn.parseUnits(
 const CUSTOM_ASSET_ID = process.env.NEXT_PUBLIC_CUSTOM_ASSET_ID ?? undefined;
 const CUSTOM_ASSET_SYMBOL =
   process.env.NEXT_PUBLIC_CUSTOM_ASSET_SYMBOL ?? 'ETH';
-
-if (!PROVIDER_URL) {
-  throw new Error(`PROVIDER_URL is not set: ${PROVIDER_URL}`);
-}
 
 function getContractId() {
   switch (CHAIN_ID_NAME) {
