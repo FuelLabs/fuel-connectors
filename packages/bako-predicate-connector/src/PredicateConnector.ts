@@ -15,6 +15,7 @@ import {
 
 import {
   BakoProvider,
+  DEFAULT_ASSET_ID,
   TypeUser,
   type UsedPredicateVersions,
   Vault,
@@ -526,7 +527,10 @@ export abstract class PredicateConnector extends FuelConnector {
           {
             SIGNERS: [signer],
             SIGNATURES_COUNT: 1,
-            HASH_PREDICATE: bakoPersonalWallet.configurable?.HASH_PREDICATE,
+            // Use the same default as legacyConnectorVersion for consistent addresses
+            HASH_PREDICATE:
+              bakoPersonalWallet.configurable?.HASH_PREDICATE ??
+              DEFAULT_ASSET_ID.assetId,
           },
           version?.toLowerCase(),
         );
