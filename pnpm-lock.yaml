@@ -296,8 +296,8 @@ importers:
         specifier: 1.93.2
         version: 1.93.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       bakosafe:
-        specifier: 0.5.0
-        version: 0.5.0(bufferutil@4.0.9)(fuels@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
+        specifier: 0.6.0
+        version: 0.6.0(bufferutil@4.0.9)(fuels@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
       bs58:
         specifier: 6.0.0
         version: 6.0.0
@@ -4047,6 +4047,11 @@ packages:
 
   bakosafe@0.5.0:
     resolution: {integrity: sha512-Q8mAUNYRSQopaOk39Rl7RSqCH/bG9zo1v2lZYsVsxdFR6lEibidZ15+W54tZRGRzLhimkt31Wh2K/DBcasoznQ==}
+    peerDependencies:
+      fuels: ^0.101.0
+
+  bakosafe@0.6.0:
+    resolution: {integrity: sha512-exyZ1NAb4IrTBuvVG2v8+2MaKm3B2Kqe0KZcNFUHtg/7qRrN2gC25m4QNgSlPGkV4cAmPyngWyFSXyV3LP33Mw==}
     peerDependencies:
       fuels: ^0.101.0
 
@@ -13594,6 +13599,26 @@ snapshots:
       axios: 1.13.2
       build: 0.1.4
       fuels: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.43.1))
+      lodash.partition: 4.6.0
+      pnpm: 10.17.1
+      uuid: 9.0.1
+      viem: 2.35.1(bufferutil@4.0.9)(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4)
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - typescript
+      - utf-8-validate
+      - zod
+
+  bakosafe@0.6.0(bufferutil@4.0.9)(fuels@0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0)))(typescript@5.4.5)(utf-8-validate@5.0.10)(zod@3.22.4):
+    dependencies:
+      '@ethereumjs/util': 9.0.3
+      '@ethersproject/bytes': 5.7.0
+      '@noble/curves': 1.9.7
+      '@noble/secp256k1': 2.3.0
+      axios: 1.13.2
+      build: 0.1.4
+      fuels: 0.102.0(vitest@2.1.9(@types/node@22.7.5)(jsdom@24.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(terser@5.31.0))
       lodash.partition: 4.6.0
       pnpm: 10.17.1
       uuid: 9.0.1

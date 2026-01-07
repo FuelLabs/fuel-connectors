@@ -435,10 +435,19 @@ export abstract class PredicateConnector extends FuelConnector {
 
     const bakoPersonalWallet = StoreManager.getPersonalWallet();
 
+    // Try to get BakoProvider if user is connected to query root wallet from API
+    let bakoProvider: BakoProvider | undefined;
+    try {
+      bakoProvider = await this._createBakoProvider();
+    } catch {
+      // User not connected yet, continue without BakoProvider
+    }
+
     return legacyConnectorVersion(
       evmAddress ?? '',
       fuelProvider.url,
       bakoPersonalWallet?.configurable?.HASH_PREDICATE,
+      bakoProvider,
     );
   }
 
