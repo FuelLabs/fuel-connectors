@@ -92,6 +92,12 @@ export function Connecting({ className }: ConnectorProps) {
         return;
       }
 
+      // Skip disclaimer if connector opts out (e.g., SocialConnector)
+      if (skipVersionSelection) {
+        cancel();
+        return;
+      }
+
       if (localStorage.getItem(PREDICATE_DISCLAIMER_KEY)) {
         cancel();
         return;
