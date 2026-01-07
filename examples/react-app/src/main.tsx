@@ -173,6 +173,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           appearance: {
             theme: 'dark',
           },
+          loginMethods: ['email'],
           embeddedWallets: {
             createOnLogin: 'users-without-wallets',
           },
