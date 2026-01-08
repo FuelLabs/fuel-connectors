@@ -255,17 +255,69 @@ export class SocialConnector extends PredicateConnector {
 
   /**
    * Waits for the embedded wallet to be created after login.
+   * Checks both user.wallet and embeddedWallet sources.
    */
   private async waitForWallet(timeoutMs = 15000): Promise<boolean> {
     if (!this.privyAuth) return false;
-    if (this.privyAuth.user?.wallet?.address) return true;
+
+    const getWalletAddress = () =>
+      this.privyAuth?.user?.wallet?.address ||
+      this.privyAuth?.embeddedWallet?.address;
+
+    if (getWalletAddress()) return true;
 
     const startTime = Date.now();
     while (Date.now() - startTime < timeoutMs) {
-      if (this.privyAuth.user?.wallet?.address) return true;
+      if (getWalletAddress()) return true;
       await new Promise((resolve) => setTimeout(resolve, 200));
     }
     return false;
+  }
+
+  /**
+   * Waits for authentication state to stabilize after Privy ready.
+   * This handles the case where Privy iframe has a session but React hasn't hydrated yet.
+   */
+  private async waitForAuthStateStable(timeoutMs = 2000): Promise<void> {
+    if (!this.privyAuth) return;
+
+    // If already authenticated, no need to wait
+    if (this.privyAuth.authenticated) {
+      console.log('[SocialConnector] Already authenticated, no wait needed');
+      return;
+    }
+
+    console.log('[SocialConnector] Waiting for auth state to stabilize...');
+    const startTime = Date.now();
+    let lastAuthState = this.privyAuth.authenticated;
+
+    while (Date.now() - startTime < timeoutMs) {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      // If auth state changed to true, we found the session
+      if (this.privyAuth.authenticated) {
+        console.log('[SocialConnector] Auth state changed to authenticated');
+        return;
+      }
+
+      // If auth state is stable (hasn't changed), we can stop waiting earlier
+      if (lastAuthState === this.privyAuth.authenticated) {
+        // Wait at least 500ms before deciding it's stable
+        if (Date.now() - startTime > 500) {
+          console.log(
+            '[SocialConnector] Auth state stable at:',
+            this.privyAuth.authenticated,
+          );
+          return;
+        }
+      }
+      lastAuthState = this.privyAuth.authenticated;
+    }
+
+    console.log(
+      '[SocialConnector] Auth state stabilized (timeout):',
+      this.privyAuth.authenticated,
+    );
   }
 
   /**
@@ -350,6 +402,10 @@ export class SocialConnector extends PredicateConnector {
     }
     console.log('[SocialConnector] Privy is ready');
 
+    // Wait a moment for authentication state to stabilize after Privy ready
+    // This handles the case where iframe session exists but React hasn't hydrated yet
+    await this.waitForAuthStateStable();
+
     // Check for wallet address from either source
     const existingWalletAddress =
       this.privyAuth.user?.wallet?.address ||
@@ -364,29 +420,54 @@ export class SocialConnector extends PredicateConnector {
       return true;
     }
 
-    // If authenticated but no wallet, try to create one manually
-    // This handles edge cases where automatic wallet creation failed
-    if (this.privyAuth.authenticated && !existingWalletAddress) {
+    // If authenticated but no wallet, wait for it to load (React hydration)
+    // Then try to create one if it still doesn't exist
+    if (this.privyAuth.authenticated) {
       console.log(
-        '[SocialConnector] Authenticated but no wallet, creating wallet...',
+        '[SocialConnector] Authenticated, waiting for wallet to load...',
       );
+
+      // Wait for wallet to appear (might just be React hydration delay)
+      const walletLoaded = await this.waitForWallet(5000);
+      if (walletLoaded) {
+        const walletAddress =
+          this.privyAuth.user?.wallet?.address ||
+          this.privyAuth.embeddedWallet?.address;
+        console.log('[SocialConnector] Wallet loaded:', walletAddress);
+        return true;
+      }
+
+      // Wallet didn't load, try to create one manually
+      console.log('[SocialConnector] Wallet not found, creating manually...');
       const walletCreated = await this.ensureEmbeddedWallet();
       if (walletCreated) {
         return true;
       }
+
+      // Wallet creation failed - session might be corrupted
+      // Logout to start fresh
+      console.log(
+        '[SocialConnector] Wallet creation failed, clearing corrupted session...',
+      );
+      await this.privyAuth.logout();
+      await this.waitForLogoutComplete();
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
     // Always logout before showing login modal to ensure clean session
-    // This prevents "Invalid code" errors from corrupted/stale sessions
-    console.log('[SocialConnector] Ensuring clean session before login...');
+    // This prevents "User already has one email account linked" errors
+    // when switching between different email accounts
+    console.log(
+      '[SocialConnector] Ensuring clean session before login modal...',
+    );
     try {
       await this.privyAuth.logout();
       await this.waitForLogoutComplete();
-      // Give Privy backend time to fully clear the session
       await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (e) {
+      // Logout might fail if not logged in - that's fine
       console.log(
-        '[SocialConnector] Logout before login failed (expected if not logged in):',
+        '[SocialConnector] Pre-login logout (expected if not logged in):',
         e,
       );
     }
@@ -476,17 +557,29 @@ export class SocialConnector extends PredicateConnector {
     try {
       console.log('[SocialConnector] Logging out from Privy...');
       await this.privyAuth.logout();
+
+      // Wait for logout to fully complete
+      await this.waitForLogoutComplete();
+
+      // Give Privy iframe time to clear its state
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       console.log('[SocialConnector] Privy logout completed');
     } catch (error) {
       console.error('[SocialConnector] Privy logout error:', error);
     }
 
-    // Clear only the personal wallet key to allow fresh login with different account
-    // Other keys (session_id, etc) are managed by PredicateConnector.disconnect()
+    // Clear bako-related localStorage keys to allow fresh login with different account
     if (typeof window !== 'undefined') {
-      const keyToRemove = 'bako_connector_personal_wallet';
-      window.localStorage.removeItem(keyToRemove);
-      console.log('[SocialConnector] Cleared:', keyToRemove);
+      const keysToRemove = [
+        'bako_connector_personal_wallet',
+        'bako_connector_session_id',
+        'bako_connector_current_account',
+      ];
+      for (const key of keysToRemove) {
+        window.localStorage.removeItem(key);
+      }
+      console.log('[SocialConnector] Cleared localStorage keys:', keysToRemove);
     }
 
     return wasAuthenticated;
