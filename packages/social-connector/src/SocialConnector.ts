@@ -199,39 +199,48 @@ export class SocialConnector extends PredicateConnector {
   }
 
   /**
-   * Waits for Privy to be ready with a timeout.
+   * Generic helper to wait for a condition to be true with timeout.
+   * @param condition - Function that returns true when condition is met
+   * @param timeoutMs - Maximum time to wait in milliseconds
+   * @param intervalMs - Polling interval in milliseconds
+   * @returns true if condition was met, false if timeout
    */
-  private async waitForPrivyReady(timeoutMs = 10000): Promise<boolean> {
-    if (!this.privyAuth) return false;
-    if (this.privyAuth.ready) return true;
+  private async waitFor(
+    condition: () => boolean,
+    timeoutMs: number,
+    intervalMs = 200,
+  ): Promise<boolean> {
+    if (condition()) return true;
 
     const startTime = Date.now();
     while (Date.now() - startTime < timeoutMs) {
-      if (this.privyAuth.ready) return true;
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      if (condition()) return true;
+      await new Promise((resolve) => setTimeout(resolve, intervalMs));
     }
     return false;
   }
 
   /**
+   * Waits for Privy to be ready with a timeout.
+   */
+  private async waitForPrivyReady(timeoutMs = 10000): Promise<boolean> {
+    if (!this.privyAuth) return false;
+    return this.waitFor(() => this.privyAuth?.ready ?? false, timeoutMs, 100);
+  }
+
+  /**
    * Waits for the embedded wallet to be created after login.
-   * Checks both user.wallet and embeddedWallet sources.
    */
   private async waitForWallet(timeoutMs = 15000): Promise<boolean> {
     if (!this.privyAuth) return false;
-
-    const getWalletAddress = () =>
-      this.privyAuth?.user?.wallet?.address ||
-      this.privyAuth?.embeddedWallet?.address;
-
-    if (getWalletAddress()) return true;
-
-    const startTime = Date.now();
-    while (Date.now() - startTime < timeoutMs) {
-      if (getWalletAddress()) return true;
-      await new Promise((resolve) => setTimeout(resolve, 200));
-    }
-    return false;
+    return this.waitFor(
+      () =>
+        !!(
+          this.privyAuth?.user?.wallet?.address ||
+          this.privyAuth?.embeddedWallet?.address
+        ),
+      timeoutMs,
+    );
   }
 
   /**
@@ -273,16 +282,7 @@ export class SocialConnector extends PredicateConnector {
    */
   private async waitForLogoutComplete(timeoutMs = 5000): Promise<boolean> {
     if (!this.privyAuth) return true;
-    if (!this.privyAuth.authenticated) return true;
-
-    const startTime = Date.now();
-    while (Date.now() - startTime < timeoutMs) {
-      if (!this.privyAuth.authenticated) {
-        return true;
-      }
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-    return false;
+    return this.waitFor(() => !this.privyAuth?.authenticated, timeoutMs, 100);
   }
 
   /**
