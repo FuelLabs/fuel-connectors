@@ -112,6 +112,33 @@ export class SocialConnector extends PredicateConnector {
     return this._getCurrentEvmAddress();
   }
 
+  /**
+   * Override accounts to check Privy auth state in addition to localStorage.
+   * This handles the page reload scenario where Privy session is restored
+   * but localStorage might not have CURRENT_ACCOUNT set yet.
+   */
+  public async accounts(): Promise<Array<string>> {
+    // First check localStorage (set after successful connect)
+    const storedAccount =
+      typeof window !== 'undefined'
+        ? window.localStorage.getItem('bako_connector_current_account')
+        : null;
+    if (storedAccount) {
+      return [storedAccount];
+    }
+
+    // If no stored account but Privy is authenticated, return EVM address
+    // This allows isConnected() to return true while waiting for full reconnect
+    if (this.privyAuth?.authenticated) {
+      const evmAddress = this._getCurrentEvmAddress();
+      if (evmAddress) {
+        return [evmAddress];
+      }
+    }
+
+    return [];
+  }
+
   protected async requireConnection(): Promise<void> {
     if (!this.privyAuth) {
       throw new Error('Privy auth not configured');
@@ -121,6 +148,14 @@ export class SocialConnector extends PredicateConnector {
     const isReady = await this.waitForPrivyReady(TIMEOUTS.REQUIRE_CONNECTION);
     if (!isReady) {
       throw new Error('Privy is not ready');
+    }
+
+    // Wait for authentication state to stabilize (handles page reload scenario)
+    await this.waitForAuthStateStable();
+
+    // Check if user is authenticated
+    if (!this.privyAuth.authenticated) {
+      throw new Error('User is not authenticated');
     }
   }
 
