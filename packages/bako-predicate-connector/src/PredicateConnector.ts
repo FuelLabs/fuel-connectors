@@ -89,7 +89,8 @@ export abstract class PredicateConnector extends FuelConnector {
 
   constructor() {
     super();
-    this.initializeSocketClient();
+    // TODO: Enable socket client when real-time features are needed
+    // this.initializeSocketClient();
 
     if (WINDOW) {
       const savedVersion = StoreManager.get('SELECTED_PREDICATE_KEY');

@@ -1,7 +1,7 @@
 import type { EventEmitter } from 'node:events';
 import { type Socket, io } from 'socket.io-client';
 
-import { APP_URL, SOCKET_URL, WINDOW } from './constants';
+import { APP_URL, SOCKET_CONFIG, SOCKET_URL, WINDOW } from './constants';
 
 export enum BakoSafeConnectorEvents {
   DEFAULT = 'message',
@@ -85,9 +85,9 @@ export class SocketClient {
         request_id: this.requestId,
       },
       autoConnect: false,
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
+      reconnection: SOCKET_CONFIG.RECONNECTION,
+      reconnectionAttempts: SOCKET_CONFIG.RECONNECTION_ATTEMPTS,
+      reconnectionDelay: SOCKET_CONFIG.RECONNECTION_DELAY_MS,
     });
 
     this.setupEventListeners();

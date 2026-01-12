@@ -4,3 +4,30 @@ export const SOCIAL_ICON =
 
 export const HAS_WINDOW = typeof window !== 'undefined';
 export const WINDOW = HAS_WINDOW ? window : null;
+
+// Polling intervals (in milliseconds)
+export const DEFAULT_POLL_INTERVAL_MS = 200;
+export const FAST_POLL_INTERVAL_MS = 100;
+export const SLOW_POLL_INTERVAL_MS = 500;
+
+// Timeouts (in milliseconds)
+export const TIMEOUTS = {
+  /** Timeout for Privy to be ready */
+  PRIVY_READY: 10_000 as number,
+  /** Timeout for require connection check */
+  REQUIRE_CONNECTION: 5_000 as number,
+  /** Timeout for embedded wallet to be available */
+  WALLET_LOAD: 15_000 as number,
+  /** Timeout for wallet creation */
+  WALLET_CREATION: 10_000 as number,
+  /** Timeout for authentication state to stabilize */
+  AUTH_STATE_STABLE: 2_000 as number,
+  /** Minimum time to wait before considering auth state stable */
+  AUTH_STATE_MIN_STABLE: 500 as number,
+  /** Timeout for logout to complete */
+  LOGOUT: 5_000 as number,
+  /** Timeout for full authentication flow */
+  AUTHENTICATION: 60_000 as number,
+  /** Delay after logout to allow state cleanup */
+  POST_LOGOUT_DELAY: 500 as number,
+};

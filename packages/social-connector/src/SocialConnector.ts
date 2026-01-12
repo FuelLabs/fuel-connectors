@@ -16,7 +16,14 @@ import {
   getProviderUrl,
 } from '@fuel-connectors/bako-predicate-connector';
 
-import { HAS_WINDOW, SOCIAL_ICON } from './constants';
+import {
+  DEFAULT_POLL_INTERVAL_MS,
+  FAST_POLL_INTERVAL_MS,
+  HAS_WINDOW,
+  SLOW_POLL_INTERVAL_MS,
+  SOCIAL_ICON,
+  TIMEOUTS,
+} from './constants';
 import type { PrivyAuthInterface, SocialConnectorConfig } from './types';
 
 export class SocialConnector extends PredicateConnector {
@@ -111,7 +118,7 @@ export class SocialConnector extends PredicateConnector {
     }
 
     // Wait for Privy to be ready before checking connection
-    const isReady = await this.waitForPrivyReady(5000);
+    const isReady = await this.waitForPrivyReady(TIMEOUTS.REQUIRE_CONNECTION);
     if (!isReady) {
       throw new Error('Privy is not ready');
     }
@@ -208,7 +215,7 @@ export class SocialConnector extends PredicateConnector {
   private async waitFor(
     condition: () => boolean,
     timeoutMs: number,
-    intervalMs = 200,
+    intervalMs = DEFAULT_POLL_INTERVAL_MS,
   ): Promise<boolean> {
     if (condition()) return true;
 
@@ -223,15 +230,23 @@ export class SocialConnector extends PredicateConnector {
   /**
    * Waits for Privy to be ready with a timeout.
    */
-  private async waitForPrivyReady(timeoutMs = 10000): Promise<boolean> {
+  private async waitForPrivyReady(
+    timeoutMs = TIMEOUTS.PRIVY_READY,
+  ): Promise<boolean> {
     if (!this.privyAuth) return false;
-    return this.waitFor(() => this.privyAuth?.ready ?? false, timeoutMs, 100);
+    return this.waitFor(
+      () => this.privyAuth?.ready ?? false,
+      timeoutMs,
+      FAST_POLL_INTERVAL_MS,
+    );
   }
 
   /**
    * Waits for the embedded wallet to be created after login.
    */
-  private async waitForWallet(timeoutMs = 15000): Promise<boolean> {
+  private async waitForWallet(
+    timeoutMs = TIMEOUTS.WALLET_LOAD,
+  ): Promise<boolean> {
     if (!this.privyAuth) return false;
     return this.waitFor(
       () =>
@@ -247,7 +262,9 @@ export class SocialConnector extends PredicateConnector {
    * Waits for authentication state to stabilize after Privy ready.
    * This handles the case where Privy iframe has a session but React hasn't hydrated yet.
    */
-  private async waitForAuthStateStable(timeoutMs = 2000): Promise<void> {
+  private async waitForAuthStateStable(
+    timeoutMs = TIMEOUTS.AUTH_STATE_STABLE,
+  ): Promise<void> {
     if (!this.privyAuth) return;
 
     // If already authenticated, no need to wait
@@ -259,7 +276,9 @@ export class SocialConnector extends PredicateConnector {
     let lastAuthState = this.privyAuth.authenticated;
 
     while (Date.now() - startTime < timeoutMs) {
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise((resolve) =>
+        setTimeout(resolve, DEFAULT_POLL_INTERVAL_MS),
+      );
 
       // If auth state changed to true, we found the session
       if (this.privyAuth.authenticated) {
@@ -268,8 +287,8 @@ export class SocialConnector extends PredicateConnector {
 
       // If auth state is stable (hasn't changed), we can stop waiting earlier
       if (lastAuthState === this.privyAuth.authenticated) {
-        // Wait at least 500ms before deciding it's stable
-        if (Date.now() - startTime > 500) {
+        // Wait at least minimum time before deciding it's stable
+        if (Date.now() - startTime > TIMEOUTS.AUTH_STATE_MIN_STABLE) {
           return;
         }
       }
@@ -280,23 +299,33 @@ export class SocialConnector extends PredicateConnector {
   /**
    * Waits for logout to complete (authenticated becomes false).
    */
-  private async waitForLogoutComplete(timeoutMs = 5000): Promise<boolean> {
+  private async waitForLogoutComplete(
+    timeoutMs = TIMEOUTS.LOGOUT,
+  ): Promise<boolean> {
     if (!this.privyAuth) return true;
-    return this.waitFor(() => !this.privyAuth?.authenticated, timeoutMs, 100);
+    return this.waitFor(
+      () => !this.privyAuth?.authenticated,
+      timeoutMs,
+      FAST_POLL_INTERVAL_MS,
+    );
   }
 
   /**
    * Waits for authentication to complete after login modal.
    * Checks for wallet address from either user.wallet or embeddedWallet.
    */
-  private async waitForAuthentication(timeoutMs = 60000): Promise<boolean> {
+  private async waitForAuthentication(
+    timeoutMs = TIMEOUTS.AUTHENTICATION,
+  ): Promise<boolean> {
     if (!this.privyAuth) return false;
 
     const startTime = Date.now();
     while (Date.now() - startTime < timeoutMs) {
       // Check if user cancelled (modal closed without auth)
       if (!this.privyAuth.ready) {
-        await new Promise((resolve) => setTimeout(resolve, 200));
+        await new Promise((resolve) =>
+          setTimeout(resolve, DEFAULT_POLL_INTERVAL_MS),
+        );
         continue;
       }
 
@@ -313,11 +342,15 @@ export class SocialConnector extends PredicateConnector {
       // If authenticated but no wallet yet, keep waiting
       // The React component will update privyAuth when embeddedWallet is ready
       if (this.privyAuth.authenticated) {
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        await new Promise((resolve) =>
+          setTimeout(resolve, SLOW_POLL_INTERVAL_MS),
+        );
         continue;
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise((resolve) =>
+        setTimeout(resolve, DEFAULT_POLL_INTERVAL_MS),
+      );
     }
 
     return false;
@@ -355,7 +388,9 @@ export class SocialConnector extends PredicateConnector {
     // Then try to create one if it still doesn't exist
     if (this.privyAuth.authenticated) {
       // Wait for wallet to appear (might just be React hydration delay)
-      const walletLoaded = await this.waitForWallet(5000);
+      const walletLoaded = await this.waitForWallet(
+        TIMEOUTS.REQUIRE_CONNECTION,
+      );
       if (walletLoaded) {
         return true;
       }
@@ -370,7 +405,9 @@ export class SocialConnector extends PredicateConnector {
       // Logout to start fresh
       await this.privyAuth.logout();
       await this.waitForLogoutComplete();
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) =>
+        setTimeout(resolve, TIMEOUTS.POST_LOGOUT_DELAY),
+      );
     }
 
     // Always logout before showing login modal to ensure clean session
@@ -379,7 +416,9 @@ export class SocialConnector extends PredicateConnector {
     try {
       await this.privyAuth.logout();
       await this.waitForLogoutComplete();
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) =>
+        setTimeout(resolve, TIMEOUTS.POST_LOGOUT_DELAY),
+      );
     } catch {
       // Logout might fail if not logged in - that's fine
     }
@@ -427,7 +466,7 @@ export class SocialConnector extends PredicateConnector {
       try {
         await this.privyAuth.createWallet();
         // Wait for wallet to be available
-        const walletReady = await this.waitForWallet(10000);
+        const walletReady = await this.waitForWallet(TIMEOUTS.WALLET_CREATION);
         if (walletReady) {
           return true;
         }
@@ -456,7 +495,9 @@ export class SocialConnector extends PredicateConnector {
       await this.waitForLogoutComplete();
 
       // Give Privy iframe time to clear its state
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) =>
+        setTimeout(resolve, TIMEOUTS.POST_LOGOUT_DELAY),
+      );
     } catch {
       // Logout error - continue with cleanup
     }

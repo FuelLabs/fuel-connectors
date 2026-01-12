@@ -20,3 +20,13 @@ export const DEFAULT_CONNECTOR_WALLET_DESCRIPTION =
   'Auto-created predicate for connector';
 
 export const DEFAULT_VERSION = { app: '0.0.0', network: '0.0.0' } as const;
+
+// Socket configuration
+export const SOCKET_CONFIG = {
+  /** Enable automatic reconnection */
+  RECONNECTION: true,
+  /** Number of reconnection attempts before giving up */
+  RECONNECTION_ATTEMPTS: 5,
+  /** Delay between reconnection attempts (in milliseconds) */
+  RECONNECTION_DELAY_MS: 1_000,
+} as const;
