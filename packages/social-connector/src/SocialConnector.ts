@@ -12,12 +12,12 @@ import {
   type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
+  getPredicateVersions,
   getProviderUrl,
 } from '@fuel-connectors/bako-predicate-connector';
 
 import { HAS_WINDOW, SOCIAL_ICON } from './constants';
 import type { PrivyAuthInterface, SocialConnectorConfig } from './types';
-import { getPredicateVersions } from './utils';
 
 export class SocialConnector extends PredicateConnector {
   name = 'Social Login';

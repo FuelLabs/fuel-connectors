@@ -1,6 +1,10 @@
+import { arrayify } from '@ethersproject/bytes';
+import { Wallet, getCompatiblePredicateVersions, versions } from 'bakosafe';
 import { Address, Predicate, getPredicateRoot } from 'fuels';
 import type { Hex } from 'viem';
-import type { Maybe, PredicateConfig } from './types';
+import type { Maybe, PredicateConfig, PredicateVersion } from './types';
+
+export { Wallet } from 'bakosafe';
 
 /**
  * Throws an error if the value is null or undefined.
@@ -48,3 +52,39 @@ export const getFuelPredicateAddresses = ({
   const predicateRoot = getPredicateRoot(predicateBytes);
   return Address.fromB256(predicateRoot).toString() as Hex;
 };
+
+/**
+ * Gets predicate versions compatible with a specific wallet type.
+ * Returns a record of version identifiers mapped to their predicate configuration.
+ *
+ * @param wallet - The wallet type to get compatible versions for (defaults to EVM)
+ * @returns Record of version identifiers to PredicateVersion objects
+ *
+ * @example
+ * ```typescript
+ * const versions = getPredicateVersions(Wallet.EVM);
+ * ```
+ */
+export function getPredicateVersions(
+  wallet: Wallet = Wallet.EVM,
+): Record<string, PredicateVersion> {
+  const compatibleVersions = getCompatiblePredicateVersions(wallet);
+
+  return compatibleVersions.reduce(
+    (acc, version) => {
+      const v = versions[version];
+      if (!v || !v.time || !v.abi || !v.bytecode) return acc;
+
+      acc[version] = {
+        generatedAt: v.time,
+        predicate: {
+          abi: v.abi,
+          bin: arrayify(v.bytecode),
+        },
+      };
+
+      return acc;
+    },
+    {} as Record<string, PredicateVersion>,
+  );
+}
