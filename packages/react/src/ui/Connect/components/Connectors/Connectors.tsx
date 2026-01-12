@@ -27,6 +27,7 @@ const ALLOWED_MOBILE_CONNECTORS = [
   'Burner Wallet',
   'Ethereum Wallets',
   'Solana Wallets',
+  'Social Login',
 ];
 
 export function Connectors() {
