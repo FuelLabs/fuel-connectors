@@ -1,6 +1,6 @@
-// Social login icon (generic user/social icon)
+// Social login icon (modern email envelope with gradient)
 export const SOCIAL_ICON =
-  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMjU2IiBmaWxsPSIjRjVGNUY1Ii8+CjxjaXJjbGUgY3g9IjI1NiIgY3k9IjIwMCIgcj0iODAiIGZpbGw9IiM2NjY2NjYiLz4KPHBhdGggZD0iTTEyOCA0MzJDMTI4IDM2MS4zMDggMTg1LjMwOCAzMDQgMjU2IDMwNEMzMjYuNjkyIDMwNCAzODQgMzYxLjMwOCAzODQgNDMyIiBzdHJva2U9IiM2NjY2NjYiIHN0cm9rZS13aWR0aD0iNjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
+  "data:image/svg+xml,%3Csvg width='512' height='512' viewBox='0 0 512 512' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300D68F'/%3E%3Cstop offset='100%25' stop-color='%2300B4A0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='256' cy='256' r='256' fill='url(%23bg)'/%3E%3Crect x='96' y='160' width='320' height='220' rx='24' fill='white' opacity='0.95'/%3E%3Cpath d='M120 184L256 280L392 184' stroke='%2300D68F' stroke-width='20' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Cpath d='M120 356L200 276' stroke='%2300B4A0' stroke-width='16' stroke-linecap='round'/%3E%3Cpath d='M392 356L312 276' stroke='%2300B4A0' stroke-width='16' stroke-linecap='round'/%3E%3C/svg%3E";
 
 export const HAS_WINDOW = typeof window !== 'undefined';
 export const WINDOW = HAS_WINDOW ? window : null;

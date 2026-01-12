@@ -480,6 +480,7 @@ export class SocialConnector extends PredicateConnector {
 
   /**
    * Handles the wallet disconnection logic via Privy logout.
+   * Clears Bako personal wallet data to allow fresh login with different account.
    */
   public async _disconnect(): Promise<boolean> {
     if (!this.privyAuth) {
@@ -500,6 +501,18 @@ export class SocialConnector extends PredicateConnector {
       );
     } catch {
       // Logout error - continue with cleanup
+    }
+
+    // Clear bako-related localStorage keys to allow fresh login with different account
+    if (typeof window !== 'undefined') {
+      const keysToRemove = [
+        'bako_connector_personal_wallet',
+        'bako_connector_session_id',
+        'bako_connector_current_account',
+      ];
+      for (const key of keysToRemove) {
+        window.localStorage.removeItem(key);
+      }
     }
 
     return wasAuthenticated;
