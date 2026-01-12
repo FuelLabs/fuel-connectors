@@ -129,7 +129,7 @@ export class WalletConnectConnector extends PredicateConnector {
     return getPredicateVersions();
   }
 
-  protected async configProviders(config: WalletConnectConfig = {}) {
+  protected async _configProviders(config: WalletConnectConfig = {}) {
     const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || new FuelProvider(network),
@@ -278,13 +278,6 @@ export class WalletConnectConnector extends PredicateConnector {
    */
   async startConsolidation(opts: StartConsolidateCoins): Promise<void> {
     this.emit(FuelConnectorEventTypes.consolidateCoins, opts);
-  }
-
-  /**
-   * Configures providers based on connector configuration.
-   */
-  protected async _configProviders(config: WalletConnectConfig = {}) {
-    return this.configProviders(config);
   }
 
   /**

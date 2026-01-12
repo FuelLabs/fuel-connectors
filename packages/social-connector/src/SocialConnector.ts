@@ -94,7 +94,7 @@ export class SocialConnector extends PredicateConnector {
     return getPredicateVersions();
   }
 
-  protected async configProviders(config: SocialConnectorConfig = {}) {
+  protected async _configProviders(config: SocialConnectorConfig = {}) {
     const network = getProviderUrl(config?.chainId ?? CHAIN_IDS.fuel.mainnet);
     this.config = Object.assign(config, {
       fuelProvider: config.fuelProvider || new FuelProvider(network),
@@ -128,13 +128,6 @@ export class SocialConnector extends PredicateConnector {
       curve: 'secp256k1',
       signature,
     };
-  }
-
-  /**
-   * Configures providers based on connector configuration.
-   */
-  protected async _configProviders(config: SocialConnectorConfig = {}) {
-    return this.configProviders(config);
   }
 
   /**
