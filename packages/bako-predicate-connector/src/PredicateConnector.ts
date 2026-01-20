@@ -105,6 +105,12 @@ export abstract class PredicateConnector extends FuelConnector {
    * Subclasses implement wallet-specific connection logic.
    */
   public async connect(): Promise<boolean> {
+    // Always clears previous session when starting a new login.
+    if (WINDOW) {
+      StoreManager.clear();
+    }
+    this.connected = false;
+
     // Step 1: Establish wallet connection (implemented by subclass)
     const walletConnectionSuccessful = await this._connect();
     if (!walletConnectionSuccessful) {
@@ -140,8 +146,22 @@ export abstract class PredicateConnector extends FuelConnector {
       serverApi: BAKO_SERVER_URL,
     });
 
-    const challengeSignature = await this._signMessage(challengeCode);
-    const sessionId = this.getSessionId();
+    let challengeSignature: string;
+
+    try {
+      challengeSignature = await this._signMessage(challengeCode);
+    } catch (_error) {
+      this.connected = false;
+
+      if (WINDOW) {
+        StoreManager.clear();
+      }
+      throw new Error('EVM signature rejected. Authentication aborted.');
+    }
+
+    if (!challengeSignature) {
+      throw new Error('Missing challenge signature. Aborting login.');
+    }
 
     const bakoProvider = await BakoProvider.authenticate(fuelProvider.url, {
       address: fuelAddress,
@@ -150,6 +170,8 @@ export abstract class PredicateConnector extends FuelConnector {
       token: challengeSignature,
       serverApi: BAKO_SERVER_URL,
     });
+
+    const sessionId = this.getSessionId();
 
     await bakoProvider.connectDapp(sessionId, ORIGIN);
 
