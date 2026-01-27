@@ -2,13 +2,16 @@ import type { FuelConfig } from 'fuels';
 
 import { Connect } from '../ui/Connect';
 
-import { useMemo } from 'react';
-import type { NetworkConfig, UIConfig } from '../types';
+import { type ReactNode, useMemo } from 'react';
+import { PRIVY_APP_ID, PRIVY_CONFIG } from '../constants/privy';
+import type { NetworkConfig, PrivyConfig, UIConfig } from '../types';
 import { BridgeDialog } from '../ui/Connect/components/Bridge/BridgeDialog';
 import { NetworkDialog } from '../ui/Connect/components/Network/NetworkDialog';
 import { useNetworkConfigs } from '../ui/Connect/hooks/useNetworkConfigs';
 import { FuelHooksProvider } from './FuelHooksProvider';
 import { FuelUIProvider, type FuelUIProviderProps } from './FuelUIProvider';
+import { PrivyInternalProvider } from './PrivyInternalProvider';
+import { PrivySyncProvider } from './PrivySyncProvider';
 
 export { useFuel } from './FuelHooksProvider';
 export { useConnectUI } from './FuelUIProvider';
@@ -18,7 +21,51 @@ type FuelProviderProps = {
   uiConfig?: UIConfig;
   fuelConfig: FuelConfig;
   networks?: Array<NetworkConfig>;
+  socialLogin?: boolean;
 } & Pick<FuelUIProviderProps, 'theme' | 'children'>;
+
+const PrivyProviderStack = ({
+  socialLoginConfig,
+  children,
+}: {
+  socialLoginConfig: PrivyConfig | null;
+  children: ReactNode;
+}) => {
+  if (!socialLoginConfig) {
+    return <>{children}</>;
+  }
+
+  return (
+    <PrivyInternalProvider
+      appId={socialLoginConfig.appId}
+      config={socialLoginConfig.config}
+    >
+      <PrivySyncProvider>{children}</PrivySyncProvider>
+    </PrivyInternalProvider>
+  );
+};
+
+const FuelProviderStack = ({
+  ui,
+  fuelConfig,
+  networks,
+  children,
+}: {
+  ui: boolean;
+  fuelConfig: FuelConfig;
+  networks: Array<NetworkConfig>;
+  children: ReactNode;
+}) => {
+  if (!ui) {
+    return <>{children}</>;
+  }
+
+  return (
+    <FuelHooksProvider fuelConfig={fuelConfig} networks={networks}>
+      {children}
+    </FuelHooksProvider>
+  );
+};
 
 export function FuelProvider({
   theme: _theme,
@@ -27,6 +74,7 @@ export function FuelProvider({
   uiConfig: _uiConfig,
   ui = true,
   networks: _networks,
+  socialLogin: _socialLogin,
 }: FuelProviderProps) {
   const theme = _theme || 'light';
   const { networks } = useNetworkConfigs(_networks);
@@ -41,9 +89,20 @@ export function FuelProvider({
     [_uiConfig],
   );
 
-  if (ui) {
-    return (
-      <FuelHooksProvider fuelConfig={fuelConfig} networks={networks}>
+  const socialLoginConfig = useMemo(() => {
+    if (!_socialLogin) return null;
+
+    if (!PRIVY_APP_ID) {
+      console.warn('Social Login enabled but PRIVY_APP_ID not set.');
+      return null;
+    }
+
+    return { appId: PRIVY_APP_ID, config: PRIVY_CONFIG };
+  }, [_socialLogin]);
+
+  return (
+    <FuelProviderStack ui={ui} fuelConfig={fuelConfig} networks={networks}>
+      <PrivyProviderStack socialLoginConfig={socialLoginConfig}>
         <FuelUIProvider
           theme={theme}
           fuelConfig={fuelConfig}
@@ -54,12 +113,7 @@ export function FuelProvider({
           {uiConfig.suggestBridge && <BridgeDialog theme={theme} />}
           {children}
         </FuelUIProvider>
-      </FuelHooksProvider>
-    );
-  }
-  return (
-    <FuelHooksProvider fuelConfig={fuelConfig} networks={networks}>
-      {children}
-    </FuelHooksProvider>
+      </PrivyProviderStack>
+    </FuelProviderStack>
   );
 }

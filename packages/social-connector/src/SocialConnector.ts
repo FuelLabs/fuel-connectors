@@ -17,6 +17,12 @@ import {
 } from '@fuel-connectors/bako-predicate-connector';
 
 import {
+  type IPrivyAuthObserver,
+  PrivyAuthEventTypes,
+} from '@fuel-connectors/common';
+
+import type { ConnectedWallet, User } from '@privy-io/react-auth';
+import {
   DEFAULT_POLL_INTERVAL_MS,
   FAST_POLL_INTERVAL_MS,
   HAS_WINDOW,
@@ -24,7 +30,11 @@ import {
   SOCIAL_ICON,
   TIMEOUTS,
 } from './constants';
-import type { PrivyAuthInterface, SocialConnectorConfig } from './types';
+import type {
+  ObserverListenersType,
+  PrivyAuthInterface,
+  SocialConnectorConfig,
+} from './types';
 
 export class SocialConnector extends PredicateConnector {
   name = 'Social Login';
@@ -42,11 +52,13 @@ export class SocialConnector extends PredicateConnector {
 
   private fuelProvider!: FuelProvider;
   private config: SocialConnectorConfig = {} as SocialConnectorConfig;
-  private privyAuth: Maybe<PrivyAuthInterface> = null;
+  private privyAuth: Maybe<PrivyAuthInterface<User, ConnectedWallet>> = null;
+  private privyAuthObserver: Maybe<IPrivyAuthObserver<User, ConnectedWallet>> =
+    null;
+  private observerListeners: ObserverListenersType<User, ConnectedWallet> = {};
 
   constructor(config: SocialConnectorConfig = {}) {
     super();
-    this.privyAuth = config.privyAuth || null;
     this.customPredicate = config.predicateConfig || null;
 
     if (HAS_WINDOW) {
@@ -55,11 +67,134 @@ export class SocialConnector extends PredicateConnector {
   }
 
   /**
+   * Set the PrivyAuthObserver for event-driven state updates.
+   * This allows granular updates without re-injecting the entire privyAuth payload.
+   */
+  public setPrivyAuthObserver(
+    observer: IPrivyAuthObserver<User, ConnectedWallet> | null,
+  ): void {
+    this.privyAuthObserver = observer;
+    this.setupObserverListeners();
+  }
+
+  /**
+   * Setup listeners for PrivyAuthObserver events.
+   * This allows granular updates without re-injecting the entire payload.
+   */
+  private setupObserverListeners(): void {
+    if (!this.privyAuthObserver) return;
+
+    // Listen for authenticated changes
+    const authenticatedListener = (value: boolean) => {
+      if (this.privyAuth) {
+        this.privyAuth.authenticated = value;
+        this.checkAndTriggerAutoReconnect();
+      }
+    };
+    this.privyAuthObserver.on(
+      PrivyAuthEventTypes.authenticated,
+      authenticatedListener,
+    );
+    this.observerListeners[PrivyAuthEventTypes.authenticated] =
+      authenticatedListener;
+
+    // Listen for ready changes
+    const readyListener = (value: boolean) => {
+      if (this.privyAuth) {
+        this.privyAuth.ready = value;
+        this.checkAndTriggerAutoReconnect();
+      }
+    };
+    this.privyAuthObserver.on(PrivyAuthEventTypes.ready, readyListener);
+    this.observerListeners[PrivyAuthEventTypes.ready] = readyListener;
+
+    // Listen for user changes
+    const userListener = (value?: User) => {
+      if (this.privyAuth) {
+        this.privyAuth.user = value;
+      }
+    };
+    this.privyAuthObserver.on(PrivyAuthEventTypes.user, userListener);
+    this.observerListeners[PrivyAuthEventTypes.user] = userListener;
+
+    // Listen for embeddedWallet changes
+    const embeddedWalletListener = (value?: ConnectedWallet) => {
+      if (this.privyAuth) {
+        this.privyAuth.embeddedWallet = value;
+      }
+    };
+    this.privyAuthObserver.on(
+      PrivyAuthEventTypes.embeddedWallet,
+      embeddedWalletListener,
+    );
+    this.observerListeners[PrivyAuthEventTypes.embeddedWallet] =
+      embeddedWalletListener;
+  }
+
+  /**
+   * Check if we should trigger auto-reconnect based on current state.
+   * Called whenever authenticated or ready state changes.
+   */
+  private checkAndTriggerAutoReconnect(): void {
+    if (
+      !this.privyAuth ||
+      !this.privyAuth.authenticated ||
+      !this.privyAuth.ready
+    ) {
+      return;
+    }
+
+    this.tryAutoReconnect();
+  }
+
+  /**
+   * Remove all observer listeners to prevent memory leaks.
+   */
+  private removeObserverListeners(): void {
+    if (!this.privyAuthObserver) return;
+
+    if (this.observerListeners[PrivyAuthEventTypes.authenticated]) {
+      this.privyAuthObserver.off(
+        PrivyAuthEventTypes.authenticated,
+        this.observerListeners[PrivyAuthEventTypes.authenticated],
+      );
+    }
+
+    if (this.observerListeners[PrivyAuthEventTypes.ready]) {
+      this.privyAuthObserver.off(
+        PrivyAuthEventTypes.ready,
+        this.observerListeners[PrivyAuthEventTypes.ready],
+      );
+    }
+
+    if (this.observerListeners[PrivyAuthEventTypes.user]) {
+      this.privyAuthObserver.off(
+        PrivyAuthEventTypes.user,
+        this.observerListeners[PrivyAuthEventTypes.user],
+      );
+    }
+
+    if (this.observerListeners[PrivyAuthEventTypes.embeddedWallet]) {
+      this.privyAuthObserver.off(
+        PrivyAuthEventTypes.embeddedWallet,
+        this.observerListeners[PrivyAuthEventTypes.embeddedWallet],
+      );
+    }
+
+    this.observerListeners = {};
+  }
+
+  /**
    * Updates the Privy auth interface.
    * Useful when the privy context changes (e.g., on re-render).
    * Also handles auto-reconnect when Privy session is restored on page reload.
+   *
+   * Note: If using PrivyAuthObserver, prefer updating the observer directly
+   * instead of calling this method repeatedly.
    */
-  public setPrivyAuth(privyAuth: PrivyAuthInterface): void {
+  public setPrivyAuth(
+    privyAuth: PrivyAuthInterface<User, ConnectedWallet>,
+  ): void {
     const wasAuthenticated = this.privyAuth?.authenticated ?? false;
     const wasReady = this.privyAuth?.ready ?? false;
     this.privyAuth = privyAuth;
@@ -588,6 +723,9 @@ export class SocialConnector extends PredicateConnector {
    * Clears Bako personal wallet data to allow fresh login with different account.
    */
   public async _disconnect(): Promise<boolean> {
+    // Clean up observer listeners if any
+    this.removeObserverListeners();
+
     if (!this.privyAuth) {
       return false;
     }

@@ -20,7 +20,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "@privy-io/react-auth": ">=1.0.0",
+    "@privy-io/react-auth": ">=2.0.0",
     "fuels": "0.102.0"
   },
   "dependencies": {
@@ -30,6 +30,7 @@
     "viem": "2.20.1"
   },
   "devDependencies": {
+    "@fuel-connectors/common": "workspace:*",
     "terser": "5.31.0",
     "tsup": "8.0.2",
     "typescript": "5.4.5",
