@@ -740,12 +740,30 @@ export abstract class PredicateConnector extends FuelConnector {
   }
 
   /**
-   * Creates a predicate in the Bako API using the provided provider.
+   * Generates a unique name to create a new predicate.
+   *
+   * The name follows the pattern: "Connector Wallet #<first 8 chars of UUID>"
+   * Example: "Connector Wallet #a1b2c3d4"
+   *
+   * @returns {string} Unique name for the predicate
+   */
+  private generateConnectorPredicateName(): string {
+    const uniqueId = crypto.randomUUID().slice(0, 8);
+    return `${DEFAULT_CONNECTOR_WALLET_NAME} #${uniqueId}`;
+  }
+
+  /**
+   * Creates a predicate in the Bako API with a unique generated name.
+   *
+   * @param provider - BakoProvider instance for API communication
+   * @param vault - Vault instance containing the predicate configuration
+   * @throws Error if creation fails
    */
   private async _createPredicateInApi(
     provider: BakoProvider,
     vault: Vault,
   ): Promise<void> {
+    const predicateName = this.generateConnectorPredicateName();
     const vaultToSave = new Vault(
       provider,
       vault.configurable,
@@ -753,7 +771,7 @@ export abstract class PredicateConnector extends FuelConnector {
     );
 
     await vaultToSave.save({
-      name: DEFAULT_CONNECTOR_WALLET_NAME,
+      name: predicateName,
       description: DEFAULT_CONNECTOR_WALLET_DESCRIPTION,
     });
   }
