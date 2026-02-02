@@ -15,8 +15,8 @@ export const HAS_WINDOW = typeof window !== 'undefined';
 export const WINDOW = HAS_WINDOW ? window : null;
 export const ORIGIN = WINDOW ? WINDOW.location.origin : 'testmode';
 
-export const DEFAULT_CONNECTOR_WALLET_NAME = 'Predicate';
-export const DEFAULT_CONNECTOR_WALLET_DESCRIPTION =
+export const DEFAULT_CONNECTOR_PREDICATE_NAME = 'Predicate';
+export const DEFAULT_CONNECTOR_PREDICATE_DESCRIPTION =
   'Auto-created predicate for connector';
 
 export const DEFAULT_VERSION = { app: '0.0.0', network: '0.0.0' } as const;

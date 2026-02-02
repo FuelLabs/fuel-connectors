@@ -29,8 +29,8 @@ import { SocketClient } from './SocketClient';
 import { StoreManager } from './StoreManager';
 import {
   BAKO_SERVER_URL,
-  DEFAULT_CONNECTOR_WALLET_DESCRIPTION,
-  DEFAULT_CONNECTOR_WALLET_NAME,
+  DEFAULT_CONNECTOR_PREDICATE_DESCRIPTION,
+  DEFAULT_CONNECTOR_PREDICATE_NAME,
   DEFAULT_VERSION,
   ORIGIN,
   WINDOW,
@@ -749,7 +749,7 @@ export abstract class PredicateConnector extends FuelConnector {
    */
   private generateConnectorPredicateName(): string {
     const uniqueId = crypto.randomUUID();
-    return `${DEFAULT_CONNECTOR_WALLET_NAME} #${uniqueId}`;
+    return `${DEFAULT_CONNECTOR_PREDICATE_NAME} #${uniqueId}`;
   }
 
   /**
@@ -772,7 +772,7 @@ export abstract class PredicateConnector extends FuelConnector {
 
     await vaultToSave.save({
       name: predicateName,
-      description: DEFAULT_CONNECTOR_WALLET_DESCRIPTION,
+      description: DEFAULT_CONNECTOR_PREDICATE_DESCRIPTION,
     });
   }
 
