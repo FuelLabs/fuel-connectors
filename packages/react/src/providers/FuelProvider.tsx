@@ -96,6 +96,7 @@ export function FuelProvider({
       </FuelHooksProvider>
     );
   }
+
   return (
     <FuelHooksProvider fuelConfig={fuelConfig} networks={networks}>
       <PrivyProviderStack socialLoginConfig={socialLoginConfig}>
