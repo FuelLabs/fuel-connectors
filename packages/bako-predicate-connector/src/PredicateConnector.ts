@@ -748,7 +748,7 @@ export abstract class PredicateConnector extends FuelConnector {
    * @returns {string} Unique name for the predicate
    */
   private generateConnectorPredicateName(): string {
-    const uniqueId = crypto.randomUUID().slice(0, 8);
+    const uniqueId = crypto.randomUUID();
     return `${DEFAULT_CONNECTOR_WALLET_NAME} #${uniqueId}`;
   }
 

@@ -15,7 +15,7 @@ export const HAS_WINDOW = typeof window !== 'undefined';
 export const WINDOW = HAS_WINDOW ? window : null;
 export const ORIGIN = WINDOW ? WINDOW.location.origin : 'testmode';
 
-export const DEFAULT_CONNECTOR_WALLET_NAME = 'Connector Wallet';
+export const DEFAULT_CONNECTOR_WALLET_NAME = 'Predicate';
 export const DEFAULT_CONNECTOR_WALLET_DESCRIPTION =
   'Auto-created predicate for connector';
 
