@@ -45,28 +45,6 @@ const PrivyProviderStack = ({
   );
 };
 
-const FuelProviderStack = ({
-  ui,
-  fuelConfig,
-  networks,
-  children,
-}: {
-  ui: boolean;
-  fuelConfig: FuelConfig;
-  networks: Array<NetworkConfig>;
-  children: ReactNode;
-}) => {
-  if (!ui) {
-    return <>{children}</>;
-  }
-
-  return (
-    <FuelHooksProvider fuelConfig={fuelConfig} networks={networks}>
-      {children}
-    </FuelHooksProvider>
-  );
-};
-
 export function FuelProvider({
   theme: _theme,
   children,
@@ -100,20 +78,29 @@ export function FuelProvider({
     return { appId: PRIVY_APP_ID, config: PRIVY_CONFIG };
   }, [_socialLogin]);
 
+  if (ui) {
+    return (
+      <FuelHooksProvider fuelConfig={fuelConfig} networks={networks}>
+        <PrivyProviderStack socialLoginConfig={socialLoginConfig}>
+          <FuelUIProvider
+            theme={theme}
+            fuelConfig={fuelConfig}
+            uiConfig={uiConfig}
+          >
+            <Connect />
+            <NetworkDialog theme={theme} />
+            {uiConfig.suggestBridge && <BridgeDialog theme={theme} />}
+            {children}
+          </FuelUIProvider>
+        </PrivyProviderStack>
+      </FuelHooksProvider>
+    );
+  }
   return (
-    <FuelProviderStack ui={ui} fuelConfig={fuelConfig} networks={networks}>
+    <FuelHooksProvider fuelConfig={fuelConfig} networks={networks}>
       <PrivyProviderStack socialLoginConfig={socialLoginConfig}>
-        <FuelUIProvider
-          theme={theme}
-          fuelConfig={fuelConfig}
-          uiConfig={uiConfig}
-        >
-          <Connect />
-          <NetworkDialog theme={theme} />
-          {uiConfig.suggestBridge && <BridgeDialog theme={theme} />}
-          {children}
-        </FuelUIProvider>
+        {children}
       </PrivyProviderStack>
-    </FuelProviderStack>
+    </FuelHooksProvider>
   );
 }
