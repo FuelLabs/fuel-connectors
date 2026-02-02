@@ -474,6 +474,8 @@ describe('Social Connector', () => {
         observer.emit(PrivyAuthEventTypes.authenticated, true);
 
         expect(mockPrivy.authenticated).toBe(true);
+
+        vi.unstubAllGlobals();
       });
 
       it('should not trigger auto-reconnect if not ready', () => {
@@ -526,6 +528,8 @@ describe('Social Connector', () => {
         observer.emit(PrivyAuthEventTypes.ready, true);
 
         expect(mockPrivy.ready).toBe(true);
+
+        vi.unstubAllGlobals();
       });
     });
 
