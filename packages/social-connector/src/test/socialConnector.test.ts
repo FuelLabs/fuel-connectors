@@ -637,7 +637,7 @@ describe('Social Connector', () => {
         expect(() => connector._disconnect()).not.toThrow();
       });
 
-      it('should properly deregister listener so it is not called after removal', () => {
+      it('should properly deregister listener so it is not called after removal', async () => {
         const connector = new SocialConnector();
         const mockPrivy = createMockPrivyAuth({
           authenticated: false,
@@ -654,7 +654,7 @@ describe('Social Connector', () => {
         mockPrivy.authenticated = false;
 
         // Disconnect to remove listeners
-        connector._disconnect();
+        await connector._disconnect();
 
         // Emit again - listener should not be called
         observer.emit(PrivyAuthEventTypes.authenticated, true);
