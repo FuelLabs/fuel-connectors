@@ -70,11 +70,6 @@ export function FuelProvider({
   const socialLoginConfig = useMemo(() => {
     if (!_socialLogin) return null;
 
-    if (!PRIVY_APP_ID) {
-      console.warn('Social Login enabled but PRIVY_APP_ID not set.');
-      return null;
-    }
-
     return { appId: PRIVY_APP_ID, config: PRIVY_CONFIG };
   }, [_socialLogin]);
 
