@@ -2,7 +2,7 @@ import type { EIP1193Provider } from './types';
 
 declare global {
   interface Window {
-    // @ts-expect-error Privy declares ethereum as any, our type is more specific
+    // @ts-ignore Privy declares ethereum as any, our type is more specific
     ethereum: EIP1193Provider | null;
   }
 }
