@@ -36,6 +36,7 @@ import {
   WINDOW,
 } from './constants';
 import type {
+  ApiError,
   BakoPersonalWalletData,
   ConnectorConfig,
   Maybe,
@@ -734,8 +735,12 @@ export abstract class PredicateConnector extends FuelConnector {
     try {
       const predicate = await provider.findPredicateByAddress(predicateAddress);
       return predicate !== null && predicate !== undefined;
-    } catch {
-      return false;
+    } catch (error) {
+      if ((error as ApiError).status === 404) {
+        return false;
+      }
+
+      return true;
     }
   }
 
