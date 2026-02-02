@@ -747,8 +747,8 @@ export abstract class PredicateConnector extends FuelConnector {
   /**
    * Generates a unique name to create a new predicate.
    *
-   * The name follows the pattern: "Connector Wallet #<first 8 chars of UUID>"
-   * Example: "Connector Wallet #a1b2c3d4"
+   * The name follows the pattern: "Predicate #<UUID>"
+   * Example: "Predicate #a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6"
    *
    * @returns {string} Unique name for the predicate
    */
