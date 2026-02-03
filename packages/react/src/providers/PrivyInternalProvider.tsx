@@ -7,10 +7,6 @@ type PrivyInternalProviderProps = PropsWithChildren & PrivyConfig;
 
 /**
  * Internal provider that wraps Privy's PrivyProvider with lazy loading.
- * This is not exported - users should use FuelProvider with socialLogin prop instead.
- *
- * Note: This component eliminates the intermediate PrivyHooksProvider layer.
- * Components can now use Privy hooks (usePrivy, useWallets, etc.) directly.
  */
 export function PrivyInternalProvider({
   appId,
