@@ -1,4 +1,3 @@
-import type { PropsWithChildren } from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 
 import {
@@ -22,14 +21,8 @@ import { PrivyAuthObserver } from './PrivyAuthObserver';
  * 2. Injects it into connectors that support it (via setPrivyAuthObserver method)
  * 3. Updates observer state when Privy state changes
  * 4. Connectors listen to observer events without depending on React
- *
- * Benefits:
- * - Zero coupling: Connectors only know IPrivyAuthObserver interface
- * - Granular updates: Only emit when values actually change
- * - No re-injection: After initial setup, only events are emitted
- * - Type-safe: Observer is typed with concrete Privy types
  */
-export function PrivySyncProvider({ children }: PropsWithChildren) {
+export function PrivyEventsWatcher() {
   const privy = usePrivy();
   const { wallets } = useWallets();
   const { sendCode, loginWithCode } = useLoginWithEmail();
@@ -137,5 +130,5 @@ export function PrivySyncProvider({ children }: PropsWithChildren) {
     observerRef.current.setEmbeddedWallet(embeddedWallet);
   }, [privy.authenticated, privy.ready, privy.user, embeddedWallet]);
 
-  return <>{children}</>;
+  return null;
 }

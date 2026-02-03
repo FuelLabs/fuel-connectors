@@ -10,8 +10,8 @@ import { NetworkDialog } from '../ui/Connect/components/Network/NetworkDialog';
 import { useNetworkConfigs } from '../ui/Connect/hooks/useNetworkConfigs';
 import { FuelHooksProvider } from './FuelHooksProvider';
 import { FuelUIProvider, type FuelUIProviderProps } from './FuelUIProvider';
+import { PrivyEventsWatcher } from './PrivyEventsWatcher';
 import { PrivyInternalProvider } from './PrivyInternalProvider';
-import { PrivySyncProvider } from './PrivySyncProvider';
 
 export { useFuel } from './FuelHooksProvider';
 export { useConnectUI } from './FuelUIProvider';
@@ -40,7 +40,8 @@ const PrivyProviderStack = ({
       appId={socialLoginConfig.appId}
       config={socialLoginConfig.config}
     >
-      <PrivySyncProvider>{children}</PrivySyncProvider>
+      <PrivyEventsWatcher />
+      {children}
     </PrivyInternalProvider>
   );
 };
