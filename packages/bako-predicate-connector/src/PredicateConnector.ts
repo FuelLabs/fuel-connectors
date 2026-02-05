@@ -29,13 +29,14 @@ import { SocketClient } from './SocketClient';
 import { StoreManager } from './StoreManager';
 import {
   BAKO_SERVER_URL,
-  DEFAULT_CONNECTOR_WALLET_DESCRIPTION,
-  DEFAULT_CONNECTOR_WALLET_NAME,
+  DEFAULT_CONNECTOR_PREDICATE_DESCRIPTION,
+  DEFAULT_CONNECTOR_PREDICATE_NAME,
   DEFAULT_VERSION,
   ORIGIN,
   WINDOW,
 } from './constants';
 import type {
+  ApiError,
   BakoPersonalWalletData,
   ConnectorConfig,
   Maybe,
@@ -734,18 +735,40 @@ export abstract class PredicateConnector extends FuelConnector {
     try {
       const predicate = await provider.findPredicateByAddress(predicateAddress);
       return predicate !== null && predicate !== undefined;
-    } catch {
-      return false;
+    } catch (error) {
+      if ((error as ApiError).status === 404) {
+        return false;
+      }
+
+      return true;
     }
   }
 
   /**
-   * Creates a predicate in the Bako API using the provided provider.
+   * Generates a unique name to create a new predicate.
+   *
+   * The name follows the pattern: "Predicate #<UUID>"
+   * Example: "Predicate #a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6"
+   *
+   * @returns {string} Unique name for the predicate
+   */
+  private generateConnectorPredicateName(): string {
+    const uniqueId = crypto.randomUUID();
+    return `${DEFAULT_CONNECTOR_PREDICATE_NAME} #${uniqueId}`;
+  }
+
+  /**
+   * Creates a predicate in the Bako API with a unique generated name.
+   *
+   * @param provider - BakoProvider instance for API communication
+   * @param vault - Vault instance containing the predicate configuration
+   * @throws Error if creation fails
    */
   private async _createPredicateInApi(
     provider: BakoProvider,
     vault: Vault,
   ): Promise<void> {
+    const predicateName = this.generateConnectorPredicateName();
     const vaultToSave = new Vault(
       provider,
       vault.configurable,
@@ -753,8 +776,8 @@ export abstract class PredicateConnector extends FuelConnector {
     );
 
     await vaultToSave.save({
-      name: DEFAULT_CONNECTOR_WALLET_NAME,
-      description: DEFAULT_CONNECTOR_WALLET_DESCRIPTION,
+      name: predicateName,
+      description: DEFAULT_CONNECTOR_PREDICATE_DESCRIPTION,
     });
   }
 

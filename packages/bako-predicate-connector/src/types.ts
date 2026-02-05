@@ -119,3 +119,9 @@ export type ConnectorConfig = {
   [key: string]: unknown;
   predicateConfig?: PredicateConfig;
 };
+
+export interface ApiError {
+  status?: number;
+  message?: string;
+  name?: string;
+}
