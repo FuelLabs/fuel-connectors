@@ -44,8 +44,6 @@ export function PrivyEventsWatcher() {
    */
   const findSocialConnector = useCallback(
     (connectors: FuelConnector[]): FuelConnector | null => {
-      if (!Array.isArray(connectors)) return null;
-
       const connector = connectors.find(
         (connector: unknown) =>
           connector !== null &&
@@ -93,6 +91,8 @@ export function PrivyEventsWatcher() {
     if (!privy.ready || setupCompleteRef.current) return;
 
     const initialize = async () => {
+      if (!fuel) return;
+
       // Create observer instance if not exists
       // Typed with concrete Privy User and ConnectedWallet types
       if (!observerRef.current) {
