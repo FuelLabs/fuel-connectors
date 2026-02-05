@@ -257,16 +257,9 @@ export class SocialConnector extends PredicateConnector {
   }
 
   /**
-   * Override isConnected() to wait for Privy to be ready before checking connection.
-   * This prevents the race condition where SDK queries isConnected() before Privy session is restored.
+   * Override isConnected() to check connection without waiting for Privy initialization.
    */
   public async isConnected(): Promise<boolean> {
-    // If Privy auth is configured, wait for it to be ready
-    if (this.privyAuth) {
-      await this.waitForPrivyReady(TIMEOUTS.REQUIRE_CONNECTION);
-      await this.waitForAuthStateStable();
-    }
-
     // Check if we have stored account AND Privy is authenticated
     const storedAccount =
       typeof window !== 'undefined'
