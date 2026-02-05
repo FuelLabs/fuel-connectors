@@ -36,6 +36,7 @@ export function Connectors() {
     connectors,
     isLoading,
     theme,
+    socialLogin,
     dialog: { connect },
   } = useConnectUI();
 
@@ -110,7 +111,7 @@ export function Connectors() {
 
   return (
     <ConnectorList>
-      {socialConnector && (
+      {socialConnector && socialLogin && (
         <EmailLogin
           onSubmitEmail={handleSubmitEmail}
           onSubmitCode={handleSubmitCode}
