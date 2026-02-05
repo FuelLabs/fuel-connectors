@@ -1,3 +1,7 @@
+import type {
+  PrivyClientConfig,
+  SignMessageModalUIOptions,
+} from '@privy-io/react-auth';
 import type { Network } from 'fuels';
 
 export type Connector = {
@@ -34,3 +38,21 @@ export type SvgIconProps = {
 };
 
 export type ConnectorList = Array<Connector>;
+
+export type PrivySignMessage = (
+  input: {
+    message: string;
+  },
+  options?: {
+    uiOptions?: SignMessageModalUIOptions;
+    address?: string;
+  },
+) => Promise<{
+  signature: string;
+}>;
+
+/** Configuration for Social Login via Privy */
+export type PrivyConfig = {
+  appId: string;
+  config: PrivyClientConfig;
+};
