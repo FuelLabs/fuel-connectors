@@ -82,6 +82,7 @@ export function FuelProvider({
             theme={theme}
             fuelConfig={fuelConfig}
             uiConfig={uiConfig}
+            socialLogin={_socialLogin}
           >
             <Connect />
             <NetworkDialog theme={theme} />
