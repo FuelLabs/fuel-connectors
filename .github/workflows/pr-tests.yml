@@ -138,10 +138,14 @@ jobs:
         run: pnpm build:connectors
 
       - name: Install Playwright Dependencies
-        run: pnpm dlx playwright@1.48.2 install-deps
+        run: |
+          pnpm dlx playwright@1.48.2 install-deps
+          pnpm dlx playwright@1.57.0 install-deps
 
       - name: Install Chromium
-        run: pnpm dlx playwright@1.48.2 install chromium
+        run: |
+          pnpm dlx playwright@1.48.2 install chromium
+          pnpm dlx playwright@1.57.0 install chromium
 
       - name: Build Synpress cache
         run: xvfb-run pnpm setup:synpress

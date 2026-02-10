@@ -42,7 +42,12 @@ export const FuelProviders = ({ children }: { children: React.ReactNode }) => {
       >
         Switch theme {theme}
       </button>
-      <FuelProvider theme={theme} fuelConfig={FUEL_CONFIG} networks={NETWORKS}>
+      <FuelProvider
+        theme={theme}
+        fuelConfig={FUEL_CONFIG}
+        networks={NETWORKS}
+        socialLogin
+      >
         {children}
       </FuelProvider>
     </>
