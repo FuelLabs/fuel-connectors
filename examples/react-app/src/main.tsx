@@ -1,8 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { counter as COUNTER_CONTRACT_ID_LOCAL } from './types/contract-ids-local.json';
-import { counter as COUNTER_CONTRACT_ID_MAINNET } from './types/contract-ids-mainnet.json';
-import { counter as COUNTER_CONTRACT_ID_TESTNET } from './types/contract-ids-testnet.json';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -80,16 +77,6 @@ const NETWORKS: NetworkConfig[] = [
   },
 ];
 
-const FUEL_CONFIG: FuelConfig = {
-  connectors: defaultConnectors({
-    devMode: true,
-    wcProjectId: WC_PROJECT_ID,
-    ethWagmiConfig: wagmiConfig,
-    chainId: CHAIN_ID,
-    fuelProvider: new Provider(PROVIDER_URL),
-  }),
-};
-
 const config: Config = {
   explorerUrl: EXPLORER_URL,
   providerUrl: PROVIDER_URL,
@@ -100,10 +87,26 @@ const config: Config = {
   assetSymbol: CUSTOM_ASSET_SYMBOL,
 };
 
+// Create fuel config with all connectors
+const fuelConfig: FuelConfig = {
+  connectors: defaultConnectors({
+    devMode: true,
+    wcProjectId: WC_PROJECT_ID,
+    ethWagmiConfig: wagmiConfig,
+    chainId: CHAIN_ID,
+    fuelProvider: new Provider(PROVIDER_URL),
+  }),
+};
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <FuelProvider theme="dark" networks={NETWORKS} fuelConfig={FUEL_CONFIG}>
+      <FuelProvider
+        theme="dark"
+        networks={NETWORKS}
+        fuelConfig={fuelConfig}
+        socialLogin
+      >
         <ConfigProvider config={config}>
           <Toast.Provider>
             <App />
@@ -115,7 +118,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         </ConfigProvider>
         <ScreenSizeIndicator />
       </FuelProvider>
-
       {isDev && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   </React.StrictMode>,

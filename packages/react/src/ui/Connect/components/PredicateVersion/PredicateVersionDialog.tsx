@@ -277,7 +277,7 @@ export function PredicateVersionDialog({ theme }: PredicateVersionProps) {
       try {
         if (hasVersionSupport(currentConnector)) {
           const availableVersions =
-            currentConnector.getAvailablePredicateVersions();
+            await currentConnector.getAvailablePredicateVersions();
           setVersions(availableVersions);
 
           const currentSelected =

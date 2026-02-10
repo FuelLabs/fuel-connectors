@@ -27,6 +27,7 @@ export type FuelUIProviderProps = {
   uiConfig: UIConfig;
   fuelConfig: FuelConfig;
   theme?: 'dark' | 'light';
+  socialLogin?: boolean;
 };
 
 export enum Routes {
@@ -53,6 +54,7 @@ export type FuelUIContextType = {
   cancel: (params?: { clean?: boolean }) => void;
   setError: (error: Error | null) => void;
   error: Error | null;
+  socialLogin?: boolean;
   dialog: {
     connector: FuelConnector | null;
     isOpen: boolean;
@@ -107,6 +109,7 @@ export function FuelUIProvider({
   children,
   theme,
   uiConfig,
+  socialLogin,
 }: FuelUIProviderProps) {
   const { fuel } = useFuel();
   const { isPending: isConnecting, isError, connectAsync } = useConnect();
@@ -227,6 +230,7 @@ export function FuelUIProvider({
       uiConfig,
       error,
       setError,
+      socialLogin,
       // Connection
       isConnected: !!isConnected,
       isConnecting,
@@ -254,6 +258,7 @@ export function FuelUIProvider({
       fuelConfig,
       uiConfig,
       error,
+      socialLogin,
       isConnected,
       isConnecting,
       isLoading,
