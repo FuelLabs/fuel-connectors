@@ -349,8 +349,7 @@ export abstract class PredicateConnector extends FuelConnector {
       this.selectedPredicateVersion = null;
     }
 
-    this.connected = false;
-    this.emitAccountChange();
+    this.emitAccountChange(null, false);
 
     return true;
   }
