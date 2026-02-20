@@ -91,7 +91,7 @@ export class PrivyAuthObserver<
     if (typeof prev === 'object' && typeof next === 'object') {
       const prevObj = prev as Record<string, unknown>;
       const nextObj = next as Record<string, unknown>;
-      return prevObj.id === nextObj.id || prevObj.address === nextObj.address;
+      return prevObj.id === nextObj.id && prevObj.address === nextObj.address;
     }
     return false;
   }
