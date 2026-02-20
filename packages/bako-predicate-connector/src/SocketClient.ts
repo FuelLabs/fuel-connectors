@@ -108,7 +108,6 @@ export class SocketClient {
    * Establishes connection to the socket server.
    */
   public connect(): void {
-    console.log('[SocketClient] Connecting...');
     if (this.isConnected || this.isConnecting) return;
 
     this.isConnecting = true;
@@ -120,7 +119,6 @@ export class SocketClient {
    */
   public get isConnected(): boolean {
     const connected = this.server.connected;
-    console.log('[SocketClient] Connection status:', connected);
     return connected;
   }
 
@@ -147,12 +145,10 @@ export class SocketClient {
     // Connection events
     this.server.on('connect', () => {
       this.isConnecting = false;
-      console.log('[SocketClient] Connected successfully');
     });
 
     this.server.on('connect_error', () => {
       this.isConnecting = false;
-      console.error('[SocketClient] Connection error');
     });
 
     this.server.on(

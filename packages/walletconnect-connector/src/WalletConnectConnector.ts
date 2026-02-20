@@ -222,17 +222,7 @@ export class WalletConnectConnector extends PredicateConnector {
   }
 
   public async disconnect(): Promise<boolean> {
-    const wagmiConfig = this.getWagmiConfig();
-    if (!wagmiConfig) throw new Error('Wagmi config not found');
-
-    const { connector, isConnected } = getAccount(wagmiConfig);
-    await disconnect(wagmiConfig, {
-      connector,
-    });
-
-    await super.disconnect();
-
-    return isConnected || false;
+    return await super.disconnect();
   }
 
   async signMessageCustomCurve(message: string) {
