@@ -161,6 +161,26 @@ export class PrivyAuthObserver<
   }
 
   /**
+   * Clean up resources when observer is no longer needed.
+   * Removes all listeners and resets state.
+   */
+  destroy(): void {
+    this.removeAllListeners();
+    this.state = {
+      authenticated: false,
+      ready: false,
+      user: undefined,
+      embeddedWallet: undefined,
+      signMessage: undefined,
+      sendCode: undefined,
+      loginWithCode: undefined,
+      login: undefined,
+      logout: undefined,
+      createWallet: undefined,
+    };
+  }
+
+  /**
    * Smart comparison to avoid unnecessary emissions.
    */
   private isEqual(prev: unknown, next: unknown): boolean {

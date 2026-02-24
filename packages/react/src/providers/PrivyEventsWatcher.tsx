@@ -148,5 +148,15 @@ export function PrivyEventsWatcher() {
     privy.createWallet,
   ]);
 
+  // Effect 4: Cleanup observer when component unmounts
+  useEffect(() => {
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.destroy();
+        observerRef.current = null;
+      }
+    };
+  }, []);
+
   return null;
 }
