@@ -527,7 +527,18 @@ export class SocialConnector extends PredicateConnector {
       throw new Error('Privy auth not configured');
     }
 
+    // Wait for wallet to be fully loaded before attempting signature
+    const walletReady = await this.waitForWallet(TIMEOUTS.WALLET_LOAD);
+    if (!walletReady) {
+      throw new Error('Wallet is not ready for signing');
+    }
+
     const walletAddress = this.privyAuth.user?.wallet?.address;
+
+    // Validate wallet address exists before using it
+    if (!walletAddress) {
+      throw new Error('Wallet address is not available');
+    }
 
     // Try using the embedded wallet's provider directly first (more reliable)
     if (this.privyAuth.embeddedWallet) {
