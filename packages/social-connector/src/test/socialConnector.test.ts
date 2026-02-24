@@ -3,23 +3,17 @@ import type { IPrivyAuthObserver } from '@fuel-connectors/common';
 import type { ConnectedWallet, User } from '@privy-io/react-auth';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SocialConnector } from '../SocialConnector';
-import type { PrivyAuthInterface } from '../types';
+import type { PrivyAuthInterface, PrivyAuthObserverType } from '../types';
 
-interface MockPrivyAuthObserver<
-  TUser extends User = User,
-  TEmbeddedWallet extends ConnectedWallet = ConnectedWallet,
-> extends IPrivyAuthObserver<TUser, TEmbeddedWallet> {
-  emit(
-    event: PrivyAuthEventTypes,
-    value?: boolean | TUser | TEmbeddedWallet,
-  ): void;
+interface MockPrivyAuthObserver
+  extends IPrivyAuthObserver<PrivyAuthObserverType> {
+  emit(event: PrivyAuthEventTypes, value?: unknown): void;
 }
 
 type AuthenticatedListener = (value: boolean) => void;
 type ReadyListener = (value: boolean) => void;
-type UserListener<TUser extends User = User> = (value?: TUser) => void;
-type WalletListener<TEmbeddedWallet extends ConnectedWallet = ConnectedWallet> =
-  (value?: TEmbeddedWallet) => void;
+type UserListener = (value?: User) => void;
+type WalletListener = (value?: ConnectedWallet) => void;
 
 // Helper to create a mock User object for testing
 const createMockUser = (address: string): User =>
@@ -36,12 +30,9 @@ const createMockWallet = (address: string): ConnectedWallet =>
   }) as unknown as ConnectedWallet;
 
 // Mock Privy auth interface
-const createMockPrivyAuth = <
-  TUser extends User = User,
-  TEmbeddedWallet extends ConnectedWallet = ConnectedWallet,
->(
-  overrides: Partial<PrivyAuthInterface<TUser, TEmbeddedWallet>> = {},
-): PrivyAuthInterface<TUser, TEmbeddedWallet> => ({
+const createMockPrivyAuth = (
+  overrides: Partial<PrivyAuthInterface> = {},
+): PrivyAuthInterface => ({
   authenticated: false,
   ready: true,
   user: undefined,
@@ -52,17 +43,14 @@ const createMockPrivyAuth = <
 });
 
 // Mock Observer implementation for testing
-const createMockObserver = <
-  TUser extends User = User,
-  TEmbeddedWallet extends ConnectedWallet = ConnectedWallet,
->(): MockPrivyAuthObserver<TUser, TEmbeddedWallet> => {
+const createMockObserver = (): MockPrivyAuthObserver => {
   const authenticatedListeners: Set<AuthenticatedListener> = new Set();
   const readyListeners: Set<ReadyListener> = new Set();
-  const userListeners: Set<UserListener<TUser>> = new Set();
-  const walletListeners: Set<WalletListener<TEmbeddedWallet>> = new Set();
+  const userListeners: Set<UserListener> = new Set();
+  const walletListeners: Set<WalletListener> = new Set();
 
   const state: Pick<
-    PrivyAuthInterface<TUser, TEmbeddedWallet>,
+    PrivyAuthInterface,
     'authenticated' | 'ready' | 'user' | 'embeddedWallet'
   > = {
     authenticated: false,
@@ -76,8 +64,9 @@ const createMockObserver = <
       event: PrivyAuthEventTypes,
       listener:
         | ((value: boolean) => void)
-        | ((value?: TUser) => void)
-        | ((value?: TEmbeddedWallet) => void),
+        | ((value?: User) => void)
+        | ((value?: ConnectedWallet) => void)
+        | ((value?: unknown) => void),
     ): void {
       switch (event) {
         case PrivyAuthEventTypes.authenticated:
@@ -87,10 +76,10 @@ const createMockObserver = <
           readyListeners.add(listener as ReadyListener);
           break;
         case PrivyAuthEventTypes.user:
-          userListeners.add(listener as UserListener<TUser>);
+          userListeners.add(listener as UserListener);
           break;
         case PrivyAuthEventTypes.embeddedWallet:
-          walletListeners.add(listener as WalletListener<TEmbeddedWallet>);
+          walletListeners.add(listener as WalletListener);
           break;
       }
     },
@@ -98,8 +87,9 @@ const createMockObserver = <
       event: PrivyAuthEventTypes,
       listener:
         | ((value: boolean) => void)
-        | ((value?: TUser) => void)
-        | ((value?: TEmbeddedWallet) => void),
+        | ((value?: User) => void)
+        | ((value?: ConnectedWallet) => void)
+        | ((value?: unknown) => void),
     ): void {
       switch (event) {
         case PrivyAuthEventTypes.authenticated:
@@ -109,16 +99,16 @@ const createMockObserver = <
           readyListeners.delete(listener as ReadyListener);
           break;
         case PrivyAuthEventTypes.user:
-          userListeners.delete(listener as UserListener<TUser>);
+          userListeners.delete(listener as UserListener);
           break;
         case PrivyAuthEventTypes.embeddedWallet:
-          walletListeners.delete(listener as WalletListener<TEmbeddedWallet>);
+          walletListeners.delete(listener as WalletListener);
           break;
       }
     },
     emit(
       event: PrivyAuthEventTypes,
-      value?: boolean | TUser | TEmbeddedWallet,
+      value?: boolean | User | ConnectedWallet | unknown,
     ): void {
       // Update internal state on emit
       switch (event) {
@@ -133,13 +123,13 @@ const createMockObserver = <
           readyListeners.forEach((listener) => listener(value as boolean));
           break;
         case PrivyAuthEventTypes.user:
-          state.user = value as TUser | undefined;
-          userListeners.forEach((listener) => listener(value as TUser));
+          state.user = value as User | undefined;
+          userListeners.forEach((listener) => listener(value as User));
           break;
         case PrivyAuthEventTypes.embeddedWallet:
-          state.embeddedWallet = value as TEmbeddedWallet | undefined;
+          state.embeddedWallet = value as ConnectedWallet | undefined;
           walletListeners.forEach((listener) =>
-            listener(value as TEmbeddedWallet),
+            listener(value as ConnectedWallet),
           );
           break;
       }
@@ -150,9 +140,15 @@ const createMockObserver = <
         ready: state.ready,
         user: state.user,
         embeddedWallet: state.embeddedWallet,
+        signMessage: undefined,
+        sendCode: undefined,
+        loginWithCode: undefined,
+        login: undefined,
+        logout: undefined,
+        createWallet: undefined,
       };
     },
-  } as MockPrivyAuthObserver<TUser, TEmbeddedWallet>;
+  } as MockPrivyAuthObserver;
 
   return observer;
 };
@@ -296,10 +292,10 @@ describe('Social Connector', () => {
   });
 
   describe('Observer Pattern - setPrivyAuthObserver()', () => {
-    let observer: MockPrivyAuthObserver<User, ConnectedWallet>;
+    let observer: MockPrivyAuthObserver;
 
     beforeEach(() => {
-      observer = createMockObserver<User, ConnectedWallet>();
+      observer = createMockObserver();
     });
 
     afterEach(() => {
@@ -315,6 +311,7 @@ describe('Social Connector', () => {
         const onSpy = vi.spyOn(observer, 'on');
         connector.setPrivyAuthObserver(observer);
 
+        // Verify all 10 event listeners are registered
         expect(onSpy).toHaveBeenCalledWith(
           PrivyAuthEventTypes.authenticated,
           expect.any(Function),
@@ -329,6 +326,30 @@ describe('Social Connector', () => {
         );
         expect(onSpy).toHaveBeenCalledWith(
           PrivyAuthEventTypes.embeddedWallet,
+          expect.any(Function),
+        );
+        expect(onSpy).toHaveBeenCalledWith(
+          PrivyAuthEventTypes.signMessage,
+          expect.any(Function),
+        );
+        expect(onSpy).toHaveBeenCalledWith(
+          PrivyAuthEventTypes.sendCode,
+          expect.any(Function),
+        );
+        expect(onSpy).toHaveBeenCalledWith(
+          PrivyAuthEventTypes.loginWithCode,
+          expect.any(Function),
+        );
+        expect(onSpy).toHaveBeenCalledWith(
+          PrivyAuthEventTypes.login,
+          expect.any(Function),
+        );
+        expect(onSpy).toHaveBeenCalledWith(
+          PrivyAuthEventTypes.logout,
+          expect.any(Function),
+        );
+        expect(onSpy).toHaveBeenCalledWith(
+          PrivyAuthEventTypes.createWallet,
           expect.any(Function),
         );
       });
@@ -611,7 +632,8 @@ describe('Social Connector', () => {
 
           await connector._disconnect();
 
-          expect(offSpy).toHaveBeenCalledTimes(4);
+          expect(offSpy).toHaveBeenCalledTimes(10);
+          // Verify all event listeners are removed
           expect(offSpy).toHaveBeenCalledWith(
             PrivyAuthEventTypes.authenticated,
             expect.any(Function),
@@ -626,6 +648,30 @@ describe('Social Connector', () => {
           );
           expect(offSpy).toHaveBeenCalledWith(
             PrivyAuthEventTypes.embeddedWallet,
+            expect.any(Function),
+          );
+          expect(offSpy).toHaveBeenCalledWith(
+            PrivyAuthEventTypes.signMessage,
+            expect.any(Function),
+          );
+          expect(offSpy).toHaveBeenCalledWith(
+            PrivyAuthEventTypes.sendCode,
+            expect.any(Function),
+          );
+          expect(offSpy).toHaveBeenCalledWith(
+            PrivyAuthEventTypes.loginWithCode,
+            expect.any(Function),
+          );
+          expect(offSpy).toHaveBeenCalledWith(
+            PrivyAuthEventTypes.login,
+            expect.any(Function),
+          );
+          expect(offSpy).toHaveBeenCalledWith(
+            PrivyAuthEventTypes.logout,
+            expect.any(Function),
+          );
+          expect(offSpy).toHaveBeenCalledWith(
+            PrivyAuthEventTypes.createWallet,
             expect.any(Function),
           );
         },
@@ -681,10 +727,10 @@ describe('Social Connector', () => {
         const onSpy2 = vi.spyOn(observer2, 'on');
 
         connector.setPrivyAuthObserver(observer1);
-        expect(onSpy1).toHaveBeenCalledTimes(4);
+        expect(onSpy1).toHaveBeenCalledTimes(10);
 
         connector.setPrivyAuthObserver(observer2);
-        expect(onSpy2).toHaveBeenCalledTimes(4);
+        expect(onSpy2).toHaveBeenCalledTimes(10);
       });
     });
 

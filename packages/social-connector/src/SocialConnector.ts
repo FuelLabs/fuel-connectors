@@ -21,7 +21,6 @@ import {
   PrivyAuthEventTypes,
 } from '@fuel-connectors/common';
 
-import type { ConnectedWallet, User } from '@privy-io/react-auth';
 import {
   DEFAULT_POLL_INTERVAL_MS,
   FAST_POLL_INTERVAL_MS,
@@ -33,6 +32,7 @@ import {
 import type {
   ObserverListenersType,
   PrivyAuthInterface,
+  PrivyAuthObserverType,
   SocialConnectorConfig,
 } from './types';
 
@@ -52,10 +52,10 @@ export class SocialConnector extends PredicateConnector {
 
   private fuelProvider!: FuelProvider;
   private config: SocialConnectorConfig = {} as SocialConnectorConfig;
-  private privyAuth: Maybe<PrivyAuthInterface<User, ConnectedWallet>> = null;
-  private privyAuthObserver: Maybe<IPrivyAuthObserver<User, ConnectedWallet>> =
+  private privyAuth: Maybe<PrivyAuthInterface> = null;
+  private privyAuthObserver: Maybe<IPrivyAuthObserver<PrivyAuthObserverType>> =
     null;
-  private observerListeners: ObserverListenersType<User, ConnectedWallet> = {};
+  private observerListeners: ObserverListenersType<PrivyAuthObserverType> = {};
 
   constructor(config: SocialConnectorConfig = {}) {
     super();
@@ -71,7 +71,7 @@ export class SocialConnector extends PredicateConnector {
    * This allows granular updates without re-injecting the entire privyAuth payload.
    */
   public setPrivyAuthObserver(
-    observer: IPrivyAuthObserver<User, ConnectedWallet> | null,
+    observer: IPrivyAuthObserver<PrivyAuthObserverType> | null,
   ): void {
     this.privyAuthObserver = observer;
     this.setupObserverListeners();
@@ -109,7 +109,7 @@ export class SocialConnector extends PredicateConnector {
     this.observerListeners[PrivyAuthEventTypes.ready] = readyListener;
 
     // Listen for user changes
-    const userListener = (value?: User) => {
+    const userListener = (value?: PrivyAuthObserverType['User']) => {
       if (this.privyAuth) {
         this.privyAuth.user = value;
       }
@@ -118,7 +118,9 @@ export class SocialConnector extends PredicateConnector {
     this.observerListeners[PrivyAuthEventTypes.user] = userListener;
 
     // Listen for embeddedWallet changes
-    const embeddedWalletListener = (value?: ConnectedWallet) => {
+    const embeddedWalletListener = (
+      value?: PrivyAuthObserverType['EmbeddedWallet'],
+    ) => {
       if (this.privyAuth) {
         this.privyAuth.embeddedWallet = value;
       }
@@ -129,6 +131,78 @@ export class SocialConnector extends PredicateConnector {
     );
     this.observerListeners[PrivyAuthEventTypes.embeddedWallet] =
       embeddedWalletListener;
+
+    // Listen for signMessage function changes
+    const signMessageListener = (
+      value?: PrivyAuthObserverType['SignMessage'],
+    ) => {
+      if (this.privyAuth && typeof value === 'function') {
+        this.privyAuth.signMessage = value;
+      }
+    };
+    this.privyAuthObserver.on(
+      PrivyAuthEventTypes.signMessage,
+      signMessageListener,
+    );
+    this.observerListeners[PrivyAuthEventTypes.signMessage] =
+      signMessageListener;
+
+    // Listen for sendCode function changes
+    const sendCodeListener = (value?: PrivyAuthObserverType['SendCode']) => {
+      if (this.privyAuth) {
+        this.privyAuth.sendCode = value;
+      }
+    };
+    this.privyAuthObserver.on(PrivyAuthEventTypes.sendCode, sendCodeListener);
+    this.observerListeners[PrivyAuthEventTypes.sendCode] = sendCodeListener;
+
+    // Listen for loginWithCode function changes
+    const loginWithCodeListener = (
+      value?: PrivyAuthObserverType['LoginWithCode'],
+    ) => {
+      if (this.privyAuth) {
+        this.privyAuth.loginWithCode = value;
+      }
+    };
+    this.privyAuthObserver.on(
+      PrivyAuthEventTypes.loginWithCode,
+      loginWithCodeListener,
+    );
+    this.observerListeners[PrivyAuthEventTypes.loginWithCode] =
+      loginWithCodeListener;
+
+    // Listen for login function changes
+    const loginListener = (value?: PrivyAuthObserverType['Login']) => {
+      if (this.privyAuth && typeof value === 'function') {
+        this.privyAuth.login = value;
+      }
+    };
+    this.privyAuthObserver.on(PrivyAuthEventTypes.login, loginListener);
+    this.observerListeners[PrivyAuthEventTypes.login] = loginListener;
+
+    // Listen for logout function changes
+    const logoutListener = (value?: PrivyAuthObserverType['Logout']) => {
+      if (this.privyAuth && typeof value === 'function') {
+        this.privyAuth.logout = value;
+      }
+    };
+    this.privyAuthObserver.on(PrivyAuthEventTypes.logout, logoutListener);
+    this.observerListeners[PrivyAuthEventTypes.logout] = logoutListener;
+
+    // Listen for createWallet function changes
+    const createWalletListener = (
+      value?: PrivyAuthObserverType['CreateWallet'],
+    ) => {
+      if (this.privyAuth) {
+        this.privyAuth.createWallet = value;
+      }
+    };
+    this.privyAuthObserver.on(
+      PrivyAuthEventTypes.createWallet,
+      createWalletListener,
+    );
+    this.observerListeners[PrivyAuthEventTypes.createWallet] =
+      createWalletListener;
   }
 
   /**
@@ -181,6 +255,48 @@ export class SocialConnector extends PredicateConnector {
       );
     }
 
+    if (this.observerListeners[PrivyAuthEventTypes.signMessage]) {
+      this.privyAuthObserver.off(
+        PrivyAuthEventTypes.signMessage,
+        this.observerListeners[PrivyAuthEventTypes.signMessage],
+      );
+    }
+
+    if (this.observerListeners[PrivyAuthEventTypes.sendCode]) {
+      this.privyAuthObserver.off(
+        PrivyAuthEventTypes.sendCode,
+        this.observerListeners[PrivyAuthEventTypes.sendCode],
+      );
+    }
+
+    if (this.observerListeners[PrivyAuthEventTypes.loginWithCode]) {
+      this.privyAuthObserver.off(
+        PrivyAuthEventTypes.loginWithCode,
+        this.observerListeners[PrivyAuthEventTypes.loginWithCode],
+      );
+    }
+
+    if (this.observerListeners[PrivyAuthEventTypes.login]) {
+      this.privyAuthObserver.off(
+        PrivyAuthEventTypes.login,
+        this.observerListeners[PrivyAuthEventTypes.login],
+      );
+    }
+
+    if (this.observerListeners[PrivyAuthEventTypes.logout]) {
+      this.privyAuthObserver.off(
+        PrivyAuthEventTypes.logout,
+        this.observerListeners[PrivyAuthEventTypes.logout],
+      );
+    }
+
+    if (this.observerListeners[PrivyAuthEventTypes.createWallet]) {
+      this.privyAuthObserver.off(
+        PrivyAuthEventTypes.createWallet,
+        this.observerListeners[PrivyAuthEventTypes.createWallet],
+      );
+    }
+
     this.observerListeners = {};
   }
 
@@ -192,9 +308,7 @@ export class SocialConnector extends PredicateConnector {
    * Note: If using PrivyAuthObserver, prefer updating the observer directly
    * instead of calling this method repeatedly.
    */
-  public setPrivyAuth(
-    privyAuth: PrivyAuthInterface<User, ConnectedWallet>,
-  ): void {
+  public setPrivyAuth(privyAuth: PrivyAuthInterface): void {
     const wasAuthenticated = this.privyAuth?.authenticated ?? false;
     const wasReady = this.privyAuth?.ready ?? false;
     this.privyAuth = privyAuth;
@@ -713,7 +827,7 @@ export class SocialConnector extends PredicateConnector {
 
   /**
    * Handles the wallet disconnection logic via Privy logout.
-   * Clears Bako personal wallet data to allow fresh login with different account.
+   * Clears Privy auth state and observer listeners.
    */
   public async _disconnect(): Promise<boolean> {
     // Clean up observer listeners if any
@@ -737,18 +851,6 @@ export class SocialConnector extends PredicateConnector {
       );
     } catch {
       // Logout error - continue with cleanup
-    }
-
-    // Clear bako-related localStorage keys to allow fresh login with different account
-    if (typeof window !== 'undefined') {
-      const keysToRemove = [
-        'bako_connector_personal_wallet',
-        'bako_connector_session_id',
-        'bako_connector_current_account',
-      ];
-      for (const key of keysToRemove) {
-        window.localStorage.removeItem(key);
-      }
     }
 
     return wasAuthenticated;

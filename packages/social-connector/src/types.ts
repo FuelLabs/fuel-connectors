@@ -1,6 +1,15 @@
 import type { PredicateConfig } from '@fuel-connectors/bako-predicate-connector';
-import { PrivyAuthEventTypes } from '@fuel-connectors/common';
-import type { ConnectedWallet, User } from '@privy-io/react-auth';
+import {
+  PrivyAuthEventTypes,
+  type TPrivyAuthObserver,
+} from '@fuel-connectors/common';
+import type {
+  ConnectedWallet,
+  User,
+  useLoginWithEmail,
+  usePrivy,
+  useSignMessage,
+} from '@privy-io/react-auth';
 import type { Provider as FuelProvider } from 'fuels';
 
 /**
@@ -17,39 +26,39 @@ export interface SocialConnectorConfig {
 
 /**
  * Minimal interface representing the Privy authentication object.
- * This interface matches the shape returned by usePrivy() from @privy-io/react-auth.
- *
- * Type Parameters:
- * - TUser: The user type (e.g., Privy's User)
- * - TEmbeddedWallet: The embedded wallet type (e.g., Privy's ConnectedWallet)
  */
-export interface PrivyAuthInterface<
-  TUser extends User = User,
-  TEmbeddedWallet extends ConnectedWallet = ConnectedWallet,
-> {
+export interface PrivyAuthInterface {
   /** Whether the user is authenticated */
   authenticated: boolean;
   /** Whether Privy has finished initializing */
   ready: boolean;
   /** The authenticated user object */
-  user?: TUser;
+  user?: User;
   /** Login method to trigger Privy authentication modal */
-  login: (options?: { loginMethods?: string[] }) => Promise<void>;
+  login: ReturnType<typeof usePrivy>['login'];
   /** Logout method to disconnect the user */
-  logout: () => Promise<void>;
+  logout: ReturnType<typeof usePrivy>['logout'];
   /** Sign a message using useSignMessage hook (Privy v2 API) */
-  signMessage: (
-    params: { message: string },
-    options?: { uiOptions?: unknown; address?: string },
-  ) => Promise<{ signature: string }>;
+  signMessage: ReturnType<typeof useSignMessage>['signMessage'];
   /** Embedded wallet from useWallets() - optional for direct provider access */
-  embeddedWallet?: TEmbeddedWallet;
+  embeddedWallet?: ConnectedWallet;
   /** Send OTP code to email (from useLoginWithEmail hook) */
-  sendCode?: (params: { email: string }) => Promise<void>;
+  sendCode?: ReturnType<typeof useLoginWithEmail>['sendCode'];
   /** Login with OTP code (from useLoginWithEmail hook) */
-  loginWithCode?: (params: { code: string }) => Promise<void>;
+  loginWithCode?: ReturnType<typeof useLoginWithEmail>['loginWithCode'];
   /** Manually create embedded wallet (from usePrivy hook) */
-  createWallet?: () => Promise<unknown>;
+  createWallet?: ReturnType<typeof usePrivy>['createWallet'];
+}
+
+export interface PrivyAuthObserverType extends TPrivyAuthObserver {
+  User: User;
+  EmbeddedWallet: ConnectedWallet;
+  SignMessage: ReturnType<typeof useSignMessage>['signMessage'];
+  SendCode: ReturnType<typeof useLoginWithEmail>['sendCode'];
+  LoginWithCode: ReturnType<typeof useLoginWithEmail>['loginWithCode'];
+  Login: ReturnType<typeof usePrivy>['login'];
+  Logout: ReturnType<typeof usePrivy>['logout'];
+  CreateWallet: ReturnType<typeof usePrivy>['createWallet'];
 }
 
 /**
@@ -57,15 +66,22 @@ export interface PrivyAuthInterface<
  * Each event has a specific type based on the event type.
  *
  * Type Parameters:
- * - TUser: The user type (e.g., Privy's User)
- * - TEmbeddedWallet: The embedded wallet type (e.g., Privy's ConnectedWallet)
+ * - T: Object type conforming to TPrivyAuthObserver, containing properties:
+ *   - User: The user type (e.g., Privy's User)
+ *   - EmbeddedWallet: The embedded wallet type (e.g., Privy's ConnectedWallet)
+ *   - SignMessage, SendCode, LoginWithCode, Login, Logout, CreateWallet: Function types
  */
 export type ObserverListenersType<
-  TUser extends User = User,
-  TEmbeddedWallet extends ConnectedWallet = ConnectedWallet,
+  T extends PrivyAuthObserverType = PrivyAuthObserverType,
 > = {
   [PrivyAuthEventTypes.authenticated]?: (value: boolean) => void;
   [PrivyAuthEventTypes.ready]?: (value: boolean) => void;
-  [PrivyAuthEventTypes.user]?: (value?: TUser) => void;
-  [PrivyAuthEventTypes.embeddedWallet]?: (value?: TEmbeddedWallet) => void;
+  [PrivyAuthEventTypes.user]?: (value?: T['User']) => void;
+  [PrivyAuthEventTypes.embeddedWallet]?: (value?: T['EmbeddedWallet']) => void;
+  [PrivyAuthEventTypes.signMessage]?: (value?: T['SignMessage']) => void;
+  [PrivyAuthEventTypes.sendCode]?: (value?: T['SendCode']) => void;
+  [PrivyAuthEventTypes.loginWithCode]?: (value?: T['LoginWithCode']) => void;
+  [PrivyAuthEventTypes.login]?: (value?: T['Login']) => void;
+  [PrivyAuthEventTypes.logout]?: (value?: T['Logout']) => void;
+  [PrivyAuthEventTypes.createWallet]?: (value?: T['CreateWallet']) => void;
 };

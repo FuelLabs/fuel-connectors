@@ -332,14 +332,21 @@ export abstract class PredicateConnector extends FuelConnector {
   public async disconnect(): Promise<boolean> {
     try {
       const sessionId = this.getSessionId();
-      await this._disconnect();
 
-      const bakoProvider = await this._createBakoProvider();
-      await bakoProvider.disconnect(sessionId);
+      // Step 1: Clean up server-side session before clearing local storage
+      try {
+        const bakoProvider = await this._createBakoProvider();
+        await bakoProvider.disconnect(sessionId);
+      } catch {
+        // Server cleanup might fail if already disconnected, continue with cleanup
+      }
+
+      // Step 2: Disconnect wallet and clear wallet-specific state
+      await this._disconnect();
     } catch {
       // Silently handle disconnect errors
     } finally {
-      // Clear all storage data
+      // Step 3: Clear all storage data
       if (WINDOW) {
         StoreManager.clear();
       }

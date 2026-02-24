@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import {
-  type ConnectedWallet,
-  type User,
   useLoginWithEmail,
   usePrivy,
   useSignMessage,
@@ -10,6 +8,7 @@ import {
 } from '@privy-io/react-auth';
 
 import type { FuelConnector } from 'fuels';
+import type { PrivyAuthObserverType } from '../types';
 import { useFuel } from './FuelHooksProvider';
 import { PrivyAuthObserver } from './PrivyAuthObserver';
 
@@ -17,10 +16,11 @@ import { PrivyAuthObserver } from './PrivyAuthObserver';
  * Synchronizes Privy auth state with connectors via the IPrivyAuthObserver interface.
  *
  * Architecture:
- * 1. Creates a PrivyAuthObserver instance (implements IPrivyAuthObserver<User, ConnectedWallet>)
+ * 1. Creates a PrivyAuthObserver instance (implements IPrivyAuthObserver)
  * 2. Injects it into connectors that support it (via setPrivyAuthObserver method)
  * 3. Updates observer state when Privy state changes
- * 4. Connectors listen to observer events without depending on React
+ * 4. Updates observer hooks functions when their references change
+ * 5. Connectors listen to observer events without depending on React
  */
 export function PrivyEventsWatcher() {
   const privy = usePrivy();
@@ -30,8 +30,8 @@ export function PrivyEventsWatcher() {
   const { fuel } = useFuel();
 
   // Observer instance - created once and reused for entire session
-  // Typed with concrete Privy User and ConnectedWallet types
-  const observerRef = useRef<PrivyAuthObserver<User, ConnectedWallet> | null>(
+  // Typed with concrete Privy User, ConnectedWallet, and function types
+  const observerRef = useRef<PrivyAuthObserver<PrivyAuthObserverType> | null>(
     null,
   );
   const setupCompleteRef = useRef(false);
@@ -94,9 +94,8 @@ export function PrivyEventsWatcher() {
       if (!fuel) return;
 
       // Create observer instance if not exists
-      // Typed with concrete Privy User and ConnectedWallet types
       if (!observerRef.current) {
-        observerRef.current = new PrivyAuthObserver<User, ConnectedWallet>();
+        observerRef.current = new PrivyAuthObserver<PrivyAuthObserverType>();
       }
 
       // Find connectors that support observer
@@ -105,11 +104,11 @@ export function PrivyEventsWatcher() {
 
       if (connector) {
         // Inject observer with type-safe generic types
-        // @ts-expect-error - setPrivyAuthObserver expects IPrivyAuthObserver<User, ConnectedWallet>
+        // @ts-expect-error - setPrivyAuthObserver expects IPrivyAuthObserver<PrivyAuthObserverType>
         connector.setPrivyAuthObserver(observerRef.current);
 
         // Also inject initial auth payload for backward compatibility
-        // @ts-expect-error - setPrivyAuth accepts PrivyAuthInterface<User, ConnectedWallet>
+        // @ts-expect-error - setPrivyAuth accepts PrivyAuthInterface
         connector.setPrivyAuth(buildPrivyAuthPayload());
 
         setupCompleteRef.current = true;
@@ -129,6 +128,25 @@ export function PrivyEventsWatcher() {
     observerRef.current.setUser(privy.user ?? undefined);
     observerRef.current.setEmbeddedWallet(embeddedWallet);
   }, [privy.authenticated, privy.ready, privy.user, embeddedWallet]);
+
+  // Effect 3: Update observer functions when their references change
+  useEffect(() => {
+    if (!observerRef.current || !setupCompleteRef.current) return;
+
+    observerRef.current.setSignMessage(signMessage);
+    observerRef.current.setSendCode(sendCode);
+    observerRef.current.setLoginWithCode(loginWithCode);
+    observerRef.current.setLogin(privy.login);
+    observerRef.current.setLogout(privy.logout);
+    observerRef.current.setCreateWallet(privy.createWallet);
+  }, [
+    signMessage,
+    sendCode,
+    loginWithCode,
+    privy.login,
+    privy.logout,
+    privy.createWallet,
+  ]);
 
   return null;
 }
