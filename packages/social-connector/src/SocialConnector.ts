@@ -73,8 +73,15 @@ export class SocialConnector extends PredicateConnector {
   public setPrivyAuthObserver(
     observer: IPrivyAuthObserver<PrivyAuthObserverType> | null,
   ): void {
+    // Always cleanup existing listeners before setting up new ones
+    this.removeObserverListeners();
+
     this.privyAuthObserver = observer;
-    this.setupObserverListeners();
+
+    // Setup listeners if observer is provided
+    if (observer) {
+      this.setupObserverListeners();
+    }
   }
 
   /**
