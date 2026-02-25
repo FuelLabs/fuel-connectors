@@ -267,8 +267,10 @@ describe('Social Connector', () => {
   describe('signMessageCustomCurve()', () => {
     it('should sign message and return secp256k1 curve', async () => {
       const mockSignature = '0xsignature123';
+      const mockAddress = '0x1234567890abcdef1234567890abcdef12345678';
       const mockPrivy = createMockPrivyAuth({
         authenticated: true,
+        user: createMockUser(mockAddress),
         signMessage: vi.fn().mockResolvedValue({ signature: mockSignature }),
       });
       const connector = new SocialConnector();
