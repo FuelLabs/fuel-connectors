@@ -2,16 +2,23 @@ import type { FuelConfig } from 'fuels';
 
 import { Connect } from '../ui/Connect';
 
-import { type ReactNode, useMemo } from 'react';
-import { PRIVY_APP_ID, PRIVY_CONFIG } from '../constants/privy';
-import type { NetworkConfig, PrivyConfig, UIConfig } from '../types';
+import { type ReactNode, Suspense, lazy, useMemo } from 'react';
+import type { NetworkConfig, UIConfig } from '../types';
 import { BridgeDialog } from '../ui/Connect/components/Bridge/BridgeDialog';
 import { NetworkDialog } from '../ui/Connect/components/Network/NetworkDialog';
 import { useNetworkConfigs } from '../ui/Connect/hooks/useNetworkConfigs';
 import { FuelHooksProvider } from './FuelHooksProvider';
 import { FuelUIProvider, type FuelUIProviderProps } from './FuelUIProvider';
-import { PrivyEventsWatcher } from './PrivyEventsWatcher';
-import { PrivyInternalProvider } from './PrivyInternalProvider';
+
+/**
+ * Lazy load Privy components only when social login is enabled.
+ * This preserves backward compatibility for users who don't install @privy-io/react-auth.
+ */
+const LazyPrivyStack = lazy(() =>
+  import('./PrivyStack').then((m) => ({
+    default: m.PrivyStack,
+  })),
+);
 
 export { useFuel } from './FuelHooksProvider';
 export { useConnectUI } from './FuelUIProvider';
@@ -25,24 +32,20 @@ type FuelProviderProps = {
 } & Pick<FuelUIProviderProps, 'theme' | 'children'>;
 
 const PrivyProviderStack = ({
-  socialLoginConfig,
+  socialLogin,
   children,
 }: {
-  socialLoginConfig: PrivyConfig | null;
+  socialLogin?: boolean;
   children: ReactNode;
 }) => {
-  if (!socialLoginConfig) {
+  if (!socialLogin) {
     return <>{children}</>;
   }
 
   return (
-    <PrivyInternalProvider
-      appId={socialLoginConfig.appId}
-      config={socialLoginConfig.config}
-    >
-      <PrivyEventsWatcher />
-      {children}
-    </PrivyInternalProvider>
+    <Suspense fallback={children}>
+      <LazyPrivyStack>{children}</LazyPrivyStack>
+    </Suspense>
   );
 };
 
@@ -68,16 +71,10 @@ export function FuelProvider({
     [_uiConfig],
   );
 
-  const socialLoginConfig = useMemo(() => {
-    if (!_socialLogin) return null;
-
-    return { appId: PRIVY_APP_ID, config: PRIVY_CONFIG };
-  }, [_socialLogin]);
-
   if (ui) {
     return (
       <FuelHooksProvider fuelConfig={fuelConfig} networks={networks}>
-        <PrivyProviderStack socialLoginConfig={socialLoginConfig}>
+        <PrivyProviderStack socialLogin={_socialLogin}>
           <FuelUIProvider
             theme={theme}
             fuelConfig={fuelConfig}
@@ -96,7 +93,7 @@ export function FuelProvider({
 
   return (
     <FuelHooksProvider fuelConfig={fuelConfig} networks={networks}>
-      <PrivyProviderStack socialLoginConfig={socialLoginConfig}>
+      <PrivyProviderStack socialLogin={_socialLogin}>
         {children}
       </PrivyProviderStack>
     </FuelHooksProvider>

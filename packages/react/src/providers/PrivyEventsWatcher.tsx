@@ -8,9 +8,9 @@ import {
 } from '@privy-io/react-auth';
 
 import type { FuelConnector } from 'fuels';
-import type { PrivyAuthObserverType } from '../types';
 import { useFuel } from './FuelHooksProvider';
 import { PrivyAuthObserver } from './PrivyAuthObserver';
+import type { PrivyAuthObserverType } from './privy.types';
 
 /**
  * Synchronizes Privy auth state with connectors via the IPrivyAuthObserver interface.
