@@ -20,12 +20,12 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "@privy-io/react-auth": ">=2.0.0",
     "fuels": "0.102.0"
   },
   "dependencies": {
     "@ethersproject/bytes": "5.7.0",
     "@fuel-connectors/bako-predicate-connector": "workspace:*",
+    "@privy-io/react-auth": ">=2.0.0",
     "bakosafe": "0.6.0",
     "viem": "2.20.1"
   },
