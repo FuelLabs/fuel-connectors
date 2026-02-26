@@ -45,6 +45,7 @@ export function EmailLogin({ onSubmitEmail, onSubmitCode }: EmailLoginProps) {
 
   const handleBack = () => {
     setState('email');
+    setEmail('');
     setCode('');
     setError(null);
   };

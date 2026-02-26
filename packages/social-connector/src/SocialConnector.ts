@@ -73,8 +73,15 @@ export class SocialConnector extends PredicateConnector {
   public setPrivyAuthObserver(
     observer: IPrivyAuthObserver<PrivyAuthObserverType> | null,
   ): void {
+    // Always cleanup existing listeners before setting up new ones
+    this.removeObserverListeners();
+
     this.privyAuthObserver = observer;
-    this.setupObserverListeners();
+
+    // Setup listeners if observer is provided
+    if (observer) {
+      this.setupObserverListeners();
+    }
   }
 
   /**
@@ -527,7 +534,20 @@ export class SocialConnector extends PredicateConnector {
       throw new Error('Privy auth not configured');
     }
 
-    const walletAddress = this.privyAuth.user?.wallet?.address;
+    // Wait for wallet to be fully loaded before attempting signature
+    const walletReady = await this.waitForWallet(TIMEOUTS.WALLET_LOAD);
+    if (!walletReady) {
+      throw new Error('Wallet is not ready for signing');
+    }
+
+    const walletAddress =
+      this.privyAuth.user?.wallet?.address ||
+      this.privyAuth.embeddedWallet?.address;
+
+    // Validate wallet address exists before using it
+    if (!walletAddress) {
+      throw new Error('Wallet address is not available');
+    }
 
     // Try using the embedded wallet's provider directly first (more reliable)
     if (this.privyAuth.embeddedWallet) {

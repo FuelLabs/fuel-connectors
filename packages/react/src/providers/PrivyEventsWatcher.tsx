@@ -148,5 +148,23 @@ export function PrivyEventsWatcher() {
     privy.createWallet,
   ]);
 
+  // Effect 4: Reset setup flag when authentication state changes to false (disconnect)
+  useEffect(() => {
+    if (privy.authenticated) return;
+
+    // Reset setup flag to allow Effect 1 to re-run on next connection
+    setupCompleteRef.current = false;
+  }, [privy.authenticated]);
+
+  // Effect 5: Cleanup observer when component unmounts
+  useEffect(() => {
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.destroy();
+        observerRef.current = null;
+      }
+    };
+  }, []);
+
   return null;
 }
