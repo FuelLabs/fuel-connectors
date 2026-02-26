@@ -152,12 +152,13 @@ export abstract class PredicateConnector extends FuelConnector {
     try {
       challengeSignature = await this._signMessage(challengeCode);
     } catch (_error) {
+      console.error('Error signing message: ', _error);
       this.connected = false;
 
       if (WINDOW) {
         StoreManager.clear();
       }
-      throw new Error('EVM signature rejected. Authentication aborted.');
+      throw new Error('Signature rejected. Authentication aborted.');
     }
 
     if (!challengeSignature) {
