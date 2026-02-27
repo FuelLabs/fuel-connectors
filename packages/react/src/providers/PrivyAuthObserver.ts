@@ -75,9 +75,10 @@ export class PrivyAuthObserver<
 
   /**
    * Update user state and emit if changed.
+   * Compares by id to detect user changes.
    */
   setUser(value?: T['User']): void {
-    if (!this.isEqual(this.state.user, value)) {
+    if (!this.isUserEqual(this.state.user, value)) {
       this.state.user = value;
       this.emit(PrivyAuthEventTypes.user, value);
     }
@@ -85,9 +86,10 @@ export class PrivyAuthObserver<
 
   /**
    * Update embeddedWallet state and emit if changed.
+   * Compares by address to detect wallet changes.
    */
   setEmbeddedWallet(value?: T['EmbeddedWallet']): void {
-    if (!this.isEqual(this.state.embeddedWallet, value)) {
+    if (!this.isEmbeddedWalletEqual(this.state.embeddedWallet, value)) {
       this.state.embeddedWallet = value;
       this.emit(PrivyAuthEventTypes.embeddedWallet, value);
     }
@@ -181,16 +183,29 @@ export class PrivyAuthObserver<
   }
 
   /**
-   * Smart comparison to avoid unnecessary emissions.
+   * Smart comparison for User objects - compare by id.
    */
-  private isEqual(prev: unknown, next: unknown): boolean {
+  private isUserEqual(prev?: T['User'], next?: T['User']): boolean {
     if (prev === next) return true;
     if (!prev || !next) return false;
-    if (typeof prev === 'object' && typeof next === 'object') {
-      const prevObj = prev as Record<string, unknown>;
-      const nextObj = next as Record<string, unknown>;
-      return prevObj.id === nextObj.id && prevObj.address === nextObj.address;
-    }
-    return false;
+    return (
+      (prev as Record<string, unknown>).id ===
+      (next as Record<string, unknown>).id
+    );
+  }
+
+  /**
+   * Smart comparison for EmbeddedWallet objects - compare by address.
+   */
+  private isEmbeddedWalletEqual(
+    prev?: T['EmbeddedWallet'],
+    next?: T['EmbeddedWallet'],
+  ): boolean {
+    if (prev === next) return true;
+    if (!prev || !next) return false;
+    return (
+      (prev as Record<string, unknown>).address ===
+      (next as Record<string, unknown>).address
+    );
   }
 }
