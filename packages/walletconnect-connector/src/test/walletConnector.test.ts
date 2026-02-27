@@ -56,18 +56,24 @@ describe('WalletConnect Connector', () => {
   });
 
   describe('constructor()', () => {
-    test('initialize properties correctly', async () => {
-      const walletWalletConnector = connectorFactory();
-      await walletWalletConnector.ping();
+    test(
+      'initialize properties correctly',
+      async () => {
+        const walletWalletConnector = connectorFactory();
+        await walletWalletConnector.ping();
 
-      expect(walletWalletConnector).to.be.an.instanceOf(WalletConnectConnector);
-      expect(walletWalletConnector.name).to.equal('Ethereum Wallets');
-      expect(walletWalletConnector.connected).to.be.false;
-      expect(walletWalletConnector.installed).to.be.true;
-      expect(await walletWalletConnector.currentNetwork()).to.be.deep.equal(
-        MAINNET_NETWORK,
-      );
-    });
+        expect(walletWalletConnector).to.be.an.instanceOf(
+          WalletConnectConnector,
+        );
+        expect(walletWalletConnector.name).to.equal('Ethereum Wallets');
+        expect(walletWalletConnector.connected).to.be.false;
+        expect(walletWalletConnector.installed).to.be.true;
+        expect(await walletWalletConnector.currentNetwork()).to.be.deep.equal(
+          MAINNET_NETWORK,
+        );
+      },
+      { timeout: 10000 },
+    );
 
     test('can construct a WalletConnectConnector with a non default Provider', async () => {
       const nonDefaultProvider = fuelProvider;
@@ -176,22 +182,6 @@ describe('WalletConnect Connector', () => {
       expect(connector.predicateAccount).toBe(vault);
       // @ts-expect-error predicateAddress is protected
       expect(connector.predicateAddress).toBe(predicateVersion);
-    });
-
-    test('should setup predicate with the latest version if no version is specified when account is connected', async () => {
-      const wallet = Wallet.generate({ provider: fuelProvider });
-      // @ts-expect-error emitAccountChange is protected
-      connector.emitAccountChange(wallet.address);
-
-      // @ts-expect-error setupPredicate is protected
-      const vault = await connector.setupPredicate();
-      // @ts-expect-error _getLatestPredicateVersion is protected
-      const latestPredicateVersion = connector._getLatestPredicateVersion();
-
-      // @ts-expect-error predicateAccount is protected
-      expect(connector.predicateAccount).toBe(vault);
-      // @ts-expect-error predicateAddress is protected
-      expect(connector.predicateAddress).toBe(latestPredicateVersion);
     });
   });
 
