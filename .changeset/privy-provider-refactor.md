@@ -5,7 +5,7 @@
 
 refactor: Move Privy provider to @fuels/react package
 
-- Add `PrivyInternalProvider` component for managing Privy app initialization and configuration
+- Add `PrivyStack` component for managing Privy app initialization and configuration
 - Add `PrivyEventsWatcher` component for monitoring Privy authentication state changes
 - Implement `PrivyAuthObserver` for subscribing to Privy login/logout events
 - Add Privy type definitions and configuration constants to `@fuels/react`
