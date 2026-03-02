@@ -12,6 +12,7 @@ import {
   type PredicateVersion,
   type PredicateWalletAdapter,
   type ProviderDictionary,
+  StoreManager,
   getPredicateVersions,
   getProviderUrl,
 } from '@fuel-connectors/bako-predicate-connector';
@@ -344,10 +345,7 @@ export class SocialConnector extends PredicateConnector {
   private tryAutoReconnect(): void {
     if (this.connected) return;
 
-    const storedAccount =
-      typeof window !== 'undefined'
-        ? window.localStorage.getItem('bako_connector_current_account')
-        : null;
+    const storedAccount = StoreManager.get('CURRENT_ACCOUNT');
 
     if (storedAccount) {
       this.connected = true;
@@ -368,11 +366,8 @@ export class SocialConnector extends PredicateConnector {
       await this.waitForAuthStateStable();
     }
 
-    // Now check stored account (same as parent class)
-    const storedAccount =
-      typeof window !== 'undefined'
-        ? window.localStorage.getItem('bako_connector_current_account')
-        : null;
+    // Now check stored account using StoreManager for consistency
+    const storedAccount = StoreManager.get('CURRENT_ACCOUNT');
 
     return storedAccount ? [storedAccount] : [];
   }
@@ -382,10 +377,7 @@ export class SocialConnector extends PredicateConnector {
    */
   public async isConnected(): Promise<boolean> {
     // Check if we have stored account AND Privy is authenticated
-    const storedAccount =
-      typeof window !== 'undefined'
-        ? window.localStorage.getItem('bako_connector_current_account')
-        : null;
+    const storedAccount = StoreManager.get('CURRENT_ACCOUNT');
 
     const hasStoredAccount = !!storedAccount;
     const isPrivyAuthenticated = this.privyAuth?.authenticated ?? false;
