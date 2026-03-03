@@ -52,6 +52,7 @@ export class PrivyAuthObserver<
     logout: undefined as T['Logout'] | undefined,
     createWallet: undefined as T['CreateWallet'] | undefined,
   };
+  private resetSetupCallback?: () => void;
 
   /**
    * Update authenticated state and emit if changed.
@@ -152,6 +153,24 @@ export class PrivyAuthObserver<
     if (this.state.createWallet !== value) {
       this.state.createWallet = value;
       this.emit(PrivyAuthEventTypes.createWallet, value);
+    }
+  }
+
+  /**
+   * Set callback to reset setup state when connector disconnects.
+   * Called by connector's _disconnect to allow reconnection on next login.
+   */
+  setResetSetupCallback(callback: () => void): void {
+    this.resetSetupCallback = callback;
+  }
+
+  /**
+   * Notify that connector is disconnecting.
+   * Allows the watcher to reset setup state for next connection.
+   */
+  onConnectorDisconnect(): void {
+    if (this.resetSetupCallback) {
+      this.resetSetupCallback();
     }
   }
 
