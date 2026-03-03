@@ -86,8 +86,6 @@ export function PrivyEventsWatcher() {
   ]);
 
   // Effect 1: Initialize observer and inject into connectors
-  // The initialization is idempotent - safe to call multiple times as observer already exists.
-  // Reinjects automatically when embeddedWallet or auth state changes.
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!privy.ready || !fuel) return;

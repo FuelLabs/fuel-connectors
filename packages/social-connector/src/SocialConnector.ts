@@ -366,7 +366,6 @@ export class SocialConnector extends PredicateConnector {
       await this.waitForAuthStateStable();
     }
 
-    // Now check stored account using StoreManager for consistency
     const storedAccount = StoreManager.get('CURRENT_ACCOUNT');
 
     return storedAccount ? [storedAccount] : [];
