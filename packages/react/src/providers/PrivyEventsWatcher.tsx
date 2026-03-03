@@ -34,7 +34,6 @@ export function PrivyEventsWatcher() {
   const observerRef = useRef<PrivyAuthObserver<PrivyAuthObserverType> | null>(
     null,
   );
-  const setupCompleteRef = useRef(false);
 
   // Find embedded wallet
   const embeddedWallet = wallets.find((w) => w.walletClientType === 'privy');
@@ -87,9 +86,11 @@ export function PrivyEventsWatcher() {
   ]);
 
   // Effect 1: Initialize observer and inject into connectors
-  // biome-ignore lint/correctness/useExhaustiveDependencies: setupCompleteRef is intentionally omitted
+  // The initialization is idempotent - safe to call multiple times as observer already exists.
+  // Reinjects automatically when embeddedWallet or auth state changes.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (!privy.ready || setupCompleteRef.current || !fuel) return;
+    if (!privy.ready || !fuel) return;
 
     // Inject on first time (not authenticated) or when properly authenticated with wallet
     if (!privy.authenticated || embeddedWallet) {
@@ -108,16 +109,9 @@ export function PrivyEventsWatcher() {
           // @ts-expect-error - setPrivyAuthObserver expects IPrivyAuthObserver<PrivyAuthObserverType>
           connector.setPrivyAuthObserver(observerRef.current);
 
-          // Setup callback for when connector disconnects to allow reconnection
-          observerRef.current.setResetSetupCallback(() => {
-            setupCompleteRef.current = false;
-          });
-
           // Also inject initial auth payload for backward compatibility
           // @ts-expect-error - setPrivyAuth accepts PrivyAuthInterface
           connector.setPrivyAuth(buildPrivyAuthPayload());
-
-          setupCompleteRef.current = true;
         }
       };
 
@@ -133,7 +127,7 @@ export function PrivyEventsWatcher() {
 
   // Effect 2: Update observer state when Privy state changes
   useEffect(() => {
-    if (!observerRef.current || !setupCompleteRef.current) return;
+    if (!observerRef.current) return;
 
     // Emit events only if values changed (smart diffing in observer)
     observerRef.current.setAuthenticated(privy.authenticated);
@@ -144,7 +138,7 @@ export function PrivyEventsWatcher() {
 
   // Effect 3: Update observer functions when their references change
   useEffect(() => {
-    if (!observerRef.current || !setupCompleteRef.current) return;
+    if (!observerRef.current) return;
 
     observerRef.current.setSignMessage(signMessage);
     observerRef.current.setSendCode(sendCode);

@@ -842,13 +842,6 @@ export class SocialConnector extends PredicateConnector {
    * Clears Privy auth state and observer listeners.
    */
   public async _disconnect(): Promise<boolean> {
-    // Notify observer that connector is disconnecting
-    // This allows PrivyEventsWatcher to reset setup state for next connection
-    if (this.privyAuthObserver) {
-      // @ts-expect-error - calling public method on observer
-      this.privyAuthObserver.onConnectorDisconnect();
-    }
-
     this.setPrivyAuthObserver(null);
 
     if (!this.privyAuth) {
