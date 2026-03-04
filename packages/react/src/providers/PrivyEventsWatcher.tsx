@@ -34,7 +34,6 @@ export function PrivyEventsWatcher() {
   const observerRef = useRef<PrivyAuthObserver<PrivyAuthObserverType> | null>(
     null,
   );
-  const setupCompleteRef = useRef(false);
 
   // Find embedded wallet
   const embeddedWallet = wallets.find((w) => w.walletClientType === 'privy');
@@ -86,41 +85,47 @@ export function PrivyEventsWatcher() {
     loginWithCode,
   ]);
 
-  // Effect 1: Initialize observer and inject into connectors once when Privy is ready
+  // Effect 1: Initialize observer and inject into connectors
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (!privy.ready || setupCompleteRef.current) return;
+    if (!privy.ready || !fuel) return;
 
-    const initialize = async () => {
-      if (!fuel) return;
+    // Inject on first time (not authenticated) or when properly authenticated with wallet
+    if (!privy.authenticated || embeddedWallet) {
+      const initialize = async () => {
+        // Create observer instance if not exists
+        if (!observerRef.current) {
+          observerRef.current = new PrivyAuthObserver<PrivyAuthObserverType>();
+        }
 
-      // Create observer instance if not exists
-      if (!observerRef.current) {
-        observerRef.current = new PrivyAuthObserver<PrivyAuthObserverType>();
-      }
+        // Find connectors that support observer
+        const connectors = await fuel.connectors();
+        const connector = findSocialConnector(connectors);
 
-      // Find connectors that support observer
-      const connectors = await fuel.connectors();
-      const connector = findSocialConnector(connectors);
+        if (connector) {
+          // Inject observer with type-safe generic types
+          // @ts-expect-error - setPrivyAuthObserver expects IPrivyAuthObserver<PrivyAuthObserverType>
+          connector.setPrivyAuthObserver(observerRef.current);
 
-      if (connector) {
-        // Inject observer with type-safe generic types
-        // @ts-expect-error - setPrivyAuthObserver expects IPrivyAuthObserver<PrivyAuthObserverType>
-        connector.setPrivyAuthObserver(observerRef.current);
+          // Also inject initial auth payload for backward compatibility
+          // @ts-expect-error - setPrivyAuth accepts PrivyAuthInterface
+          connector.setPrivyAuth(buildPrivyAuthPayload());
+        }
+      };
 
-        // Also inject initial auth payload for backward compatibility
-        // @ts-expect-error - setPrivyAuth accepts PrivyAuthInterface
-        connector.setPrivyAuth(buildPrivyAuthPayload());
-
-        setupCompleteRef.current = true;
-      }
-    };
-
-    initialize();
-  }, [privy.ready, fuel, findSocialConnector, buildPrivyAuthPayload]);
+      initialize();
+    }
+  }, [
+    privy.ready,
+    fuel,
+    privy.authenticated,
+    embeddedWallet,
+    findSocialConnector,
+  ]);
 
   // Effect 2: Update observer state when Privy state changes
   useEffect(() => {
-    if (!observerRef.current || !setupCompleteRef.current) return;
+    if (!observerRef.current) return;
 
     // Emit events only if values changed (smart diffing in observer)
     observerRef.current.setAuthenticated(privy.authenticated);
@@ -131,7 +136,7 @@ export function PrivyEventsWatcher() {
 
   // Effect 3: Update observer functions when their references change
   useEffect(() => {
-    if (!observerRef.current || !setupCompleteRef.current) return;
+    if (!observerRef.current) return;
 
     observerRef.current.setSignMessage(signMessage);
     observerRef.current.setSendCode(sendCode);
@@ -148,15 +153,7 @@ export function PrivyEventsWatcher() {
     privy.createWallet,
   ]);
 
-  // Effect 4: Reset setup flag when authentication state changes to false (disconnect)
-  useEffect(() => {
-    if (privy.authenticated) return;
-
-    // Reset setup flag to allow Effect 1 to re-run on next connection
-    setupCompleteRef.current = false;
-  }, [privy.authenticated]);
-
-  // Effect 5: Cleanup observer when component unmounts
+  // Effect 4: Cleanup observer when component unmounts
   useEffect(() => {
     return () => {
       if (observerRef.current) {
