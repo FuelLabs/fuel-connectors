@@ -1,4 +1,5 @@
 'use client';
+
 import { defaultConnectors } from '@fuels/connectors';
 import { FuelProvider } from '@fuels/react';
 import { coinbaseWallet, walletConnect } from '@wagmi/connectors';

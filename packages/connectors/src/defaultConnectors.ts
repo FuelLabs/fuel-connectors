@@ -6,6 +6,7 @@ import {
 import { FuelWalletDevelopmentConnector } from '@fuel-connectors/fuel-development-wallet';
 import { FuelWalletConnector } from '@fuel-connectors/fuel-wallet';
 import { FueletWalletConnector } from '@fuel-connectors/fuelet-wallet';
+import { SocialConnector } from '@fuel-connectors/social-connector';
 import { SolanaConnector } from '@fuel-connectors/solana-connector';
 import { WalletConnectConnector } from '@fuel-connectors/walletconnect-connector';
 import type { Config } from '@wagmi/core';
@@ -47,6 +48,10 @@ export function defaultConnectors({
     }),
     new SolanaConnector({
       projectId: wcProjectId,
+      chainId,
+      fuelProvider,
+    }),
+    new SocialConnector({
       chainId,
       fuelProvider,
     }),

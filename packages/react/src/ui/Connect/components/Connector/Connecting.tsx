@@ -80,8 +80,21 @@ export function Connecting({ className }: ConnectorProps) {
         typeof (connector as { getAvailablePredicateVersions?: unknown })
           .getAvailablePredicateVersions === 'function';
 
-      if (supportsPredicateVersions) {
+      // Skip version selection if connector explicitly opts out (e.g., SocialConnector uses API wallet directly)
+      const skipVersionSelection =
+        connector &&
+        'skipVersionSelection' in connector &&
+        (connector as { skipVersionSelection?: boolean })
+          .skipVersionSelection === true;
+
+      if (supportsPredicateVersions && !skipVersionSelection) {
         setRoute(Routes.PredicateVersionSelector);
+        return;
+      }
+
+      // Skip disclaimer if connector opts out (e.g., SocialConnector)
+      if (skipVersionSelection) {
+        cancel();
         return;
       }
 
