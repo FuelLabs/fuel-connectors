@@ -225,8 +225,6 @@ export abstract class PredicateConnector extends FuelConnector {
 
     const transactionResponse = await vault.send(tx);
 
-    await transactionResponse.waitForResult();
-
     return transactionResponse;
   }
 
