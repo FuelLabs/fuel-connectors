@@ -120,3 +120,22 @@ React App is faster to build for e2e development.
 ## 📜 License
 
 This repo is licensed under the `Apache-2.0` license. See [`LICENSE`](./LICENSE) for more information.
+
+## Quick Start
+
+To get started with Fuel Connectors, install the package:
+
+```bash
+pnpm add @fuels/connectors
+```
+
+Then import and use the connector in your application:
+
+```typescript
+import { FuelWalletConnector } from '@fuels/connectors';
+
+const connector = new FuelWalletConnector();
+await connector.connect();
+```
+
+For more details, see the [documentation](https://docs.fuel.network/guides/fuel-connectors/).
