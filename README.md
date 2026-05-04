@@ -120,3 +120,13 @@ React App is faster to build for e2e development.
 ## 📜 License
 
 This repo is licensed under the `Apache-2.0` license. See [`LICENSE`](./LICENSE) for more information.
+
+## Development
+
+```bash
+pnpm install
+pnpm build
+pnpm test
+```
+
+For detailed contribution guidelines, see the [documentation](https://docs.fuel.network/).
